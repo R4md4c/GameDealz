@@ -1,6 +1,7 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.data.entity.Country
+import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import kotlinx.coroutines.Dispatchers.IO
@@ -19,9 +20,10 @@ internal class GetStoredRegionsUseCase(
             val serverRegions = remoteRepository.regions()
 
             val regionsWithCountries = serverRegions.map {
-                val region = Region(it.key)
-                val countries = it.value.countries.map { countryCode -> Country(countryCode, region.code) }.toSet()
-                RegionWithCountries(region, countries)
+                val region = Region(it.key, it.value.currency.code)
+                val countries =
+                    it.value.countries.map { countryCode -> Country(countryCode, region.regionCode) }.toSet()
+                RegionWithCountries(region, Currency(it.value.currency.code, it.value.currency.sign), countries)
             }
 
             localRepository.save(regionsWithCountries)

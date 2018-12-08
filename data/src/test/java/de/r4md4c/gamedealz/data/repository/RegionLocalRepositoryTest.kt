@@ -3,6 +3,7 @@ package de.r4md4c.gamedealz.data.repository
 import com.nhaarman.mockitokotlin2.verify
 import de.r4md4c.gamedealz.data.dao.RegionWithCountriesDao
 import de.r4md4c.gamedealz.data.entity.Country
+import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import kotlinx.coroutines.runBlocking
@@ -48,13 +49,16 @@ class RegionLocalRepositoryTest {
     @Test
     fun save() {
         runBlocking {
-            val regions = (1..10).map { Region("Region$it") }
+            val currency = (1..10).map { Currency("Currency$it", "sign$it") }
+            val regions = (1..10).map { Region("Region$it", "Currency$it") }
             val countries = (1..10).map { Country("Code$it", "Region$it") }
-            val regionWithCountries = regions.zip(countries).map { RegionWithCountries(it.first, setOf(it.second)) }
+            val regionWithCountries = regions.zip(countries).zip(currency).map {
+                RegionWithCountries(it.first.first, it.second, setOf(it.first.second))
+            }
 
             regionLocalRepository.save(regionWithCountries)
 
-            verify(regionsWithCountriesDao).insertRegionsWithCountries(regions, countries)
+            verify(regionsWithCountriesDao).insertRegionsWithCountries(currency, regions, countries)
         }
     }
 }

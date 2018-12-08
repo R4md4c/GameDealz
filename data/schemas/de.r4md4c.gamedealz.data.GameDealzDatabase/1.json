@@ -2,31 +2,58 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "19ee221b8d239914073b9b465c31c27d",
+    "identityHash": "5cc4f34b59130453a6d37bd0cd486e5d",
     "entities": [
       {
         "tableName": "Region",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, PRIMARY KEY(`code`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`regionCode` TEXT NOT NULL, `fk_currencyCode` TEXT NOT NULL, PRIMARY KEY(`regionCode`), FOREIGN KEY(`fk_currencyCode`) REFERENCES `Currency`(`currencyCode`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
         "fields": [
           {
-            "fieldPath": "code",
-            "columnName": "code",
+            "fieldPath": "regionCode",
+            "columnName": "regionCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currencyCode",
+            "columnName": "fk_currencyCode",
             "affinity": "TEXT",
             "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "code"
+            "regionCode"
           ],
           "autoGenerate": false
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [
+          {
+            "name": "index_Region_fk_currencyCode",
+            "unique": false,
+            "columnNames": [
+              "fk_currencyCode"
+            ],
+            "createSql": "CREATE  INDEX `index_Region_fk_currencyCode` ON `${TABLE_NAME}` (`fk_currencyCode`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Currency",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "fk_currencyCode"
+            ],
+            "referencedColumns": [
+              "currencyCode"
+            ]
+          }
+        ]
       },
       {
         "tableName": "Country",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `regionCode` TEXT NOT NULL, PRIMARY KEY(`code`), FOREIGN KEY(`regionCode`) REFERENCES `Region`(`code`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `regionCode` TEXT NOT NULL, PRIMARY KEY(`code`), FOREIGN KEY(`regionCode`) REFERENCES `Region`(`regionCode`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
         "fields": [
           {
             "fieldPath": "code",
@@ -66,16 +93,42 @@
               "regionCode"
             ],
             "referencedColumns": [
-              "code"
+              "regionCode"
             ]
           }
         ]
+      },
+      {
+        "tableName": "Currency",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`currencyCode` TEXT NOT NULL, `sign` TEXT NOT NULL, PRIMARY KEY(`currencyCode`))",
+        "fields": [
+          {
+            "fieldPath": "currencyCode",
+            "columnName": "currencyCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sign",
+            "columnName": "sign",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "currencyCode"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"19ee221b8d239914073b9b465c31c27d\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5cc4f34b59130453a6d37bd0cd486e5d\")"
     ]
   }
 }

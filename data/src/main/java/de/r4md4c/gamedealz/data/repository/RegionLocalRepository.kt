@@ -8,7 +8,10 @@ internal class RegionLocalRepository(private val regionWithCountriesDao: RegionW
     override suspend fun all(): List<RegionWithCountries> = regionWithCountriesDao.allRegions()
 
     override suspend fun save(models: List<RegionWithCountries>) {
-        regionWithCountriesDao.insertRegionsWithCountries(models.map { it.region }, models.flatMap { it.countries })
+        regionWithCountriesDao.insertRegionsWithCountries(
+            models.map { it.currency },
+            models.map { it.region },
+            models.flatMap { it.countries })
     }
 
     override suspend fun findById(id: String): RegionWithCountries? = regionWithCountriesDao.region(id)

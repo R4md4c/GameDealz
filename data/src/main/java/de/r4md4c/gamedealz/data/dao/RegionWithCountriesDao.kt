@@ -2,6 +2,7 @@ package de.r4md4c.gamedealz.data.dao
 
 import androidx.room.*
 import de.r4md4c.gamedealz.data.entity.Country
+import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 
@@ -15,7 +16,7 @@ internal interface RegionWithCountriesDao {
      * @param countries the countries that needs to be linked with the region, make sure to supply am existing region.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRegionsWithCountries(regions: List<Region>, countries: List<Country>)
+    suspend fun insertRegionsWithCountries(currencies: List<Currency>, regions: List<Region>, countries: List<Country>)
 
     /**
      * Retrieved all stored regions with their respective countries.
@@ -23,16 +24,16 @@ internal interface RegionWithCountriesDao {
      * @return a List of regions along their countries.
      */
     @Transaction
-    @Query("SELECT * FROM Region")
+    @Query("SELECT * FROM Region LEFT JOIN Currency ON Region.fk_currencyCode = Currency.currencyCode")
     suspend fun allRegions(): List<RegionWithCountries>
 
     /**
      * Selects a region along with their countries by region.
      *
-     * @param regionCode the region code that this region will follow.
+     * @param regionCode the region regionCode that this region will follow.
      * @return A single region along with its countries, otherwise null if the regionCode doesn't exist.
      */
     @Transaction
-    @Query("SELECT * FROM Region WHERE code = :regionCode")
+    @Query("SELECT * FROM Region LEFT JOIN Currency ON Region.fk_currencyCode = Currency.currencyCode WHERE regionCode = :regionCode")
     suspend fun region(regionCode: String): RegionWithCountries?
 }

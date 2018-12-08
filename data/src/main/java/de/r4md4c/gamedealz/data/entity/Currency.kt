@@ -4,4 +4,4 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Currency(@PrimaryKey val code: String, val sign: String)
+data class Currency(@PrimaryKey val currencyCode: String, val sign: String)

@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     foreignKeys = [ForeignKey(
         entity = Region::class,
         childColumns = ["regionCode"],
-        parentColumns = ["code"],
+        parentColumns = ["regionCode"],
         deferred = true,
         onDelete = CASCADE
     )],
