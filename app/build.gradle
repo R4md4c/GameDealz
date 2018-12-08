@@ -5,11 +5,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion project.ext.compileSdk
     defaultConfig {
         applicationId "de.r4md4c.gamedealz"
-        minSdkVersion 15
-        targetSdkVersion 28
+        minSdkVersion project.ext.minSdk
+        targetSdkVersion project.ext.targetSdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,15 +28,15 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
 
+    implementation "com.mikepenz:materialdrawer:6.1.1"
+
     implementation "org.koin:koin-core:${versions.koin}"
     implementation "org.koin:koin-core-ext:${versions.koin}"
     implementation "org.koin:koin-android:${versions.koin}"
     implementation "org.koin:koin-androidx-scope:${versions.koin}"
     implementation "org.koin:koin-androidx-viewmodel:${versions.koin}"
 
-    implementation project(':network')
-    implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+    implementation project(':domain')
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.koin:koin-test:${versions.koin}"

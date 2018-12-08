@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+
+android {
+    compileSdkVersion project.ext.compileSdk
+
+    defaultConfig {
+        minSdkVersion project.ext.minSdk
+        targetSdkVersion project.ext.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "androidx.room:room-runtime:${versions.room}"
+    kapt "androidx.room:room-compiler:${versions.room}"
+    implementation "androidx.room:room-coroutines:${versions.room}"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+
+    implementation "org.koin:koin-android:${versions.koin}"
+    implementation "org.koin:koin-core:${versions.koin}"
+
+    testImplementation "org.koin:koin-test:${versions.koin}"
+    testImplementation "com.google.truth:truth:${versions.truth}"
+    testImplementation 'junit:junit:4.12'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+
+    androidTestImplementation "androidx.test.ext:junit:1.0.0"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1-alpha01'
+    androidTestImplementation "com.google.truth:truth:${versions.truth}"
+    androidTestImplementation "org.koin:koin-test:${versions.koin}"
+    androidTestImplementation "androidx.room:room-testing:${versions.room}"
+    androidTestImplementation 'androidx.test:runner:1.1.1-alpha01'
+}

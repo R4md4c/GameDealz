@@ -15,11 +15,22 @@ buildscript {
     }
 }
 
+allprojects {
+    project.ext {
+        minSdk = project.hasProperty('MIN_SDK') ? MIN_SDK : 16
+        compileSdk = 28
+        targetSdk = 28
+    }
+}
+
 ext.versions = [
     'okhttp' : '3.12.0',
     'retrofit' : '2.5.0',
     'koin': '1.0.2',
-    'coroutines': '1.0.1'
+    'coroutines': '1.0.1',
+    'room': '2.1.0-alpha03',
+    'truth': '0.42',
+    'mockito_kotlin': '2.0.0'
 ]
 
 allprojects {
