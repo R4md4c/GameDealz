@@ -7,6 +7,7 @@ import de.r4md4c.gamedealz.network.repository.IsThereAnyDealRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRepository
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -25,7 +26,13 @@ val NETWORK = module {
 
     single {
         OkHttpClient.Builder()
+            .addInterceptor(get<HttpLoggingInterceptor>())
             .build()
+    }
+
+    single {
+        HttpLoggingInterceptor()
+            .setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
     }
 
     single {
