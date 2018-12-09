@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.os.ConfigurationCompat
 import java.util.*
 
-internal class AndroidConfigurationImpl(private val context: Context) : AndroidConfiguration {
+internal class AndroidConfigurationImpl(private val context: Context) : ConfigurationProvider {
 
     override val locale: Locale
         get() = ConfigurationCompat.getLocales(context.resources.configuration)[0]

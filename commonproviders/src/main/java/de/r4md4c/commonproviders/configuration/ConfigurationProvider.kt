@@ -5,7 +5,7 @@ import java.util.*
 /**
  * A Wrapper around needed functionality from [android.content.res.Configuration].
  */
-interface AndroidConfiguration {
+interface ConfigurationProvider {
 
     val locale: Locale
 }
