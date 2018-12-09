@@ -46,6 +46,8 @@ dependencies {
     implementation "org.koin:koin-core:${versions.koin}"
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     implementation "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"

@@ -27,8 +27,12 @@ dependencies {
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
 
     implementation "com.mikepenz:materialdrawer:6.1.1"
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     implementation "org.koin:koin-core:${versions.koin}"
     implementation "org.koin:koin-core-ext:${versions.koin}"

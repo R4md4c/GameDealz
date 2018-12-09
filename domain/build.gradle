@@ -32,7 +32,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
 
-    implementation project(":data")
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    api project(":data")
     implementation project(":network")
     implementation "org.koin:koin-core:${versions.koin}"
 
