@@ -3,7 +3,7 @@ package de.r4md4c.gamedealz.domain.usecase
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 
 /**
- * Retrieves the current region.
+ * Retrieves all regions.
  */
 interface GetRegionsUseCase {
 

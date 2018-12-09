@@ -35,7 +35,7 @@ interface IsThereAnyDealService {
     fun regions(): Deferred<DataWrapper<RegionCodes>>
 
     @GET("v02/web/stores")
-    fun stores(@Query("region") region: String, @Query("country") country: String): Deferred<Stores>
+    fun stores(@Query("region") region: String, @Query("country") country: String?): Deferred<Stores>
 
     @GET("v02/game/plain")
     fun plain(

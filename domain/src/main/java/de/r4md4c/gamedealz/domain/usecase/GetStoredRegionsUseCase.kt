@@ -7,7 +7,7 @@ import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository
-import de.r4md4c.gamedealz.network.repository.RegionsRepository as RemoteRegionRepository
+import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionRepository
 
 internal class GetStoredRegionsUseCase(
     private val localRepository: LocalRegionRepository,

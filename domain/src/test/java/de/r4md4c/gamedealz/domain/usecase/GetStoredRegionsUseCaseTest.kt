@@ -11,7 +11,7 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionsRepository
-import de.r4md4c.gamedealz.network.repository.RegionsRepository as RemoteRegionsRepository
+import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionsRepository
 
 class GetStoredRegionsUseCaseTest {
 

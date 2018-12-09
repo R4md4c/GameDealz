@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.network.model.DataWrapper
+import de.r4md4c.gamedealz.network.model.Stores
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.RegionCodes
 import kotlinx.coroutines.async
@@ -39,4 +40,15 @@ class IsThereAnyDealRepositoryTest {
         }
     }
 
+    @Test
+    fun stores() {
+        runBlocking {
+            whenever(service.stores("", "")).thenReturn(async { Stores(emptyList()) })
+
+            val result = subject.stores("", "")
+
+            verify(service).stores("", "")
+            assertThat(result).isEmpty()
+        }
+    }
 }
