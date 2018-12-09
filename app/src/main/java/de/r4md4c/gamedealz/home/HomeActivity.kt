@@ -3,7 +3,7 @@ package de.r4md4c.gamedealz.home
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
+import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import de.r4md4c.gamedealz.R
@@ -16,22 +16,26 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner {
 
     private val viewModel: HomeViewModel by viewModel()
 
+    private val accountHeader by lazy {
+        AccountHeaderBuilder()
+            .withActivity(this)
+            .withCompactStyle(true)
+            .build()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         loadDrawer()
 
-        viewModel.regions.observe(this, Observer {
-            println(it)
-        })
 
-        viewModel.retrieveRegions()
     }
 
     private fun loadDrawer() {
         drawer = DrawerBuilder(this)
             .withToolbar(toolbar)
+            .withAccountHeader(accountHeader)
             .build()
     }
 }

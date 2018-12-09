@@ -22,7 +22,7 @@ class HomeViewModel(private val getRegionsUseCase: GetRegionsUseCase) : ViewMode
         regions.postValue(useCaseRegions)
     }
 
-    val regions = MutableLiveData<List<RegionWithCountries>>()
+    val currentRegion = MutableLiveData<List<RegionWithCountries>>()
 
     override fun onCleared() {
         super.onCleared()
