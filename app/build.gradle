@@ -25,9 +25,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:${versions.androidx_appcompat}"
+
+    implementation "androidx.appcompat:appcompat:${versions.androidX}"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    
+    implementation "androidx.recyclerview:recyclerview:${versions.androidX}"
+    implementation "com.google.android.material:material:${versions.androidX}"
+
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
 
     implementation "com.mikepenz:materialdrawer:6.1.1"

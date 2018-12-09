@@ -1,38 +1,49 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
+import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.findCountry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class GetCurrentActiveRegionImpl(
     private val getRegionsUseCase: GetRegionsUseCase,
-    private val configurationProvider: ConfigurationProvider
+    private val configurationProvider: ConfigurationProvider,
+    private val sharedPreferences: SharedPreferencesProvider
 ) : GetCurrentActiveRegion {
 
     override suspend fun invoke(): ActiveRegion {
+        val savedRegionCountryPair = sharedPreferences.activeRegionAndCountry
         val regions = withContext(Dispatchers.IO) { getRegionsUseCase.regions() }
-        val locale = configurationProvider.locale
 
         return withContext(Dispatchers.Default) {
-            // We are doing an n^2 search, doesn't matter since it is a constant length array.
-            val localeBasedRegionWithCountries = regions.asSequence().firstOrNull {
-                it.findCountry(locale.country) != null
+            if (savedRegionCountryPair == null) {
+                val locale = configurationProvider.locale
+                val localeBasedRegionWithCountries = regions.findRegionAndCountryByLocale(locale)
+                localeBasedRegionWithCountries?.let {
+                    ActiveRegion(it.region, it.findCountry(locale.country)!!, it.currency)
+                } ?: regions.getRegionAndCountry(DEFAULT_REGION, DEFAULT_COUNTRY)!!
+            } else {
+                regions.getRegionAndCountry(savedRegionCountryPair.first, savedRegionCountryPair.second)!!
+            }.apply {
+                sharedPreferences.activeRegionAndCountry = region.regionCode to country.code
             }
-
-            localeBasedRegionWithCountries?.let {
-                ActiveRegion(it.region, it.findCountry(locale.country)!!, it.currency)
-            } ?: getDefaultRegionAndCountry(regions)
         }
     }
 
-    private fun getDefaultRegionAndCountry(regions: List<RegionWithCountries>): ActiveRegion {
-        val defaultRegion = regions.asSequence().first { it.region.regionCode == DEFAULT_REGION }
-        val defaultCountry = defaultRegion.countries.asSequence().first { it.code.equals(DEFAULT_COUNTRY, true) }
+    private fun List<RegionWithCountries>.findRegionAndCountryByLocale(locale: Locale): RegionWithCountries? =
+        asSequence().firstOrNull {
+            it.findCountry(locale.country) != null
+        }
 
-        return ActiveRegion(defaultRegion.region, defaultCountry, defaultRegion.currency)
+    private fun List<RegionWithCountries>.getRegionAndCountry(regionCode: String, countryCode: String): ActiveRegion? {
+        val foundRegion = asSequence().first { it.region.regionCode == regionCode }
+        val foundCountry = foundRegion.countries.asSequence().first { it.code.equals(countryCode, true) }
+
+        return ActiveRegion(foundRegion.region, foundCountry, foundRegion.currency)
     }
 
     private companion object {

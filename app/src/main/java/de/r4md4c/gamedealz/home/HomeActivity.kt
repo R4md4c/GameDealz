@@ -7,8 +7,9 @@ import androidx.lifecycle.Observer
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.domain.model.displayName
+import de.r4md4c.gamedealz.items.ProgressItem
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -35,10 +36,23 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun listenToViewModel() {
         viewModel.currentRegion.observe(this, Observer {
-            accountHeader.setSelectionFirstLine(it.region.regionCode)
-            accountHeader.setSelectionSecondLine(it.country.displayName())
+            accountHeader.setSelectionFirstLine(it.first)
+            accountHeader.setSelectionSecondLine(it.second)
         })
 
+        viewModel.loading.observe(this, Observer {
+            showProgress(it)
+        })
+
+        viewModel.stores.observe(this, Observer { storeList ->
+            drawer.removeAllItems()
+            val drawerItems = storeList.map {
+                PrimaryDrawerItem()
+                    .withName(it.name)
+                    .withTag(it.id)
+            }
+            drawer.addItems(*drawerItems.toTypedArray())
+        })
         viewModel.retrieveRegions()
     }
 
@@ -47,5 +61,12 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner {
             .withToolbar(toolbar)
             .withAccountHeader(accountHeader)
             .build()
+    }
+
+    private fun showProgress(show: Boolean) {
+        drawer.removeAllItems()
+        if (show) {
+            drawer.addItem(ProgressItem())
+        }
     }
 }

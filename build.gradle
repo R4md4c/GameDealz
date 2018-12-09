@@ -32,8 +32,7 @@ ext.versions = [
     'truth': '0.42',
     'mockito_kotlin': '2.0.0',
     'timber': '4.7.1',
-    'androidx_appcompat': '1.1.0-alpha01',
-    'androidx_core': '1.1.0-alpha02',
+    'androidX': '1.1.0-alpha01',
     'robolectric': '4.1-beta-2'
 ]
 
