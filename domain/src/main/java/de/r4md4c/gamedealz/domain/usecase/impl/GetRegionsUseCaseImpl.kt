@@ -1,29 +1,32 @@
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
+import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionRepository
 
-internal class GetStoredRegionsUseCase(
+internal class GetRegionsUseCaseImpl(
     private val localRepository: LocalRegionRepository,
     private val remoteRepository: RemoteRegionRepository
 ) : GetRegionsUseCase {
 
-    override suspend fun regions(): List<RegionWithCountries> =
+    override suspend fun invoke(param: VoidParameter?): List<RegionWithCountries> =
         withContext(IO) {
-            val localRegions = localRepository.all()
+            val localRegionsChannel = localRepository.all()
+            val localRegions = localRegionsChannel.receive()
             if (!localRegions.isEmpty()) {
                 localRegions
             } else {
                 val regionsWithCountries = loadRegionsFromServer()
                 localRepository.save(regionsWithCountries)
 
-                localRepository.all()
+                localRegionsChannel.receive().apply { localRegionsChannel.cancel() }
             }
         }
 

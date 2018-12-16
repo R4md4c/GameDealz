@@ -34,7 +34,7 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${versions.timber}"
 
-    api project(':data')
+    implementation project(':data')
     implementation project(':commonproviders')
     implementation project(':network')
     implementation "org.koin:koin-core:${versions.koin}"

@@ -41,8 +41,11 @@ dependencies {
 
     implementation "androidx.room:room-runtime:${versions.room}"
     kapt "androidx.room:room-compiler:${versions.room}"
+    implementation "androidx.room:room-rxjava2:${versions.room}"
     implementation "androidx.room:room-coroutines:${versions.room}"
 
+    implementation "io.reactivex.rxjava2:rxjava:2.2.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${versions.coroutines}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
@@ -57,10 +60,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
 
-    androidTestImplementation "androidx.test.ext:junit:1.0.0"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1-alpha01'
+    androidTestImplementation "androidx.test.ext:junit:1.1.0"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     androidTestImplementation "com.google.truth:truth:${versions.truth}"
     androidTestImplementation "org.koin:koin-test:${versions.koin}"
     androidTestImplementation "androidx.room:room-testing:${versions.room}"
-    androidTestImplementation 'androidx.test:runner:1.1.1-alpha01'
+    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
+    androidTestImplementation 'androidx.test:runner:1.1.1'
 }

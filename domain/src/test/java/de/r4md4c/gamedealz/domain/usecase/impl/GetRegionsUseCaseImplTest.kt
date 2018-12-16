@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.usecase.impl
 
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionsRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionsRepository
 
-class GetStoredRegionsUseCaseTest {
+class GetRegionsUseCaseImplTest {
 
     @Mock
     private lateinit var localRepository: LocalRegionsRepository
@@ -21,13 +21,13 @@ class GetStoredRegionsUseCaseTest {
     @Mock
     private lateinit var remoteRepository: RemoteRegionsRepository
 
-    private lateinit var subject: GetStoredRegionsUseCase
+    private lateinit var subject: GetRegionsUseCaseImpl
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        subject = GetStoredRegionsUseCase(localRepository, remoteRepository)
+        subject = GetRegionsUseCaseImpl(localRepository, remoteRepository)
     }
 
     @Test
@@ -35,7 +35,7 @@ class GetStoredRegionsUseCaseTest {
         runBlocking {
             whenever(localRepository.all()).thenReturn(listOf(mock()))
 
-            val result = subject.regions()
+            val result = subject()
 
             assertThat(result).hasSize(1)
             verify(localRepository).all()
@@ -49,7 +49,7 @@ class GetStoredRegionsUseCaseTest {
             whenever(localRepository.all()).thenReturn(emptyList())
             whenever(remoteRepository.regions()).thenReturn(regionRemoteResponse())
 
-            subject.regions()
+            subject()
 
             verify(localRepository, times(2)).all()
             verify(localRepository).save(listOf(regionLocal()))

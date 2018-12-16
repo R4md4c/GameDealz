@@ -1,10 +1,7 @@
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.usecase.impl
 
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.data.entity.Country
@@ -12,6 +9,7 @@ import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
+import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -30,13 +28,13 @@ class GetCurrentActiveRegionImplTest {
     @Mock
     private lateinit var sharedPreferencesProvider: SharedPreferencesProvider
 
-    private lateinit var subject: GetCurrentActiveRegionImpl
+    private lateinit var subject: GetCurrentActiveRegionUseCaseImpl
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        subject = GetCurrentActiveRegionImpl(getRegionsUseCase, configurationProvider, sharedPreferencesProvider)
+        subject = GetCurrentActiveRegionUseCaseImpl(getRegionsUseCase, configurationProvider, sharedPreferencesProvider)
     }
 
 
@@ -96,7 +94,10 @@ class GetCurrentActiveRegionImplTest {
     fun `it should try to return result from shared preferences first`() {
         val mockCurrency = mock<Currency>()
         ArrangeBuilder()
-            .withSharedPreference(DEFAULT_REGION, DEFAULT_COUNTRY)
+            .withSharedPreference(
+                DEFAULT_REGION,
+                DEFAULT_COUNTRY
+            )
             .withRegionsWithCountries(
                 listOf(
                     RegionWithCountries(
@@ -141,13 +142,14 @@ class GetCurrentActiveRegionImplTest {
             subject()
         }
 
-        verify(sharedPreferencesProvider).activeRegionAndCountry = DEFAULT_REGION to DEFAULT_COUNTRY
+        verify(sharedPreferencesProvider).activeRegionAndCountry = DEFAULT_REGION to
+                DEFAULT_COUNTRY
     }
 
     inner class ArrangeBuilder {
 
         fun withRegionsWithCountries(regionsWithCountries: List<RegionWithCountries>) = apply {
-            runBlocking { whenever(getRegionsUseCase.regions()).thenReturn(regionsWithCountries) }
+            runBlocking { whenever(getRegionsUseCase.invoke(anyOrNull())).thenReturn(regionsWithCountries) }
         }
 
         fun withLocale(locale: Locale) = apply {

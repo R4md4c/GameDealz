@@ -8,6 +8,7 @@ import retrofit2.http.*
 typealias RegionCodes = Map<String, Region>
 typealias ShopPlains = Map<String, IdToPlainMap>
 typealias PlainPriceList = Map<String, ListWrapper<Price>>
+
 /**
  * A retrofit interface for accessing IsThereAnyDeal's API.
  * Check https://itad.docs.apiary.io/#reference/ for documentation.

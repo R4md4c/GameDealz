@@ -1,6 +1,7 @@
 package de.r4md4c.gamedealz.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -14,6 +15,7 @@ import de.r4md4c.gamedealz.data.entity.Region
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.android.ext.koin.androidContext
@@ -28,6 +30,10 @@ import kotlin.properties.Delegates
 
 @RunWith(AndroidJUnit4::class)
 class RegionWithCountriesDaoTest : KoinTest {
+
+    @JvmField
+    @Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val roomWithCountriesDao: RegionWithCountriesDao by inject()
 
@@ -49,82 +55,83 @@ class RegionWithCountriesDaoTest : KoinTest {
 
     @Test
     fun allRegions_ReturnEmpty() {
-        runBlocking {
-            val regions = roomWithCountriesDao.allRegions()
+        val regions = roomWithCountriesDao.allRegions()
 
-            assertThat(regions).isEmpty()
+        val ts = regions.test()
+
+        ts.assertValue {
+            it.isEmpty()
         }
     }
 
     @Test
     fun allRegions_whenNoCountriesStored() {
-        runBlocking {
-            ArrangeBuilder()
-                .withCurrency(currencyList())
-                .withRegions((1..10).map { Fixtures.region("region$it", currencyList().first().currencyCode) })
-                .withCountries(emptyList())
-                .arrange()
+        ArrangeBuilder()
+            .withCurrency(currencyList())
+            .withRegions((1..10).map { Fixtures.region("region$it", currencyList().first().currencyCode) })
+            .withCountries(emptyList())
+            .arrange()
 
-            val regions = roomWithCountriesDao.allRegions()
+        val regions = roomWithCountriesDao.allRegions().test()
 
-            assertThat(regions).hasSize(10)
+        regions.assertValue {
+            it.size == 10
         }
     }
 
     @Test
     fun allRegions_withCurrencies() {
-        runBlocking {
-            ArrangeBuilder()
-                .withCurrency(currencyList())
-                .withRegions((1..10).map { Fixtures.region("region$it", currencyList().first().currencyCode) })
-                .withCountries(emptyList())
-                .arrange()
+        ArrangeBuilder()
+            .withCurrency(currencyList())
+            .withRegions((1..10).map { Fixtures.region("region$it", currencyList().first().currencyCode) })
+            .withCountries(emptyList())
+            .arrange()
 
-            val regions = roomWithCountriesDao.allRegions()
+        val regions = roomWithCountriesDao.allRegions().test()
 
-            assertThat(regions.map { it.currency }).containsAllIn(arrayOf(currencyList().first()))
+        regions.assertValue {
+            it.map { it.currency }.contains(currencyList().first())
         }
+
     }
 
     @Test
     fun allRegions_whenCountriesAreStored() {
-        runBlocking {
-            ArrangeBuilder()
-                .withCurrency(currencyList())
-                .withRegions((1..10).map { Fixtures.region("region$it", currencyList().first().currencyCode) })
-                .withCountries((1..10).map {
-                    Fixtures.country(
-                        "country$it",
-                        Fixtures.region("region$it", Fixtures.currency().currencyCode)
-                    )
-                })
-                .arrange()
+        ArrangeBuilder()
+            .withCurrency(currencyList())
+            .withRegions((1..10).map { Fixtures.region("region$it", currencyList().first().currencyCode) })
+            .withCountries((1..10).map {
+                Fixtures.country(
+                    "country$it",
+                    Fixtures.region("region$it", Fixtures.currency().currencyCode)
+                )
+            })
+            .arrange()
 
-            val regions = roomWithCountriesDao.allRegions()
+        val regions = roomWithCountriesDao.allRegions().test()
 
-            assertThat(regions).hasSize(10)
-            regions.forEach { assertThat(it.countries).hasSize(1) }
+        regions.assertValue {
+            it.size == 10
         }
     }
 
     @Test
     fun allRegions_whenMultipleCountriesAreStoredPerRegion() {
-        runBlocking {
-            ArrangeBuilder()
-                .withCurrency(currencyList())
-                .withRegions(listOf(Fixtures.region("region", currencyList().first().currencyCode)))
-                .withCountries((1..10).map {
-                    Fixtures.country(
-                        "country$it",
-                        Fixtures.region("region", Fixtures.currency().currencyCode)
-                    )
-                })
-                .arrange()
+        ArrangeBuilder()
+            .withCurrency(currencyList())
+            .withRegions(listOf(Fixtures.region("region", currencyList().first().currencyCode)))
+            .withCountries((1..10).map {
+                Fixtures.country(
+                    "country$it",
+                    Fixtures.region("region", Fixtures.currency().currencyCode)
+                )
+            })
+            .arrange()
 
-            val regions = roomWithCountriesDao.allRegions()
+        val regions = roomWithCountriesDao.allRegions().test()
 
-            assertThat(regions).hasSize(1)
-            assertThat(regions.first().countries).hasSize(10)
+        regions.assertValue {
+            it.size == 1 && it.first().countries.size == 10
         }
     }
 

@@ -1,5 +1,6 @@
 package de.r4md4c.gamedealz.data.dao
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -10,6 +11,7 @@ import de.r4md4c.gamedealz.data.entity.Store
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.android.ext.koin.androidContext
@@ -26,12 +28,17 @@ class StoresDaoTest : KoinTest {
 
     private val storesDao: StoresDao by inject()
 
+    @JvmField
+    @Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
     @Before
     fun beforeEach() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         StandAloneContext.startKoin(listOf(DATA, module {
             single(override = true) {
-                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java).build()
+                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java)
+                    .build()
             }
         })).with(context)
     }
@@ -44,13 +51,14 @@ class StoresDaoTest : KoinTest {
 
     @Test
     fun all_retrievesAllStores() {
-        runBlocking {
-            ArrangeBuilder()
-                .arrange()
+        ArrangeBuilder()
+            .arrange()
 
-            val allStores = storesDao.all()
+        val allStores = storesDao.all().test()
 
-            assertThat(allStores).hasSize(10)
+        allStores.assertValueCount(1)
+        allStores.assertValue {
+            it.size == 10
         }
     }
 
@@ -77,6 +85,18 @@ class StoresDaoTest : KoinTest {
 
             assertThat(singleStore).isNull()
         }
+    }
+
+    @Test
+    fun updateSelected() {
+        val storesList = this.storesList
+        ArrangeBuilder()
+            .withStores(storesList)
+            .arrange()
+
+        val result = storesDao.updateSelected(true, storesList.map { it.id }.toSet())
+
+        assertThat(result).isEqualTo(10)
     }
 
     private val storesList = (1..10).map { Store("id$it", "name$it", "color$it") }

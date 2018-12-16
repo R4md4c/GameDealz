@@ -9,6 +9,7 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.items.ProgressItem
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,21 +46,29 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner {
         })
 
         viewModel.stores.observe(this, Observer { storeList ->
-            drawer.removeAllItems()
             val drawerItems = storeList.map {
                 PrimaryDrawerItem()
                     .withName(it.name)
-                    .withTag(it.id)
+                    .withTag(it)
+                    .withIdentifier(it.id.hashCode().toLong())
+                    .withSetSelected(it.selected)
+                    .withOnDrawerItemClickListener { _, _, drawerItem ->
+                        viewModel.onStoreSelected(drawerItem.tag as StoreModel)
+                        true
+                    }
             }
-            drawer.addItems(*drawerItems.toTypedArray())
+            drawer.setItems(drawerItems)
         })
-        viewModel.retrieveRegions()
+        viewModel.init()
     }
 
     private fun loadDrawer() {
         drawer = DrawerBuilder(this)
             .withToolbar(toolbar)
             .withAccountHeader(accountHeader)
+            .withMultiSelect(true)
+            .withCloseOnClick(false)
+            .withHasStableIds(true)
             .build()
     }
 

@@ -10,5 +10,6 @@ import androidx.room.PrimaryKey
 data class Store(
     @PrimaryKey val id: String,
     val name: String,
-    val color: String
+    val color: String,
+    val selected: Boolean = false
 )
