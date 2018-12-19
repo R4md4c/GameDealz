@@ -10,7 +10,6 @@ internal class RegionLocalRepository(private val regionWithCountriesDao: RegionW
     override suspend fun all(ids: Collection<String>?): ReceiveChannel<List<RegionWithCountries>> =
         (ids?.let { regionWithCountriesDao.allRegions(it.toSet()) } ?: regionWithCountriesDao.allRegions())
             .onBackpressureLatest()
-            .distinctUntilChanged()
             .openSubscription()
 
     override suspend fun save(models: List<RegionWithCountries>) {

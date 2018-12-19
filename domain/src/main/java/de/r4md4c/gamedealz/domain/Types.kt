@@ -7,3 +7,5 @@ object VoidParameter : Parameter()
 data class TypeParameter<T>(val value: T) : Parameter()
 
 data class CollectionParameter<T>(val list: Collection<T>) : Parameter()
+
+data class PageParameter(val offset: Int, val pageSize: Int) : Parameter()

@@ -13,7 +13,7 @@ typealias PlainPriceList = Map<String, ListWrapper<Price>>
  * A retrofit interface for accessing IsThereAnyDeal's API.
  * Check https://itad.docs.apiary.io/#reference/ for documentation.
  */
-interface IsThereAnyDealService {
+internal interface IsThereAnyDealService {
 
     @GET("oauth/authorize?response_type=code")
     fun authorize(
@@ -60,6 +60,16 @@ interface IsThereAnyDealService {
         @Query("shops") shops: Set<String>? = null
     )
             : Deferred<DataWrapper<PlainPriceList>>
+
+    @GET("v01/deals/list")
+    fun deals(
+        @Query("key") key: String = BuildConfig.API_KEY,
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20,
+        @Query("region") region: String?,
+        @Query("country") country: String?,
+        @Query("shops") shops: String
+    ): Deferred<DataWrapper<ListWrapper<Deal>>>
 }
 
 private const val GRANT_TYPE = "authorization_code"

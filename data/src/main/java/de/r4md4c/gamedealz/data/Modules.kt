@@ -24,8 +24,8 @@ val DATA = module {
         get<GameDealzDatabase>().storesDao()
     }
 
-    factory<RegionsRepository> { RegionLocalRepository(get()) }
+    single<RegionsRepository> { RegionLocalRepository(get()) }
 
-    factory<StoresRepository> { StoresLocalRepository(get()) }
+    single<StoresRepository> { StoresLocalRepository(get()) }
 
 }

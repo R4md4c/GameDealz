@@ -1,7 +1,6 @@
 package de.r4md4c.gamedealz.home
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
@@ -10,23 +9,20 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.utils.GlobalExceptionHandler
-import kotlinx.coroutines.*
+import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
-import kotlin.properties.Delegates
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val toggleStoresUseCase: ToggleStoresUseCase
-) : ViewModel() {
+) : AbstractViewModel() {
 
-    private val viewModelJob = SupervisorJob()
-
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
-    private var _storesChannel: ReceiveChannel<List<StoreModel>> by Delegates.notNull()
+    private var _storesChannel: ReceiveChannel<List<StoreModel>>? = null
 
     val currentRegion = MutableLiveData<Pair<String, String>>()
 
@@ -43,7 +39,7 @@ class HomeViewModel(
 
         _storesChannel = getStoresUseCase(TypeParameter(activeRegion))
         withContext(IO) {
-            _storesChannel.consumeEach {
+            _storesChannel?.consumeEach {
                 stores.postValue(it)
             }
         }
@@ -51,14 +47,13 @@ class HomeViewModel(
         loading.postValue(false)
     }
 
-    fun onStoreSelected(store: StoreModel) = uiScope.launch {
+    fun onStoreSelected(store: StoreModel) = uiScope.launch(GlobalExceptionHandler("Failed to select a store")) {
         toggleStoresUseCase(CollectionParameter(setOf(store)))
     }
 
     override fun onCleared() {
         super.onCleared()
-        _storesChannel.cancel()
-        viewModelJob.cancel()
+        _storesChannel?.cancel()
     }
 
 }

@@ -1,5 +1,6 @@
 package de.r4md4c.gamedealz.home
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
@@ -9,12 +10,14 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.items.ProgressItem
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
-class HomeActivity : AppCompatActivity(), LifecycleOwner {
+class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragmentInteractionListener {
 
     private lateinit var drawer: Drawer
 
@@ -31,8 +34,18 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        loadDrawer()
+        loadDrawer(savedInstanceState)
+
         listenToViewModel()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        drawer.saveInstanceState(outState)
+    }
+
+    override fun onFragmentInteraction(uri: Uri) {
+        Timber.d("$uri")
     }
 
     private fun listenToViewModel() {
@@ -62,13 +75,14 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner {
         viewModel.init()
     }
 
-    private fun loadDrawer() {
+    private fun loadDrawer(savedInstanceState: Bundle?) {
         drawer = DrawerBuilder(this)
             .withToolbar(toolbar)
             .withAccountHeader(accountHeader)
             .withMultiSelect(true)
             .withCloseOnClick(false)
             .withHasStableIds(true)
+            .apply { savedInstanceState?.let { withSavedInstance(it) } }
             .build()
     }
 

@@ -66,6 +66,17 @@ class IsThereAnyDealServiceTest : KoinTest {
         }
     }
 
+    @Test
+    fun deals() {
+        runBlocking {
+            val result = service.deals(region = "us", country = "US", shops = setOf("steam", "gog")).await()
+
+            assertThat(result.data.list).isNotEmpty()
+            assertThat(result.data.list.count()).isEqualTo(20)
+            assertThat(result.data.count).isGreaterThan(0)
+        }
+    }
+
     @After
     fun afterEach() {
         stopKoin()

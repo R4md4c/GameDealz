@@ -3,6 +3,7 @@ package de.r4md4c.gamedealz.network
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import de.r4md4c.gamedealz.network.repository.DealsRemoteRepository
 import de.r4md4c.gamedealz.network.repository.IsThereAnyDealRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
@@ -47,5 +48,7 @@ val NETWORK = module {
     single<RegionsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
     single<StoresRemoteRepository> { get<IsThereAnyDealRepository>() }
+
+    single<DealsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
 }

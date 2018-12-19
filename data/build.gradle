@@ -41,6 +41,7 @@ dependencies {
 
     implementation "androidx.room:room-runtime:${versions.room}"
     kapt "androidx.room:room-compiler:${versions.room}"
+    implementation "androidx.lifecycle:lifecycle-livedata:${versions.livedata}"
     implementation "androidx.room:room-rxjava2:${versions.room}"
     implementation "androidx.room:room-coroutines:${versions.room}"
 

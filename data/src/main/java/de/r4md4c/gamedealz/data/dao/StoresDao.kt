@@ -33,6 +33,14 @@ internal interface StoresDao {
     fun all(ids: Set<String>): Flowable<List<Store>>
 
     /**
+     * All selected stores.
+     *
+     * @return a list of stores.
+     */
+    @Query("SELECT * FROM Store WHERE selected = 1")
+    fun allSelected(): Flowable<List<Store>>
+
+    /**
      * Retrieves a single store.
      *
      * @param storeId the store id that will be used to retrieve the store.

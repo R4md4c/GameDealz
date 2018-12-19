@@ -13,7 +13,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
     }
+    
     buildTypes {
         release {
             minifyEnabled false
@@ -24,12 +27,15 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation "androidx.appcompat:appcompat:${versions.androidX}"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation "androidx.recyclerview:recyclerview:${versions.androidX}"
+    implementation "android.arch.navigation:navigation-fragment-ktx:${versions.nav_version}"
+    implementation "android.arch.navigation:navigation-ui-ktx:${versions.nav_version}"
     implementation "com.google.android.material:material:${versions.androidX}"
+    implementation "androidx.paging:paging-runtime-ktx:${versions.paging_version}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
 
@@ -45,8 +51,12 @@ dependencies {
 
     implementation project(':domain')
 
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.koin:koin-test:${versions.koin}"
+    testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
+
     androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation "android.arch.navigation:navigation-testing:${versions.nav_version}"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

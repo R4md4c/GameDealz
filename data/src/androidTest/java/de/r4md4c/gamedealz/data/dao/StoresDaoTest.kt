@@ -99,6 +99,20 @@ class StoresDaoTest : KoinTest {
         assertThat(result).isEqualTo(10)
     }
 
+    @Test
+    fun allSelected() {
+        val storesList = this.storesList.take(5).map { it.copy(selected = true) }
+        ArrangeBuilder()
+            .withStores(storesList)
+            .arrange()
+
+        val result = storesDao.allSelected().test()
+
+        result.assertValue {
+            it.size == 5
+        }
+    }
+
     private val storesList = (1..10).map { Store("id$it", "name$it", "color$it") }
 
     private inner class ArrangeBuilder {

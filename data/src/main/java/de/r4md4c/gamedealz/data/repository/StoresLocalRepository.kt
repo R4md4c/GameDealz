@@ -17,4 +17,7 @@ internal class StoresLocalRepository(private val storesDao: StoresDao) : StoresR
     override fun updateSelected(selected: Boolean, stores: Set<Store>) {
         storesDao.updateSelected(selected, stores.mapTo(mutableSetOf()) { it.id })
     }
+
+    override suspend fun selectedStores(): ReceiveChannel<Collection<Store>> =
+        storesDao.allSelected().openSubscription()
 }
