@@ -6,13 +6,18 @@ import androidx.paging.PositionalDataSource
 import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
+import de.r4md4c.gamedealz.utils.state.Event
+import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class DealsDataSourceImpl(private val getDealsUseCase: GetDealsUseCase) : PositionalDataSource<DealModel>(),
+class DealsDataSourceImpl(
+    private val getDealsUseCase: GetDealsUseCase,
+    private val stateMachineDelegate: StateMachineDelegate<Event>
+) : PositionalDataSource<DealModel>(),
     DealsDataSource {
 
     private val _loading = MutableLiveData<Boolean>()
@@ -42,7 +47,7 @@ class DealsDataSourceImpl(private val getDealsUseCase: GetDealsUseCase) : Positi
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<DealModel>) {
         job?.cancel()
         job = scope.launch {
-            _loading.postValue(true)
+            stateMachineDelegate.transition(Event.OnLoadingStart)
 
             getDealsUseCase.runCatching {
                 invoke(PageParameter(params.requestedStartPosition, params.pageSize))
@@ -55,8 +60,7 @@ class DealsDataSourceImpl(private val getDealsUseCase: GetDealsUseCase) : Positi
             }.onFailure {
                 Timber.e(it, "Failed to get initial deals")
             }
-
-            _loading.postValue(false)
+            stateMachineDelegate.transition(Event.OnLoadingEnded)
         }
     }
 }

@@ -1,6 +1,5 @@
 package de.r4md4c.gamedealz.deals
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import androidx.paging.toLiveData
@@ -9,6 +8,9 @@ import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.utils.debounce
+import de.r4md4c.gamedealz.utils.state.Event
+import de.r4md4c.gamedealz.utils.state.SideEffect
+import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -18,7 +20,8 @@ import timber.log.Timber
 
 class DealsViewModel(
     private val factory: DataSource.Factory<Int, DealModel>,
-    private val selectedStoresUseCase: GetSelectedStoresUseCase
+    private val selectedStoresUseCase: GetSelectedStoresUseCase,
+    private val uiStateMachineDelegate: StateMachineDelegate<Event>
 ) : AbstractViewModel() {
 
     private var channel: ReceiveChannel<List<StoreModel>>? = null
@@ -27,8 +30,8 @@ class DealsViewModel(
         factory.toLiveData(BuildConfig.DEFAULT_PAGE_SIZE)
     }
 
-    val loading: LiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
+    val sideEffect: MutableLiveData<SideEffect> by lazy {
+        MutableLiveData<SideEffect>()
     }
 
     fun init() {
@@ -40,11 +43,16 @@ class DealsViewModel(
                 deals.value?.dataSource?.invalidate()
             }
         }
+
+        uiStateMachineDelegate.onTransition {
+            sideEffect.postValue(it)
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
         channel?.cancel()
+        uiStateMachineDelegate.onTransition(null)
     }
 
 }

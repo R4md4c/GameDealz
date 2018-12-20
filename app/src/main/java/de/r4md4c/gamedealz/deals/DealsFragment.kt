@@ -5,22 +5,34 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.SCOPE_FRAGMENT
+import de.r4md4c.gamedealz.utils.state.SideEffect
 import kotlinx.android.synthetic.main.fragment_deals.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ext.android.bindScope
+import org.koin.androidx.scope.ext.android.getOrCreateScope
 
 
 class DealsFragment : Fragment(), LifecycleOwner {
+
     private var listener: OnFragmentInteractionListener? = null
 
-    private val dealsViewModel by viewModel<DealsViewModel>()
+    private val dealsViewModel by inject<DealsViewModel>()
 
     private val adapter by lazy { DealsAdapter() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        bindScope(getOrCreateScope(SCOPE_FRAGMENT))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,8 +53,11 @@ class DealsFragment : Fragment(), LifecycleOwner {
         dealsViewModel.deals.observe(this, Observer {
             adapter.submitList(it)
         })
-        dealsViewModel.loading.observe(this, Observer {
-            progress.visibility = if (it) View.VISIBLE else View.GONE
+        dealsViewModel.sideEffect.observe(this, Observer {
+            when (it) {
+                is SideEffect.ShowLoading -> progress.visibility = VISIBLE
+                is SideEffect.HideLoading -> progress.visibility = GONE
+            }
         })
     }
 

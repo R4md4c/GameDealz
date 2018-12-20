@@ -5,16 +5,26 @@ import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.home.HomeViewModel
-import org.koin.androidx.viewmodel.ext.koin.viewModel
+import de.r4md4c.gamedealz.utils.state.Event
+import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
+import de.r4md4c.gamedealz.utils.state.UIStateMachineDelegate
+import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.dsl.module.module
+
+const val SCOPE_FRAGMENT = "fragment_scope"
 
 val MAIN = module {
 
-    viewModel {
-        HomeViewModel(get(), get(), get())
+    scope<DataSource.Factory<Int, DealModel>>(SCOPE_FRAGMENT) { DealsDataSourceFactory(get(), get()) }
+
+    scope<StateMachineDelegate<Event>>(SCOPE_FRAGMENT) {
+        UIStateMachineDelegate()
     }
 
-    viewModel { DealsViewModel(get(), get()) }
+    scope(SCOPE_FRAGMENT) {
+        DealsViewModel(get(), get(), get())
+    }
 
-    factory<DataSource.Factory<Int, DealModel>> { DealsDataSourceFactory(get()) }
+    viewModel<HomeViewModel>()
+
 }
