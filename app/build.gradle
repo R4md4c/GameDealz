@@ -56,7 +56,6 @@ dependencies {
 
     implementation project(':domain')
 
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.koin:koin-test:${versions.koin}"
     testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"

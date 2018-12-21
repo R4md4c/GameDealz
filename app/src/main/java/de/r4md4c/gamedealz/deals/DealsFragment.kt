@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.SCOPE_FRAGMENT
+import de.r4md4c.gamedealz.utils.decorator.GridDecorator
 import de.r4md4c.gamedealz.utils.state.SideEffect
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
@@ -81,7 +83,8 @@ class DealsFragment : Fragment(), LifecycleOwner {
 
     private fun setupRecyclerView() {
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = GridLayoutManager(context, 2)
+        context?.let { recyclerView.addItemDecoration(GridDecorator(it)) }
+        recyclerView.layoutManager = StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
     }
 
     companion object {

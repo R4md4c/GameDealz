@@ -10,5 +10,6 @@ data class DealModel(
     val priceCutPercentage: Short,
     val shop: ShopModel,
     val urls: Urls,
-    val added: Long
+    val added: Long,
+    val currencyModel: CurrencyModel
 )

@@ -1,31 +1,22 @@
 package de.r4md4c.gamedealz.deals
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.DealModel
-import kotlinx.android.synthetic.main.layout_deal_item.view.*
 
-class DealsAdapter : PagedListAdapter<DealModel, DealsAdapter.DealViewHolder>(COMPARATOR) {
+class DealsAdapter : PagedListAdapter<DealModel, DealItemViewHolder>(COMPARATOR) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DealViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DealItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return DealViewHolder(layoutInflater.inflate(R.layout.layout_deal_item, parent, false))
+        return DealItemViewHolder(layoutInflater.inflate(R.layout.layout_deal_item, parent, false))
     }
 
-    override fun onBindViewHolder(holder: DealViewHolder, position: Int) {
-        val item = getItem(position)
-
-        with(holder.itemView) {
-            title.text = item?.title
-        }
+    override fun onBindViewHolder(holder: DealItemViewHolder, position: Int) {
+        holder.onBind(getItem(position))
     }
-
-    class DealViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
 
 private val COMPARATOR = object : DiffUtil.ItemCallback<DealModel>() {

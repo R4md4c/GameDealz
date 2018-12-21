@@ -29,7 +29,7 @@ internal class GetDealsUseCaseImpl(
                 selectedStoresUseCase().first().map { it.id }.toSet()
             )
                 .run {
-                    this.totalCount to page.map { it.toDealModel() }
+                    this.totalCount to page.map { it.toDealModel(activeRegion.currency) }
                 }
         }
     }
