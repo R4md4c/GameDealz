@@ -17,7 +17,7 @@ import timber.log.Timber
 
 class DealsDataSourceImpl(
     private val getDealsUseCase: GetDealsUseCase,
-    private val stateMachineDelegate: StateMachineDelegate<Event>
+    private val stateMachineDelegate: StateMachineDelegate
 ) : PositionalDataSource<DealModel>(),
     DealsDataSource {
 
@@ -37,10 +37,10 @@ class DealsDataSourceImpl(
                 stateMachineDelegate.transition(Event.OnLoadingMoreStarted)
                 invoke(PageParameter(params.startPosition + 1, params.loadSize))
             }.onSuccess {
+                stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
                 if (!it.second.isEmpty()) {
                     callback.onResult(it.second)
                 }
-                stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
             }.onFailure {
                 stateMachineDelegate.transition(Event.OnError(it.cause?.message ?: it.message))
                 Timber.e(

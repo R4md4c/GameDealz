@@ -3,7 +3,7 @@ package de.r4md4c.gamedealz.utils.state
 import com.tinder.StateMachine
 import timber.log.Timber
 
-class UIStateMachineDelegate : StateMachineDelegate<Event> {
+class UIStateMachineDelegate : StateMachineDelegate {
 
     private var transitionBlock: ((SideEffect) -> Unit)? = null
 

@@ -12,7 +12,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.items.ProgressItem
+import de.r4md4c.gamedealz.items.ProgressDrawerItem
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -89,7 +89,7 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
     private fun showProgress(show: Boolean) {
         drawer.removeAllItems()
         if (show) {
-            drawer.addItem(ProgressItem())
+            drawer.addItem(ProgressDrawerItem())
         }
     }
 }

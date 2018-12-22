@@ -18,10 +18,10 @@ import de.r4md4c.gamedealz.SCOPE_FRAGMENT
 import de.r4md4c.gamedealz.utils.decorator.GridDecorator
 import de.r4md4c.gamedealz.utils.state.SideEffect
 import kotlinx.android.synthetic.main.fragment_deals.*
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
-import timber.log.Timber
 
 
 class DealsFragment : Fragment(), LifecycleOwner {
@@ -30,7 +30,7 @@ class DealsFragment : Fragment(), LifecycleOwner {
 
     private val dealsViewModel by inject<DealsViewModel>()
 
-    private val adapter by lazy { DealsAdapter() }
+    private val adapter by lazy { DealsAdapter(get()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,10 +58,11 @@ class DealsFragment : Fragment(), LifecycleOwner {
             adapter.submitList(it)
         })
         dealsViewModel.sideEffect.observe(this, Observer {
-            Timber.d(("SideEffect: $it"))
             when (it) {
                 is SideEffect.ShowLoading -> progress.visibility = VISIBLE
                 is SideEffect.HideLoading -> progress.visibility = GONE
+                is SideEffect.ShowLoadingMore -> adapter.showProgress(true)
+                is SideEffect.HideLoadingMore -> adapter.showProgress(false)
             }
         })
     }
@@ -88,9 +89,7 @@ class DealsFragment : Fragment(), LifecycleOwner {
         recyclerView.adapter = adapter
         context?.let { recyclerView.addItemDecoration(GridDecorator(it)) }
         recyclerView.layoutManager =
-                StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL).apply {
-                    gapStrategy
-                }
+                StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
     }
 
     companion object {

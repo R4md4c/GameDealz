@@ -10,7 +10,6 @@ import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.utils.debounce
 import de.r4md4c.gamedealz.utils.skip
-import de.r4md4c.gamedealz.utils.state.Event
 import de.r4md4c.gamedealz.utils.state.SideEffect
 import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
@@ -23,7 +22,7 @@ import timber.log.Timber
 class DealsViewModel(
     private val factory: DataSource.Factory<Int, DealModel>,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
-    private val uiStateMachineDelegate: StateMachineDelegate<Event>
+    private val uiStateMachineDelegate: StateMachineDelegate
 ) : AbstractViewModel() {
 
     private var channel: ReceiveChannel<List<StoreModel>>? = null

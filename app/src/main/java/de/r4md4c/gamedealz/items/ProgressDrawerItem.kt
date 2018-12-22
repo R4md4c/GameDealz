@@ -3,7 +3,7 @@ package de.r4md4c.gamedealz.items
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
 
-class ProgressItem : PrimaryDrawerItem() {
+class ProgressDrawerItem : PrimaryDrawerItem() {
 
     override fun getLayoutRes(): Int = R.layout.item_progress
 

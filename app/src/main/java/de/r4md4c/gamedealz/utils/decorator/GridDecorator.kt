@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.gamedealz.R
 
 /**
@@ -22,8 +23,12 @@ class GridDecorator(private val context: Context) : RecyclerView.ItemDecoration(
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val position = parent.getChildLayoutPosition(view)
 
-        outRect.left = spacing8
-        outRect.top = spacing8
-        outRect.right = if (position % spanCount == 0) 0 else spacing8
+        (view.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.apply {
+            outRect.left = spacing8
+            outRect.top = spacing8
+            outRect.right = if (spanIndex % spanCount == 0) 0 else spacing8
+        }
+
+
     }
 }
