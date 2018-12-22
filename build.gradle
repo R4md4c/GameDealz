@@ -36,6 +36,7 @@ ext.versions = [
     'mockito_kotlin': '2.0.0',
     'timber': '4.7.1',
     'livedata': '2.0.0',
+    'glide': '4.8.0',
     'androidX': '1.1.0-alpha01',
     'material': '1.1.0-alpha02',
     'robolectric': '4.1-beta-2'

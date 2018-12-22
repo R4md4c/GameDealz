@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
+import de.r4md4c.gamedealz.utils.image.GlideApp
 import kotlinx.android.synthetic.main.layout_deal_item.view.*
 
 class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,6 +26,11 @@ class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             name.text = dealModel?.title
             price.text = dealModel?.priceSpan()
             stores.text = dealModel?.shop?.name
+
+            GlideApp.with(image)
+                .load(dealModel?.urls?.imageUrl)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(image)
         }
     }
 

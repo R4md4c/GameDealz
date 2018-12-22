@@ -1,6 +1,7 @@
 package de.r4md4c.gamedealz.utils.state
 
 import com.tinder.StateMachine
+import timber.log.Timber
 
 class UIStateMachineDelegate : StateMachineDelegate<Event> {
 
@@ -11,10 +12,14 @@ class UIStateMachineDelegate : StateMachineDelegate<Event> {
             onTransition {
                 val validTransition = it as? StateMachine.Transition.Valid ?: return@onTransition
 
+                Timber.d("Received a new transition: $validTransition")
                 validTransition.sideEffect?.let { sideEffect -> transitionBlock?.invoke(sideEffect) }
             }
         }
     }
+
+    override val state: State
+        get() = stateMachine.state
 
     override fun transition(event: Event) {
         stateMachine.transition(event)

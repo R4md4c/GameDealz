@@ -48,7 +48,7 @@ internal interface IsThereAnyDealService {
     @GET("v01/game/plain/list")
     fun allPlains(
         @Query("key") key: String = BuildConfig.API_KEY,
-        @Query("shops") shops: Set<String>
+        @Query("shops") shops: String
     ): Deferred<DataWrapper<ShopPlains>>
 
     @GET("v01/game/prices")

@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 repositories {
     maven { url "https://jitpack.io" }
 }
@@ -34,12 +36,18 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation "androidx.appcompat:appcompat:${versions.androidX}"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation "androidx.recyclerview:recyclerview:${versions.androidX}"
     implementation "android.arch.navigation:navigation-fragment-ktx:${versions.nav_version}"
     implementation "android.arch.navigation:navigation-ui-ktx:${versions.nav_version}"
     implementation "com.google.android.material:material:${versions.material}"
     implementation "androidx.paging:paging-runtime-ktx:${versions.paging_version}"
+
+    implementation ("com.github.bumptech.glide:glide:${versions.glide}") {
+        exclude group: "com.android.support"
+    }
+    implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
+    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
 

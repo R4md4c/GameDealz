@@ -7,6 +7,7 @@ import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import de.r4md4c.gamedealz.utils.state.Event
+import de.r4md4c.gamedealz.utils.state.State
 import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,15 +28,21 @@ class DealsDataSourceImpl(
     private val scope = CoroutineScope(IO)
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<DealModel>) {
+        if (params.startPosition == 0 || stateMachineDelegate.state is State.Loading) {
+            return
+        }
         job?.cancel()
         job = scope.launch {
             getDealsUseCase.runCatching {
+                stateMachineDelegate.transition(Event.OnLoadingMoreStarted)
                 invoke(PageParameter(params.startPosition + 1, params.loadSize))
             }.onSuccess {
                 if (!it.second.isEmpty()) {
                     callback.onResult(it.second)
                 }
+                stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
             }.onFailure {
+                stateMachineDelegate.transition(Event.OnError(it.cause?.message ?: it.message))
                 Timber.e(
                     it,
                     "Failed to deals in loadRange method startPosition: ${params.startPosition + 1}, pageSize: ${params.loadSize}"
@@ -45,6 +52,9 @@ class DealsDataSourceImpl(
     }
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<DealModel>) {
+        if (stateMachineDelegate.state is State.Loading) {
+            return
+        }
         job?.cancel()
         job = scope.launch {
             stateMachineDelegate.transition(Event.OnLoadingStart)
@@ -52,15 +62,12 @@ class DealsDataSourceImpl(
             getDealsUseCase.runCatching {
                 invoke(PageParameter(params.requestedStartPosition, params.pageSize))
             }.onSuccess { deals ->
-                if (deals.second.isEmpty()) {
-                    callback.onResult(emptyList(), 0, 0)
-                } else {
-                    callback.onResult(deals.second, deals.second.size, deals.first)
-                }
+                stateMachineDelegate.transition(Event.OnLoadingEnded)
+                callback.onResult(deals.second, deals.second.size)
             }.onFailure {
+                stateMachineDelegate.transition(Event.OnError(it.cause?.message ?: it.message))
                 Timber.e(it, "Failed to get initial deals")
             }
-            stateMachineDelegate.transition(Event.OnLoadingEnded)
         }
     }
 }

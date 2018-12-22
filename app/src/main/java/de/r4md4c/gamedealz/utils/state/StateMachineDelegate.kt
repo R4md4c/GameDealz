@@ -13,6 +13,11 @@ interface StateMachineDelegate<T : Event> {
     fun transition(event: T)
 
     /**
+     * The current state of the machine.
+     */
+    val state: State
+
+    /**
      * Callback when transition changes.
      */
     fun onTransition(block: ((SideEffect) -> Unit)?)

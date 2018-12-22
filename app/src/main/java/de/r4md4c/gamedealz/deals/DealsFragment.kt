@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
+import timber.log.Timber
 
 
 class DealsFragment : Fragment(), LifecycleOwner {
@@ -51,11 +52,13 @@ class DealsFragment : Fragment(), LifecycleOwner {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         dealsViewModel.init()
         dealsViewModel.deals.observe(this, Observer {
             adapter.submitList(it)
         })
         dealsViewModel.sideEffect.observe(this, Observer {
+            Timber.d(("SideEffect: $it"))
             when (it) {
                 is SideEffect.ShowLoading -> progress.visibility = VISIBLE
                 is SideEffect.HideLoading -> progress.visibility = GONE
@@ -84,7 +87,10 @@ class DealsFragment : Fragment(), LifecycleOwner {
     private fun setupRecyclerView() {
         recyclerView.adapter = adapter
         context?.let { recyclerView.addItemDecoration(GridDecorator(it)) }
-        recyclerView.layoutManager = StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
+        recyclerView.layoutManager =
+                StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL).apply {
+                    gapStrategy
+                }
     }
 
     companion object {

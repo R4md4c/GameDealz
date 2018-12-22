@@ -3,10 +3,7 @@ package de.r4md4c.gamedealz.network
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import de.r4md4c.gamedealz.network.repository.DealsRemoteRepository
-import de.r4md4c.gamedealz.network.repository.IsThereAnyDealRepository
-import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository
-import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
+import de.r4md4c.gamedealz.network.repository.*
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,6 +41,8 @@ val NETWORK = module {
     }
 
     single { IsThereAnyDealRepository(get()) }
+
+    single<PlainsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
     single<RegionsRemoteRepository> { get<IsThereAnyDealRepository>() }
 

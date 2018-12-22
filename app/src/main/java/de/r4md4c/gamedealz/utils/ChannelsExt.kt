@@ -28,3 +28,22 @@ fun <T> ReceiveChannel<T>.debounce(
             }
         }
     }
+
+
+fun <T> ReceiveChannel<T>.skip(
+    scope: CoroutineScope,
+    count: Int
+): ReceiveChannel<T> =
+    Channel<T>(capacity = Channel.CONFLATED).also { channel ->
+        scope.launch {
+            var skip = count
+            whileSelect {
+                onReceive {
+                    if (skip-- <= 0) {
+                        channel.offer(it)
+                    }
+                    true
+                }
+            }
+        }
+    }

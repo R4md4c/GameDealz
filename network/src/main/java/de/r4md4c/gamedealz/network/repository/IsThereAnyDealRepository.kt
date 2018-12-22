@@ -5,9 +5,10 @@ import de.r4md4c.gamedealz.network.model.PageResult
 import de.r4md4c.gamedealz.network.model.Store
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.RegionCodes
+import de.r4md4c.gamedealz.network.service.ShopPlains
 
 internal class IsThereAnyDealRepository(private val service: IsThereAnyDealService) : RegionsRemoteRepository,
-    StoresRemoteRepository, DealsRemoteRepository {
+    StoresRemoteRepository, DealsRemoteRepository, PlainsRemoteRepository {
 
     override suspend fun regions(): RegionCodes = service.regions().await().data
 
@@ -29,4 +30,7 @@ internal class IsThereAnyDealRepository(private val service: IsThereAnyDealServi
             shops = shops.fold("") { acc, value -> "$acc$value," }).await().run {
             PageResult(this.data.count ?: 0, this.data.list)
         }
+
+    override suspend fun plainsList(shops: Set<String>): ShopPlains =
+        service.allPlains(shops = shops.fold("") { acc, value -> "$acc$value," }).await().data
 }
