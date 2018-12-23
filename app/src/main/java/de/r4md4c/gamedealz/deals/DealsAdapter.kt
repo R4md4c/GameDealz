@@ -7,11 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.DealModel
-import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import de.r4md4c.gamedealz.utils.viewholder.ProgressViewHolder
 
-class DealsAdapter(private val stateMachine: StateMachineDelegate) :
-    PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPARATOR) {
+class DealsAdapter : PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPARATOR) {
     private var progress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

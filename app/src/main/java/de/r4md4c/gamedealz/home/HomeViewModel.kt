@@ -11,6 +11,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.utils.GlobalExceptionHandler
+import de.r4md4c.gamedealz.utils.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.consumeEach
@@ -32,7 +33,7 @@ class HomeViewModel(
     private val _stores by lazy { MutableLiveData<List<StoreModel>>() }
     val stores: LiveData<List<StoreModel>> by lazy { _stores }
 
-    private val _openRegionSelectionDialog by lazy { MutableLiveData<ActiveRegion>() }
+    private val _openRegionSelectionDialog by lazy { SingleLiveEvent<ActiveRegion>() }
     val openRegionSelectionDialog: LiveData<ActiveRegion> by lazy { _openRegionSelectionDialog }
 
     private val _closeDrawer by lazy { MutableLiveData<Unit>() }

@@ -18,7 +18,6 @@ import de.r4md4c.gamedealz.SCOPE_FRAGMENT
 import de.r4md4c.gamedealz.utils.decorator.GridDecorator
 import de.r4md4c.gamedealz.utils.state.SideEffect
 import kotlinx.android.synthetic.main.fragment_deals.*
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
@@ -30,7 +29,7 @@ class DealsFragment : Fragment(), LifecycleOwner {
 
     private val dealsViewModel by inject<DealsViewModel>()
 
-    private val adapter by lazy { DealsAdapter(get()) }
+    private val adapter by lazy { DealsAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

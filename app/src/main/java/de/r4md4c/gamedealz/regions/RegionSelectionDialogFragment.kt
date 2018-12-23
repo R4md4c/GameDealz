@@ -48,8 +48,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
         return MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
-            .setPositiveButton(android.R.string.ok) { dialog, _ -> submitResult(); dialog.dismiss(); }
-            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .setPositiveButton(android.R.string.ok) { _, _ -> submitResult(); dismiss() }
+            .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .create()
     }
 
