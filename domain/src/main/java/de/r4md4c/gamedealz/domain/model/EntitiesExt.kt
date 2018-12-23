@@ -10,8 +10,12 @@ import de.r4md4c.gamedealz.network.model.Shop
 import java.text.NumberFormat
 import java.util.*
 
-internal fun RegionWithCountries.findCountry(countryCode: String): Country? =
+internal fun RegionWithCountriesModel.findCountry(countryCode: String): CountryModel? =
     countries.asSequence().firstOrNull { it.code.equals(countryCode, true) }
+
+internal fun RegionWithCountries.toModel(): RegionWithCountriesModel = RegionWithCountriesModel(region.regionCode,
+    currency.toCurrencyModel(),
+    countries.map { it.toCountryModel() })
 
 fun CountryModel.displayName(): String =
     Locale("", code).displayCountry

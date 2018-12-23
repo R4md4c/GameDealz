@@ -22,4 +22,6 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
     factory<GetSelectedStoresUseCase> { GetSelectedStoresUseCaseImpl(get()) }
 
     factory<GetImageUrlUseCase> { GetImageUrlFromSteamUseCaseImpl(get(), get()) }
+
+    factory<GetCountriesUnderRegionUseCase> { GetCountriesUnderRegionUseCaseImpl(get()) }
 })

@@ -2,6 +2,7 @@ package de.r4md4c.gamedealz.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import de.r4md4c.gamedealz.data.dao.CountriesDao
 import de.r4md4c.gamedealz.data.dao.PlainsDao
 import de.r4md4c.gamedealz.data.dao.RegionWithCountriesDao
 import de.r4md4c.gamedealz.data.dao.StoresDao
@@ -15,6 +16,8 @@ internal abstract class GameDealzDatabase : RoomDatabase() {
     abstract fun storesDao(): StoresDao
 
     abstract fun plainsDao(): PlainsDao
+
+    abstract fun countriesDao(): CountriesDao
 
     companion object {
         const val DATABASE_NAME = "game_dealz.db"

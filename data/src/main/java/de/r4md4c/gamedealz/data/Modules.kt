@@ -13,22 +13,28 @@ val DATA = module {
             .build()
     }
 
-    single {
+    factory {
         get<GameDealzDatabase>().regionWithCountriesDao()
     }
 
-    single {
+    factory {
         get<GameDealzDatabase>().storesDao()
     }
 
-    single {
+    factory {
         get<GameDealzDatabase>().plainsDao()
     }
 
-    single<PlainsRepository> { PlainsLocalRepository(get()) }
+    factory {
+        get<GameDealzDatabase>().countriesDao()
+    }
 
-    single<RegionsRepository> { RegionLocalRepository(get()) }
+    factory<PlainsRepository> { PlainsLocalRepository(get()) }
 
-    single<StoresRepository> { StoresLocalRepository(get()) }
+    factory<RegionsRepository> { RegionLocalRepository(get()) }
+
+    factory<StoresRepository> { StoresLocalRepository(get()) }
+
+    factory<CountriesRepository> { CountriesLocalRepository(get()) }
 
 }

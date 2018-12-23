@@ -12,7 +12,9 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
+import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.items.ProgressDrawerItem
+import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -27,6 +29,7 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
         AccountHeaderBuilder()
             .withActivity(this)
             .withCompactStyle(true)
+            .withOnAccountHeaderSelectionViewClickListener { _, _ -> handleAccountHeaderClick(); true }
             .build()
     }
 
@@ -50,12 +53,16 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
 
     private fun listenToViewModel() {
         viewModel.currentRegion.observe(this, Observer {
-            accountHeader.setSelectionFirstLine(it.first)
-            accountHeader.setSelectionSecondLine(it.second)
+            accountHeader.setSelectionFirstLine(it.regionCode)
+            accountHeader.setSelectionSecondLine(it.country.displayName())
         })
 
-        viewModel.loading.observe(this, Observer {
+        viewModel.regionsLoading.observe(this, Observer {
             showProgress(it)
+        })
+
+        viewModel.openRegionSelectionDialog.observe(this, Observer {
+            RegionSelectionDialogFragment.create(it).show(supportFragmentManager, null)
         })
 
         viewModel.stores.observe(this, Observer { storeList ->
@@ -91,5 +98,9 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
         if (show) {
             drawer.addItem(ProgressDrawerItem())
         }
+    }
+
+    private fun handleAccountHeaderClick() {
+        viewModel.onRegionChangeClicked()
     }
 }

@@ -1,10 +1,11 @@
 package de.r4md4c.gamedealz.home
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
@@ -24,31 +25,42 @@ class HomeViewModel(
 
     private var _storesChannel: ReceiveChannel<List<StoreModel>>? = null
 
-    val currentRegion = MutableLiveData<Pair<String, String>>()
+    private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
+    val currentRegion: LiveData<ActiveRegion> by lazy { _currentRegion }
 
-    val loading = MutableLiveData<Boolean>()
+    private val _regionsLoading by lazy { MutableLiveData<Boolean>() }
+    val regionsLoading: LiveData<Boolean> by lazy { _regionsLoading }
 
-    val stores = MutableLiveData<List<StoreModel>>()
+    private val _stores by lazy { MutableLiveData<List<StoreModel>>() }
+    val stores: LiveData<List<StoreModel>> by lazy { _stores }
+
+    private val _openRegionSelectionDialog by lazy { MutableLiveData<ActiveRegion>() }
+    val openRegionSelectionDialog: LiveData<ActiveRegion> by lazy { _openRegionSelectionDialog }
 
     fun init() = uiScope.launch(GlobalExceptionHandler("Failure during init()")) {
-        loading.postValue(true)
+        _regionsLoading.postValue(true)
 
         val activeRegion = getCurrentActiveRegion()
 
-        currentRegion.postValue(activeRegion.regionCode to activeRegion.country.displayName())
+        _currentRegion.postValue(activeRegion)
 
         _storesChannel = getStoresUseCase(TypeParameter(activeRegion))
         withContext(IO) {
             _storesChannel?.consumeEach {
-                stores.postValue(it)
+                _stores.postValue(it)
             }
         }
-
-        loading.postValue(false)
     }
 
     fun onStoreSelected(store: StoreModel) = uiScope.launch(GlobalExceptionHandler("Failed to select a store")) {
         toggleStoresUseCase(CollectionParameter(setOf(store)))
+    }
+
+    fun onRegionChangeClicked() {
+        uiScope.launch(IO) {
+            val activeRegion = getCurrentActiveRegion()
+            _openRegionSelectionDialog.postValue(activeRegion)
+        }
     }
 
     override fun onCleared() {
