@@ -8,22 +8,20 @@ import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.utils.GlobalExceptionHandler
 import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
+    private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val toggleStoresUseCase: ToggleStoresUseCase
 ) : AbstractViewModel() {
-
-    private var _storesChannel: ReceiveChannel<List<StoreModel>>? = null
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
     val currentRegion: LiveData<ActiveRegion> by lazy { _currentRegion }
@@ -37,6 +35,9 @@ class HomeViewModel(
     private val _openRegionSelectionDialog by lazy { MutableLiveData<ActiveRegion>() }
     val openRegionSelectionDialog: LiveData<ActiveRegion> by lazy { _openRegionSelectionDialog }
 
+    private val _closeDrawer by lazy { MutableLiveData<Unit>() }
+    val closeDrawer: LiveData<Unit> by lazy { _closeDrawer }
+
     fun init() = uiScope.launch(GlobalExceptionHandler("Failure during init()")) {
         _regionsLoading.postValue(true)
 
@@ -44,16 +45,21 @@ class HomeViewModel(
 
         _currentRegion.postValue(activeRegion)
 
-        _storesChannel = getStoresUseCase(TypeParameter(activeRegion))
-        withContext(IO) {
-            _storesChannel?.consumeEach {
-                _stores.postValue(it)
+        listenForStoreChanges(activeRegion)
+
+        uiScope.launch {
+            onActiveRegionChange.activeRegionChange().consumeEach {
+                _currentRegion.postValue(it)
             }
         }
     }
 
     fun onStoreSelected(store: StoreModel) = uiScope.launch(GlobalExceptionHandler("Failed to select a store")) {
         toggleStoresUseCase(CollectionParameter(setOf(store)))
+    }
+
+    fun closeDrawer() {
+        _closeDrawer.postValue(Unit)
     }
 
     fun onRegionChangeClicked() {
@@ -63,9 +69,10 @@ class HomeViewModel(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        _storesChannel?.cancel()
+    private fun listenForStoreChanges(activeRegion: ActiveRegion) = uiScope.launch(IO) {
+        getStoresUseCase(TypeParameter(activeRegion)).consumeEach {
+            _stores.postValue(it)
+        }
     }
 
 }

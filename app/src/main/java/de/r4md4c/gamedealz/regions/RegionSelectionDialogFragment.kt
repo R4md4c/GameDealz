@@ -1,7 +1,7 @@
 package de.r4md4c.gamedealz.regions
 
 import android.app.Dialog
-import android.content.DialogInterface
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,9 +22,25 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     private var dialogView: View by Delegates.notNull()
 
+    private var regionChangeSubmitted: OnRegionChangeSubmitted? = null
+
+    // A hack to fix a bug in spinners that makes them fire onItemSelected without any user interaction.
+    private var skipFirstSelection: Int = 1
+
     private val activeRegion by lazy {
         arguments?.getParcelable<ActiveRegion>(KEY_REGION)
             ?: throw IllegalStateException("RegionSelectionDialogFragment expects an active region.")
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        regionChangeSubmitted = context as? OnRegionChangeSubmitted ?:
+                throw ClassCastException("Host Context should implement OnRegionChangeSubmitted interface")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        regionChangeSubmitted = null
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -32,20 +48,29 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
         return MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
-            .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(android.R.string.ok) { dialog, _ -> submitResult(); dialog.dismiss(); }
             .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             .create()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setupRegions()
-        setupCountries()
+        val regionIndex = savedInstanceState?.getInt(STATE_REGION_INDEX)
+        val countryIndex = savedInstanceState?.getInt(STATE_COUNTRY_INDEX)
+
+        setupRegions(regionIndex)
+        setupCountries(countryIndex)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        with(dialogView) {
+            outState.putInt(STATE_REGION_INDEX, region_spinner.selectedItemPosition)
+            outState.putInt(STATE_COUNTRY_INDEX, country_spinner.selectedItemPosition)
+        }
+    }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
+    private fun submitResult() {
         with(dialogView) {
             val selectedRegionCode = viewModel.regions.value?.let {
                 it.regions[region_spinner.selectedItemPosition]
@@ -55,13 +80,15 @@ class RegionSelectionDialogFragment : DialogFragment() {
             }
             (selectedRegionCode to selectedCountryCode).takeIf {
                 it.first != null && it.second != null
-            }?.let { viewModel.onSubmitResult(it.first!!, it.second!!) }
+            }?.let {
+                viewModel.onSubmitResult(it.first!!, it.second!!)
+                regionChangeSubmitted?.onRegionSubmitted()
+            }
         }
     }
 
-    private fun submitResults(dialog: DialogInterface) {}
-    private fun setupRegions() {
-        viewModel.requestRegions(activeRegion)
+    private fun setupRegions(regionIndex: Int?) {
+        viewModel.requestRegions(activeRegion, regionIndex)
         viewModel.regions.observe(this, Observer { regionSelectedModel ->
             with(dialogView) {
                 region_spinner.adapter =
@@ -78,15 +105,17 @@ class RegionSelectionDialogFragment : DialogFragment() {
                     }
 
                     override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                        viewModel.onRegionSelected(parent.adapter.getItem(position) as String)
+                        if (skipFirstSelection-- <= 0) {
+                            viewModel.onRegionSelected(parent.adapter.getItem(position) as String)
+                        }
                     }
                 }
             }
         })
     }
 
-    private fun setupCountries() {
-        viewModel.requestCountriesUnderRegion(activeRegion)
+    private fun setupCountries(countryIndex: Int?) {
+        viewModel.requestCountriesUnderRegion(activeRegion, countryIndex)
         viewModel.countries.observe(this, Observer { selectedCountryModel ->
             with(dialogView) {
                 country_spinner.adapter =
@@ -110,6 +139,9 @@ class RegionSelectionDialogFragment : DialogFragment() {
                 putParcelable(KEY_REGION, region)
             }
         }
+
+        private const val STATE_REGION_INDEX = "region_index"
+        private const val STATE_COUNTRY_INDEX = "country_index"
 
         private const val KEY_REGION = "region"
     }

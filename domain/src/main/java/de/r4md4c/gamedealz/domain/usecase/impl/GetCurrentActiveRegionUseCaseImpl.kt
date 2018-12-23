@@ -8,7 +8,10 @@ import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel
 import de.r4md4c.gamedealz.domain.model.findCountry
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.mapNotNull
 import kotlinx.coroutines.withContext
 import java.util.*
 
@@ -16,7 +19,7 @@ internal class GetCurrentActiveRegionUseCaseImpl(
     private val getRegionsUseCase: GetRegionsUseCase,
     private val configurationProvider: ConfigurationProvider,
     private val sharedPreferences: SharedPreferencesProvider
-) : GetCurrentActiveRegionUseCase {
+) : GetCurrentActiveRegionUseCase, OnCurrentActiveRegionReactiveUseCase {
 
 
     override suspend fun invoke(param: VoidParameter?): ActiveRegion {
@@ -27,20 +30,27 @@ internal class GetCurrentActiveRegionUseCaseImpl(
             if (savedRegionCountryPair == null) {
                 val locale = configurationProvider.locale
                 val localeBasedRegionWithCountries = regions.findRegionAndCountryByLocale(locale)
-                localeBasedRegionWithCountries?.let {
+                val result = localeBasedRegionWithCountries?.let {
                     ActiveRegion(
                         it.regionCode,
                         it.findCountry(locale.country)!!,
                         it.currency
                     )
                 } ?: regions.getRegionAndCountry(DEFAULT_REGION, DEFAULT_COUNTRY)!!
+                sharedPreferences.activeRegionAndCountry = result.regionCode to result.country.code
+                result
             } else {
                 regions.getRegionAndCountry(savedRegionCountryPair.first, savedRegionCountryPair.second)!!
-            }.apply {
-                sharedPreferences.activeRegionAndCountry = regionCode to country.code
             }
         }
     }
+
+    override suspend fun activeRegionChange(): ReceiveChannel<ActiveRegion> =
+        sharedPreferences.activeRegionAndCountryChannel
+            .mapNotNull {
+                val regions = withContext(Dispatchers.IO) { getRegionsUseCase() }
+                regions.getRegionAndCountry(it.first, it.second)
+            }
 
     private fun List<RegionWithCountriesModel>.findRegionAndCountryByLocale(locale: Locale): RegionWithCountriesModel? =
         asSequence().firstOrNull {

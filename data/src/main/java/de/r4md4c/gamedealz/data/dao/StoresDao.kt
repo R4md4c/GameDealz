@@ -1,9 +1,6 @@
 package de.r4md4c.gamedealz.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import de.r4md4c.gamedealz.data.entity.Store
 import io.reactivex.Flowable
 
@@ -14,7 +11,7 @@ internal interface StoresDao {
      * Inserts stores in a transaction.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(stores: List<Store>)
+    suspend fun insert(stores: Collection<Store>)
 
     /**
      * Retrieves all stored stores.
@@ -31,6 +28,12 @@ internal interface StoresDao {
      */
     @Query("SELECT * FROM Store WHERE id IN (:ids)")
     fun all(ids: Set<String>): Flowable<List<Store>>
+
+    @Transaction
+    suspend fun replaceAll(stores: Collection<Store>) {
+        delete()
+        insert(stores)
+    }
 
     /**
      * All selected stores.
@@ -58,4 +61,7 @@ internal interface StoresDao {
      */
     @Query("UPDATE Store SET selected=:selected WHERE id IN (:ids)")
     fun updateSelected(selected: Boolean, ids: Set<String>): Int
+
+    @Query("DELETE FROM STORE")
+    fun delete(): Int
 }

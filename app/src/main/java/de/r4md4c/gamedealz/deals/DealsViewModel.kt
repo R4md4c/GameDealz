@@ -9,13 +9,13 @@ import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.utils.debounce
-import de.r4md4c.gamedealz.utils.skip
 import de.r4md4c.gamedealz.utils.state.SideEffect
 import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.drop
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -45,7 +45,7 @@ class DealsViewModel(
         uiScope.launch(IO) {
             channel = selectedStoresUseCase()
 
-            channel?.debounce(uiScope, 1500)?.skip(uiScope, 1)?.consumeEach {
+            channel?.debounce(uiScope, 500)?.drop(1)?.consumeEach {
                 Timber.d("Change")
 
                 deals.value?.dataSource?.invalidate()

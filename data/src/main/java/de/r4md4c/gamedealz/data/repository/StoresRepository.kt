@@ -20,4 +20,10 @@ interface StoresRepository : Repository<Store, String> {
      */
     suspend fun selectedStores(): ReceiveChannel<Collection<Store>>
 
+    /**
+     * Clears the repository then insert the stores.
+     *
+     * @param stores the stores that are going to be stored after clearing the table.
+     */
+    suspend fun replace(stores: Collection<Store>)
 }

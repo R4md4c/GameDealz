@@ -10,7 +10,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.withContext
 
-class GetSelectedStoresUseCaseImpl(private val storesRepository: StoresRepository) : GetSelectedStoresUseCase {
+internal class GetSelectedStoresUseCaseImpl(private val storesRepository: StoresRepository) : GetSelectedStoresUseCase {
 
     override suspend fun invoke(param: VoidParameter?): ReceiveChannel<List<StoreModel>> =
         withContext(IO) {

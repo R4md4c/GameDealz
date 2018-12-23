@@ -9,6 +9,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.channels.map
 
 internal class GetStoresUseCaseImpl(
@@ -21,9 +22,7 @@ internal class GetStoresUseCaseImpl(
         val activeRegion = param?.value ?: activeRegionUseCase()
 
         return with(activeRegion) {
-            val storesChannel = storesRepository.all()
-            val stores = storesChannel.receive()
-            storesChannel.cancel()
+            val stores = storesRepository.all().first()
 
             if (stores.isEmpty()) {
                 val remoteStores = storesRemoteRepository.stores(regionCode, country.code)

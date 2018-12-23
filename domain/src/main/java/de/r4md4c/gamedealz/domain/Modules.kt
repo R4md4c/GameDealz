@@ -13,6 +13,10 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<GetCurrentActiveRegionUseCase> { GetCurrentActiveRegionUseCaseImpl(get(), get(), get()) }
 
+    factory<OnCurrentActiveRegionReactiveUseCase> { GetCurrentActiveRegionUseCaseImpl(get(), get(), get()) }
+
+    factory<ChangeActiveRegionUseCase> { ChangeActiveRegionUseCaseImpl(get(), get(), get(), get()) }
+
     factory<GetStoresUseCase> { GetStoresUseCaseImpl(get(), get(), get()) }
 
     factory<ToggleStoresUseCase> { StoresSelectionUseCaseImpl(get()) }

@@ -14,12 +14,14 @@ import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.items.ProgressDrawerItem
+import de.r4md4c.gamedealz.regions.OnRegionChangeSubmitted
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragmentInteractionListener {
+class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragmentInteractionListener,
+    OnRegionChangeSubmitted {
 
     private lateinit var drawer: Drawer
 
@@ -51,6 +53,10 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
         Timber.d("$uri")
     }
 
+    override fun onRegionSubmitted() {
+        viewModel.closeDrawer()
+    }
+
     private fun listenToViewModel() {
         viewModel.currentRegion.observe(this, Observer {
             accountHeader.setSelectionFirstLine(it.regionCode)
@@ -79,6 +85,11 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
             }
             drawer.setItems(drawerItems)
         })
+
+        viewModel.closeDrawer.observe(this, Observer {
+            drawer.closeDrawer()
+        })
+
         viewModel.init()
     }
 
