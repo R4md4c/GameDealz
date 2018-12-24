@@ -27,7 +27,7 @@ allprojects {
 ext.versions = [
     'okhttp' : '3.12.0',
     'retrofit' : '2.5.0',
-    'nav_version': '1.0.0-alpha08',
+    'nav_version': '1.0.0-alpha09',
     'paging_version': '2.1.0-rc01',
     'koin': '1.0.2',
     'coroutines': '1.0.1',
@@ -35,7 +35,7 @@ ext.versions = [
     'truth': '0.42',
     'mockito_kotlin': '2.0.0',
     'timber': '4.7.1',
-    'livedata': '2.0.0',
+    'lifecycle': '2.0.0',
     'glide': '4.8.0',
     'androidX': '1.1.0-alpha01',
     'material': '1.1.0-alpha02',

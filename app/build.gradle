@@ -37,6 +37,8 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:${versions.androidX}"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
+    implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
     implementation "androidx.recyclerview:recyclerview:${versions.androidX}"
     implementation "android.arch.navigation:navigation-fragment-ktx:${versions.nav_version}"
     implementation "android.arch.navigation:navigation-ui-ktx:${versions.nav_version}"
@@ -69,6 +71,5 @@ dependencies {
     testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
 
     androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation "android.arch.navigation:navigation-testing:${versions.nav_version}"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

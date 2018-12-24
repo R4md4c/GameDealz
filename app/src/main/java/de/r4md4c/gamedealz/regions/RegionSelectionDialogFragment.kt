@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
+import de.r4md4c.gamedealz.home.HomeActivity
 import kotlinx.android.synthetic.main.dialog_region_choice.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.properties.Delegates
@@ -68,6 +69,14 @@ class RegionSelectionDialogFragment : DialogFragment() {
             outState.putInt(STATE_REGION_INDEX, region_spinner.selectedItemPosition)
             outState.putInt(STATE_COUNTRY_INDEX, country_spinner.selectedItemPosition)
         }
+    }
+
+    /**
+     * A convience method to communicate between [HomeActivity] and [RegionSelectionDialogFragment]
+     */
+    interface OnRegionChangeSubmitted {
+
+        fun onRegionSubmitted()
     }
 
     private fun submitResult() {

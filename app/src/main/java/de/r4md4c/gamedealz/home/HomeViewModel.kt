@@ -12,6 +12,7 @@ import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.utils.GlobalExceptionHandler
 import de.r4md4c.gamedealz.utils.livedata.SingleLiveEvent
+import de.r4md4c.gamedealz.utils.navigator.Navigator
 import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.consumeEach
@@ -21,7 +22,8 @@ class HomeViewModel(
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
-    private val toggleStoresUseCase: ToggleStoresUseCase
+    private val toggleStoresUseCase: ToggleStoresUseCase,
+    private val navigator: Navigator
 ) : AbstractViewModel() {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
@@ -61,6 +63,10 @@ class HomeViewModel(
 
     fun closeDrawer() {
         _closeDrawer.postValue(Unit)
+    }
+
+    fun onNavigateTo(uri: String) {
+        navigator.navigate(uri)
     }
 
     fun onRegionChangeClicked() {

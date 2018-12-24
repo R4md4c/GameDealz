@@ -3,11 +3,10 @@ package de.r4md4c.gamedealz.deals
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -15,34 +14,34 @@ import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.SCOPE_FRAGMENT
+import de.r4md4c.gamedealz.search.SearchFragment
 import de.r4md4c.gamedealz.utils.decorator.GridDecorator
 import de.r4md4c.gamedealz.utils.state.SideEffect
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 
 
 class DealsFragment : Fragment(), LifecycleOwner {
 
     private var listener: OnFragmentInteractionListener? = null
 
-    private val dealsViewModel by inject<DealsViewModel>()
+    private val dealsViewModel by inject<DealsViewModel> { parametersOf("activity" to requireActivity()) }
 
     private val adapter by lazy { DealsAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindScope(getOrCreateScope(SCOPE_FRAGMENT))
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_deals, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_deals, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +63,14 @@ class DealsFragment : Fragment(), LifecycleOwner {
                 is SideEffect.HideLoadingMore -> adapter.showProgress(false)
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_deals, menu)
+
+        (menu.findItem(R.id.menu_search).actionView as? SearchView)?.let { searchView ->
+            searchView.setOnQueryTextListener(OnQueryTextListener(searchView))
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -91,8 +98,15 @@ class DealsFragment : Fragment(), LifecycleOwner {
                 StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = DealsFragment()
+    private inner class OnQueryTextListener(private val searchView: SearchView) : SearchView.OnQueryTextListener {
+
+        override fun onQueryTextSubmit(query: String): Boolean {
+            listener?.onFragmentInteraction(SearchFragment.toUri(query))
+            searchView.clearFocus()
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String): Boolean = false
+
     }
 }

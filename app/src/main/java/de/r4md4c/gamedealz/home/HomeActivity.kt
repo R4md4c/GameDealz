@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -14,18 +15,18 @@ import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.items.ProgressDrawerItem
-import de.r4md4c.gamedealz.regions.OnRegionChangeSubmitted
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
+import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
+import org.koin.core.parameter.parametersOf
 
 class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragmentInteractionListener,
-    OnRegionChangeSubmitted {
+    SearchFragment.OnFragmentInteractionListener, RegionSelectionDialogFragment.OnRegionChangeSubmitted {
 
     private lateinit var drawer: Drawer
 
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModel { parametersOf(this) }
 
     private val accountHeader by lazy {
         AccountHeaderBuilder()
@@ -50,8 +51,10 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-        Timber.d("$uri")
+        viewModel.onNavigateTo(uri.toString())
     }
+
+    override fun onSupportNavigateUp(): Boolean = findNavController(R.id.nav_host_fragment).navigateUp()
 
     override fun onRegionSubmitted() {
         viewModel.closeDrawer()
