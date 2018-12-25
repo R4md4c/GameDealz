@@ -1,5 +1,6 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.DealModel
@@ -18,7 +19,8 @@ internal class GetDealsUseCaseImpl(
     private val dealsRemoteRepository: DealsRemoteRepository,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
-    private val getImageUrlUseCase: GetImageUrlUseCase
+    private val getImageUrlUseCase: GetImageUrlUseCase,
+    private val storesRepository: StoresRepository
 ) : GetDealsUseCase {
 
     override suspend fun invoke(param: PageParameter?): DealsResult {
@@ -33,8 +35,9 @@ internal class GetDealsUseCaseImpl(
                 selectedStoresUseCase().first().map { it.id }.toSet()
             )
                 .run {
-                    this.totalCount to page.map {
-                        it.toDealModel(activeRegion.currency).loadWithImage()
+                    this.totalCount to page.mapNotNull {
+                        val shopColor = storesRepository.findById(it.shop.id)?.color ?: return@mapNotNull null
+                        it.toDealModel(activeRegion.currency, shopColor).loadWithImage()
                     }
                 }
         }

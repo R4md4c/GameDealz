@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">GameDealz</string>
 
-    <string name="on">On</string>
+    <string name="on">on</string>
     <string name="since">since</string>
     <string name="search">Search</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_on_going_deals">Ongoing Deals</string>
+    <string name="retry">Retry</string>
+    <string name="results_empty">Returned results were empty.</string>
+    <string name="current_best">Current Best:</string>
+    <string name="historical_low">Historical Low:</string>
 </resources>

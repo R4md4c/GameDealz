@@ -3,6 +3,7 @@ package de.r4md4c.gamedealz.regions
 import androidx.collection.ArrayMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
@@ -11,7 +12,6 @@ import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionParameter
 import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCountriesUnderRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
-import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

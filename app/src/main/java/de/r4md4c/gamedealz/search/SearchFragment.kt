@@ -5,10 +5,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.utils.deepllink.DeepLinks
-import de.r4md4c.gamedealz.utils.navigator.Navigator
+import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
+import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
+import de.r4md4c.gamedealz.common.deepllink.DeepLinks
+import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.state.SideEffect
+import kotlinx.android.synthetic.main.fragment_search.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -16,14 +21,24 @@ import org.koin.core.parameter.parametersOf
 
 const val ARG_SEARCH_TERM = "search_term"
 
-class SearchFragment : Fragment() {
+class SearchFragment : BaseFragment() {
 
     private val searchTerm by lazy { arguments?.getString(ARG_SEARCH_TERM) }
+
     private var listener: OnFragmentInteractionListener? = null
+
+    private var searchView: SearchView? = null
 
     private val viewModel by viewModel<SearchViewModel>()
 
     private val navigator: Navigator by inject { parametersOf(requireActivity()) }
+
+    private val searchAdapter by lazy { SearchAdapter(layoutInflater) }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_search, container, false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,47 +47,50 @@ class SearchFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_search, menu)
-        with(menu.findItem(R.id.search_bar)) {
-            expandActionView()
-            setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                    return false
-                }
+        setupSearchMenuItem(menu.findItem(R.id.search_bar))
+    }
 
-                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                    viewModel.onSearchViewCollapse(navigator)
-                    return true
-                }
-            })
-
-
-
-            (actionView as? SearchView)?.run {
-
-
-                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String): Boolean {
-                        viewModel.onSubmitQuery(query)
-                        return true
-                    }
-
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        return false
-                    }
-                })
-
-                setQuery(searchTerm, true)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        retry.setOnClickListener {
+            searchView?.let { searchView ->
+                viewModel.onQueryChanged(searchView.query.toString())
             }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_search, container, false)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel.searchResults.observe(this, Observer {
+            emptyResultsTitleText.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+            searchAdapter.submitList(it)
+        })
+        viewModel.sideEffects.observe(this, Observer {
+            when (it) {
+                is SideEffect.ShowLoading -> {
+                    errorGroup.visibility = View.GONE
+                    progress.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                    emptyResultsTitleText.visibility = View.GONE
+                }
+                is SideEffect.HideLoading -> {
+                    errorGroup.visibility = View.GONE
+                    progress.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    emptyResultsTitleText.visibility = View.VISIBLE
+                    searchView?.clearFocus()
+                }
+                is SideEffect.ShowError -> {
+                    errorText.text = it.error.localizedMessage
 
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+                    errorGroup.visibility = View.VISIBLE
+                    progress.visibility = View.GONE
+                    emptyResultsTitleText.visibility = View.GONE
+                    recyclerView.visibility = View.GONE
+                }
+            }
+        })
     }
 
     override fun onAttach(context: Context) {
@@ -87,6 +105,48 @@ class SearchFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    private fun setupRecyclerView() {
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(VerticalLinearDecorator(context))
+            adapter = searchAdapter
+        }
+    }
+
+    private fun setupSearchMenuItem(searchMenuItem: MenuItem) = with(searchMenuItem) {
+        expandActionView()
+
+        setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                return false
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                viewModel.onSearchViewCollapse(navigator)
+                return true
+            }
+        })
+
+        (actionView as? SearchView)?.run {
+
+            searchView = this
+
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    viewModel.onQueryChanged(newText)
+                    return true
+                }
+            })
+
+            setQuery(searchTerm, false)
+            viewModel.onQueryChanged(searchTerm ?: return@run)
+        }
     }
 
     interface OnFragmentInteractionListener {

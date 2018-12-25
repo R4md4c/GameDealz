@@ -22,34 +22,35 @@ internal fun Currency.toCurrencyModel(): CurrencyModel = CurrencyModel(this.curr
 
 internal fun Country.toCountryModel(): CountryModel = CountryModel(code)
 
-internal fun Deal.toDealModel(currencyModel: CurrencyModel): DealModel =
+internal fun Deal.toDealModel(currencyModel: CurrencyModel, colorRgb: String): DealModel =
     DealModel(
         gameId,
         title,
         newPrice,
         oldPrice,
         priceCutPercentage,
-        shop.toShopModel(),
+        shop.toShopModel(colorRgb),
         urls.toUrls(),
         added,
         currencyModel
     )
 
-internal fun Shop.toShopModel(): ShopModel = ShopModel(id, name)
+internal fun Shop.toShopModel(rgbColor: String): ShopModel = ShopModel(id, name, rgbColor)
 
 internal fun GameUrls.toUrls(): Urls = Urls(buy, gameInfo)
 
 internal fun Store.toStoreModel(): StoreModel = StoreModel(id, name, selected)
 
-internal fun Price.toPriceModel(): PriceModel = PriceModel(newPrice, oldPrice, priceCutPercentage, url, shop, drm)
+internal fun Price.toPriceModel(storeColor: String): PriceModel =
+    PriceModel(newPrice, oldPrice, priceCutPercentage, url, shop.toShopModel(storeColor), drm)
 
-internal fun HistoricalLow.toModel(): HistoricalLowModel? {
+internal fun HistoricalLow.toModel(colorRgb: String): HistoricalLowModel? {
     val shop = shop ?: return null
     val price = price ?: return null
     val priceCutPercentage = priceCutPercentage ?: return null
     val added = added ?: return null
 
-    return HistoricalLowModel(shop.toShopModel(), price, priceCutPercentage, added)
+    return HistoricalLowModel(shop.toShopModel(colorRgb), price, priceCutPercentage, added)
 }
 
 fun Float.formatCurrency(currencyModel: CurrencyModel): String? =

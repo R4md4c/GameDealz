@@ -5,5 +5,5 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="oldPriceColor">@android:color/darker_gray</color>
-    <color name="discountColor">@color/colorAccent</color>
+    <color name="newPriceColor">@color/colorAccent</color>
 </resources>

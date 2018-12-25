@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.livedata
+package de.r4md4c.gamedealz.common.livedata
 
 
 import androidx.annotation.MainThread

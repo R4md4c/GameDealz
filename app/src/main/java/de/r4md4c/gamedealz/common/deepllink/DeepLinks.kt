@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.deepllink
+package de.r4md4c.gamedealz.common.deepllink
 
 import android.net.Uri
 

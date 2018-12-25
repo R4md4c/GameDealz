@@ -5,15 +5,13 @@ import androidx.paging.Config
 import androidx.paging.DataSource
 import androidx.paging.toLiveData
 import de.r4md4c.gamedealz.BuildConfig
+import de.r4md4c.gamedealz.common.debounce
+import de.r4md4c.gamedealz.common.state.SideEffect
+import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.model.DealModel
-import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
-import de.r4md4c.gamedealz.utils.debounce
-import de.r4md4c.gamedealz.utils.state.SideEffect
-import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
-import de.r4md4c.gamedealz.utils.viewmodel.AbstractViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.drop
 import kotlinx.coroutines.launch
@@ -24,8 +22,6 @@ class DealsViewModel(
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val uiStateMachineDelegate: StateMachineDelegate
 ) : AbstractViewModel() {
-
-    private var channel: ReceiveChannel<List<StoreModel>>? = null
 
     val deals by lazy {
         factory.toLiveData(
@@ -43,9 +39,7 @@ class DealsViewModel(
 
     fun init() {
         uiScope.launch(IO) {
-            channel = selectedStoresUseCase()
-
-            channel?.debounce(uiScope, 500)?.drop(1)?.consumeEach {
+            selectedStoresUseCase().debounce(uiScope, 500)?.drop(1)?.consumeEach {
                 Timber.d("Change")
 
                 deals.value?.dataSource?.invalidate()
@@ -55,11 +49,11 @@ class DealsViewModel(
         uiStateMachineDelegate.onTransition {
             sideEffect.postValue(it)
         }
+        deals.value?.dataSource?.invalidate()
     }
 
     override fun onCleared() {
         super.onCleared()
-        channel?.cancel()
         uiStateMachineDelegate.onTransition(null)
     }
 

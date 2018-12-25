@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.state
+package de.r4md4c.gamedealz.common.state
 
 import com.tinder.StateMachine
 import timber.log.Timber

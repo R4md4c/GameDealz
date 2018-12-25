@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils
+package de.r4md4c.gamedealz.common
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import timber.log.Timber

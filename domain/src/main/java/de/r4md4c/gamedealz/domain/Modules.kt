@@ -21,7 +21,7 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<ToggleStoresUseCase> { StoresSelectionUseCaseImpl(get()) }
 
-    factory<GetDealsUseCase> { GetDealsUseCaseImpl(get(), get(), get(), get()) }
+    factory<GetDealsUseCase> { GetDealsUseCaseImpl(get(), get(), get(), get(), get()) }
 
     factory<GetSelectedStoresUseCase> { GetSelectedStoresUseCaseImpl(get()) }
 
@@ -29,5 +29,5 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<GetCountriesUnderRegionUseCase> { GetCountriesUnderRegionUseCaseImpl(get()) }
 
-    factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get()) }
+    factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get(), get(), get()) }
 })

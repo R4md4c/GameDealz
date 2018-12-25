@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.viewmodel
+package de.r4md4c.gamedealz.common.viewmodel
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel

@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.state
+package de.r4md4c.gamedealz.common.state
 
 /**
  * A delegate for the interaction with the state machine.

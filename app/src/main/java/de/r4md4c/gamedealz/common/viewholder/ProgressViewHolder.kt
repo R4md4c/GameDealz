@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.viewholder
+package de.r4md4c.gamedealz.common.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

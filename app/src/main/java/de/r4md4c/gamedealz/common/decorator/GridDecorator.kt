@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.decorator
+package de.r4md4c.gamedealz.common.decorator
 
 import android.content.Context
 import android.graphics.Rect

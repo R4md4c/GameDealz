@@ -6,8 +6,8 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.viewholder.ProgressViewHolder
 import de.r4md4c.gamedealz.domain.model.DealModel
-import de.r4md4c.gamedealz.utils.viewholder.ProgressViewHolder
 
 class DealsAdapter : PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPARATOR) {
     private var progress = false

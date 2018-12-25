@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.navigator
+package de.r4md4c.gamedealz.common.navigator
 
 interface Navigator {
 

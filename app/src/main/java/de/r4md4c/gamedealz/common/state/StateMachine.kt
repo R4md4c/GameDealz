@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.state
+package de.r4md4c.gamedealz.common.state
 
 import com.tinder.StateMachine
 
@@ -13,7 +13,7 @@ sealed class Event {
     object OnLoadingStart : Event()
     object OnLoadingMoreStarted : Event()
     object OnLoadingMoreEnded : Event()
-    data class OnError(val msgError: String?) : Event()
+    data class OnError(val error: Throwable) : Event()
     object OnLoadingEnded : Event()
 }
 
@@ -22,7 +22,7 @@ sealed class SideEffect {
     object HideLoading : SideEffect()
     object ShowLoadingMore : SideEffect()
     object HideLoadingMore : SideEffect()
-    object ShowError : SideEffect()
+    class ShowError(val error: Throwable) : SideEffect()
 }
 
 val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
@@ -33,7 +33,7 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
             transitionTo(State.Idle, SideEffect.HideLoading)
         }
         on<Event.OnError> {
-            transitionTo(State.Error, SideEffect.ShowError)
+            transitionTo(State.Error, SideEffect.ShowError(it.error))
         }
     }
 
@@ -45,7 +45,7 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
             transitionTo(State.Loading, SideEffect.ShowLoadingMore)
         }
         on<Event.OnError> {
-            transitionTo(State.Error, SideEffect.ShowError)
+            transitionTo(State.Error, SideEffect.ShowError(it.error))
         }
     }
 
@@ -54,7 +54,7 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
             transitionTo(State.Loading, SideEffect.ShowLoading)
         }
         on<Event.OnError> {
-            transitionTo(State.Error, SideEffect.ShowError)
+            transitionTo(State.Error, SideEffect.ShowError(it.error))
         }
         on<Event.OnLoadingEnded> {
             transitionTo(State.Idle, SideEffect.HideLoading)

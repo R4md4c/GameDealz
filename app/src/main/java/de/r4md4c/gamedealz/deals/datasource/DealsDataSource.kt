@@ -1,10 +1,67 @@
 package de.r4md4c.gamedealz.deals.datasource
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PositionalDataSource
+import de.r4md4c.gamedealz.common.state.Event
+import de.r4md4c.gamedealz.common.state.State
+import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.domain.PageParameter
+import de.r4md4c.gamedealz.domain.model.DealModel
+import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
-interface DealsDataSource {
+class DealsDataSource(
+    private val getDealsUseCase: GetDealsUseCase,
+    private val stateMachineDelegate: StateMachineDelegate
+) : PositionalDataSource<DealModel>() {
 
-    val loading: LiveData<Boolean>
+    private var job: Job? = null
+    private val scope = CoroutineScope(IO)
 
-    fun invalidate()
+    override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<DealModel>) {
+        if (params.startPosition == 0 || stateMachineDelegate.state is State.Loading) {
+            return
+        }
+        job?.cancel()
+        job = scope.launch {
+            getDealsUseCase.runCatching {
+                stateMachineDelegate.transition(Event.OnLoadingMoreStarted)
+                invoke(PageParameter(params.startPosition + 1, params.loadSize))
+            }.onSuccess {
+                stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
+                if (!it.second.isEmpty()) {
+                    callback.onResult(it.second)
+                }
+            }.onFailure {
+                stateMachineDelegate.transition(Event.OnError(it))
+                Timber.e(
+                    it,
+                    "Failed to deals in loadRange method startPosition: ${params.startPosition + 1}, pageSize: ${params.loadSize}"
+                )
+            }
+        }
+    }
+
+    override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<DealModel>) {
+        if (stateMachineDelegate.state is State.Loading) {
+            return
+        }
+        job?.cancel()
+        job = scope.launch {
+            stateMachineDelegate.transition(Event.OnLoadingStart)
+
+            getDealsUseCase.runCatching {
+                invoke(PageParameter(params.requestedStartPosition, params.pageSize))
+            }.onSuccess { deals ->
+                stateMachineDelegate.transition(Event.OnLoadingEnded)
+                callback.onResult(deals.second, deals.second.size)
+            }.onFailure {
+                stateMachineDelegate.transition(Event.OnError(it))
+                Timber.e(it, "Failed to get initial deals")
+            }
+        }
+    }
 }

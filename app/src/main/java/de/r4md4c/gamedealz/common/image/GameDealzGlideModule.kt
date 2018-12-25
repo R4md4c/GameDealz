@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.utils.image
+package de.r4md4c.gamedealz.common.image
 
 import android.content.Context
 import com.bumptech.glide.Glide

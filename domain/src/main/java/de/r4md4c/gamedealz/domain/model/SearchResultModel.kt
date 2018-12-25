@@ -4,5 +4,7 @@ data class SearchResultModel(
     val title: String,
     val gameId: String,
     val prices: List<PriceModel>,
-    val historicalLow: HistoricalLowModel?
+    val currencyModel: CurrencyModel,
+    val historicalLow: HistoricalLowModel?,
+    val imageUrl: String? = null
 )

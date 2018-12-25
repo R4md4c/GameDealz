@@ -1,11 +1,11 @@
-package de.r4md4c.gamedealz.utils.navigator
+package de.r4md4c.gamedealz.common.navigator
 
 import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavController
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.search.ARG_SEARCH_TERM
-import de.r4md4c.gamedealz.utils.deepllink.DeepLinks
 
 class AndroidNavigator(private val navController: NavController) : Navigator {
 

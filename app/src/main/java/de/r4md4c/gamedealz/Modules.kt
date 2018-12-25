@@ -3,16 +3,16 @@ package de.r4md4c.gamedealz
 import android.app.Activity
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
+import de.r4md4c.gamedealz.common.navigator.AndroidNavigator
+import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
-import de.r4md4c.gamedealz.utils.navigator.AndroidNavigator
-import de.r4md4c.gamedealz.utils.navigator.Navigator
-import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
-import de.r4md4c.gamedealz.utils.state.UIStateMachineDelegate
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.dsl.module.module
 
