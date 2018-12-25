@@ -8,13 +8,12 @@ import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
+import de.r4md4c.gamedealz.search.SearchViewModel
 import de.r4md4c.gamedealz.utils.navigator.AndroidNavigator
 import de.r4md4c.gamedealz.utils.navigator.Navigator
 import de.r4md4c.gamedealz.utils.state.StateMachineDelegate
 import de.r4md4c.gamedealz.utils.state.UIStateMachineDelegate
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
-import org.koin.androidx.viewmodel.ext.koin.viewModel
-import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module.module
 
 const val SCOPE_FRAGMENT = "fragment_scope"
@@ -31,15 +30,9 @@ val MAIN = module {
         DealsViewModel(get(), get(), get())
     }
 
-    viewModel { (activity: Activity) ->
-        HomeViewModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(parameters = { parametersOf(activity) })
-        )
-    }
+    viewModel<HomeViewModel>()
+
+    viewModel<SearchViewModel>()
 
     viewModel<RegionSelectionViewModel>()
 

@@ -50,7 +50,7 @@ class IsThereAnyDealServiceTest : KoinTest {
     @Test
     fun allPlains() {
         runBlocking {
-            val result = service.allPlains(shops = setOf("discord")).await()
+            val result = service.allPlains(shops = "discord").await()
 
             assertThat(result.data).isNotEmpty()
         }
@@ -59,7 +59,7 @@ class IsThereAnyDealServiceTest : KoinTest {
     @Test
     fun prices() {
         runBlocking {
-            val result = service.prices(plains = setOf("battlefieldv")).await()
+            val result = service.prices(plains = "battlefieldv").await()
 
             assertThat(result.data).isNotEmpty()
             assertThat(result.data["battlefieldv"]!!.list).isNotEmpty()
@@ -69,7 +69,7 @@ class IsThereAnyDealServiceTest : KoinTest {
     @Test
     fun deals() {
         runBlocking {
-            val result = service.deals(region = "us", country = "US", shops = setOf("steam", "gog")).await()
+            val result = service.deals(region = "us", country = "US", shops = "steam,gog").await()
 
             assertThat(result.data.list).isNotEmpty()
             assertThat(result.data.list.count()).isEqualTo(20)

@@ -54,12 +54,23 @@ internal interface IsThereAnyDealService {
     @GET("v01/game/prices")
     fun prices(
         @Query("key") key: String = BuildConfig.API_KEY,
-        @Query("plains") plains: Set<String>,
+        @Query("plains") plains: String,
         @Query("region") region: String? = null,
         @Query("country") country: String? = null,
-        @Query("shops") shops: Set<String>? = null
+        @Query("shops") shops: String? = null,
+        @Query("added") added: Int? = null
     )
             : Deferred<DataWrapper<PlainPriceList>>
+
+    @GET("v01/game/lowest")
+    fun historicalLow(
+        @Query("key") key: String = BuildConfig.API_KEY,
+        @Query("plains") plains: String,
+        @Query("region") region: String? = null,
+        @Query("country") country: String? = null,
+        @Query("shops") shops: String? = null
+    )
+            : Deferred<DataWrapper<Map<String, HistoricalLow>>>
 
     @GET("v01/deals/list")
     fun deals(

@@ -22,8 +22,7 @@ class HomeViewModel(
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
-    private val toggleStoresUseCase: ToggleStoresUseCase,
-    private val navigator: Navigator
+    private val toggleStoresUseCase: ToggleStoresUseCase
 ) : AbstractViewModel() {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
@@ -65,7 +64,7 @@ class HomeViewModel(
         _closeDrawer.postValue(Unit)
     }
 
-    fun onNavigateTo(uri: String) {
+    fun onNavigateTo(navigator: Navigator, uri: String) {
         navigator.navigate(uri)
     }
 

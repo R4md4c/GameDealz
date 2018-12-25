@@ -17,7 +17,9 @@ import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.items.ProgressDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
+import de.r4md4c.gamedealz.utils.navigator.Navigator
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -27,6 +29,8 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
     private lateinit var drawer: Drawer
 
     private val viewModel: HomeViewModel by viewModel { parametersOf(this) }
+
+    private val navigator: Navigator by inject { parametersOf(this) }
 
     private val accountHeader by lazy {
         AccountHeaderBuilder()
@@ -51,7 +55,7 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-        viewModel.onNavigateTo(uri.toString())
+        viewModel.onNavigateTo(navigator, uri.toString())
     }
 
     override fun onSupportNavigateUp(): Boolean = findNavController(R.id.nav_host_fragment).navigateUp()

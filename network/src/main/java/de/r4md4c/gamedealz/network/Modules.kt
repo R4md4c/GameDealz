@@ -4,7 +4,11 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import de.r4md4c.gamedealz.network.repository.*
+import de.r4md4c.gamedealz.network.scrapper.JsoupScrapper
+import de.r4md4c.gamedealz.network.scrapper.Scrapper
+import de.r4md4c.gamedealz.network.service.IsThereAnyDealScrappingService
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
+import de.r4md4c.gamedealz.network.service.SearchService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module.module
@@ -40,14 +44,20 @@ val NETWORK = module {
             .build()
     }
 
-    single { IsThereAnyDealRepository(get()) }
+    factory { IsThereAnyDealRepository(get()) }
 
-    single<PlainsRemoteRepository> { get<IsThereAnyDealRepository>() }
+    factory<PlainsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
-    single<RegionsRemoteRepository> { get<IsThereAnyDealRepository>() }
+    factory<PricesRemoteRepository> { get<IsThereAnyDealRepository>() }
 
-    single<StoresRemoteRepository> { get<IsThereAnyDealRepository>() }
+    factory<RegionsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
-    single<DealsRemoteRepository> { get<IsThereAnyDealRepository>() }
+    factory<StoresRemoteRepository> { get<IsThereAnyDealRepository>() }
+
+    factory<DealsRemoteRepository> { get<IsThereAnyDealRepository>() }
+
+    factory<SearchService> { IsThereAnyDealScrappingService(get()) }
+
+    factory<Scrapper> { JsoupScrapper(get()) }
 
 }

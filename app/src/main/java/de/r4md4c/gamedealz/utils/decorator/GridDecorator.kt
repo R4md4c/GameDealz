@@ -21,14 +21,10 @@ class GridDecorator(private val context: Context) : RecyclerView.ItemDecoration(
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        val position = parent.getChildLayoutPosition(view)
-
         (view.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.apply {
             outRect.left = spacing8
             outRect.top = spacing8
             outRect.right = if (spanIndex % spanCount == 0) 0 else spacing8
         }
-
-
     }
 }

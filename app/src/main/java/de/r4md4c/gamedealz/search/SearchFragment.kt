@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.utils.deepllink.DeepLinks
+import de.r4md4c.gamedealz.utils.navigator.Navigator
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 
 const val ARG_SEARCH_TERM = "search_term"
@@ -18,6 +21,10 @@ class SearchFragment : Fragment() {
     private val searchTerm by lazy { arguments?.getString(ARG_SEARCH_TERM) }
     private var listener: OnFragmentInteractionListener? = null
 
+    private val viewModel by viewModel<SearchViewModel>()
+
+    private val navigator: Navigator by inject { parametersOf(requireActivity()) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -25,7 +32,7 @@ class SearchFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_search, menu)
-        menu.findItem(R.id.search_bar).run {
+        with(menu.findItem(R.id.search_bar)) {
             expandActionView()
             setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
                 override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
@@ -33,13 +40,30 @@ class SearchFragment : Fragment() {
                 }
 
                 override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                    findNavController().navigateUp()
+                    viewModel.onSearchViewCollapse(navigator)
                     return true
                 }
             })
-        }
 
-        (menu.findItem(R.id.search_bar).actionView as? SearchView)?.setQuery(searchTerm, false)
+
+
+            (actionView as? SearchView)?.run {
+
+
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        viewModel.onSubmitQuery(query)
+                        return true
+                    }
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        return false
+                    }
+                })
+
+                setQuery(searchTerm, true)
+            }
+        }
     }
 
     override fun onCreateView(

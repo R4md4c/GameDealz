@@ -28,4 +28,6 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
     factory<GetImageUrlUseCase> { GetImageUrlFromSteamUseCaseImpl(get(), get()) }
 
     factory<GetCountriesUnderRegionUseCase> { GetCountriesUnderRegionUseCaseImpl(get()) }
+
+    factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get()) }
 })

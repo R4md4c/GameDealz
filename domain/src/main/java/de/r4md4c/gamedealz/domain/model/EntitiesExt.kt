@@ -4,9 +4,7 @@ import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.data.entity.Store
-import de.r4md4c.gamedealz.network.model.Deal
-import de.r4md4c.gamedealz.network.model.GameUrls
-import de.r4md4c.gamedealz.network.model.Shop
+import de.r4md4c.gamedealz.network.model.*
 import java.text.NumberFormat
 import java.util.*
 
@@ -42,6 +40,17 @@ internal fun Shop.toShopModel(): ShopModel = ShopModel(id, name)
 internal fun GameUrls.toUrls(): Urls = Urls(buy, gameInfo)
 
 internal fun Store.toStoreModel(): StoreModel = StoreModel(id, name, selected)
+
+internal fun Price.toPriceModel(): PriceModel = PriceModel(newPrice, oldPrice, priceCutPercentage, url, shop, drm)
+
+internal fun HistoricalLow.toModel(): HistoricalLowModel? {
+    val shop = shop ?: return null
+    val price = price ?: return null
+    val priceCutPercentage = priceCutPercentage ?: return null
+    val added = added ?: return null
+
+    return HistoricalLowModel(shop.toShopModel(), price, priceCutPercentage, added)
+}
 
 fun Float.formatCurrency(currencyModel: CurrencyModel): String? =
     runCatching {

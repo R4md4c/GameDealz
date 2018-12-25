@@ -16,4 +16,6 @@ class AndroidNavigator(private val navController: NavController) : Navigator {
         })
     }
 
+    override fun navigateUp() = navController.navigateUp()
+
 }
