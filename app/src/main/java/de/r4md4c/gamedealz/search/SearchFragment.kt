@@ -78,7 +78,8 @@ class SearchFragment : BaseFragment() {
                     errorGroup.visibility = View.GONE
                     progress.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
-                    emptyResultsTitleText.visibility = View.VISIBLE
+                    emptyResultsTitleText.visibility =
+                            if (viewModel.searchResults.value?.isEmpty() == true) View.VISIBLE else View.GONE
                     searchView?.clearFocus()
                 }
                 is SideEffect.ShowError -> {

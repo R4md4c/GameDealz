@@ -8,5 +8,5 @@
     <string name="retry">Retry</string>
     <string name="results_empty">Returned results were empty.</string>
     <string name="current_best">Current Best:</string>
-    <string name="historical_low">Historical Low:</string>
+    <string name="historical_low">Historical low was</string>
 </resources>

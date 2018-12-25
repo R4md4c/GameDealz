@@ -14,12 +14,13 @@
         <ImageView
                 android:id="@+id/image"
                 android:layout_width="0dp"
+                android:adjustViewBounds="true"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_height="@dimen/image_height"
+                android:layout_height="wrap_content"
+                android:maxHeight="@dimen/image_height"
                 tools:src="@drawable/ic_placeholder"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintBottom_toTopOf="@+id/name"/>
 
         <TextView
