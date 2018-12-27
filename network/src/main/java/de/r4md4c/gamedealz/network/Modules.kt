@@ -9,22 +9,34 @@ import de.r4md4c.gamedealz.network.scrapper.Scrapper
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealScrappingService
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.SearchService
+import de.r4md4c.gamedealz.network.service.steam.SteamService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module.module
+import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 val NETWORK = module {
 
-    single {
+    single<IsThereAnyDealService> {
         Retrofit.Builder()
             .client(get())
             .baseUrl("https://api.isthereanydeal.com/")
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addCallAdapterFactory(get())
             .addConverterFactory(MoshiConverterFactory.create(get()))
             .build()
             .create(IsThereAnyDealService::class.java)
+    }
+
+    single<SteamService> {
+        Retrofit.Builder()
+            .client(get())
+            .baseUrl("https://store.steampowered.com/api/")
+            .addCallAdapterFactory(get())
+            .addConverterFactory(MoshiConverterFactory.create(get()))
+            .build()
+            .create(SteamService::class.java)
     }
 
     single {
@@ -36,6 +48,10 @@ val NETWORK = module {
     single {
         HttpLoggingInterceptor()
             .setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
+    }
+
+    single<CallAdapter.Factory> {
+        CoroutineCallAdapterFactory()
     }
 
     single {
@@ -57,6 +73,8 @@ val NETWORK = module {
     factory<DealsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
     factory<SearchService> { IsThereAnyDealScrappingService(get()) }
+
+    factory<SteamRemoteRepository> { SteamRepository(get()) }
 
     factory<Scrapper> { JsoupScrapper(get()) }
 

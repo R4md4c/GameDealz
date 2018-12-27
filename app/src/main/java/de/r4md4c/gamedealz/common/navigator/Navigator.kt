@@ -5,4 +5,6 @@ interface Navigator {
     fun navigate(uri: String)
 
     fun navigateUp(): Boolean
+
+    fun navigateToUrl(url: String)
 }

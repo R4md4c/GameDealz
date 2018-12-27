@@ -29,5 +29,7 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<GetCountriesUnderRegionUseCase> { GetCountriesUnderRegionUseCaseImpl(get()) }
 
+    factory<GetPlainDetails> { GetPlainDetailsImpl(get(), get(), get(), get(), get()) }
+
     factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get(), get(), get()) }
 })

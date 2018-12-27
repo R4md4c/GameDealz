@@ -35,21 +35,25 @@
     </fragment>
     <fragment
             android:id="@+id/gameDetailFragment"
-            android:name="de.r4md4c.gamedealz.detail.GameDetailFragment"
-            app:layout="@layout/fragment_game_detail"
-            android:label="GameDetailFragment">
+            android:name="de.r4md4c.gamedealz.detail.DetailsFragment"
+            app:layout="@layout/fragment_game_detail">
         <argument
                 android:name="plain_id"
                 app:argType="string"/>
         <argument
                 android:name="title"
                 app:argType="string"/>
+
+        <argument
+                android:name="buy_url"
+                app:argType="string"/>
+
     </fragment>
     <action
             android:id="@+id/action_global_gameDetailFragment"
             app:destination="@id/gameDetailFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
 </navigation>

@@ -3,18 +3,23 @@ package de.r4md4c.gamedealz.deals
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.GridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
-import de.r4md4c.gamedealz.detail.GameDetailFragment
+import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
@@ -25,17 +30,16 @@ class DealsFragment : BaseFragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
-    private val dealsViewModel by inject<DealsViewModel> { parametersOf("activity" to requireActivity()) }
+    private val dealsViewModel by inject<DealsViewModel> { parametersOf(requireActivity()) }
 
     private val adapter by lazy {
         DealsAdapter {
-            listener?.onFragmentInteraction(GameDetailFragment.newInstance(it.title, it.gameId))
+            listener?.onFragmentInteraction(DetailsFragment.toUri(it.title, it.gameId, it.urls.buyUrl))
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         dealsViewModel.init()
     }
@@ -47,6 +51,7 @@ class DealsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
         setupRecyclerView()
     }
 
@@ -66,20 +71,20 @@ class DealsFragment : BaseFragment() {
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_deals, menu)
-
-        (menu.findItem(R.id.menu_search).actionView as? SearchView)?.let { searchView ->
-            searchView.setOnQueryTextListener(OnQueryTextListener(searchView))
-        }
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+        }
+    }
+
+    override fun onCreateOptionsMenu(toolbar: Toolbar) {
+        super.onCreateOptionsMenu(toolbar)
+        toolbar.inflateMenu(R.menu.menu_deals)
+        (toolbar.menu.findItem(R.id.menu_search).actionView as? SearchView)?.let { searchView ->
+            searchView.setOnQueryTextListener(OnQueryTextListener(searchView))
         }
     }
 

@@ -3,6 +3,7 @@ package de.r4md4c.gamedealz.home
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -18,7 +19,6 @@ import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -27,6 +27,9 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     SearchFragment.OnFragmentInteractionListener, RegionSelectionDialogFragment.OnRegionChangeSubmitted {
 
     private lateinit var drawer: Drawer
+
+    val drawerLayout: DrawerLayout
+        get() = drawer.drawerLayout
 
     private val viewModel: HomeViewModel by viewModel { parametersOf(this) }
 
@@ -43,14 +46,7 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
         loadDrawer(savedInstanceState)
-
-        NavigationUI.setupActionBarWithNavController(
-            this,
-            findNavController(R.id.nav_host_fragment),
-            drawer.drawerLayout
-        )
 
         listenToViewModel()
     }
@@ -122,7 +118,6 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
 
     private fun loadDrawer(savedInstanceState: Bundle?) {
         drawer = DrawerBuilder(this)
-            .withToolbar(toolbar)
             .withAccountHeader(accountHeader)
             .withMultiSelect(true)
             .withCloseOnClick(false)

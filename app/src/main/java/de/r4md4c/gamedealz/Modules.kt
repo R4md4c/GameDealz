@@ -9,11 +9,14 @@ import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
+import de.r4md4c.gamedealz.detail.DetailsViewModel
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
+import org.koin.androidx.viewmodel.ext.koin.viewModel
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module.module
 
 const val SCOPE_FRAGMENT = "fragment_scope"
@@ -36,6 +39,13 @@ val MAIN = module {
 
     viewModel<RegionSelectionViewModel>()
 
-    factory<Navigator> { (activity: Activity) -> AndroidNavigator(activity.findNavController(R.id.nav_host_fragment)) }
+    viewModel { (activity: Activity) -> DetailsViewModel(get(parameters = { parametersOf(activity) }), get()) }
+
+    factory<Navigator> { (activity: Activity) ->
+        AndroidNavigator(
+            activity,
+            activity.findNavController(R.id.nav_host_fragment)
+        )
+    }
 
 }

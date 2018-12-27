@@ -1,10 +1,13 @@
 package de.r4md4c.gamedealz.common.base.fragment
 
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import de.r4md4c.gamedealz.SCOPE_FRAGMENT
+import de.r4md4c.gamedealz.home.HomeActivity
+import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 
@@ -16,12 +19,13 @@ abstract class BaseFragment : Fragment() {
         bindScope(getOrCreateScope(SCOPE_FRAGMENT))
     }
 
-    fun setTitle(title: String?) {
-        (activity as? AppCompatActivity)?.supportActionBar?.title = title
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        toolbar?.let { onCreateOptionsMenu(it) }
     }
 
-    fun setTitle(@StringRes titleResId: Int) {
-        (activity as? AppCompatActivity)?.supportActionBar?.setTitle(titleResId)
-    }
+    val drawerLayout: DrawerLayout?
+        get() = (activity as? HomeActivity)?.drawerLayout
 
+    open fun onCreateOptionsMenu(toolbar: Toolbar) = Unit
 }

@@ -3,8 +3,12 @@ package de.r4md4c.gamedealz.search
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.gamedealz.R
@@ -38,14 +42,9 @@ class SearchFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_search, container, false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_search, menu)
-        setupSearchMenuItem(menu.findItem(R.id.search_bar))
+    override fun onCreateOptionsMenu(toolbar: Toolbar) {
+        toolbar.inflateMenu(R.menu.menu_search)
+        setupSearchMenuItem(toolbar.menu.findItem(R.id.search_bar))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
