@@ -31,7 +31,6 @@ class DealsFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        setTitle(R.string.title_on_going_deals)
 
         dealsViewModel.init()
     }
@@ -91,8 +90,7 @@ class DealsFragment : BaseFragment() {
     private fun setupRecyclerView() {
         recyclerView.adapter = adapter
         context?.let { recyclerView.addItemDecoration(GridDecorator(it)) }
-        recyclerView.layoutManager =
-                StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
     }
 
     private inner class OnQueryTextListener(private val searchView: SearchView) : SearchView.OnQueryTextListener {

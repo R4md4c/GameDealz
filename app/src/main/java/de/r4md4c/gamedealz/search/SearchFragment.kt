@@ -13,17 +13,15 @@ import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.SideEffect
+import de.r4md4c.gamedealz.search.SearchFragmentArgs.fromBundle
 import kotlinx.android.synthetic.main.fragment_search.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-
-const val ARG_SEARCH_TERM = "search_term"
-
 class SearchFragment : BaseFragment() {
 
-    private val searchTerm by lazy { arguments?.getString(ARG_SEARCH_TERM) }
+    private val searchTerm by lazy { fromBundle(arguments!!).searchTerm }
 
     private var listener: OnFragmentInteractionListener? = null
 
@@ -146,7 +144,7 @@ class SearchFragment : BaseFragment() {
             })
 
             setQuery(searchTerm, false)
-            viewModel.onQueryChanged(searchTerm ?: return@run)
+            viewModel.onQueryChanged(searchTerm)
         }
     }
 

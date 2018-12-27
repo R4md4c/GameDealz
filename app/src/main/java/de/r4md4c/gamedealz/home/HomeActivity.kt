@@ -3,19 +3,19 @@ package de.r4md4c.gamedealz.home
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.viewholder.ProgressDrawerItem
 import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.displayName
-import de.r4md4c.gamedealz.items.ProgressDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,7 +23,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragmentInteractionListener,
+class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionListener,
     SearchFragment.OnFragmentInteractionListener, RegionSelectionDialogFragment.OnRegionChangeSubmitted {
 
     private lateinit var drawer: Drawer
@@ -46,6 +46,12 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
         setSupportActionBar(toolbar)
         loadDrawer(savedInstanceState)
 
+        NavigationUI.setupActionBarWithNavController(
+            this,
+            findNavController(R.id.nav_host_fragment),
+            drawer.drawerLayout
+        )
+
         listenToViewModel()
     }
 
@@ -58,26 +64,34 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
         viewModel.onNavigateTo(navigator, uri.toString())
     }
 
-    override fun onSupportNavigateUp(): Boolean = findNavController(R.id.nav_host_fragment).navigateUp()
+    override fun onSupportNavigateUp(): Boolean =
+        NavigationUI.navigateUp(findNavController(R.id.nav_host_fragment), drawer.drawerLayout)
 
     override fun onRegionSubmitted() {
         viewModel.closeDrawer()
     }
 
     private fun listenToViewModel() {
-        viewModel.currentRegion.observe(this, Observer {
-            accountHeader.setSelectionFirstLine(it.regionCode)
-            accountHeader.setSelectionSecondLine(it.country.displayName())
-        })
+        observeCurrentRegion()
 
-        viewModel.regionsLoading.observe(this, Observer {
-            showProgress(it)
-        })
+        observeRegionsLoading()
 
-        viewModel.openRegionSelectionDialog.observe(this, Observer {
-            RegionSelectionDialogFragment.create(it).show(supportFragmentManager, null)
-        })
+        observeRegioNSelectionDialog()
 
+        observeStoreSelections()
+
+        observeCloseDrawer()
+
+        viewModel.init()
+    }
+
+    private fun observeCloseDrawer() {
+        viewModel.closeDrawer.observe(this, Observer {
+            drawer.closeDrawer()
+        })
+    }
+
+    private fun observeStoreSelections() {
         viewModel.stores.observe(this, Observer { storeList ->
             val drawerItems = storeList.map {
                 PrimaryDrawerItem()
@@ -92,12 +106,18 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
             }
             drawer.setItems(drawerItems)
         })
+    }
 
-        viewModel.closeDrawer.observe(this, Observer {
-            drawer.closeDrawer()
+    private fun observeRegioNSelectionDialog() {
+        viewModel.openRegionSelectionDialog.observe(this, Observer {
+            RegionSelectionDialogFragment.create(it).show(supportFragmentManager, null)
         })
+    }
 
-        viewModel.init()
+    private fun observeRegionsLoading() {
+        viewModel.regionsLoading.observe(this, Observer {
+            showProgress(it)
+        })
     }
 
     private fun loadDrawer(savedInstanceState: Bundle?) {
@@ -120,5 +140,12 @@ class HomeActivity : AppCompatActivity(), LifecycleOwner, DealsFragment.OnFragme
 
     private fun handleAccountHeaderClick() {
         viewModel.onRegionChangeClicked()
+    }
+
+    private fun observeCurrentRegion() {
+        viewModel.currentRegion.observe(this, Observer {
+            accountHeader.setSelectionFirstLine(it.regionCode)
+            accountHeader.setSelectionSecondLine(it.country.displayName())
+        })
     }
 }

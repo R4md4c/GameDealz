@@ -29,6 +29,7 @@ class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             GlideApp.with(image)
                 .load(dealModel?.urls?.imageUrl)
                 .placeholder(R.drawable.ic_placeholder)
+                .fitCenter()
                 .into(image)
         }
     }

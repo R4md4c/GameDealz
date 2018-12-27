@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.drop
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class DealsViewModel(
     private val factory: DataSource.Factory<Int, DealModel>,
@@ -40,8 +39,6 @@ class DealsViewModel(
     fun init() {
         uiScope.launch(IO) {
             selectedStoresUseCase().debounce(uiScope, 500)?.drop(1)?.consumeEach {
-                Timber.d("Change")
-
                 deals.value?.dataSource?.invalidate()
             }
         }

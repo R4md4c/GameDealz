@@ -1,4 +1,4 @@
-package de.r4md4c.gamedealz.items
+package de.r4md4c.gamedealz.common.viewholder
 
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
