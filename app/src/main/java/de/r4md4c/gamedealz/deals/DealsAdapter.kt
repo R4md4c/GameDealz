@@ -9,7 +9,8 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.viewholder.ProgressViewHolder
 import de.r4md4c.gamedealz.domain.model.DealModel
 
-class DealsAdapter : PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPARATOR) {
+class DealsAdapter(private val dealClick: (deal: DealModel) -> Unit) :
+    PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPARATOR) {
     private var progress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -35,7 +36,7 @@ class DealsAdapter : PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPAR
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            R.layout.layout_deal_item -> (holder as DealItemViewHolder).onBind(getItem(position))
+            R.layout.layout_deal_item -> (holder as DealItemViewHolder).onBind(getItem(position), dealClick)
         }
     }
 

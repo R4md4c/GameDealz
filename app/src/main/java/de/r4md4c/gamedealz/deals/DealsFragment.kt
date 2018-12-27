@@ -14,6 +14,7 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.GridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
+import de.r4md4c.gamedealz.detail.GameDetailFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
@@ -26,7 +27,11 @@ class DealsFragment : BaseFragment() {
 
     private val dealsViewModel by inject<DealsViewModel> { parametersOf("activity" to requireActivity()) }
 
-    private val adapter by lazy { DealsAdapter() }
+    private val adapter by lazy {
+        DealsAdapter {
+            listener?.onFragmentInteraction(GameDetailFragment.newInstance(it.title, it.gameId))
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

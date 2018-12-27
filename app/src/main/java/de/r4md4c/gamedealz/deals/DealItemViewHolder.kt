@@ -20,8 +20,10 @@ class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val newPriceColor by lazy { ContextCompat.getColor(itemView.context, R.color.newPriceColor) }
     private val oldPriceColor by lazy { ContextCompat.getColor(itemView.context, R.color.oldPriceColor) }
 
-    fun onBind(dealModel: DealModel?) {
+    fun onBind(dealModel: DealModel?, clickListener: (DealModel) -> Unit) {
         with(itemView) {
+            setOnClickListener { dealModel?.let { clickListener(dealModel) } }
+
             name.text = dealModel?.title
             price.text = dealModel?.newAndOldPriceSpan(newPriceColor, oldPriceColor)
             stores.text = dealModel?.storeAndTimeSpan(itemView.context)
