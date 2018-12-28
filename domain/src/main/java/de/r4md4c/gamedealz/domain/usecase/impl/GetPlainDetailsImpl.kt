@@ -50,7 +50,7 @@ internal class GetPlainDetailsImpl(
             currencyModel = activeRegion.currency,
             plainId = plainId,
             shopPrices = shopPrices,
-            screenshots = steamResult?.screenshots?.map { it.thumbnail } ?: emptyList(),
+            screenshots = steamResult?.screenshots?.map { ScreenshotModel(it.thumbnail, it.full) } ?: emptyList(),
             headerImage = steamResult?.headerImage,
             aboutGame = steamResult?.aboutGame,
             shortDescription = steamResult?.shortDescription,

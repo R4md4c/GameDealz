@@ -16,7 +16,7 @@ data class PlainDetailsModel(
     val currencyModel: CurrencyModel,
     val plainId: String,
     val shopPrices: Map<ShopModel, Pair<PriceModel, HistoricalLowModel?>>,
-    val screenshots: List<String> = emptyList(),
+    val screenshots: List<ScreenshotModel> = emptyList(),
     val headerImage: String? = null,
     val aboutGame: String? = null,
     val shortDescription: String? = null,

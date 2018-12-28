@@ -38,7 +38,7 @@ class DealsViewModel(
 
     fun init() {
         uiScope.launch(IO) {
-            selectedStoresUseCase().debounce(uiScope, 500)?.drop(1)?.consumeEach {
+            selectedStoresUseCase().debounce(uiScope, 500).drop(1).consumeEach {
                 deals.value?.dataSource?.invalidate()
             }
         }

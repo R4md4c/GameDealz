@@ -18,8 +18,10 @@ import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
+import de.r4md4c.gamedealz.detail.item.AboutGameItem
 import de.r4md4c.gamedealz.detail.item.HeaderItem
 import de.r4md4c.gamedealz.detail.item.PriceItem
+import de.r4md4c.gamedealz.detail.item.ScreenshotsSectionItems
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -58,13 +60,26 @@ class DetailsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        detailsViewModel.loadPlainDetails(plainId)
+        if (savedInstanceState == null) {
+            detailsViewModel.loadPlainDetails(plainId)
+        }
+
+        detailsViewModel.gameInformation.observe(this, Observer {
+            itemsAdapter.add(
+                HeaderItem(getString(R.string.about_game)),
+                AboutGameItem(it.headerImage, it.shortDescription)
+            )
+        })
 
         detailsViewModel.screenshots.observe(this, Observer {
-            itemsAdapter.add(HeaderItem(R.string.screenshots))
+            itemsAdapter.add(
+                HeaderItem(getString(R.string.screenshots)),
+                ScreenshotsSectionItems(it, resourcesProvider, recyclerView.recycledViewPool)
+            )
         })
+
         detailsViewModel.prices.observe(this, Observer {
-            itemsAdapter.add(listOf(HeaderItem(R.string.prices)) + it.map { priceDetails ->
+            itemsAdapter.add(listOf(HeaderItem(getString(R.string.prices))) + it.map { priceDetails ->
                 PriceItem(priceDetails, resourcesProvider, dateFormatter) { clickedDetails ->
                     detailsViewModel.onBuyButtonClick(clickedDetails.priceModel.url)
                 }

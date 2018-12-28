@@ -2,13 +2,12 @@ package de.r4md4c.gamedealz.detail.item
 
 import android.annotation.SuppressLint
 import android.view.View
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
 
-class HeaderItem(@StringRes val headerResId: Int) : AbstractItem<HeaderItem, HeaderItem.ViewHolder>() {
+class HeaderItem(val headerString: String) : AbstractItem<HeaderItem, HeaderItem.ViewHolder>() {
 
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_header
@@ -21,7 +20,7 @@ class HeaderItem(@StringRes val headerResId: Int) : AbstractItem<HeaderItem, Hea
         super.bindView(holder, payloads)
 
         with(holder.itemView) {
-            header.text = resources.getString(headerResId)
+            header.text = headerString
         }
     }
 

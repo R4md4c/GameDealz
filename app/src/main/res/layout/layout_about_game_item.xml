@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:orientation="vertical"
+                                                   android:layout_width="match_parent"
+                                                   app:cardElevation="2dp"
+                                                   android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:padding="@dimen/baseline_1x"
+            android:layout_height="wrap_content">
+
+        <ImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:adjustViewBounds="true"
+                tools:src="@tools:sample/avatars"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="@tools:sample/lorem"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/baseline_1x"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:layout_constraintTop_toBottomOf="@+id/image"
+                android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
