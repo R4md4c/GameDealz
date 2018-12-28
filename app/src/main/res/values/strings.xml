@@ -9,4 +9,6 @@
     <string name="results_empty">Returned results were empty.</string>
     <string name="current_best">Current Best:</string>
     <string name="historical_low">Historical low was</string>
+    <string name="prices">Prices</string>
+    <string name="shop">Shop</string>
 </resources>

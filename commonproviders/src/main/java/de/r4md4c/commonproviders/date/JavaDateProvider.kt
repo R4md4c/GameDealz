@@ -2,7 +2,7 @@ package de.r4md4c.commonproviders.date
 
 import java.util.*
 
-class JavaDateProvider() : DateProvider {
+class JavaDateProvider : DateProvider {
 
     override fun now(): Date = Date()
 

@@ -5,12 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mikepenz.fastadapter.IItem
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
+import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
+import de.r4md4c.gamedealz.detail.item.HeaderItem
+import de.r4md4c.gamedealz.detail.item.PriceItem
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -25,6 +32,8 @@ class DetailsFragment : BaseFragment() {
 
     private val detailsViewModel by viewModel<DetailsViewModel> { parametersOf(requireActivity()) }
 
+    private val itemsAdapter by lazy { FastItemAdapter<IItem<*, *>>() }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_game_detail, container, false)
 
@@ -33,16 +42,32 @@ class DetailsFragment : BaseFragment() {
         NavigationUI.setupWithNavController(collapsing_toolbar, toolbar, findNavController())
         setupTitle()
         setupFab()
+        recyclerView.apply {
+            addItemDecoration(DetailsItemDecorator(context))
+            layoutManager = LinearLayoutManager(context)
+            adapter = itemsAdapter
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         detailsViewModel.loadPlainDetails(plainId)
+
+        detailsViewModel.screenshots.observe(this, Observer {
+            itemsAdapter.add(HeaderItem(R.string.prices))
+        })
+        detailsViewModel.prices.observe(this, Observer {
+            itemsAdapter.add(it.map { priceDetails ->
+                PriceItem(priceDetails, requireContext()) { clickedDetails ->
+                    detailsViewModel.onBuyButtonClick(clickedDetails.priceModel.url)
+                }
+            })
+        })
     }
 
     private fun setupFab() {
         buyFab.setOnClickListener {
-            detailsViewModel.onBuyClick(buyUrl)
+            detailsViewModel.onBuyButtonClick(buyUrl)
         }
     }
 

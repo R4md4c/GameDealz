@@ -3,16 +3,17 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
-import de.r4md4c.gamedealz.domain.model.PriceModel
-import de.r4md4c.gamedealz.domain.model.toPriceModel
+import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
+import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.steam.AppDetails
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import de.r4md4c.gamedealz.network.repository.SteamRemoteRepository
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -31,23 +32,24 @@ internal class GetPlainDetailsImpl(
 
         val activeRegion = activeRegionUseCase()
 
-        val steamResult: AppDetails? = if (shopId == null) {
+        val deferredSteamResult: Deferred<AppDetails?>? = if (shopId == null) {
             null
         } else {
-            runCatching { retrieveSteamApp(shopId) }
-                .onFailure {
-                    Timber.w(it, "Failed to retrieve app details from steam.")
-                }.getOrNull()
+            async {
+                runCatching { retrieveSteamApp(shopId) }
+                    .onFailure {
+                        Timber.w(it, "Failed to retrieve app details from steam.")
+                    }.getOrNull()
+            }
         }
 
-        val isThereAnyDealPrices = pricesRemoteRepository.retrievesPrices(
-            setOf(plainId),
-            countryCode = activeRegion.country.code, regionCode = activeRegion.regionCode
-        )
+        val steamResult = deferredSteamResult?.await()
+        val shopPrices = asyncShopPricesWithHistoricalLows(plainId, activeRegion).await()
 
-
-        PlainDetailsModel(plainId = plainId,
-            prices = pricesToPriceModel(isThereAnyDealPrices[plainId]),
+        PlainDetailsModel(
+            currencyModel = activeRegion.currency,
+            plainId = plainId,
+            shopPrices = shopPrices,
             screenshots = steamResult?.screenshots?.map { it.thumbnail } ?: emptyList(),
             headerImage = steamResult?.headerImage,
             aboutGame = steamResult?.aboutGame,
@@ -68,6 +70,37 @@ internal class GetPlainDetailsImpl(
         }
     }
 
+    private suspend fun asyncShopPricesWithHistoricalLows(
+        plainId: String,
+        activeRegion: ActiveRegion
+    ): Deferred<Map<ShopModel, Pair<PriceModel, HistoricalLowModel?>>> = withContext(IO) {
+        async {
+            val currentPrices = pricesRemoteRepository.retrievesPrices(
+                plainIds = setOf(plainId),
+                countryCode = activeRegion.country.code,
+                regionCode = activeRegion.regionCode
+            ).run { pricesToPriceModel(this[plainId]) }
+
+            val shopPricesMap: Map<ShopModel, PriceModel> =
+                currentPrices.groupBy { it.shop }.mapValues { it.value.first() }
+
+            // Retrieve the historical lows by looping through the shops inside current prices and convert them to
+            // Historical Models.
+            val historicalLowPrices = currentPrices.mapNotNull {
+                pricesRemoteRepository.historicalLow(
+                    setOf(plainId),
+                    setOf(it.shop.id),
+                    regionCode = activeRegion.regionCode,
+                    countryCode = activeRegion.country.code
+                )[plainId]
+                    ?.run { historicalLowToModel(this) }
+            }.groupBy { it.shop }.mapValues { it.value.first() }
+
+            shopPricesMap.mapValues { it.value to historicalLowPrices[it.key] }
+
+        }
+    }
+
     private fun String.getIdFromSteamAppId() =
         substring(indexOf('/') + 1)
 
@@ -76,4 +109,16 @@ internal class GetPlainDetailsImpl(
             val shop = storesRepository.findById(it.shop.id) ?: return@mapNotNull null
             it.toPriceModel(shop.color)
         } ?: emptyList()
+
+    private suspend fun historicalLowToModel(historicalLow: HistoricalLow): HistoricalLowModel? =
+        historicalLow.run {
+            if (this.shop != null) {
+                val shop = storesRepository.findById(this.shop!!.id) ?: return@run null
+                this.toModel(shop.color)
+            } else {
+                null
+            }
+        }
+
+
 }

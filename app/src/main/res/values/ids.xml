@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="progress_item" type="id"/>
+    <item name="cell_item" type="id"/>
+    <item name="row_item" type="id"/>
+    <item name="column_item" type="id"/>
 </resources>
