@@ -67,6 +67,7 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:${versions.koin}"
     implementation "org.koin:koin-androidx-viewmodel:${versions.koin}"
 
+    implementation project(':commonproviders')
     implementation project(':domain')
 
     testImplementation 'junit:junit:4.12'

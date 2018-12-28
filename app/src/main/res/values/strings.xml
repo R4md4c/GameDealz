@@ -10,5 +10,6 @@
     <string name="current_best">Current Best:</string>
     <string name="historical_low">Historical low was</string>
     <string name="prices">Prices</string>
+    <string name="screenshots">Screenshots</string>
     <string name="shop">Shop</string>
 </resources>

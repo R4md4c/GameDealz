@@ -11,6 +11,8 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
@@ -19,6 +21,7 @@ import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
 import de.r4md4c.gamedealz.detail.item.HeaderItem
 import de.r4md4c.gamedealz.detail.item.PriceItem
 import kotlinx.android.synthetic.main.fragment_game_detail.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -31,6 +34,10 @@ class DetailsFragment : BaseFragment() {
     private val buyUrl by lazy { fromBundle(arguments!!).buyUrl }
 
     private val detailsViewModel by viewModel<DetailsViewModel> { parametersOf(requireActivity()) }
+
+    private val resourcesProvider: ResourcesProvider by inject()
+
+    private val dateFormatter: DateFormatter by inject()
 
     private val itemsAdapter by lazy { FastItemAdapter<IItem<*, *>>() }
 
@@ -54,11 +61,11 @@ class DetailsFragment : BaseFragment() {
         detailsViewModel.loadPlainDetails(plainId)
 
         detailsViewModel.screenshots.observe(this, Observer {
-            itemsAdapter.add(HeaderItem(R.string.prices))
+            itemsAdapter.add(HeaderItem(R.string.screenshots))
         })
         detailsViewModel.prices.observe(this, Observer {
-            itemsAdapter.add(it.map { priceDetails ->
-                PriceItem(priceDetails, requireContext()) { clickedDetails ->
+            itemsAdapter.add(listOf(HeaderItem(R.string.prices)) + it.map { priceDetails ->
+                PriceItem(priceDetails, resourcesProvider, dateFormatter) { clickedDetails ->
                     detailsViewModel.onBuyButtonClick(clickedDetails.priceModel.url)
                 }
             })

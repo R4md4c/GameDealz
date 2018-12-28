@@ -1,7 +1,6 @@
 package de.r4md4c.gamedealz.detail.item
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -10,9 +9,10 @@ import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
+import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.detail.PriceDetails
@@ -24,11 +24,12 @@ import java.util.concurrent.TimeUnit
 
 class PriceItem(
     private val priceDetails: PriceDetails,
-    private val context: Context,
+    private val resourcesProvider: ResourcesProvider,
+    private val dateFormatter: DateFormatter,
     private val onBuyClick: (PriceDetails) -> Unit
 ) : AbstractItem<PriceItem, PriceItem.ViewHolder>() {
-    private val newPriceColor by lazy { ContextCompat.getColor(context, R.color.newPriceColor) }
-    private val oldPriceColor by lazy { ContextCompat.getColor(context, R.color.oldPriceColor) }
+    private val newPriceColor by lazy { resourcesProvider.getColor(R.color.newPriceColor) }
+    private val oldPriceColor by lazy { resourcesProvider.getColor(R.color.oldPriceColor) }
 
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_prices_item
@@ -51,14 +52,15 @@ class PriceItem(
     private fun currentBestString(priceDetails: PriceDetails): CharSequence {
         val currentBestPrice =
             priceDetails.priceModel.newAndOldPriceSpan(priceDetails.currencyModel, newPriceColor, oldPriceColor)
-        return TextUtils.concat(context.getString(R.string.current_best), " ", currentBestPrice)
+        return TextUtils.concat(resourcesProvider.getString(R.string.current_best), " ", currentBestPrice)
     }
 
     private fun historicalLowString(
         historicalLowModel: HistoricalLowModel,
         currencyModel: CurrencyModel
     ): CharSequence {
-        return TextUtils.concat(context.getString(R.string.historical_low),
+        return TextUtils.concat(
+            resourcesProvider.getString(R.string.historical_low),
             " ",
             SpannableString(historicalLowModel.price.formatCurrency(currencyModel))
                 .apply {
@@ -66,11 +68,11 @@ class PriceItem(
                     setSpan(StyleSpan(Typeface.BOLD), 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 },
             " ",
-            context.getString(R.string.on),
+            resourcesProvider.getString(R.string.on),
             " ",
             SpannableString(
-                DateUtils.formatDateTime(
-                    context, TimeUnit.SECONDS.toMillis(historicalLowModel.added),
+                dateFormatter.formateDateTime(
+                    TimeUnit.SECONDS.toMillis(historicalLowModel.added),
                     DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_YEAR
                 )
             )

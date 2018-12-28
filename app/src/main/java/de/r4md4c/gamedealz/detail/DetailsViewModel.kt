@@ -39,7 +39,9 @@ class DetailsViewModel(
 
     fun loadPlainDetails(plainId: String) = uiScope.launch(IO) {
         val details = getPlainDetails(TypeParameter(plainId))
-        _screenshots.postValue(details.screenshots)
+        if (details.screenshots.isNotEmpty()) {
+            _screenshots.postValue(details.screenshots)
+        }
         withContext(Dispatchers.Default) {
             // TODO: Refactor this ugly piece of unreadable code.
             details.shopPrices.map { it.key }
