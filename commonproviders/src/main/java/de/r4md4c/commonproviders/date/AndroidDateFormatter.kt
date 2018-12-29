@@ -5,7 +5,7 @@ import android.text.format.DateUtils
 
 class AndroidDateFormatter(private val context: Context) : DateFormatter {
 
-    override fun formateDateTime(millis: Long, flags: Int): String =
+    override fun formatDateTime(millis: Long, flags: Int): String =
         DateUtils.formatDateTime(context, millis, flags)
 
 }

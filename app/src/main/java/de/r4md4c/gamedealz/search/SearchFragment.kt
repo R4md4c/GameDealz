@@ -9,14 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.SideEffect
+import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragmentArgs.fromBundle
 import kotlinx.android.synthetic.main.fragment_search.*
 import org.koin.android.ext.android.inject
@@ -35,7 +39,19 @@ class SearchFragment : BaseFragment() {
 
     private val navigator: Navigator by inject { parametersOf(requireActivity()) }
 
-    private val searchAdapter by lazy { SearchAdapter(layoutInflater) }
+    private val resourcesProvider by inject<ResourcesProvider>()
+
+    private val dateFormatter by inject<DateFormatter>()
+
+    private var searchResultsLoaded = false
+
+    private val searchAdapter by lazy {
+        SearchAdapter(layoutInflater, resourcesProvider, dateFormatter) {
+            it.prices.firstOrNull()?.let { priceModel ->
+                listener?.onFragmentInteraction(DetailsFragment.toUri(it.title, it.gameId, priceModel.url))
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,33 +75,35 @@ class SearchFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        viewModel.onQueryChanged(searchTerm)
+
         viewModel.searchResults.observe(this, Observer {
-            emptyResultsTitleText.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+            emptyResultsTitleText.isVisible = it.isEmpty()
             searchAdapter.submitList(it)
+            searchResultsLoaded = true
         })
         viewModel.sideEffects.observe(this, Observer {
             when (it) {
                 is SideEffect.ShowLoading -> {
-                    errorGroup.visibility = View.GONE
-                    progress.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                    emptyResultsTitleText.visibility = View.GONE
+                    errorGroup.isVisible = false
+                    progress.isVisible = true
+                    recyclerView.isVisible = false
+                    emptyResultsTitleText.isVisible = false
                 }
                 is SideEffect.HideLoading -> {
-                    errorGroup.visibility = View.GONE
-                    progress.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                    emptyResultsTitleText.visibility =
-                            if (viewModel.searchResults.value?.isEmpty() == true) View.VISIBLE else View.GONE
+                    errorGroup.isVisible = false
+                    progress.isVisible = false
+                    recyclerView.isVisible = true
+                    emptyResultsTitleText.isVisible = viewModel.searchResults.value?.isEmpty() == true
                     searchView?.clearFocus()
                 }
                 is SideEffect.ShowError -> {
                     errorText.text = it.error.localizedMessage
-
-                    errorGroup.visibility = View.VISIBLE
-                    progress.visibility = View.GONE
-                    emptyResultsTitleText.visibility = View.GONE
-                    recyclerView.visibility = View.GONE
+                    errorGroup.isVisible = true
+                    progress.isVisible = false
+                    emptyResultsTitleText.isVisible = false
+                    recyclerView.isVisible = false
                 }
             }
         })
@@ -128,8 +146,8 @@ class SearchFragment : BaseFragment() {
         })
 
         (actionView as? SearchView)?.run {
-
             searchView = this
+            setQuery(searchTerm, false)
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
@@ -141,8 +159,6 @@ class SearchFragment : BaseFragment() {
                     return true
                 }
             })
-
-            setQuery(searchTerm, false)
         }
     }
 

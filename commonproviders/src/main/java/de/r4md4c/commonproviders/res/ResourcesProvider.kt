@@ -16,5 +16,7 @@ interface ResourcesProvider {
 
     fun getDimenPixelSize(@DimenRes dimensionRes: Int): Int
 
+    fun getDimension(@DimenRes dimensionRes: Int): Float
+
     fun getInteger(@IntegerRes integerRes: Int): Int
 }

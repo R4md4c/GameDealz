@@ -11,5 +11,5 @@ interface DateFormatter {
      * @param millis Unix timestamp in Millis
      * @param flags Check the FORMAT_* in [android.text.format.DateUtils] for the available values.
      */
-    fun formateDateTime(millis: Long, flags: Int): String
+    fun formatDateTime(millis: Long, flags: Int): String
 }

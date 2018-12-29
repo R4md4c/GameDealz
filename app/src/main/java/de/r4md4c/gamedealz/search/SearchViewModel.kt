@@ -17,6 +17,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.distinct
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -31,6 +32,7 @@ class SearchViewModel(
     private val queryChannel = uiScope.actor<String>(Dispatchers.Default) {
         filter { it.isNotBlank() }
             .debounce(uiScope, 500)
+            .distinct()
             .consumeEach {
                 Timber.d("Actor called")
                 currentJob?.cancelAndJoin()
@@ -54,7 +56,6 @@ class SearchViewModel(
     }
 
     fun onQueryChanged(searchTerm: String) {
-        Timber.d("On Query Changed: $searchTerm")
         queryChannel.offer(searchTerm)
     }
 

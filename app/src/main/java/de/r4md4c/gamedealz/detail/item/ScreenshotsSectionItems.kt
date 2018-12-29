@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.stfalcon.imageviewer.StfalconImageViewer
+import de.r4md4c.commonproviders.extensions.resolveThemeAttribute
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.image.GlideApp
@@ -36,7 +38,8 @@ class ScreenshotsSectionItems(
                     }
                 setRecycledViewPool(parentPool)
                 addItemDecoration(ScreenshotsItemDecorator(resourcesProvider))
-                layoutManager = GridLayoutManager(context, resourcesProvider.getInteger(R.integer.span_count))
+                layoutManager =
+                        GridLayoutManager(context, resourcesProvider.getInteger(R.integer.screenshots_span_count))
                     .apply { spanSizeLookup.isSpanIndexCacheEnabled = true }
             }
         }
@@ -46,9 +49,15 @@ class ScreenshotsSectionItems(
 
     private fun onScreenShotClick(context: Context): OnScreenShotClick = { position ->
         StfalconImageViewer.Builder<ScreenshotModel>(context, screenshots) { view, image ->
+            val circularProgressDrawable = CircularProgressDrawable(context).apply {
+                strokeWidth = resourcesProvider.getDimension(R.dimen.progress_stroke_size)
+                centerRadius = 30f
+                setColorSchemeColors(context.resolveThemeAttribute(android.R.attr.colorAccent).data)
+                start()
+            }
             GlideApp.with(view)
                 .load(image.full)
-                .placeholder(R.drawable.ic_placeholder)
+                .placeholder(circularProgressDrawable)
                 .into(view)
         }.also {
             it.withStartPosition(position)

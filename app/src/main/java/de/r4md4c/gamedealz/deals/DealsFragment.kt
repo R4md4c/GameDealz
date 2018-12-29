@@ -5,11 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -17,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
-import de.r4md4c.gamedealz.common.decorator.GridDecorator
+import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragment
@@ -63,8 +62,8 @@ class DealsFragment : BaseFragment() {
         })
         dealsViewModel.sideEffect.observe(this, Observer {
             when (it) {
-                is SideEffect.ShowLoading -> progress.visibility = VISIBLE
-                is SideEffect.HideLoading -> progress.visibility = GONE
+                is SideEffect.ShowLoading -> progress.isVisible = true
+                is SideEffect.HideLoading -> progress.isVisible = false
                 is SideEffect.ShowLoadingMore -> adapter.showProgress(true)
                 is SideEffect.HideLoadingMore -> adapter.showProgress(false)
             }
@@ -99,8 +98,9 @@ class DealsFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
         recyclerView.adapter = adapter
-        context?.let { recyclerView.addItemDecoration(GridDecorator(it)) }
-        recyclerView.layoutManager = StaggeredGridLayoutManager(resources.getInteger(R.integer.span_count), VERTICAL)
+        context?.let { recyclerView.addItemDecoration(StaggeredGridDecorator(it)) }
+        recyclerView.layoutManager =
+                StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
     }
 
     private inner class OnQueryTextListener(private val searchView: SearchView) : SearchView.OnQueryTextListener {

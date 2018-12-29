@@ -71,7 +71,7 @@ class PriceItem(
             resourcesProvider.getString(R.string.on),
             " ",
             SpannableString(
-                dateFormatter.formateDateTime(
+                dateFormatter.formatDateTime(
                     TimeUnit.SECONDS.toMillis(historicalLowModel.added),
                     DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_YEAR
                 )
