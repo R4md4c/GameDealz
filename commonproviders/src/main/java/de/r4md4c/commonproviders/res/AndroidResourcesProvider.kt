@@ -10,4 +10,6 @@ internal class AndroidResourcesProvider(private val context: Context) : Resource
     override fun getString(stringRes: Int): String = context.resources.getString(stringRes)
 
     override fun getDimenPixelSize(dimensionRes: Int): Int = context.resources.getDimensionPixelSize(dimensionRes)
+
+    override fun getInteger(integerRes: Int): Int = context.resources.getInteger(integerRes)
 }

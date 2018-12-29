@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 data class PriceDetails(
     val priceModel: PriceModel,
@@ -35,27 +36,37 @@ class DetailsViewModel(
     private val _gameInformation by lazy { MutableLiveData<GameInformation>() }
     val gameInformation: LiveData<GameInformation> by lazy { _gameInformation }
 
+    private val _loading by lazy { MutableLiveData<Boolean>() }
+    val isLoading: LiveData<Boolean> by lazy { _loading }
+
     fun onBuyButtonClick(buyUrl: String) {
         navigator.navigateToUrl(buyUrl)
     }
 
     fun loadPlainDetails(plainId: String) = uiScope.launch(IO) {
-        val details = getPlainDetails(TypeParameter(plainId))
-        details.shortDescription?.let {
-            _gameInformation.postValue(GameInformation(details.headerImage, it))
-        }
+        try {
+            _loading.postValue(true)
+            val details = getPlainDetails(TypeParameter(plainId))
+            details.shortDescription?.let {
+                _gameInformation.postValue(GameInformation(details.headerImage, it))
+            }
 
-        if (details.screenshots.isNotEmpty()) {
-            _screenshots.postValue(details.screenshots)
-        }
+            if (details.screenshots.isNotEmpty()) {
+                _screenshots.postValue(details.screenshots)
+            }
 
-        withContext(Dispatchers.Default) {
-            // TODO: Refactor this ugly piece of unreadable code.
-            details.shopPrices.map { it.key }
-                .zip(details.shopPrices.map { it.value.first })
-                .zip(details.shopPrices.map { it.value.second })
-                .map { PriceDetails(it.first.second, it.first.first, it.second, details.currencyModel) }
-                .run { _prices.postValue(this) }
+            withContext(Dispatchers.Default) {
+                // TODO: Refactor this ugly piece of unreadable code.
+                details.shopPrices.map { it.key }
+                    .zip(details.shopPrices.map { it.value.first })
+                    .zip(details.shopPrices.map { it.value.second })
+                    .map { PriceDetails(it.first.second, it.first.first, it.second, details.currencyModel) }
+                    .run { _prices.postValue(this) }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Exception happened while retrieving plain details.")
+        } finally {
+            _loading.postValue(false)
         }
     }
 }

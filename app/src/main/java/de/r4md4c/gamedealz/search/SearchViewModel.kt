@@ -32,6 +32,7 @@ class SearchViewModel(
         filter { it.isNotBlank() }
             .debounce(uiScope, 500)
             .consumeEach {
+                Timber.d("Actor called")
                 currentJob?.cancelAndJoin()
                 loadSearchResults(it)
             }
@@ -53,6 +54,7 @@ class SearchViewModel(
     }
 
     fun onQueryChanged(searchTerm: String) {
+        Timber.d("On Query Changed: $searchTerm")
         queryChannel.offer(searchTerm)
     }
 

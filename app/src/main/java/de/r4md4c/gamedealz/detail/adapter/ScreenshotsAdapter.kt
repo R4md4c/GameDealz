@@ -8,10 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.image.GlideApp
+import de.r4md4c.gamedealz.detail.item.OnScreenShotClick
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import kotlinx.android.synthetic.main.layout_screenshot_item.view.*
 
-class ScreenshotsAdapter(private val layoutInflater: LayoutInflater) :
+class ScreenshotsAdapter(
+    private val layoutInflater: LayoutInflater,
+    private val onClick: OnScreenShotClick
+) :
     ListAdapter<ScreenshotModel, RecyclerView.ViewHolder>(COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
@@ -23,6 +27,7 @@ class ScreenshotsAdapter(private val layoutInflater: LayoutInflater) :
                 .load(getItem(position).thumbnail)
                 .placeholder(R.drawable.ic_placeholder)
                 .into(image)
+            image.setOnClickListener { onClick(position) }
         }
     }
 

@@ -47,6 +47,13 @@
             app:srcCompat="@drawable/ic_shopping_cart"
             android:layout_height="wrap_content"/>
 
+    <ProgressBar
+            android:id="@+id/progress"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"

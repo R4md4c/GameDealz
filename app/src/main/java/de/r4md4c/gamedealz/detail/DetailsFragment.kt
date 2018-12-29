@@ -64,6 +64,11 @@ class DetailsFragment : BaseFragment() {
             detailsViewModel.loadPlainDetails(plainId)
         }
 
+        detailsViewModel.isLoading.observe(this, Observer {
+            progress.visibility = if (it) View.VISIBLE else View.GONE
+            recyclerView.visibility = if (!it) View.VISIBLE else View.GONE
+        })
+
         detailsViewModel.gameInformation.observe(this, Observer {
             itemsAdapter.add(
                 HeaderItem(getString(R.string.about_game)),

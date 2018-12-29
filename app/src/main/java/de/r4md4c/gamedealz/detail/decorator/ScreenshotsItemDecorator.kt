@@ -19,9 +19,11 @@ class ScreenshotsItemDecorator(private val resourcesProvider: ResourcesProvider)
         val spanIndex = gridLayoutManager?.spanSizeLookup?.getSpanIndex(position, gridLayoutManager.spanCount) ?: -1
 
         with(outRect) {
+            // If last span then don't add a right offset.
             right = if (spanIndex == spanCount - 1) 0 else spacing4
+            // Ignore the top 3
             top = when (position) {
-                0, 1, 2 -> 0
+                in 0 until spanCount -> 0
                 else -> spacing4
             }
         }

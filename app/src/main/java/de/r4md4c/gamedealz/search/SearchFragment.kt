@@ -143,7 +143,6 @@ class SearchFragment : BaseFragment() {
             })
 
             setQuery(searchTerm, false)
-            viewModel.onQueryChanged(searchTerm)
         }
     }
 
