@@ -68,7 +68,7 @@ class SearchFragment : BaseFragment() {
         setupRecyclerView()
         retry.setOnClickListener {
             searchView?.let { searchView ->
-                viewModel.onQueryChanged(searchView.query.toString())
+                viewModel.startSearch(searchView.query.toString())
             }
         }
     }
@@ -76,7 +76,9 @@ class SearchFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.onQueryChanged(searchTerm)
+        if (!searchResultsLoaded) {
+            viewModel.startSearch(searchTerm)
+        }
 
         viewModel.searchResults.observe(this, Observer {
             emptyResultsTitleText.isVisible = it.isEmpty()

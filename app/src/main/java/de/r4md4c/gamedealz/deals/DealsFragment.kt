@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
@@ -82,9 +83,8 @@ class DealsFragment : BaseFragment() {
     override fun onCreateOptionsMenu(toolbar: Toolbar) {
         super.onCreateOptionsMenu(toolbar)
         toolbar.inflateMenu(R.menu.menu_deals)
-        (toolbar.menu.findItem(R.id.menu_search).actionView as? SearchView)?.let { searchView ->
-            searchView.setOnQueryTextListener(OnQueryTextListener(searchView))
-        }
+        val searchMenuItem = toolbar.menu.findItem(R.id.menu_search)
+        (searchMenuItem.actionView as? SearchView)?.setOnQueryTextListener(OnQueryTextListener(searchMenuItem))
     }
 
     override fun onDetach() {
@@ -103,11 +103,11 @@ class DealsFragment : BaseFragment() {
                 StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
     }
 
-    private inner class OnQueryTextListener(private val searchView: SearchView) : SearchView.OnQueryTextListener {
+    private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {
 
         override fun onQueryTextSubmit(query: String): Boolean {
             listener?.onFragmentInteraction(SearchFragment.toUri(query))
-            searchView.clearFocus()
+            searchMenuItem.collapseActionView()
             return true
         }
 

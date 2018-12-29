@@ -55,6 +55,10 @@ class SearchViewModel(
         navigator.navigateUp()
     }
 
+    fun startSearch(searchTerm: String) {
+        loadSearchResults(searchTerm)
+    }
+
     fun onQueryChanged(searchTerm: String) {
         queryChannel.offer(searchTerm)
     }
