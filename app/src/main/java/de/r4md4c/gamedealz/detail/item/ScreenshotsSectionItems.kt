@@ -51,7 +51,7 @@ class ScreenshotsSectionItems(
         StfalconImageViewer.Builder<ScreenshotModel>(context, screenshots) { view, image ->
             val circularProgressDrawable = CircularProgressDrawable(context).apply {
                 strokeWidth = resourcesProvider.getDimension(R.dimen.progress_stroke_size)
-                centerRadius = 30f
+                centerRadius = resourcesProvider.getDimension(R.dimen.progress_size)
                 setColorSchemeColors(context.resolveThemeAttribute(android.R.attr.colorAccent).data)
                 start()
             }

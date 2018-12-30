@@ -1,9 +1,15 @@
 package de.r4md4c.gamedealz.detail.item
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.image.GlideApp
@@ -30,6 +36,28 @@ class AboutGameItem(
             } else {
                 GlideApp.with(this)
                     .load(headerImage)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            progress.isVisible = false
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            progress.isVisible = false
+                            return false
+                        }
+                    })
                     .into(image)
             }
 

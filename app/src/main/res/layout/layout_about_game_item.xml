@@ -22,6 +22,23 @@
                 tools:src="@tools:sample/avatars"
                 android:layout_height="wrap_content"/>
 
+        <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_height="wrap_content"/>
+
+        <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="progress,image"
+                android:layout_height="wrap_content"/>
+
         <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
@@ -31,7 +48,7 @@
                 android:gravity="center"
                 android:layout_marginTop="@dimen/baseline_1x"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintTop_toBottomOf="@+id/image"
+                app:layout_constraintTop_toBottomOf="@+id/barrier"
                 android:layout_height="wrap_content"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

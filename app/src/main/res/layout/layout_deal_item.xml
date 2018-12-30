@@ -14,11 +14,9 @@
         <ImageView
                 android:id="@+id/image"
                 android:layout_width="0dp"
-                android:adjustViewBounds="true"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_height="wrap_content"
-                android:maxHeight="104dp"
+                android:layout_height="104dp"
                 tools:src="@drawable/ic_placeholder"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/name"/>
