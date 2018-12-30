@@ -7,7 +7,8 @@ import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.network.model.Plain
 import de.r4md4c.gamedealz.network.scrapper.Scrapper
 import kotlinx.coroutines.runBlocking
-import okio.Okio
+import okio.buffer
+import okio.source
 import org.jsoup.Jsoup
 import org.junit.Before
 import org.junit.Test
@@ -75,13 +76,13 @@ class IsThereAnyDealScrappingServiceTest {
     private fun readSearchItems(): String {
         val classLoader = javaClass.classLoader
         val file = File(classLoader!!.getResource("search_items.html").file)
-        return Okio.buffer(Okio.source(file)).readUtf8()
+        return file.source().buffer().readUtf8()
     }
 
     private fun readEmptySearchItems(): String {
         val classLoader = javaClass.classLoader
         val file = File(classLoader!!.getResource("search_items_not_found.html").file)
-        return Okio.buffer(Okio.source(file)).readUtf8()
+        return file.source().buffer().readUtf8()
     }
 }
 

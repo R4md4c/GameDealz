@@ -4,11 +4,10 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
-import de.r4md4c.gamedealz.data.entity.Country
-import de.r4md4c.gamedealz.data.entity.Currency
-import de.r4md4c.gamedealz.data.entity.Region
-import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
+import de.r4md4c.gamedealz.domain.model.CountryModel
+import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -40,16 +39,16 @@ class GetCurrentActiveRegionImplTest {
 
     @Test
     fun `it should return the active region from the configuration locale`() {
-        val mockRegion = mock<Region>()
-        val mockCurrency = mock<Currency>()
+        val mockCurrency = mock<CurrencyModel>()
         ArrangeBuilder()
             .withNullSharedPreferenceValue()
             .withLocale(Locale("aLanguage", "aCountry"))
             .withRegionsWithCountries(
                 listOf(
-                    RegionWithCountries(
-                        mockRegion, mockCurrency,
-                        setOf(Country("aCountry", ""))
+                    RegionWithCountriesModel(
+                        "",
+                        mockCurrency,
+                        listOf(CountryModel("aCountry"))
                     )
                 )
             )
@@ -59,21 +58,21 @@ class GetCurrentActiveRegionImplTest {
         }
 
         verify(configurationProvider).locale
-        assertThat(result).isEqualTo(ActiveRegion(mockRegion, Country("aCountry", ""), mockCurrency))
+        assertThat(result).isEqualTo(ActiveRegion("", CountryModel("aCountry"), mockCurrency))
     }
 
     @Test
     fun `it should return the default region when locale is not among the regions`() {
-        val mockCurrency = mock<Currency>()
+        val mockCurrency = mock<CurrencyModel>()
         ArrangeBuilder()
             .withNullSharedPreferenceValue()
             .withLocale(Locale("aLanguage", "aCountry"))
             .withRegionsWithCountries(
                 listOf(
-                    RegionWithCountries(
-                        Region(DEFAULT_REGION, ""),
+                    RegionWithCountriesModel(
+                        DEFAULT_REGION,
                         mockCurrency,
-                        setOf(Country(DEFAULT_COUNTRY, ""))
+                        listOf(CountryModel(DEFAULT_COUNTRY))
                     )
                 )
             )
@@ -84,15 +83,15 @@ class GetCurrentActiveRegionImplTest {
 
         assertThat(result).isEqualTo(
             ActiveRegion(
-                Region(DEFAULT_REGION, ""),
-                Country(DEFAULT_COUNTRY, ""), mockCurrency
+                DEFAULT_REGION,
+                CountryModel(DEFAULT_COUNTRY), mockCurrency
             )
         )
     }
 
     @Test
     fun `it should try to return result from shared preferences first`() {
-        val mockCurrency = mock<Currency>()
+        val mockCurrency = mock<CurrencyModel>()
         ArrangeBuilder()
             .withSharedPreference(
                 DEFAULT_REGION,
@@ -100,10 +99,10 @@ class GetCurrentActiveRegionImplTest {
             )
             .withRegionsWithCountries(
                 listOf(
-                    RegionWithCountries(
-                        Region(DEFAULT_REGION, ""),
+                    RegionWithCountriesModel(
+                        DEFAULT_REGION,
                         mockCurrency,
-                        setOf(Country(DEFAULT_COUNTRY, ""))
+                        listOf(CountryModel(DEFAULT_COUNTRY))
                     )
                 )
             )
@@ -114,8 +113,9 @@ class GetCurrentActiveRegionImplTest {
 
         assertThat(result).isEqualTo(
             ActiveRegion(
-                Region(DEFAULT_REGION, ""),
-                Country(DEFAULT_COUNTRY, ""), mockCurrency
+                DEFAULT_REGION,
+                CountryModel(DEFAULT_COUNTRY),
+                mockCurrency
             )
         )
         verify(sharedPreferencesProvider).activeRegionAndCountry
@@ -124,16 +124,16 @@ class GetCurrentActiveRegionImplTest {
 
     @Test
     fun `it should save to shared preferences at the end`() {
-        val mockCurrency = mock<Currency>()
+        val mockCurrency = mock<CurrencyModel>()
         ArrangeBuilder()
             .withNullSharedPreferenceValue()
             .withLocale(Locale("aLanguage", "aCountry"))
             .withRegionsWithCountries(
                 listOf(
-                    RegionWithCountries(
-                        Region(DEFAULT_REGION, ""),
+                    RegionWithCountriesModel(
+                        DEFAULT_REGION,
                         mockCurrency,
-                        setOf(Country(DEFAULT_COUNTRY, ""))
+                        listOf(CountryModel(DEFAULT_COUNTRY))
                     )
                 )
             )
@@ -148,7 +148,7 @@ class GetCurrentActiveRegionImplTest {
 
     inner class ArrangeBuilder {
 
-        fun withRegionsWithCountries(regionsWithCountries: List<RegionWithCountries>) = apply {
+        fun withRegionsWithCountries(regionsWithCountries: List<RegionWithCountriesModel>) = apply {
             runBlocking { whenever(getRegionsUseCase.invoke(anyOrNull())).thenReturn(regionsWithCountries) }
         }
 

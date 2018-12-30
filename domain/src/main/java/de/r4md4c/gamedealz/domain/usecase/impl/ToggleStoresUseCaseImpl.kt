@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.withContext
 
-internal class StoresSelectionUseCaseImpl(private val storesRepository: StoresRepository) : ToggleStoresUseCase {
+internal class ToggleStoresUseCaseImpl(private val storesRepository: StoresRepository) : ToggleStoresUseCase {
 
     override suspend fun invoke(param: CollectionParameter<StoreModel>?) {
         requireNotNull(param)

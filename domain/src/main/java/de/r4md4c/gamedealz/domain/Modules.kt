@@ -19,7 +19,7 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<GetStoresUseCase> { GetStoresUseCaseImpl(get(), get(), get()) }
 
-    factory<ToggleStoresUseCase> { StoresSelectionUseCaseImpl(get()) }
+    factory<ToggleStoresUseCase> { ToggleStoresUseCaseImpl(get()) }
 
     factory<GetDealsUseCase> { GetDealsUseCaseImpl(get(), get(), get(), get(), get()) }
 

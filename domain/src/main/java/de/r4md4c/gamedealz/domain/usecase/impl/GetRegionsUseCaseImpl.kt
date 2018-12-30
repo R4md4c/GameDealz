@@ -8,6 +8,7 @@ import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.withContext
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionRepository
@@ -23,8 +24,7 @@ internal class GetRegionsUseCaseImpl(
         withContext(IO) {
             retrieveAndStorePlainsFromSteam()
 
-            val localRegionsChannel = localRepository.all()
-            val localRegions = localRegionsChannel.receive()
+            val localRegions = localRepository.all().first()
 
             if (!localRegions.isEmpty()) {
                 localRegions.map { it.toModel() }
@@ -32,7 +32,7 @@ internal class GetRegionsUseCaseImpl(
                 val regionsWithCountries = loadRegionsFromServer()
                 localRepository.save(regionsWithCountries)
 
-                localRegionsChannel.receive().map { it.toModel() }.apply { localRegionsChannel.cancel() }
+                localRepository.all().first().map { it.toModel() }
             }
         }
 

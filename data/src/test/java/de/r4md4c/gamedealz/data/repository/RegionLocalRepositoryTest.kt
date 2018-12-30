@@ -1,11 +1,14 @@
 package de.r4md4c.gamedealz.data.repository
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.dao.RegionWithCountriesDao
 import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
+import io.reactivex.Flowable
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -27,11 +30,22 @@ class RegionLocalRepositoryTest {
     }
 
     @Test
-    fun allRegions() {
+    fun `all invokes allRegions when supplied collection is null`() {
         runBlocking {
+            ArrangeBuilder()
             regionLocalRepository.all()
 
             verify(regionsWithCountriesDao).allRegions()
+        }
+    }
+
+    @Test
+    fun `all invokes allRegions with collection when supplied collection is null`() {
+        runBlocking {
+            ArrangeBuilder()
+            regionLocalRepository.all(emptyList())
+
+            verify(regionsWithCountriesDao).allRegions(any())
         }
     }
 
@@ -59,6 +73,14 @@ class RegionLocalRepositoryTest {
             regionLocalRepository.save(regionWithCountries)
 
             verify(regionsWithCountriesDao).insertRegionsWithCountries(currency, regions, countries)
+        }
+    }
+
+
+    private inner class ArrangeBuilder {
+        init {
+            whenever(regionsWithCountriesDao.allRegions()).thenReturn(Flowable.just(emptyList()))
+            whenever(regionsWithCountriesDao.allRegions(any())).thenReturn(Flowable.just(emptyList()))
         }
     }
 }

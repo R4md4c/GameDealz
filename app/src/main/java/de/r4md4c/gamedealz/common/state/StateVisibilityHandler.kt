@@ -9,6 +9,9 @@ import kotlinx.android.synthetic.main.layout_error_retry_empty.*
 
 typealias OnRetryClick = () -> Unit
 
+/**
+ * Handles visibility of the widgets depending on the state machine's SideEffect.
+ */
 class StateVisibilityHandler(
     private val fragment: Fragment,
     private val onRetryClick: OnRetryClick

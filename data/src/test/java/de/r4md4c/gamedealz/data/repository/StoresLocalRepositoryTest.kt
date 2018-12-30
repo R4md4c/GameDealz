@@ -1,7 +1,10 @@
 package de.r4md4c.gamedealz.data.repository
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.dao.StoresDao
+import io.reactivex.Flowable
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -23,11 +26,22 @@ class StoresLocalRepositoryTest {
     }
 
     @Test
-    fun all() {
+    fun `all invokes all in dao when no collection is supplied`() {
         runBlocking {
+            ArrangeBuilder()
             storesLocalRepository.all()
 
             verify(storesDao).all()
+        }
+    }
+
+    @Test
+    fun `all invokes all in dao when collection is supplied`() {
+        runBlocking {
+            ArrangeBuilder()
+            storesLocalRepository.all(emptyList())
+
+            verify(storesDao).all(any())
         }
     }
 
@@ -46,6 +60,13 @@ class StoresLocalRepositoryTest {
             storesLocalRepository.findById("")
 
             verify(storesDao).singleStore("")
+        }
+    }
+
+    inner class ArrangeBuilder {
+        init {
+            whenever(storesDao.all()).thenReturn(Flowable.just(emptyList()))
+            whenever(storesDao.all(any())).thenReturn(Flowable.just(emptyList()))
         }
     }
 }
