@@ -5,12 +5,14 @@ import com.tinder.StateMachine
 sealed class State {
     object Loading : State()
     object Idle : State()
+    object Empty : State()
     object LoadingMore : State()
     object Error : State()
 }
 
 sealed class Event {
     object OnLoadingStart : Event()
+    object OnShowEmpty : Event()
     object OnLoadingMoreStarted : Event()
     object OnLoadingMoreEnded : Event()
     data class OnError(val error: Throwable) : Event()
@@ -18,6 +20,7 @@ sealed class Event {
 }
 
 sealed class SideEffect {
+    object ShowEmpty : SideEffect()
     object ShowLoading : SideEffect()
     object HideLoading : SideEffect()
     object ShowLoadingMore : SideEffect()
@@ -35,6 +38,9 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
         on<Event.OnError> {
             transitionTo(State.Error, SideEffect.ShowError(it.error))
         }
+        on<Event.OnShowEmpty> {
+            transitionTo(State.Empty, SideEffect.ShowEmpty)
+        }
     }
 
     state<State.LoadingMore> {
@@ -46,6 +52,9 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
         }
         on<Event.OnError> {
             transitionTo(State.Error, SideEffect.ShowError(it.error))
+        }
+        on<Event.OnShowEmpty> {
+            transitionTo(State.Empty, SideEffect.ShowEmpty)
         }
     }
 
@@ -64,6 +73,15 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
         }
         on<Event.OnLoadingMoreEnded> {
             transitionTo(State.Idle, SideEffect.HideLoadingMore)
+        }
+        on<Event.OnShowEmpty> {
+            transitionTo(State.Empty, SideEffect.ShowEmpty)
+        }
+    }
+
+    state<State.Empty> {
+        on<Event.OnLoadingStart> {
+            transitionTo(State.Loading, SideEffect.ShowLoading)
         }
     }
 

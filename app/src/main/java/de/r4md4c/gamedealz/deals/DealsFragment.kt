@@ -9,16 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.r4md4c.commonproviders.extensions.resolveThemeAttribute
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
+import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
@@ -31,6 +32,10 @@ class DealsFragment : BaseFragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private val dealsViewModel by inject<DealsViewModel> { parametersOf(requireActivity()) }
+
+    private val stateVisibilityHandler by inject<StateVisibilityHandler> {
+        parametersOf(this, { dealsViewModel.onRefresh() })
+    }
 
     private val adapter by lazy {
         DealsAdapter {
@@ -53,6 +58,8 @@ class DealsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
         setupRecyclerView()
+        swipeToRefresh.setColorSchemeColors(requireContext().resolveThemeAttribute(android.R.attr.colorAccent).data)
+        swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,10 +70,9 @@ class DealsFragment : BaseFragment() {
         })
         dealsViewModel.sideEffect.observe(this, Observer {
             when (it) {
-                is SideEffect.ShowLoading -> progress.isVisible = true
-                is SideEffect.HideLoading -> progress.isVisible = false
                 is SideEffect.ShowLoadingMore -> adapter.showProgress(true)
                 is SideEffect.HideLoadingMore -> adapter.showProgress(false)
+                else -> stateVisibilityHandler.onSideEffect(it)
             }
         })
     }
@@ -97,9 +103,9 @@ class DealsFragment : BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        recyclerView.adapter = adapter
-        context?.let { recyclerView.addItemDecoration(StaggeredGridDecorator(it)) }
-        recyclerView.layoutManager =
+        content.adapter = adapter
+        context?.let { content.addItemDecoration(StaggeredGridDecorator(it)) }
+        content.layoutManager =
                 StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
     }
 

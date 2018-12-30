@@ -10,18 +10,22 @@ import de.r4md4c.gamedealz.network.service.IsThereAnyDealScrappingService
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.SearchService
 import de.r4md4c.gamedealz.network.service.steam.SteamService
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.File
 
 val NETWORK = module {
 
     single<IsThereAnyDealService> {
+        val okHttpClient: OkHttpClient = get()
         Retrofit.Builder()
-            .client(get())
+            .client(okHttpClient.newBuilder().cache(get()).build())
             .baseUrl("https://api.isthereanydeal.com/")
             .addCallAdapterFactory(get())
             .addConverterFactory(MoshiConverterFactory.create(get()))
@@ -30,8 +34,9 @@ val NETWORK = module {
     }
 
     single<SteamService> {
+        val okHttpClient: OkHttpClient = get()
         Retrofit.Builder()
-            .client(get())
+            .client(okHttpClient.newBuilder().cache(get()).build())
             .baseUrl("https://store.steampowered.com/api/")
             .addCallAdapterFactory(get())
             .addConverterFactory(MoshiConverterFactory.create(get()))
@@ -43,6 +48,11 @@ val NETWORK = module {
         OkHttpClient.Builder()
             .addInterceptor(get<HttpLoggingInterceptor>())
             .build()
+    }
+
+    factory {
+        val okHttpCacheDir = File(androidContext().cacheDir, "http-cache")
+        Cache(okHttpCacheDir, 50 * 1024 * 1024) // 50 MB
     }
 
     single {

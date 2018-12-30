@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -17,6 +16,7 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
+import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
 import de.r4md4c.gamedealz.detail.item.AboutGameItem
@@ -44,6 +44,12 @@ class DetailsFragment : BaseFragment() {
 
     private val itemsAdapter by lazy { FastItemAdapter<IItem<*, *>>() }
 
+    private val stateVisibilityHandler by inject<StateVisibilityHandler> {
+        parametersOf(this, {
+            detailsViewModel.loadPlainDetails(plainId)
+        })
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_game_detail, container, false)
 
@@ -52,7 +58,7 @@ class DetailsFragment : BaseFragment() {
         NavigationUI.setupWithNavController(collapsing_toolbar, toolbar, findNavController())
         setupTitle()
         setupFab()
-        recyclerView.apply {
+        content.apply {
             addItemDecoration(DetailsItemDecorator(context))
             layoutManager = LinearLayoutManager(context)
             adapter = itemsAdapter
@@ -65,9 +71,8 @@ class DetailsFragment : BaseFragment() {
             detailsViewModel.loadPlainDetails(plainId)
         }
 
-        detailsViewModel.isLoading.observe(this, Observer {
-            progress.isVisible = it
-            recyclerView.isVisible = !it
+        detailsViewModel.sideEffect.observe(this, Observer {
+            stateVisibilityHandler.onSideEffect(it)
         })
 
         detailsViewModel.gameInformation.observe(this, Observer {
@@ -80,7 +85,7 @@ class DetailsFragment : BaseFragment() {
         detailsViewModel.screenshots.observe(this, Observer {
             itemsAdapter.add(
                 HeaderItem(getString(R.string.screenshots)),
-                ScreenshotsSectionItems(it, resourcesProvider, recyclerView.recycledViewPool)
+                ScreenshotsSectionItems(it, resourcesProvider, content.recycledViewPool)
             )
         })
 

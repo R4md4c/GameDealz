@@ -59,6 +59,9 @@ class DealsDataSource(
                 }
             }.onSuccess { deals ->
                 stateMachineDelegate.transition(Event.OnLoadingEnded)
+                if (deals.second.isEmpty()) {
+                    stateMachineDelegate.transition(Event.OnShowEmpty)
+                }
                 callback.onResult(deals.second, deals.second.size)
             }.onFailure {
 

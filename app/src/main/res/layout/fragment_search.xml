@@ -11,21 +11,9 @@
     <androidx.recyclerview.widget.RecyclerView
             app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/recyclerView"
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
-
-    <TextView
-            android:id="@+id/emptyResultsTitleText"
-            android:layout_width="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/results_empty"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_height="wrap_content"/>
 
     <ProgressBar
             android:id="@+id/progress"
@@ -37,34 +25,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-    <TextView
-            android:id="@+id/errorText"
-            android:layout_width="match_parent"
-            android:layout_gravity="center"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            style="@style/TextAppearance.Design.Error"
-            tools:text="An error has happened."
-            android:gravity="center"
-            android:layout_height="wrap_content"/>
-
-    <Button
-            android:id="@+id/retry"
-            android:layout_width="wrap_content"
-            style="@style/Widget.MaterialComponents.Button"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="@string/retry"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/errorText"
-            android:layout_height="wrap_content"/>
-
-    <androidx.constraintlayout.widget.Group
-            android:id="@+id/errorGroup"
-            android:visibility="gone"
-            app:constraint_referenced_ids="errorText,retry"
-            android:layout_width="0dp"
-            android:layout_height="0dp"/>
+    <include layout="@layout/layout_error_retry_empty"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

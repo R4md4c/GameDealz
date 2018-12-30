@@ -2,6 +2,7 @@ package de.r4md4c.gamedealz.detail.item
 
 import android.annotation.SuppressLint
 import android.view.View
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
@@ -32,7 +33,7 @@ class AboutGameItem(
                     .into(image)
             }
 
-            description.text = shortDescription
+            description.text = HtmlCompat.fromHtml(shortDescription, HtmlCompat.FROM_HTML_MODE_COMPACT)
         }
 
     }

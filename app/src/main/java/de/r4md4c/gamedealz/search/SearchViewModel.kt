@@ -70,6 +70,9 @@ class SearchViewModel(
                 .onSuccess {
                     _searchResults.postValue(it)
                     stateMachineDelegate.transition(Event.OnLoadingEnded)
+                    if (it.isEmpty()) {
+                        stateMachineDelegate.transition(Event.OnShowEmpty)
+                    }
                 }
                 .onFailure {
                     Timber.e(it, "Exception happened while loading search results.")

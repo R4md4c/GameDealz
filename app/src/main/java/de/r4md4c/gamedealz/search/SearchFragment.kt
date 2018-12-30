@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.commonproviders.date.DateFormatter
@@ -19,7 +18,7 @@ import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.navigator.Navigator
-import de.r4md4c.gamedealz.common.state.SideEffect
+import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragmentArgs.fromBundle
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -53,6 +52,14 @@ class SearchFragment : BaseFragment() {
         }
     }
 
+    private val stateVisibilityHandler by inject<StateVisibilityHandler> {
+        parametersOf(this, {
+            searchView?.let { searchView ->
+                viewModel.startSearch(searchView.query.toString())
+            }
+        })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,11 +73,6 @@ class SearchFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        retry.setOnClickListener {
-            searchView?.let { searchView ->
-                viewModel.startSearch(searchView.query.toString())
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -81,33 +83,11 @@ class SearchFragment : BaseFragment() {
         }
 
         viewModel.searchResults.observe(this, Observer {
-            emptyResultsTitleText.isVisible = it.isEmpty()
             searchAdapter.submitList(it)
             searchResultsLoaded = true
         })
         viewModel.sideEffects.observe(this, Observer {
-            when (it) {
-                is SideEffect.ShowLoading -> {
-                    errorGroup.isVisible = false
-                    progress.isVisible = true
-                    recyclerView.isVisible = false
-                    emptyResultsTitleText.isVisible = false
-                }
-                is SideEffect.HideLoading -> {
-                    errorGroup.isVisible = false
-                    progress.isVisible = false
-                    recyclerView.isVisible = true
-                    emptyResultsTitleText.isVisible = viewModel.searchResults.value?.isEmpty() == true
-                    searchView?.clearFocus()
-                }
-                is SideEffect.ShowError -> {
-                    errorText.text = it.error.localizedMessage
-                    errorGroup.isVisible = true
-                    progress.isVisible = false
-                    emptyResultsTitleText.isVisible = false
-                    recyclerView.isVisible = false
-                }
-            }
+            stateVisibilityHandler.onSideEffect(it)
         })
     }
 
@@ -126,7 +106,7 @@ class SearchFragment : BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        with(recyclerView) {
+        with(content) {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(VerticalLinearDecorator(context))
             adapter = searchAdapter

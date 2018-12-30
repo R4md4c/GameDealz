@@ -1,11 +1,14 @@
 package de.r4md4c.gamedealz
 
 import android.app.Activity
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
 import de.r4md4c.gamedealz.common.navigator.AndroidNavigator
 import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.state.OnRetryClick
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
@@ -39,7 +42,7 @@ val MAIN = module {
 
     viewModel<RegionSelectionViewModel>()
 
-    viewModel { (activity: Activity) -> DetailsViewModel(get(parameters = { parametersOf(activity) }), get()) }
+    viewModel { (activity: Activity) -> DetailsViewModel(get(parameters = { parametersOf(activity) }), get(), get()) }
 
     factory<Navigator> { (activity: Activity) ->
         AndroidNavigator(
@@ -47,5 +50,7 @@ val MAIN = module {
             activity.findNavController(R.id.nav_host_fragment)
         )
     }
+
+    factory { (fragment: Fragment, onRetry: OnRetryClick) -> StateVisibilityHandler(fragment, onRetry) }
 
 }

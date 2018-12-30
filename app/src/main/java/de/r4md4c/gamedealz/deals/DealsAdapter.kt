@@ -37,6 +37,7 @@ class DealsAdapter(private val dealClick: (deal: DealModel) -> Unit) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
             R.layout.layout_deal_item -> (holder as DealItemViewHolder).onBind(getItem(position), dealClick)
+            else -> Unit
         }
     }
 
