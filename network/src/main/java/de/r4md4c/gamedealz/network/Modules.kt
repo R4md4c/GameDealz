@@ -3,8 +3,8 @@ package de.r4md4c.gamedealz.network
 import android.os.Build
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
+import de.r4md4c.gamedealz.network.json.ApplicationJsonAdapterFactory
 import de.r4md4c.gamedealz.network.repository.*
 import de.r4md4c.gamedealz.network.scrapper.JsoupScrapper
 import de.r4md4c.gamedealz.network.scrapper.Scrapper
@@ -74,7 +74,7 @@ val NETWORK = module {
 
     single {
         Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
+            .add(ApplicationJsonAdapterFactory.INSTANCE)
             .build()
     }
 

@@ -1,7 +1,9 @@
 package de.r4md4c.gamedealz.network.model.steam
 
 import com.squareup.moshi.Json
+import se.ansman.kotshi.JsonSerializable
 
+@JsonSerializable
 data class AppDetails(
     val name: String,
     @Json(name = "steam_appid") val appId: String,
