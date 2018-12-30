@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import de.r4md4c.commonproviders.extensions.resolveThemeAttribute
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
@@ -58,7 +58,7 @@ class DealsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
         setupRecyclerView()
-        swipeToRefresh.setColorSchemeColors(requireContext().resolveThemeAttribute(android.R.attr.colorAccent).data)
+        swipeToRefresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
     }
 

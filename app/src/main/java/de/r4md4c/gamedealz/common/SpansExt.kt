@@ -7,6 +7,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import androidx.annotation.ColorInt
+import androidx.core.text.inSpans
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
@@ -29,23 +30,11 @@ private fun newAndOldPriceSpannableString(
     val formattedNewPrice = newPrice.formatCurrency(currencyModel) ?: return null
 
     return SpannableStringBuilder()
-        .append(formattedOldPrice, StrikethroughSpan(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        .apply {
-            setSpan(
-                ForegroundColorSpan(oldPriceColor),
-                0,
-                formattedOldPrice.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        .inSpans(ForegroundColorSpan(oldPriceColor), StrikethroughSpan()) {
+            append(formattedOldPrice)
         }
         .append(' ')
-        .append(formattedNewPrice, StyleSpan(Typeface.BOLD), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        .apply {
-            setSpan(
-                ForegroundColorSpan(newPriceColor),
-                formattedNewPrice.length + 1,
-                length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        .inSpans(StyleSpan(Typeface.BOLD), ForegroundColorSpan(newPriceColor)) {
+            append(formattedNewPrice)
         }
 }

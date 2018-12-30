@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.text.inSpans
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
@@ -71,30 +72,20 @@ class SearchItemViewHolder(
         return SpannableStringBuilder()
             .append(resourcesProvider.getString(R.string.historical_low))
             .append(' ')
-            .append(price, StyleSpan(Typeface.BOLD), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            .apply {
-                setSpan(
-                    ForegroundColorSpan(newPriceColor),
-                    length - price.length,
-                    length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+            .inSpans(StyleSpan(Typeface.BOLD), ForegroundColorSpan(newPriceColor)) {
+                append(price)
             }
             .append(' ')
             .append(resourcesProvider.getString(R.string.on).toLowerCase())
             .append(' ')
-            .append(shop)
-            .apply {
-                val (start, end) = length - shop.length to length
-                setSpan(StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            .inSpans(StyleSpan(Typeface.BOLD)) {
+                append(shop)
             }
             .append(' ')
             .append(resourcesProvider.getString(R.string.on).toLowerCase())
             .append(' ')
-            .append(addedDate)
-            .apply {
-                val (start, end) = length - addedDate.length to length
-                setSpan(StyleSpan(Typeface.BOLD_ITALIC), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            .inSpans(StyleSpan(Typeface.BOLD_ITALIC)) {
+                append(addedDate)
             }
     }
 }

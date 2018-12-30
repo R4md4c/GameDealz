@@ -1,8 +1,10 @@
 package de.r4md4c.gamedealz.network
 
+import android.os.Build
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
 import de.r4md4c.gamedealz.network.repository.*
 import de.r4md4c.gamedealz.network.scrapper.JsoupScrapper
 import de.r4md4c.gamedealz.network.scrapper.Scrapper
@@ -11,14 +13,19 @@ import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.SearchService
 import de.r4md4c.gamedealz.network.service.steam.SteamService
 import okhttp3.Cache
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
 import java.io.File
+import javax.net.ssl.SSLContext
+
 
 val NETWORK = module {
 
@@ -47,6 +54,7 @@ val NETWORK = module {
     single {
         OkHttpClient.Builder()
             .addInterceptor(get<HttpLoggingInterceptor>())
+            .enableTls12OnPreLollipop()
             .build()
     }
 
@@ -88,4 +96,25 @@ val NETWORK = module {
 
     factory<Scrapper> { JsoupScrapper(get()) }
 
+}
+
+private fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builder {
+    if (Build.VERSION.SDK_INT in Build.VERSION_CODES.JELLY_BEAN..Build.VERSION_CODES.KITKAT) {
+        try {
+            val sc = SSLContext.getInstance("TLSv1.2")
+            sc.init(null, null, null)
+            sslSocketFactory(Tls12SocketFactory(sc.socketFactory))
+
+            val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .tlsVersions(TlsVersion.TLS_1_2).build()
+
+            val specs = arrayListOf(cs, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT)
+
+            connectionSpecs(specs)
+        } catch (exc: Exception) {
+            Timber.e(exc, "Error while setting TLS 1.2")
+        }
+    }
+
+    return this
 }

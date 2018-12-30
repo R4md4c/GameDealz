@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.stfalcon.imageviewer.StfalconImageViewer
-import de.r4md4c.commonproviders.extensions.resolveThemeAttribute
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.image.GlideApp
@@ -52,7 +52,7 @@ class ScreenshotsSectionItems(
             val circularProgressDrawable = CircularProgressDrawable(context).apply {
                 strokeWidth = resourcesProvider.getDimension(R.dimen.progress_stroke_size)
                 centerRadius = resourcesProvider.getDimension(R.dimen.progress_size)
-                setColorSchemeColors(context.resolveThemeAttribute(android.R.attr.colorAccent).data)
+                setColorSchemeColors(ContextCompat.getColor(context, R.color.colorAccent))
                 start()
             }
             GlideApp.with(view)

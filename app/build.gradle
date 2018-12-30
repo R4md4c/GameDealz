@@ -22,6 +22,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+
         buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
     }
     
@@ -40,6 +43,8 @@ androidExtensions {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation "androidx.appcompat:appcompat:${versions.androidX}"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
