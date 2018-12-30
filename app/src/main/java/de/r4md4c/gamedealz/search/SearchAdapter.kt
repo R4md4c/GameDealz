@@ -28,8 +28,9 @@ class SearchAdapter(
     }
 
     override fun onBindViewHolder(holder: SearchItemViewHolder, position: Int) {
-        holder.onBind(getItem(position))
-        holder.itemView.setOnClickListener { onClickListener(getItem(position)) }
+        val searchItem = getItem(position)
+        holder.onBind(searchItem)
+        holder.itemView.setOnClickListener { onClickListener(searchItem) }
     }
 
     override fun getItemId(position: Int): Long = getItem(position).gameId.hashCode().toLong()

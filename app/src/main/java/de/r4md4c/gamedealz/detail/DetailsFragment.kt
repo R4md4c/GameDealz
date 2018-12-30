@@ -23,6 +23,7 @@ import de.r4md4c.gamedealz.detail.item.AboutGameItem
 import de.r4md4c.gamedealz.detail.item.HeaderItem
 import de.r4md4c.gamedealz.detail.item.PriceItem
 import de.r4md4c.gamedealz.detail.item.ScreenshotsSectionItems
+import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -65,10 +66,18 @@ class DetailsFragment : BaseFragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        detailsViewModel.onSaveState()?.let { outState.putParcelable(STATE_DETAILS, it) }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (savedInstanceState == null) {
             detailsViewModel.loadPlainDetails(plainId)
+        } else {
+            savedInstanceState.getParcelable<PlainDetailsModel>(STATE_DETAILS)
+                ?.let { detailsViewModel.onRestoreState(it) }
         }
 
         detailsViewModel.sideEffect.observe(this, Observer {
@@ -113,5 +122,7 @@ class DetailsFragment : BaseFragment() {
         @JvmStatic
         fun toUri(title: String, plainId: String, buyUrl: String): Uri =
             DeepLinks.buildDetailUri(plainId, title, buyUrl)
+
+        private const val STATE_DETAILS = "state_detail"
     }
 }

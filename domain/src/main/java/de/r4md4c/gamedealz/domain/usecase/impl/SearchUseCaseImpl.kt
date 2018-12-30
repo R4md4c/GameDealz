@@ -5,14 +5,12 @@ import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import de.r4md4c.gamedealz.network.service.SearchService
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
@@ -20,7 +18,6 @@ internal class SearchUseCaseImpl(
     private val searchService: SearchService,
     private val pricesRemoteRepository: PricesRemoteRepository,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val storesRepository: StoresRepository,
     private val imageUrlUseCase: GetImageUrlUseCase
 ) : SearchUseCase {
@@ -29,7 +26,6 @@ internal class SearchUseCaseImpl(
         val searchTerm = requireNotNull(param).value
 
         val activeRegion = activeRegionUseCase()
-        val selectedStores = selectedStoresUseCase()
 
         // Execute the search query.
         val searchResults = searchService.search(searchTerm)
@@ -39,18 +35,17 @@ internal class SearchUseCaseImpl(
         if (searchResults.isEmpty()) return@withContext emptyList<SearchResultModel>()
 
         val searchResultsPlainId = searchResults.mapTo(mutableSetOf()) { it.plain.value }
-        val storeIds = selectedStores.first().mapTo(mutableSetOf()) { it.id }
 
         val prices = pricesRemoteRepository.retrievesPrices(
             searchResultsPlainId,
-            storeIds, activeRegion.regionCode, activeRegion.country.code
+            emptySet(), activeRegion.regionCode, activeRegion.country.code
         )
 
         check(isActive) { "Search was cancelled" }
 
         val historicalLow = pricesRemoteRepository.historicalLow(
             searchResultsPlainId,
-            storeIds,
+            emptySet(),
             activeRegion.regionCode,
             activeRegion.country.code
         )

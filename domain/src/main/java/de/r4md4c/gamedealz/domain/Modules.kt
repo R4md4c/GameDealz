@@ -31,5 +31,5 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<GetPlainDetails> { GetPlainDetailsImpl(get(), get(), get(), get(), get()) }
 
-    factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get(), get(), get()) }
+    factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get(), get()) }
 })

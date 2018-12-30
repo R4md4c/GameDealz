@@ -32,16 +32,7 @@ internal class GetPlainDetailsImpl(
 
         val activeRegion = activeRegionUseCase()
 
-        val deferredSteamResult: Deferred<AppDetails?>? = if (shopId == null) {
-            null
-        } else {
-            async {
-                runCatching { retrieveSteamApp(shopId) }
-                    .onFailure {
-                        Timber.w(it, "Failed to retrieve app details from steam.")
-                    }.getOrNull()
-            }
-        }
+        val deferredSteamResult: Deferred<AppDetails?>? = getSteamInfo(shopId)
 
         val steamResult = deferredSteamResult?.await()
         val shopPrices = asyncShopPricesWithHistoricalLows(plainId, activeRegion).await()
@@ -73,7 +64,7 @@ internal class GetPlainDetailsImpl(
     private suspend fun asyncShopPricesWithHistoricalLows(
         plainId: String,
         activeRegion: ActiveRegion
-    ): Deferred<Map<ShopModel, Pair<PriceModel, HistoricalLowModel?>>> = withContext(IO) {
+    ): Deferred<Map<ShopModel, PriceModelHistoricalLowModelPair>> = withContext(IO) {
         async {
             val currentPrices = pricesRemoteRepository.retrievesPrices(
                 plainIds = setOf(plainId),
@@ -96,7 +87,7 @@ internal class GetPlainDetailsImpl(
                     ?.run { historicalLowToModel(this) }
             }.groupBy { it.shop }.mapValues { it.value.first() }
 
-            shopPricesMap.mapValues { it.value to historicalLowPrices[it.key] }
+            shopPricesMap.mapValues { PriceModelHistoricalLowModelPair(it.value, historicalLowPrices[it.key]) }
 
         }
     }
@@ -120,5 +111,15 @@ internal class GetPlainDetailsImpl(
             }
         }
 
+    private suspend fun getSteamInfo(shopId: String?): Deferred<AppDetails?>? = withContext(IO) {
+        shopId?.let {
+            async {
+                runCatching { retrieveSteamApp(shopId) }
+                    .onFailure {
+                        Timber.w(it, "Failed to retrieve app details from steam.")
+                    }.getOrNull()
+            }
+        }
+    }
 
 }

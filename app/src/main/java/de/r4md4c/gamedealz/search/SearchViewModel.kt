@@ -34,7 +34,6 @@ class SearchViewModel(
             .debounce(uiScope, 500)
             .distinct()
             .consumeEach {
-                Timber.d("Actor called")
                 currentJob?.cancelAndJoin()
                 loadSearchResults(it)
             }
@@ -45,7 +44,6 @@ class SearchViewModel(
 
     private val _stateMachineSignals by lazy { MutableLiveData<SideEffect>() }
     val sideEffects: LiveData<SideEffect> by lazy { _stateMachineSignals }
-
 
     init {
         stateMachineDelegate.onTransition { _stateMachineSignals.postValue(it) }

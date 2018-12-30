@@ -1,5 +1,9 @@
 package de.r4md4c.gamedealz.domain.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+
 /**
  * A data class that aggregates the information retrieved from IsThereAnyDeal and Steam.
  *
@@ -12,13 +16,18 @@ package de.r4md4c.gamedealz.domain.model
  *  @param shortDescription the description that lies under the header image on steam.
  *  @param drmNotice The drm notice that is retrieved from steam.
  */
+@Parcelize
 data class PlainDetailsModel(
     val currencyModel: CurrencyModel,
     val plainId: String,
-    val shopPrices: Map<ShopModel, Pair<PriceModel, HistoricalLowModel?>>,
+    val shopPrices: Map<ShopModel, PriceModelHistoricalLowModelPair>,
     val screenshots: List<ScreenshotModel> = emptyList(),
     val headerImage: String? = null,
     val aboutGame: String? = null,
     val shortDescription: String? = null,
     val drmNotice: String? = null
-)
+) : Parcelable
+
+@Parcelize
+data class PriceModelHistoricalLowModelPair(val priceModel: PriceModel, val historicalLowModel: HistoricalLowModel?) :
+    Parcelable
