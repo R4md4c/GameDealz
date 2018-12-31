@@ -27,6 +27,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.DealModel
 import kotlinx.android.synthetic.main.layout_deal_item.view.*

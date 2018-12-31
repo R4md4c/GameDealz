@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.detail.item.OnScreenShotClick
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import kotlinx.android.synthetic.main.layout_screenshot_item.view.*

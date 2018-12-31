@@ -17,13 +17,21 @@
 
 package de.r4md4c.gamedealz
 
+import android.content.Context
 import androidx.multidex.MultiDexApplication
+import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
+import org.acra.ACRA
+import org.acra.annotation.AcraCore
 import org.koin.android.ext.android.startKoin
 import org.koin.android.logger.AndroidLogger
 import org.koin.log.EmptyLogger
 import timber.log.Timber
 
+@AcraCore(
+    reportSenderFactoryClasses = [AcraReportSenderFactory::class],
+    buildConfigClass = BuildConfig::class
+)
 class GameDealzApplication : MultiDexApplication() {
 
     override fun onCreate() {
@@ -35,5 +43,10 @@ class GameDealzApplication : MultiDexApplication() {
         }
 
         startKoin(this, listOf(MAIN) + DOMAIN, logger = if (isDebug) AndroidLogger() else EmptyLogger())
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        ACRA.init(this)
     }
 }

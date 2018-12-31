@@ -19,6 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+                android:name=".common.acra.ErrorActivity"
+                android:label="@string/title_submit_error_report"/>
     </application>
 
 </manifest>

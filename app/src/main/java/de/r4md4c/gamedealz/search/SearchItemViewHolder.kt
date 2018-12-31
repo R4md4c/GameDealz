@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency

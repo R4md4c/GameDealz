@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:id="@+id/toolbar"
+            android:background="?colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:layout_height="?actionBarSize"/>
+
+    <TextView
+            android:id="@+id/sorryText"
+            android:layout_width="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:text="@string/sorry"
+            android:layout_marginTop="@dimen/baseline_2x"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/baseline_2x"
+            android:layout_marginRight="@dimen/baseline_2x"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/messageWhatHappenedView"/>
+
+    <TextView
+            android:id="@+id/messageWhatHappenedView"
+            android:paddingTop="@dimen/baseline_2x"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/sorryText"
+            app:layout_constraintTop_toBottomOf="@+id/sorryText"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:text="@string/what_happened"
+            app:layout_constraintBottom_toTopOf="@+id/scrollView"/>
+
+    <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="0dp"
+            app:layout_constraintLeft_toLeftOf="@+id/sorryText"
+            app:layout_constraintRight_toRightOf="@+id/sorryText"
+            android:paddingTop="@dimen/baseline_2x"
+            app:layout_constraintTop_toBottomOf="@+id/messageWhatHappenedView"
+            app:layout_constraintBottom_toTopOf="@+id/yourCommentTitle"
+            android:layout_height="0dp">
+
+        <TextView
+                android:id="@+id/errorMessageView"
+                android:layout_width="match_parent"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                tools:text="Stacktrace here"
+                android:layout_height="wrap_content"/>
+
+    </ScrollView>
+
+    <TextView
+            android:id="@+id/yourCommentTitle"
+            app:layout_constraintLeft_toLeftOf="@+id/sorryText"
+            app:layout_constraintRight_toRightOf="@+id/sorryText"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView"
+            android:paddingTop="@dimen/baseline_2x"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:text="@string/your_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/yourCommentEditText"/>
+
+    <EditText
+            android:id="@+id/yourCommentEditText"
+            app:layout_constraintLeft_toLeftOf="@+id/sorryText"
+            app:layout_constraintRight_toRightOf="@+id/sorryText"
+            android:layout_width="0dp"
+            android:paddingTop="@dimen/baseline_2x"
+            android:hint="@string/additional_info"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintTop_toBottomOf="@+id/yourCommentTitle"
+            android:inputType=""
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/reportButton"/>
+
+    <com.google.android.material.button.MaterialButton
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/baseline_2x"
+            android:text="@string/error_report_button_text"
+            app:layout_constraintTop_toBottomOf="@+id/yourCommentEditText"
+            app:layout_constraintLeft_toLeftOf="@+id/sorryText"
+            app:layout_constraintRight_toRightOf="@+id/sorryText"
+            android:layout_height="wrap_content"
+            android:id="@+id/reportButton"
+            android:layout_marginBottom="@dimen/baseline_2x"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

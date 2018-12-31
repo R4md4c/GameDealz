@@ -29,6 +29,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.image.GlideApp
 import kotlinx.android.synthetic.main.layout_about_game_item.view.*
 
 class AboutGameItem(

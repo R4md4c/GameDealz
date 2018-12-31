@@ -29,6 +29,7 @@ import com.mikepenz.fastadapter.items.AbstractItem
 import com.stfalcon.imageviewer.StfalconImageViewer
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.detail.adapter.ScreenshotsAdapter
 import de.r4md4c.gamedealz.detail.decorator.ScreenshotsItemDecorator
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
