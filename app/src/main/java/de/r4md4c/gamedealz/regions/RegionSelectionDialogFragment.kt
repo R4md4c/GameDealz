@@ -1,3 +1,20 @@
+/*
+ * This file is part of GameDealz.
+ *
+ * GameDealz is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * GameDealz is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package de.r4md4c.gamedealz.regions
 
 import android.app.Dialog
@@ -36,8 +53,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        regionChangeSubmitted = context as? OnRegionChangeSubmitted ?:
-                throw ClassCastException("Host Context should implement OnRegionChangeSubmitted interface")
+        regionChangeSubmitted = context as? OnRegionChangeSubmitted ?: throw ClassCastException("Host Context should implement OnRegionChangeSubmitted interface")
     }
 
     override fun onDetach() {
@@ -78,6 +94,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
             submitResult()
         }
     }
+
     /**
      * A convenience method to communicate between [HomeActivity] and [RegionSelectionDialogFragment]
      */
@@ -93,8 +110,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
             }
             val selectedCountryCode =
                 viewModel.countries.value?.takeIf { country_spinner.selectedItemPosition > -1 }?.let {
-                it.countries[country_spinner.selectedItemPosition]
-            }
+                    it.countries[country_spinner.selectedItemPosition]
+                }
             (selectedRegionCode to selectedCountryCode).takeIf {
                 it.first != null && it.second != null
             }?.let {
