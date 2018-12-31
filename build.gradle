@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     project.ext {
-        minSdk = project.hasProperty('MIN_SDK') ? MIN_SDK : 19
+        minSdk = 19
         compileSdk = 28
         targetSdk = 28
     }
