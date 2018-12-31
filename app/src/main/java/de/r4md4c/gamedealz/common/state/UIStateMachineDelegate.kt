@@ -2,11 +2,10 @@ package de.r4md4c.gamedealz.common.state
 
 import com.tinder.StateMachine
 import timber.log.Timber
-import java.lang.ref.WeakReference
 
 class UIStateMachineDelegate : StateMachineDelegate {
 
-    private var transitionBlock: WeakReference<((SideEffect) -> Unit)>? = null
+    private var transitionBlock: ((SideEffect) -> Unit)? = null
 
     private val stateMachine by lazy {
         UI_STATE_MACHINE.with {
@@ -14,7 +13,7 @@ class UIStateMachineDelegate : StateMachineDelegate {
                 val validTransition = it as? StateMachine.Transition.Valid ?: return@onTransition
 
                 Timber.d("Received a new transition: $validTransition")
-                validTransition.sideEffect?.let { sideEffect -> transitionBlock?.get()?.invoke(sideEffect) }
+                validTransition.sideEffect?.let { sideEffect -> transitionBlock?.invoke(sideEffect) }
             }
         }
     }
@@ -27,6 +26,6 @@ class UIStateMachineDelegate : StateMachineDelegate {
     }
 
     override fun onTransition(block: ((SideEffect) -> Unit)) {
-        this.transitionBlock = WeakReference(block)
+        this.transitionBlock = block
     }
 }
