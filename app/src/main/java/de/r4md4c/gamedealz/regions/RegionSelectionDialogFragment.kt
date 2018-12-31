@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -49,7 +50,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
         return MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
-            .setPositiveButton(android.R.string.ok) { _, _ -> submitResult(); dismiss() }
+            .setPositiveButton(android.R.string.ok) { _, _ -> }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .create()
     }
@@ -71,8 +72,14 @@ class RegionSelectionDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        (dialog as? AlertDialog)?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+            submitResult()
+        }
+    }
     /**
-     * A convience method to communicate between [HomeActivity] and [RegionSelectionDialogFragment]
+     * A convenience method to communicate between [HomeActivity] and [RegionSelectionDialogFragment]
      */
     interface OnRegionChangeSubmitted {
 
@@ -84,7 +91,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
             val selectedRegionCode = viewModel.regions.value?.let {
                 it.regions[region_spinner.selectedItemPosition]
             }
-            val selectedCountryCode = viewModel.countries.value?.let {
+            val selectedCountryCode =
+                viewModel.countries.value?.takeIf { country_spinner.selectedItemPosition > -1 }?.let {
                 it.countries[country_spinner.selectedItemPosition]
             }
             (selectedRegionCode to selectedCountryCode).takeIf {
@@ -92,6 +100,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
             }?.let {
                 viewModel.onSubmitResult(it.first!!, it.second!!)
                 regionChangeSubmitted?.onRegionSubmitted()
+                dismiss()
             }
         }
     }

@@ -67,12 +67,20 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         viewModel.closeDrawer()
     }
 
+    override fun onBackPressed() {
+        if (drawer.isDrawerOpen) {
+            drawer.closeDrawer()
+            return
+        }
+        super.onBackPressed()
+    }
+
     private fun listenToViewModel() {
         observeCurrentRegion()
 
         observeRegionsLoading()
 
-        observeRegioNSelectionDialog()
+        observeRegionSelectionDialog()
 
         observeStoreSelections()
 
@@ -104,7 +112,7 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         })
     }
 
-    private fun observeRegioNSelectionDialog() {
+    private fun observeRegionSelectionDialog() {
         viewModel.openRegionSelectionDialog.observe(this, Observer {
             RegionSelectionDialogFragment.create(it).show(supportFragmentManager, null)
         })

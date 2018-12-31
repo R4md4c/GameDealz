@@ -85,6 +85,7 @@ class SearchFragment : BaseFragment() {
         viewModel.searchResults.observe(this, Observer {
             searchAdapter.submitList(it)
             searchResultsLoaded = true
+            searchView?.clearFocus()
         })
         viewModel.sideEffects.observe(this, Observer {
             stateVisibilityHandler.onSideEffect(it)

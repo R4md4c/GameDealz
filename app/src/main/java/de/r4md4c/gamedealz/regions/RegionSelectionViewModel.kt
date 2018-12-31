@@ -40,7 +40,8 @@ class RegionSelectionViewModel(
             val allRegions = getRegionsUseCase().filter { it.countries.isNotEmpty() }
 
             _regions.postValue(
-                RegionSelectionModel(allRegions.map { it.regionCode },
+                RegionSelectionModel(
+                    allRegions.map { it.regionCode.toUpperCase() },
                     restoreRegionIndex ?: allRegions.indexOfFirst { r -> r.regionCode == activeRegion.regionCode })
             )
 
@@ -48,7 +49,7 @@ class RegionSelectionViewModel(
     }
 
     fun requestCountriesUnderRegion(activeRegion: ActiveRegion, restoreCountryIndex: Int?) {
-        loadCountries(activeRegion.regionCode) {
+        loadCountries(activeRegion.regionCode.toLowerCase()) {
             _countries.postValue(
                 CountrySelectionModel(it.map { model -> model.displayName() },
                     restoreCountryIndex ?: it.indexOfFirst { c -> c.code == activeRegion.country.code })
@@ -57,8 +58,8 @@ class RegionSelectionViewModel(
     }
 
     fun onRegionSelected(regionCode: String) {
-        loadCountries(regionCode) {
-            _countries.postValue(CountrySelectionModel(it.map { model -> model.displayName() }, null))
+        loadCountries(regionCode.toLowerCase()) {
+            _countries.postValue(CountrySelectionModel(it.map { model -> model.displayName() }, 0))
         }
     }
 
@@ -67,7 +68,14 @@ class RegionSelectionViewModel(
 
         // Launching to the global scope so that we don't get tied to this VM's lifecycle.
         GlobalScope.launch {
-            changeActiveRegionUseCase(TypeParameter(ChangeActiveRegionParameter(regionCode, countryModel.code)))
+            changeActiveRegionUseCase(
+                TypeParameter(
+                    ChangeActiveRegionParameter(
+                        regionCode.toLowerCase(),
+                        countryModel.code
+                    )
+                )
+            )
         }
     }
 

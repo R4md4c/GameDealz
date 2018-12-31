@@ -45,13 +45,13 @@ class HomeViewModel(
 
         val activeRegion = getCurrentActiveRegion()
 
-        _currentRegion.postValue(activeRegion)
+        _currentRegion.postValue(activeRegion.copy(regionCode = activeRegion.regionCode.toUpperCase()))
 
         listenForStoreChanges(activeRegion)
 
         uiScope.launch {
             onActiveRegionChange.activeRegionChange().consumeEach {
-                _currentRegion.postValue(it)
+                _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
             }
         }
     }
