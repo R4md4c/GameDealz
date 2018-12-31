@@ -5,6 +5,13 @@ to retrieve/search for deals and compares prices.
 
 **Disclaimer**: GameDealz is not affiliated in any way with [IsThereAnyDeals.com](https://isthereanydeal.com/).
 
+## Screenshots
+
+[<img src="screenshots/screenshot1.png" width=260>](screenshots/screenshot1.png)
+[<img src="screenshots/screenshot2.png" width=260>](screenshots/screenshot2.png)
+[<img src="screenshots/screenshot3.png" width=260>](screenshots/screenshot3.png)
+[<img src="screenshots/screenshot4.png" width=260>](screenshots/screenshot4.png)
+
 ## Features
 
 * List current on going deals according to shops and regions.
