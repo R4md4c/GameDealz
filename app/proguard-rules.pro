@@ -23,3 +23,4 @@
 -keepclassmembers class * extends androidx.lifecycle.ViewModel {
     <init>(...);
 }
+-keep class androidx.appcompat.graphics.** { *; }
