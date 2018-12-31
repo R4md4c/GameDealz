@@ -20,5 +20,5 @@ interface StateMachineDelegate {
     /**
      * Callback when transition changes.
      */
-    fun onTransition(block: ((SideEffect) -> Unit)?)
+    fun onTransition(block: ((SideEffect) -> Unit))
 }

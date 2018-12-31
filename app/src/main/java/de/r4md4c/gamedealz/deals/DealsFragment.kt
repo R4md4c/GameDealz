@@ -24,6 +24,7 @@ import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
@@ -31,7 +32,7 @@ class DealsFragment : BaseFragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
-    private val dealsViewModel by inject<DealsViewModel> { parametersOf(requireActivity()) }
+    private val dealsViewModel by viewModel<DealsViewModel> { parametersOf(requireActivity()) }
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
         parametersOf(this, { dealsViewModel.onRefresh() })

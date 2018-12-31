@@ -52,10 +52,4 @@ class DealsViewModel(
     fun onRefresh() {
         deals.value?.dataSource?.invalidate()
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        uiStateMachineDelegate.onTransition(null)
-    }
-
 }

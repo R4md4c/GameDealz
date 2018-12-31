@@ -22,18 +22,26 @@ import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module.module
 
-const val SCOPE_FRAGMENT = "fragment_scope"
-
 val MAIN = module {
 
-    scope<DataSource.Factory<Int, DealModel>>(SCOPE_FRAGMENT) { DealsDataSourceFactory(get(), get()) }
+    factory<DataSource.Factory<Int, DealModel>> { (stateMachineDelegate: StateMachineDelegate) ->
+        DealsDataSourceFactory(get(), stateMachineDelegate)
+    }
 
-    scope<StateMachineDelegate>(SCOPE_FRAGMENT) {
+    factory<StateMachineDelegate> {
         UIStateMachineDelegate()
     }
 
-    scope(SCOPE_FRAGMENT) {
-        DealsViewModel(get(), get(), get())
+    factory<Navigator> { (activity: Activity) ->
+        AndroidNavigator(
+            activity,
+            activity.findNavController(R.id.nav_host_fragment)
+        )
+    }
+
+    viewModel {
+        val stateMachineDelegate = get<StateMachineDelegate>()
+        DealsViewModel(get(parameters = { parametersOf(stateMachineDelegate) }), get(), stateMachineDelegate)
     }
 
     viewModel<HomeViewModel>()
@@ -43,13 +51,6 @@ val MAIN = module {
     viewModel<RegionSelectionViewModel>()
 
     viewModel { (activity: Activity) -> DetailsViewModel(get(parameters = { parametersOf(activity) }), get(), get()) }
-
-    factory<Navigator> { (activity: Activity) ->
-        AndroidNavigator(
-            activity,
-            activity.findNavController(R.id.nav_host_fragment)
-        )
-    }
 
     factory { (fragment: Fragment, onRetry: OnRetryClick) -> StateVisibilityHandler(fragment, onRetry) }
 
