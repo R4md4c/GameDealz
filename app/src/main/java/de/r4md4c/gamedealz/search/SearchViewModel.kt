@@ -19,6 +19,8 @@ package de.r4md4c.gamedealz.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.Default
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event
@@ -28,8 +30,6 @@ import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.actor
@@ -46,7 +46,7 @@ class SearchViewModel(
 
     private var currentJob: Job? = null
 
-    private val queryChannel = uiScope.actor<String>(Dispatchers.Default) {
+    private val queryChannel = uiScope.actor<String>(Default) {
         filter { it.isNotBlank() }
             .debounce(uiScope, 500)
             .distinct()

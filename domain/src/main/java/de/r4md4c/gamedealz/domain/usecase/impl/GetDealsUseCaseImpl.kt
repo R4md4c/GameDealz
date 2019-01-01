@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
@@ -28,7 +29,6 @@ import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.network.repository.DealsRemoteRepository
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.withContext
 

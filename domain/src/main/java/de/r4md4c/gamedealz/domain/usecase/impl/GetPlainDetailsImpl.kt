@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
@@ -29,7 +30,6 @@ import de.r4md4c.gamedealz.network.model.steam.AppDetails
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import de.r4md4c.gamedealz.network.repository.SteamRemoteRepository
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber

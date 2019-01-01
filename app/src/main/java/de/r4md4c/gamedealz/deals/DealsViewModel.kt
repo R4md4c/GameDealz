@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.Config
 import androidx.paging.DataSource
 import androidx.paging.toLiveData
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.BuildConfig
 import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.state.SideEffect
@@ -28,7 +29,6 @@ import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.drop
 import kotlinx.coroutines.launch

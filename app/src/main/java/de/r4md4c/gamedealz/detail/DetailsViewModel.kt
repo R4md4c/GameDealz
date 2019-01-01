@@ -19,6 +19,8 @@ package de.r4md4c.gamedealz.detail
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.Default
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event
@@ -29,9 +31,6 @@ import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import kotlinx.android.parcel.Parcelize
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -103,7 +102,7 @@ class DetailsViewModel(
             _screenshots.postValue(details.screenshots)
         }
 
-        withContext(Dispatchers.Default) {
+        withContext(Default) {
             // TODO: Refactor this ugly piece of unreadable code.
             details.shopPrices.map { it.key }
                 .zip(details.shopPrices.map { it.value.priceModel })

@@ -17,12 +17,12 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.toStoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.withContext

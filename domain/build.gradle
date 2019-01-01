@@ -44,6 +44,7 @@ dependencies {
     implementation project(':network')
     implementation "org.koin:koin-core:${versions.koin}"
 
+    testImplementation project(':commonproviders')
     testImplementation "org.koin:koin-test:${versions.koin}"
     testImplementation "com.google.truth:truth:${versions.truth}"
     testImplementation 'junit:junit:4.12'
