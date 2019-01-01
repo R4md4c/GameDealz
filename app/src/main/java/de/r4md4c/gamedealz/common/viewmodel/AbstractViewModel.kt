@@ -19,15 +19,15 @@ package de.r4md4c.gamedealz.common.viewmodel
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class AbstractViewModel : ViewModel() {
 
     private val viewModelJob = SupervisorJob()
 
-    protected val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    protected val uiScope = CoroutineScope(GameDealzDispatchers.Main + viewModelJob)
 
     @CallSuper
     override fun onCleared() {

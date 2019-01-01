@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.deals.datasource
 
 import androidx.paging.PositionalDataSource
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.State
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
@@ -25,7 +26,6 @@ import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch

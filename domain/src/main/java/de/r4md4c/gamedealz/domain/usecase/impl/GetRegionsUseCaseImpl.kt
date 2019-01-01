@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.entity.*
 import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
@@ -24,7 +25,6 @@ import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel
 import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.withContext
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository

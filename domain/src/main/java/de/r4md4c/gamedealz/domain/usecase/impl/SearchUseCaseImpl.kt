@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
@@ -27,7 +28,6 @@ import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import de.r4md4c.gamedealz.network.service.SearchService
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 

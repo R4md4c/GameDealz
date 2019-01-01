@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.repository.StoresRepository
@@ -26,7 +27,6 @@ import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionParameter
 import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
