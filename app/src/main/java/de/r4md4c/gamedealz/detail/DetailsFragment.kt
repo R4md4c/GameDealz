@@ -74,6 +74,7 @@ class DetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         NavigationUI.setupWithNavController(collapsing_toolbar, toolbar, findNavController())
+        stateVisibilityHandler.onViewCreated()
         setupTitle()
         setupFab()
         content.apply {

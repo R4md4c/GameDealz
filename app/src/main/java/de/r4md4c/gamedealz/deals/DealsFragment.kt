@@ -76,6 +76,7 @@ class DealsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
         setupRecyclerView()
+        stateVisibilityHandler.onViewCreated()
         swipeToRefresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
     }

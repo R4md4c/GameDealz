@@ -33,9 +33,6 @@ class StateVisibilityHandler(
     private val fragment: Fragment,
     private val onRetryClick: OnRetryClick
 ) {
-    init {
-        fragment.retry?.setOnClickListener { onRetryClick() }
-    }
 
     private val content: View?
         get() = fragment.view?.findViewById(R.id.content)
@@ -45,6 +42,10 @@ class StateVisibilityHandler(
 
     private val swipeToRefresh: SwipeRefreshLayout?
         get() = fragment.view?.findViewById(R.id.swipeToRefresh) as? SwipeRefreshLayout
+
+    fun onViewCreated() {
+        fragment.retry?.setOnClickListener { onRetryClick() }
+    }
 
     fun onSideEffect(sideEffect: SideEffect) {
         with(fragment) {

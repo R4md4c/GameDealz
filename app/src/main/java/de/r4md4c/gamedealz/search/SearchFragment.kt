@@ -90,6 +90,7 @@ class SearchFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        stateVisibilityHandler.onViewCreated()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
