@@ -12,7 +12,9 @@ to retrieve/search for deals and compare prices.
 [<img src="screenshots/screenshot3.png" width=260>](screenshots/screenshot3.png)
 [<img src="screenshots/screenshot4.png" width=260>](screenshots/screenshot4.png)
 
-## Features
+[![GameDealz on the Google Play Store](https://developer.android.com/images/brand/en_app_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=de.r4md4c.gamedealz)
+
+## Features 
 
 * List current on going deals according to shops and regions.
 * Compare prices and historical lows across different shops.
