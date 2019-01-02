@@ -16,6 +16,7 @@
     <string name="screenshots">Screenshots</string>
     <string name="shop">Shop</string>
     <string name="about_game">About the Game</string>
+    <string name="add_to_watch_list">Add to watch list</string>
     <string name="filter_sort_by">Sort by</string>
     <!-- Error Activity -->
     <string name="sorry">Sorry, that should not have happened.</string>
@@ -23,4 +24,7 @@
     <string name="your_comment">Your comment:</string>
     <string name="additional_info">Additional Information…</string>
     <string name="error_report_button_text">Report via E-Mail</string>
+
+    <string name="notify_when_price_reaches">Notify me when the price reaches below</string>
+    <string name="notify_when_price_reaches_subtitle">A notification will be displayed when the price reaches the specified threshold.</string>
 </resources>

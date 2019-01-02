@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.home
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.gamedealz.common.IDispatchers
@@ -87,8 +88,8 @@ class HomeViewModel(
         _closeDrawer.postValue(Unit)
     }
 
-    fun onNavigateTo(navigator: Navigator, uri: String) {
-        navigator.navigate(uri)
+    fun onNavigateTo(navigator: Navigator, uri: String, extras: Parcelable? = null) {
+        navigator.navigate(uri, extras)
     }
 
     fun onRegionChangeClicked() =

@@ -35,7 +35,7 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/buyFab"
+            android:id="@+id/addToWatchList"
             android:layout_width="wrap_content"
             app:layout_anchor="@+id/appbar"
             app:backgroundTint="?colorAccent"
@@ -44,7 +44,8 @@
             app:layout_anchorGravity="end|bottom"
             app:fabSize="normal"
             app:tint="@android:color/white"
-            app:srcCompat="@drawable/ic_shopping_cart"
+            app:srcCompat="@drawable/ic_add_to_watch_list"
+            android:contentDescription="@string/add_to_watch_list"
             android:layout_height="wrap_content"/>
 
 

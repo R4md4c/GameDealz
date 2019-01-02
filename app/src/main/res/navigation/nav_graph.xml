@@ -47,6 +47,10 @@
         <argument
                 android:name="buy_url"
                 app:argType="string"/>
+        <argument
+                android:name="price_model"
+                app:argType="de.r4md4c.gamedealz.domain.model.PriceModel"
+                />
 
     </fragment>
     <action

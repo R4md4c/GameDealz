@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.home
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -74,8 +75,8 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         drawer.saveInstanceState(outState)
     }
 
-    override fun onFragmentInteraction(uri: Uri) {
-        viewModel.onNavigateTo(navigator, uri.toString())
+    override fun onFragmentInteraction(uri: Uri, extras: Parcelable?) {
+        viewModel.onNavigateTo(navigator, uri.toString(), extras)
     }
 
     override fun onSupportNavigateUp(): Boolean =

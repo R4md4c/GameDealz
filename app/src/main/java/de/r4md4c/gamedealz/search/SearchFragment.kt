@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.search
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -176,7 +177,7 @@ class SearchFragment : BaseFragment() {
     }
 
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri)
+        fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
     }
 
     companion object {

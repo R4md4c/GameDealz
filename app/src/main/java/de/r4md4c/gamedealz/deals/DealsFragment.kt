@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.deals
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -38,6 +39,7 @@ import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
+import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
@@ -118,7 +120,7 @@ class DealsFragment : BaseFragment() {
     }
 
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri)
+        fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
     }
 
     private fun setupRecyclerView() {
@@ -131,7 +133,7 @@ class DealsFragment : BaseFragment() {
     private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {
 
         override fun onQueryTextSubmit(query: String): Boolean {
-            listener?.onFragmentInteraction(SearchFragment.toUri(query))
+            listener?.onFragmentInteraction(SearchFragment.toUri(query), null)
             searchMenuItem.collapseActionView()
             return true
         }
