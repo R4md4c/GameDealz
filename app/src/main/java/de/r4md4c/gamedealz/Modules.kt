@@ -34,6 +34,7 @@ import de.r4md4c.gamedealz.detail.DetailsViewModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
+import de.r4md4c.gamedealz.watchlist.AddToWatchListViewModel
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.core.parameter.parametersOf
@@ -66,6 +67,8 @@ val MAIN = module {
     viewModel<SearchViewModel>()
 
     viewModel<RegionSelectionViewModel>()
+
+    viewModel<AddToWatchListViewModel>()
 
     viewModel { (activity: Activity) ->
         DetailsViewModel(

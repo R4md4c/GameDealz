@@ -21,14 +21,53 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.PriceModel
+import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
+    private val addToWatchListViewModel by viewModel<AddToWatchListViewModel>()
+
+    private val title: String by lazy { arguments!!.getString(ARG_TITLE) }
+
+    private val plainId: String by lazy { arguments!!.getString(ARG_PLAIN_ID) }
+
+    private val priceModel: PriceModel by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        text1.text = priceModel.newPrice.toString()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        addToWatchListViewModel.loadStores().observe(this, Observer {
+            storesChipGroup.removeAllViews()
+
+            it.map { store ->
+                (LayoutInflater.from(activity).inflate(
+                    R.layout.layout_add_to_watch_list_chip_item,
+                    storesChipGroup,
+                    false
+                ) as Chip).also { chip ->
+                    chip.text = store.name
+                    chip.tag = store.id
+                    chip.isChecked = true
+                    storesChipGroup.addView(chip)
+                }
+            }
+        })
+    }
 
     companion object {
         fun newInstance(plainId: String, title: String, priceModel: PriceModel) = AddToWatchListDialog().apply {
