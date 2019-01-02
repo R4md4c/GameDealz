@@ -15,24 +15,24 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.coroutines
+package de.r4md4c.gamedealz.test
 
+import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
-interface IDispatchers {
+/**
+ * A Singleton that will be used primarily during JUnit tests.
+ * It resorts back to using the original Coroutines Main dispatcher instead of the default Android
+ */
+object TestDispatchers : IDispatchers {
 
-    /**
-     * Use it for operations on main thread.
-     */
-    val Main: CoroutineDispatcher
+    override val Main: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 
-    /**
-     *  Unbounded thread pool.
-     */
-    val IO: CoroutineDispatcher
+    override val IO: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 
-    /**
-     * Bounded thread pool by the number of CPU cores.
-     */
-    val Default: CoroutineDispatcher
+    override val Default: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 }

@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import de.r4md4c.commonproviders.coroutines.IDispatchers
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event

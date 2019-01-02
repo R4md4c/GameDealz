@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.regions
 import androidx.collection.ArrayMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import de.r4md4c.commonproviders.coroutines.IDispatchers
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion

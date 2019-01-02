@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.Config
 import androidx.paging.DataSource
 import androidx.paging.toLiveData
-import de.r4md4c.commonproviders.coroutines.IDispatchers
 import de.r4md4c.gamedealz.BuildConfig
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate

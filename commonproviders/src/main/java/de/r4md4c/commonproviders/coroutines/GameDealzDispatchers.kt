@@ -17,6 +17,7 @@
 
 package de.r4md4c.commonproviders.coroutines
 
+import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.MainCoroutineDispatcher

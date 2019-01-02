@@ -19,8 +19,7 @@ package de.r4md4c.gamedealz.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import de.r4md4c.commonproviders.coroutines.IDispatchers
-import de.r4md4c.gamedealz.common.GlobalExceptionHandler
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
@@ -63,7 +62,7 @@ class HomeViewModel(
     val onError: LiveData<String> by lazy { _onError }
 
     fun init() {
-        uiScope.launch {
+        uiScope.launch(dispatchers.Default) {
             kotlin.runCatching {
                 _regionsLoading.postValue(true)
 
@@ -77,17 +76,11 @@ class HomeViewModel(
         listenForRegionChanges()
     }
 
-    private fun listenForRegionChanges() =
-        uiScope.launch(dispatchers.IO) {
-            kotlin.runCatching {
-                onActiveRegionChange.activeRegionChange().consumeEach {
-                    _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
-                }
-            }.onFailure(onFailureHandler)
-        }
 
-    fun onStoreSelected(store: StoreModel) = uiScope.launch(GlobalExceptionHandler("Failed to select a store")) {
-        toggleStoresUseCase(CollectionParameter(setOf(store)))
+    fun onStoreSelected(store: StoreModel) = uiScope.launch {
+        kotlin.runCatching {
+            toggleStoresUseCase(CollectionParameter(setOf(store)))
+        }.onFailure(onFailureHandler)
     }
 
     fun closeDrawer() {
@@ -106,6 +99,15 @@ class HomeViewModel(
             }.onFailure(onFailureHandler)
         }
 
+    private fun listenForRegionChanges() =
+        uiScope.launch(dispatchers.IO) {
+            kotlin.runCatching {
+                onActiveRegionChange.activeRegionChange().consumeEach {
+                    _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
+                }
+            }.onFailure(onFailureHandler)
+        }
+
     private fun listenForStoreChanges(activeRegion: ActiveRegion) = uiScope.launch(dispatchers.IO) {
         kotlin.runCatching {
             getStoresUseCase(TypeParameter(activeRegion)).consumeEach {
@@ -115,7 +117,7 @@ class HomeViewModel(
     }
 
     private val onFailureHandler = { throwable: Throwable ->
-        _onError.postValue(throwable.localizedMessage)
+        _onError.postValue(throwable.localizedMessage ?: throwable.message)
         Timber.e(throwable)
     }
 }

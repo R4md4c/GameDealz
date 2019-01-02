@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.detail
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
-import de.r4md4c.commonproviders.coroutines.IDispatchers
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event

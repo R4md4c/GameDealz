@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.common.viewmodel
 
 import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
-import de.r4md4c.commonproviders.coroutines.IDispatchers
+import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
