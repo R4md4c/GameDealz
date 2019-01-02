@@ -39,22 +39,17 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val priceModel: PriceModel by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        text1.text = priceModel.newPrice.toString()
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        addToWatchListViewModel.loadStores().observe(this, Observer {
+
+        addToWatchListViewModel.loadStores().observe(this, Observer { stores ->
             storesChipGroup.removeAllViews()
 
-            it.map { store ->
+            stores.map { store ->
                 (LayoutInflater.from(activity).inflate(
                     R.layout.layout_add_to_watch_list_chip_item,
                     storesChipGroup,
@@ -62,8 +57,20 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                 ) as Chip).also { chip ->
                     chip.text = store.name
                     chip.tag = store.id
+                    chip.id = Math.abs(store.id.hashCode())
                     chip.isChecked = true
                     storesChipGroup.addView(chip)
+                }
+            }
+
+            storeAllSwitch.setOnCheckedChangeListener { _, isChecked ->
+                if (!isChecked) {
+                    storesChipGroup.clearCheck()
+                } else {
+                    stores.forEach {
+                        (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked = true
+                    }
+
                 }
             }
         })
