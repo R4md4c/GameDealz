@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
+import de.r4md4c.commonproviders.coroutines.IDispatchers
 import de.r4md4c.gamedealz.common.GlobalExceptionHandler
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigator.Navigator
@@ -34,13 +34,15 @@ import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class HomeViewModel(
+    private val dispatchers: IDispatchers,
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val toggleStoresUseCase: ToggleStoresUseCase
-) : AbstractViewModel() {
+) : AbstractViewModel(dispatchers) {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
     val currentRegion: LiveData<ActiveRegion> by lazy { _currentRegion }
@@ -57,21 +59,32 @@ class HomeViewModel(
     private val _closeDrawer by lazy { MutableLiveData<Unit>() }
     val closeDrawer: LiveData<Unit> by lazy { _closeDrawer }
 
-    fun init() = uiScope.launch(GlobalExceptionHandler("Failure during init()")) {
-        _regionsLoading.postValue(true)
+    private val _onError by lazy { SingleLiveEvent<String>() }
+    val onError: LiveData<String> by lazy { _onError }
 
-        val activeRegion = getCurrentActiveRegion()
-
-        _currentRegion.postValue(activeRegion.copy(regionCode = activeRegion.regionCode.toUpperCase()))
-
-        listenForStoreChanges(activeRegion)
-
+    fun init() {
         uiScope.launch {
-            onActiveRegionChange.activeRegionChange().consumeEach {
-                _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
-            }
+            kotlin.runCatching {
+                _regionsLoading.postValue(true)
+
+                getCurrentActiveRegion().also { activeRegion ->
+                    _currentRegion.postValue(activeRegion.copy(regionCode = activeRegion.regionCode.toUpperCase()))
+                }
+            }.onSuccess { listenForStoreChanges(it) }
+                .onFailure(onFailureHandler)
         }
+
+        listenForRegionChanges()
     }
+
+    private fun listenForRegionChanges() =
+        uiScope.launch(dispatchers.IO) {
+            kotlin.runCatching {
+                onActiveRegionChange.activeRegionChange().consumeEach {
+                    _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
+                }
+            }.onFailure(onFailureHandler)
+        }
 
     fun onStoreSelected(store: StoreModel) = uiScope.launch(GlobalExceptionHandler("Failed to select a store")) {
         toggleStoresUseCase(CollectionParameter(setOf(store)))
@@ -85,17 +98,24 @@ class HomeViewModel(
         navigator.navigate(uri)
     }
 
-    fun onRegionChangeClicked() {
-        uiScope.launch(IO) {
-            val activeRegion = getCurrentActiveRegion()
-            _openRegionSelectionDialog.postValue(activeRegion)
+    fun onRegionChangeClicked() =
+        uiScope.launch(dispatchers.IO) {
+            kotlin.runCatching {
+                val activeRegion = getCurrentActiveRegion()
+                _openRegionSelectionDialog.postValue(activeRegion)
+            }.onFailure(onFailureHandler)
         }
+
+    private fun listenForStoreChanges(activeRegion: ActiveRegion) = uiScope.launch(dispatchers.IO) {
+        kotlin.runCatching {
+            getStoresUseCase(TypeParameter(activeRegion)).consumeEach {
+                _stores.postValue(it)
+            }
+        }.onFailure(onFailureHandler)
     }
 
-    private fun listenForStoreChanges(activeRegion: ActiveRegion) = uiScope.launch(IO) {
-        getStoresUseCase(TypeParameter(activeRegion)).consumeEach {
-            _stores.postValue(it)
-        }
+    private val onFailureHandler = { throwable: Throwable ->
+        _onError.postValue(throwable.localizedMessage)
+        Timber.e(throwable)
     }
-
 }

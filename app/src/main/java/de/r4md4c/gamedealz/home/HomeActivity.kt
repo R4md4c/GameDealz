@@ -30,10 +30,11 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigator.Navigator
-import de.r4md4c.gamedealz.common.viewholder.ProgressDrawerItem
 import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.displayName
+import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
+import de.r4md4c.gamedealz.home.item.ProgressDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import org.koin.android.ext.android.inject
@@ -103,6 +104,8 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
 
         observeCloseDrawer()
 
+        observeErrors()
+
         viewModel.init()
     }
 
@@ -166,6 +169,15 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         viewModel.currentRegion.observe(this, Observer {
             accountHeader.setSelectionFirstLine(it.regionCode)
             accountHeader.setSelectionSecondLine(it.country.displayName())
+        })
+    }
+
+    private fun observeErrors() {
+        viewModel.onError.observe(this, Observer {
+            drawer.removeAllItems()
+            drawer.addItem(ErrorDrawerItem(it) {
+                viewModel.init()
+            })
         })
     }
 }

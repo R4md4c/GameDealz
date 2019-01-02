@@ -15,17 +15,28 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewholder
+package de.r4md4c.gamedealz.home.item
 
+import android.annotation.SuppressLint
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.state.OnRetryClick
+import kotlinx.android.synthetic.main.layout_drawer_retry.view.*
 
-class ProgressDrawerItem : PrimaryDrawerItem() {
+class ErrorDrawerItem(
+    private val retryText: String,
+    private val onRetryClick: OnRetryClick
+) : PrimaryDrawerItem() {
 
-    override fun getLayoutRes(): Int = R.layout.item_progress
+    override fun getLayoutRes(): Int = R.layout.layout_drawer_retry
 
-    override fun getType(): Int = R.id.progress_item
+    @SuppressLint("ResourceType")
+    override fun getType(): Int = R.layout.layout_drawer_retry
 
-    override fun bindView(viewHolder: ViewHolder?, payloads: MutableList<Any?>) {
+    override fun bindView(viewHolder: ViewHolder, payloads: MutableList<Any?>) {
+        with(viewHolder.itemView) {
+            errorText.text = retryText
+            retry.setOnClickListener { onRetryClick() }
+        }
     }
 }

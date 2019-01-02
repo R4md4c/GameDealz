@@ -15,23 +15,24 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewmodel
+package de.r4md4c.commonproviders.coroutines
 
-import androidx.annotation.CallSuper
-import androidx.lifecycle.ViewModel
-import de.r4md4c.commonproviders.coroutines.IDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.CoroutineDispatcher
 
-abstract class AbstractViewModel(dispatchers: IDispatchers) : ViewModel() {
+interface IDispatchers {
 
-    private val viewModelJob = SupervisorJob()
+    /**
+     * Use it for operations on main thread.
+     */
+    val Main: CoroutineDispatcher
 
-    protected val uiScope = CoroutineScope(dispatchers.Main + viewModelJob)
+    /**
+     *  Unbounded thread pool.
+     */
+    val IO: CoroutineDispatcher
 
-    @CallSuper
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
-    }
+    /**
+     * Bounded thread pool by the number of CPU cores.
+     */
+    val Default: CoroutineDispatcher
 }

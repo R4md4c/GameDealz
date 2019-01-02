@@ -58,7 +58,7 @@ val MAIN = module {
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()
-        DealsViewModel(get(parameters = { parametersOf(stateMachineDelegate) }), get(), stateMachineDelegate)
+        DealsViewModel(get(), get(parameters = { parametersOf(stateMachineDelegate) }), get(), stateMachineDelegate)
     }
 
     viewModel<HomeViewModel>()
@@ -67,7 +67,14 @@ val MAIN = module {
 
     viewModel<RegionSelectionViewModel>()
 
-    viewModel { (activity: Activity) -> DetailsViewModel(get(parameters = { parametersOf(activity) }), get(), get()) }
+    viewModel { (activity: Activity) ->
+        DetailsViewModel(
+            get(),
+            get(parameters = { parametersOf(activity) }),
+            get(),
+            get()
+        )
+    }
 
     factory { (fragment: Fragment, onRetry: OnRetryClick) -> StateVisibilityHandler(fragment, onRetry) }
 

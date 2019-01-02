@@ -19,6 +19,8 @@ package de.r4md4c.commonproviders
 
 import de.r4md4c.commonproviders.configuration.AndroidConfigurationImpl
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
+import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers
+import de.r4md4c.commonproviders.coroutines.IDispatchers
 import de.r4md4c.commonproviders.date.AndroidDateFormatter
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.date.DateProvider
@@ -31,6 +33,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 
 val COMMON_PROVIDERS = module {
+
+    single<IDispatchers> { GameDealzDispatchers }
 
     factory<ConfigurationProvider> { AndroidConfigurationImpl(androidContext()) }
 
