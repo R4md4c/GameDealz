@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.regions
 import androidx.collection.ArrayMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
@@ -37,10 +37,11 @@ data class RegionSelectionModel(val regions: List<String>, val activeRegionIndex
 data class CountrySelectionModel(val countries: List<String>, val activeCountryIndex: Int?)
 
 class RegionSelectionViewModel(
+    private val dispatchers: IDispatchers,
     private val countriesUnderRegionUseCase: GetCountriesUnderRegionUseCase,
     private val getRegionsUseCase: GetRegionsUseCase,
     private val changeActiveRegionUseCase: ChangeActiveRegionUseCase
-) : AbstractViewModel() {
+) : AbstractViewModel(dispatchers) {
 
     private val displayNameToCountryCodeMap: MutableMap<String, CountryModel> by lazy { ArrayMap<String, CountryModel>() }
 
@@ -51,7 +52,7 @@ class RegionSelectionViewModel(
     val countries: LiveData<CountrySelectionModel> by lazy { _countries }
 
     fun requestRegions(activeRegion: ActiveRegion, restoreRegionIndex: Int?) {
-        uiScope.launch(IO) {
+        uiScope.launch(dispatchers.IO) {
 
             //Filter out regions that have no countries
             val allRegions = getRegionsUseCase().filter { it.countries.isNotEmpty() }
@@ -97,7 +98,7 @@ class RegionSelectionViewModel(
     }
 
     private inline fun loadCountries(regionCode: String, crossinline block: (List<CountryModel>) -> Unit) {
-        uiScope.launch(IO) {
+        uiScope.launch(dispatchers.IO) {
             val countries = countriesUnderRegionUseCase(TypeParameter(regionCode))
             saveDisplayNames(countries)
             block(countries)

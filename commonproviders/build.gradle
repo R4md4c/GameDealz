@@ -38,6 +38,7 @@ dependencies {
     implementation "org.koin:koin-android:${versions.koin}"
     implementation "org.koin:koin-core:${versions.koin}"
 
+    implementation project(':common')
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
     testImplementation "org.koin:koin-test:${versions.koin}"
     testImplementation "com.google.truth:truth:${versions.truth}"

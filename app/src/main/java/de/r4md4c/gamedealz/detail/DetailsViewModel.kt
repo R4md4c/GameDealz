@@ -19,8 +19,7 @@ package de.r4md4c.gamedealz.detail
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.Default
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event
@@ -45,10 +44,11 @@ data class PriceDetails(
 data class GameInformation(val headerImage: String?, val shortDescription: String)
 
 class DetailsViewModel(
+    private val dispatchers: IDispatchers,
     private val navigator: Navigator,
     private val getPlainDetails: GetPlainDetails,
     private val stateMachineDelegate: StateMachineDelegate
-) : AbstractViewModel() {
+) : AbstractViewModel(dispatchers) {
 
     private var loadedPlainDetailsModel: PlainDetailsModel? = null
 
@@ -73,14 +73,14 @@ class DetailsViewModel(
     }
 
     fun onRestoreState(plainDetailsModel: PlainDetailsModel) {
-        uiScope.launch(Default) {
+        uiScope.launch(dispatchers.Default) {
             postDetailsInfo(plainDetailsModel)
         }
     }
 
     fun onSaveState(): PlainDetailsModel? = loadedPlainDetailsModel
 
-    fun loadPlainDetails(plainId: String) = uiScope.launch(IO) {
+    fun loadPlainDetails(plainId: String) = uiScope.launch(dispatchers.IO) {
         try {
             stateMachineDelegate.transition(Event.OnLoadingStart)
 
@@ -102,7 +102,7 @@ class DetailsViewModel(
             _screenshots.postValue(details.screenshots)
         }
 
-        withContext(Default) {
+        withContext(dispatchers.Default) {
             // TODO: Refactor this ugly piece of unreadable code.
             details.shopPrices.map { it.key }
                 .zip(details.shopPrices.map { it.value.priceModel })

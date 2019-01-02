@@ -21,8 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.Config
 import androidx.paging.DataSource
 import androidx.paging.toLiveData
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.BuildConfig
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
@@ -34,10 +34,11 @@ import kotlinx.coroutines.channels.drop
 import kotlinx.coroutines.launch
 
 class DealsViewModel(
+    private val dispatchers: IDispatchers,
     private val factory: DataSource.Factory<Int, DealModel>,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val uiStateMachineDelegate: StateMachineDelegate
-) : AbstractViewModel() {
+) : AbstractViewModel(dispatchers) {
 
     val deals by lazy {
         factory.toLiveData(
@@ -54,7 +55,7 @@ class DealsViewModel(
     }
 
     fun init() {
-        uiScope.launch(IO) {
+        uiScope.launch(dispatchers.IO) {
             selectedStoresUseCase().debounce(uiScope, 500).drop(1).consumeEach {
                 deals.value?.dataSource?.invalidate()
             }

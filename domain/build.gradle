@@ -39,6 +39,7 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${versions.timber}"
 
+    implementation project(':common')
     implementation project(':data')
     implementation project(':commonproviders')
     implementation project(':network')

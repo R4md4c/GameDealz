@@ -1,0 +1,15 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+    implementation project(':common')
+    api "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+    api "org.koin:koin-test:${versions.koin}"
+    api "com.google.truth:truth:${versions.truth}"
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"

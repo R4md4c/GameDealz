@@ -23,7 +23,7 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.common.viewholder.ProgressViewHolder
+import de.r4md4c.gamedealz.deals.item.ProgressViewHolder
 import de.r4md4c.gamedealz.domain.model.DealModel
 
 class DealsAdapter(private val dealClick: (deal: DealModel) -> Unit) :

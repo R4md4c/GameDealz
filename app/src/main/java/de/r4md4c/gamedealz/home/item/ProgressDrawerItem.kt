@@ -15,16 +15,17 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewholder
+package de.r4md4c.gamedealz.home.item
 
-import android.view.View
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import de.r4md4c.gamedealz.R
 
-class ProgressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    init {
-        (itemView.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.apply {
-            isFullSpan = true
-        }
+class ProgressDrawerItem : PrimaryDrawerItem() {
+
+    override fun getLayoutRes(): Int = R.layout.item_progress
+
+    override fun getType(): Int = R.id.progress_item
+
+    override fun bindView(viewHolder: ViewHolder?, payloads: MutableList<Any?>) {
     }
 }

@@ -17,6 +17,7 @@
 
 package de.r4md4c.commonproviders.coroutines
 
+import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -28,12 +29,12 @@ import kotlinx.coroutines.android.AndroidDispatcherFactory
  *
  * You should always use this instead of the default [Dispatchers].
  */
-object GameDealzDispatchers {
+object GameDealzDispatchers : IDispatchers {
 
     @UseExperimental(InternalCoroutinesApi::class)
-    val Main: MainCoroutineDispatcher by lazy { AndroidDispatcherFactory().createDispatcher(emptyList()) }
+    override val Main: MainCoroutineDispatcher by lazy { AndroidDispatcherFactory().createDispatcher(emptyList()) }
 
-    val IO = Dispatchers.IO
+    override val IO = Dispatchers.IO
 
-    val Default = Dispatchers.Default
+    override val Default = Dispatchers.Default
 }

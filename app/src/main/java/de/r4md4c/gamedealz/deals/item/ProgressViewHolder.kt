@@ -15,23 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewmodel
+package de.r4md4c.gamedealz.deals.item
 
-import androidx.annotation.CallSuper
-import androidx.lifecycle.ViewModel
-import de.r4md4c.gamedealz.common.IDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
-abstract class AbstractViewModel(dispatchers: IDispatchers) : ViewModel() {
-
-    private val viewModelJob = SupervisorJob()
-
-    protected val uiScope = CoroutineScope(dispatchers.Main + viewModelJob)
-
-    @CallSuper
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
+class ProgressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    init {
+        (itemView.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.apply {
+            isFullSpan = true
+        }
     }
 }

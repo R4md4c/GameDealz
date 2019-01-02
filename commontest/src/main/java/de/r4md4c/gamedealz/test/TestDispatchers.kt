@@ -15,17 +15,24 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewholder
+package de.r4md4c.gamedealz.test
 
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.IDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
-class ProgressDrawerItem : PrimaryDrawerItem() {
+/**
+ * A Singleton that will be used primarily during JUnit tests.
+ * It resorts back to using the original Coroutines Main dispatcher instead of the default Android
+ */
+object TestDispatchers : IDispatchers {
 
-    override fun getLayoutRes(): Int = R.layout.item_progress
+    override val Main: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 
-    override fun getType(): Int = R.id.progress_item
+    override val IO: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 
-    override fun bindView(viewHolder: ViewHolder?, payloads: MutableList<Any?>) {
-    }
+    override val Default: CoroutineDispatcher
+        get() = Dispatchers.Unconfined
 }
