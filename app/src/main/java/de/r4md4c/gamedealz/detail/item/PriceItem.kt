@@ -26,6 +26,7 @@ import android.text.format.DateUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.commonproviders.date.DateFormatter
@@ -43,21 +44,49 @@ class PriceItem(
     private val priceDetails: PriceDetails,
     private val resourcesProvider: ResourcesProvider,
     private val dateFormatter: DateFormatter,
+    private val desiredConstraintLayoutState: Int,
     private val onBuyClick: (PriceDetails) -> Unit
 ) : AbstractItem<PriceItem, PriceItem.ViewHolder>() {
     private val newPriceColor by lazy { resourcesProvider.getColor(R.color.newPriceColor) }
     private val oldPriceColor by lazy { resourcesProvider.getColor(R.color.oldPriceColor) }
 
+    init {
+        require(
+            desiredConstraintLayoutState == R.id.state_historical_low ||
+                    desiredConstraintLayoutState == R.id.state_current_best
+        )
+        { "PriceItem only accepts R.id.state_historical_low or R.id.state_current_best" }
+    }
+
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_prices_item
 
-    override fun getViewHolder(v: View): ViewHolder = ViewHolder(v)
+    override fun getViewHolder(v: View): ViewHolder = ViewHolder(v).apply {
+        with(v) {
+            constraintLayout.loadLayoutDescription(R.xml.layout_detail_prices_item_state)
+        }
+    }
 
     override fun getLayoutRes(): Int = R.layout.layout_detail_prices_item
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
         with(holder.itemView) {
+            constraintLayout.setState(desiredConstraintLayoutState, 0, 0)
+
+            val (currentBestAppearance, historicalLowAppearance) = when (desiredConstraintLayoutState) {
+                R.id.state_historical_low -> {
+                    R.style.TextAppearance_MaterialComponents_Body2 to R.style.TextAppearance_MaterialComponents_Body1
+                }
+                R.id.state_current_best -> {
+                    R.style.TextAppearance_MaterialComponents_Body1 to R.style.TextAppearance_MaterialComponents_Body2
+                }
+                else -> throw IllegalStateException("Unsupported states provided.")
+            }
+
+            TextViewCompat.setTextAppearance(historicalLow, historicalLowAppearance)
+            TextViewCompat.setTextAppearance(currentBest, currentBestAppearance)
+
             currentBest.text = currentBestString(priceDetails)
             historicalLow.text =
                     priceDetails.historicalLowModel?.let { historicalLowString(it, priceDetails.currencyModel) }
