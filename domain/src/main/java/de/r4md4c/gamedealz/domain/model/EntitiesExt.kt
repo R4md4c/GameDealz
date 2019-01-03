@@ -21,8 +21,8 @@ import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.data.entity.Store
+import de.r4md4c.gamedealz.domain.cache.NumberFormatCurrencyCache
 import de.r4md4c.gamedealz.network.model.*
-import java.text.NumberFormat
 import java.util.*
 
 internal fun RegionWithCountriesModel.findCountry(countryCode: String): CountryModel? =
@@ -72,9 +72,5 @@ internal fun HistoricalLow.toModel(colorRgb: String): HistoricalLowModel? {
 
 fun Float.formatCurrency(currencyModel: CurrencyModel): String? =
     runCatching {
-        val format = NumberFormat.getCurrencyInstance()
-        val currency = java.util.Currency.getInstance(currencyModel.currencyCode)
-        format.currency = currency
-
-        format.format(this)
+        NumberFormatCurrencyCache[currencyModel.currencyCode].format(this)
     }.getOrNull()
