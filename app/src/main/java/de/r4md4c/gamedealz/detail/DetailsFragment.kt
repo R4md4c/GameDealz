@@ -39,7 +39,6 @@ import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
 import de.r4md4c.gamedealz.detail.item.*
-import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -86,7 +85,9 @@ class DetailsFragment : BaseFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        detailsViewModel.onSaveState()?.let { outState.putParcelable(STATE_DETAILS, it) }
+        detailsViewModel.onSaveState()?.let {
+            outState.putParcelable(STATE_DETAILS, it)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -94,7 +95,7 @@ class DetailsFragment : BaseFragment() {
         if (savedInstanceState == null) {
             detailsViewModel.loadPlainDetails(plainId)
         } else {
-            savedInstanceState.getParcelable<PlainDetailsModel>(STATE_DETAILS)
+            savedInstanceState.getParcelable<DetailsViewModelState>(STATE_DETAILS)
                 ?.let { detailsViewModel.onRestoreState(it) }
         }
 

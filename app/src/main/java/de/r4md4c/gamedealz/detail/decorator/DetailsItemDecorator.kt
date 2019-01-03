@@ -29,11 +29,13 @@ class DetailsItemDecorator(private val context: Context) : RecyclerView.ItemDeco
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val position = parent.getChildAdapterPosition(view)
+        val viewType = parent.getChildViewHolder(view).itemViewType
         val itemCount = parent.adapter?.itemCount ?: -1
 
         outRect.left = spacing8
         outRect.right = spacing8
-        outRect.top = spacing8
+        outRect.top =
+                if (position == 0 && viewType == R.layout.layout_detail_header_filter_item) spacing8 * 4 else spacing8
         outRect.bottom = if (position == itemCount - 1) spacing8 else 0
     }
 }

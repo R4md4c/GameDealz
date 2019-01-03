@@ -38,6 +38,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Parcelize
+data class DetailsViewModelState(val filterSelection: Int, val plainDetailsModel: PlainDetailsModel) : Parcelable
+
+@Parcelize
 data class PriceDetails(
     val priceModel: PriceModel,
     val shopModel: ShopModel,
@@ -88,13 +91,15 @@ class DetailsViewModel(
         _filterItemChoice.postValue(filterItemId)
     }
 
-    fun onRestoreState(plainDetailsModel: PlainDetailsModel) {
+    fun onRestoreState(detailsViewModelState: DetailsViewModelState) {
         uiScope.launch(dispatchers.Default) {
-            postDetailsInfo(plainDetailsModel)
+            postDetailsInfo(detailsViewModelState.plainDetailsModel)
+            _filterItemChoice.postValue(detailsViewModelState.filterSelection)
         }
     }
 
-    fun onSaveState(): PlainDetailsModel? = loadedPlainDetailsModel
+    fun onSaveState(): DetailsViewModelState? =
+        loadedPlainDetailsModel?.let { DetailsViewModelState(currentFilterItemChoice, it) }
 
     fun loadPlainDetails(plainId: String) = uiScope.launch(dispatchers.IO) {
         try {
