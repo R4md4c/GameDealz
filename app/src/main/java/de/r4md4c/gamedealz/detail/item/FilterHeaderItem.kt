@@ -21,9 +21,13 @@ import android.annotation.SuppressLint
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
+import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.R
 import kotlinx.android.synthetic.main.layout_detail_header_filter_item.view.*
 
@@ -48,6 +52,14 @@ class FilterHeaderItem(
 
         with(holder.itemView) {
             header.text = headerString
+            val icon = AppCompatResources.getDrawable(context, R.drawable.ic_filter_list)?.apply {
+                DrawableCompat.setTint(this, context.resolveThemeColor(R.attr.colorOnSurface))
+            }
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                filterView, null,
+                null, icon, null
+            )
+
             filterView.setOnClickListener {
                 PopupMenu(context, filterView).also { popupMenu ->
                     popupMenu.inflate(menuItem)

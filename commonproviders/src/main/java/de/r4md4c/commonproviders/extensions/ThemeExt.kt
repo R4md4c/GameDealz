@@ -20,6 +20,10 @@ package de.r4md4c.commonproviders.extensions
 import android.content.Context
 import android.util.TypedValue
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 
 fun Context.resolveThemeAttribute(@AttrRes resId: Int): TypedValue =
     TypedValue().apply { theme.resolveAttribute(resId, this, true) }
+
+@ColorInt
+fun Context.resolveThemeColor(@AttrRes attrId: Int): Int = resolveThemeAttribute(attrId).data

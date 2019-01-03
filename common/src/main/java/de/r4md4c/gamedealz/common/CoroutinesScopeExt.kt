@@ -17,15 +17,14 @@
 
 package de.r4md4c.gamedealz.common
 
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 inline fun CoroutineScope.launchWithCatching(
-    crossinline block: () -> Unit,
+    context: CoroutineDispatcher,
+    crossinline block: suspend () -> Unit,
     crossinline errorBlock: (Throwable) -> Unit
 ) {
     launch(CoroutineExceptionHandler { _, throwable -> errorBlock(throwable) }) {
-        block()
+        withContext(context) { block() }
     }
 }

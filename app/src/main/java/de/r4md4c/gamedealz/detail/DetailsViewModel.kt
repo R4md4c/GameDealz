@@ -101,21 +101,21 @@ class DetailsViewModel(
     fun onSaveState(): DetailsViewModelState? =
         loadedPlainDetailsModel?.let { DetailsViewModelState(currentFilterItemChoice, it) }
 
-    fun loadPlainDetails(plainId: String) = uiScope.launch(dispatchers.IO) {
-        try {
-            stateMachineDelegate.transition(Event.OnLoadingStart)
+    fun loadPlainDetails(plainId: String) = uiScope.launchWithCatching(dispatchers.IO, {
 
-            val details = getPlainDetails(TypeParameter(plainId))
-            postDetailsInfo(details)
+        stateMachineDelegate.transition(Event.OnLoadingStart)
 
-            stateMachineDelegate.transition(Event.OnLoadingEnded)
-        } catch (e: Exception) {
-            stateMachineDelegate.transition(Event.OnError(e))
-        }
+        val details = getPlainDetails(TypeParameter(plainId))
+        postDetailsInfo(details)
+
+        stateMachineDelegate.transition(Event.OnLoadingEnded)
+
+    }) {
+        stateMachineDelegate.transition(Event.OnError(it))
     }
 
     private fun applyFilter(filterChoice: Int): LiveData<List<PriceDetails>> {
-        uiScope.launchWithCatching({
+        uiScope.launchWithCatching(dispatchers.Default, {
             _prices.value?.sortedBy {
                 when (filterChoice) {
                     R.id.menu_item_current_best -> it.priceModel.newPrice
@@ -141,11 +141,11 @@ class DetailsViewModel(
 
         withContext(dispatchers.Default) {
             // TODO: Refactor this ugly piece of unreadable code.
-            details.shopPrices.map { it.key }
+            val value = details.shopPrices.map { it.key }
                 .zip(details.shopPrices.map { it.value.priceModel })
                 .zip(details.shopPrices.map { it.value.historicalLowModel })
                 .map { PriceDetails(it.first.second, it.first.first, it.second, details.currencyModel) }
-                .run { _prices.postValue(this) }
+            _prices.postValue(value)
         }
         loadedPlainDetailsModel = details
     }
