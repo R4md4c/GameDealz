@@ -15,15 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.extensions
+package de.r4md4c.gamedealz.common
 
-import android.content.Context
-import android.util.TypedValue
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
+import kotlinx.coroutines.*
 
-fun Context.resolveThemeAttribute(@AttrRes resId: Int): TypedValue =
-    TypedValue().apply { theme.resolveAttribute(resId, this, true) }
-
-@ColorInt
-fun Context.resolveThemeColor(@AttrRes attrId: Int): Int = resolveThemeAttribute(attrId).data
+inline fun CoroutineScope.launchWithCatching(
+    context: CoroutineDispatcher,
+    crossinline block: suspend () -> Unit,
+    crossinline errorBlock: (Throwable) -> Unit
+) {
+    launch(CoroutineExceptionHandler { _, throwable -> errorBlock(throwable) }) {
+        withContext(context) { block() }
+    }
+}

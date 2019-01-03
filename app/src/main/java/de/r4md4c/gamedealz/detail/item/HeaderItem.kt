@@ -24,7 +24,7 @@ import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
 import kotlinx.android.synthetic.main.layout_detail_header.view.*
 
-class HeaderItem(val headerString: String) : AbstractItem<HeaderItem, HeaderItem.ViewHolder>() {
+class HeaderItem(private val headerString: String) : AbstractItem<HeaderItem, HeaderItem.ViewHolder>() {
 
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_header

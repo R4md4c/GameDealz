@@ -22,12 +22,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItem
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
@@ -36,11 +38,7 @@ import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
-import de.r4md4c.gamedealz.detail.item.AboutGameItem
-import de.r4md4c.gamedealz.detail.item.HeaderItem
-import de.r4md4c.gamedealz.detail.item.PriceItem
-import de.r4md4c.gamedealz.detail.item.ScreenshotsSectionItems
-import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
+import de.r4md4c.gamedealz.detail.item.*
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,7 +58,8 @@ class DetailsFragment : BaseFragment() {
 
     private val dateFormatter: DateFormatter by inject()
 
-    private val itemsAdapter by lazy { FastItemAdapter<IItem<*, *>>() }
+    private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
+    private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
         parametersOf(this, {
@@ -80,13 +79,15 @@ class DetailsFragment : BaseFragment() {
         content.apply {
             addItemDecoration(DetailsItemDecorator(context))
             layoutManager = LinearLayoutManager(context)
-            adapter = itemsAdapter
+            adapter = FastAdapter.with<IItem<*, *>, ItemAdapter<IItem<*, *>>>(listOf(gameDetailsAdapter, pricesAdapter))
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        detailsViewModel.onSaveState()?.let { outState.putParcelable(STATE_DETAILS, it) }
+        detailsViewModel.onSaveState()?.let {
+            outState.putParcelable(STATE_DETAILS, it)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -94,7 +95,7 @@ class DetailsFragment : BaseFragment() {
         if (savedInstanceState == null) {
             detailsViewModel.loadPlainDetails(plainId)
         } else {
-            savedInstanceState.getParcelable<PlainDetailsModel>(STATE_DETAILS)
+            savedInstanceState.getParcelable<DetailsViewModelState>(STATE_DETAILS)
                 ?.let { detailsViewModel.onRestoreState(it) }
         }
 
@@ -103,22 +104,35 @@ class DetailsFragment : BaseFragment() {
         })
 
         detailsViewModel.gameInformation.observe(this, Observer {
-            itemsAdapter.add(
+            gameDetailsAdapter.add(
                 HeaderItem(getString(R.string.about_game)),
                 AboutGameItem(it.headerImage, it.shortDescription)
             )
         })
 
         detailsViewModel.screenshots.observe(this, Observer {
-            itemsAdapter.add(
+            gameDetailsAdapter.add(
                 HeaderItem(getString(R.string.screenshots)),
                 ScreenshotsSectionItems(it, resourcesProvider, content.recycledViewPool)
             )
         })
 
         detailsViewModel.prices.observe(this, Observer {
-            itemsAdapter.add(listOf(HeaderItem(getString(R.string.prices))) + it.map { priceDetails ->
-                PriceItem(priceDetails, resourcesProvider, dateFormatter) { clickedDetails ->
+            val filterHeaderItem = FilterHeaderItem(
+                getString(R.string.prices),
+                R.menu.details_prices_sort_menu,
+                detailsViewModel.currentFilterItemChoice,
+                this::handleFilterItemClick
+            )
+
+            val desiredState = if (detailsViewModel.currentFilterItemChoice == R.id.menu_item_current_best) {
+                R.id.state_current_best
+            } else {
+                R.id.state_historical_low
+            }
+
+            pricesAdapter.set(listOf(filterHeaderItem) + it.map { priceDetails ->
+                PriceItem(priceDetails, resourcesProvider, dateFormatter, desiredState) { clickedDetails ->
                     detailsViewModel.onBuyButtonClick(clickedDetails.priceModel.url)
                 }
             })
@@ -135,6 +149,9 @@ class DetailsFragment : BaseFragment() {
         collapsing_toolbar.title = title
     }
 
+    private fun handleFilterItemClick(@IdRes clickedFilterItemId: Int) {
+        detailsViewModel.onFilterChange(clickedFilterItemId)
+    }
 
     companion object {
         @JvmStatic

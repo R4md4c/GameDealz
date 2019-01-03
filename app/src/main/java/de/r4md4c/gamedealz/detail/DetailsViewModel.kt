@@ -19,7 +19,11 @@ package de.r4md4c.gamedealz.detail
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event
@@ -32,6 +36,9 @@ import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+@Parcelize
+data class DetailsViewModelState(val filterSelection: Int, val plainDetailsModel: PlainDetailsModel) : Parcelable
 
 @Parcelize
 data class PriceDetails(
@@ -56,13 +63,21 @@ class DetailsViewModel(
     val screenshots: LiveData<List<ScreenshotModel>> by lazy { _screenshots }
 
     private val _prices by lazy { SingleLiveEvent<List<PriceDetails>>() }
-    val prices: LiveData<List<PriceDetails>> by lazy { _prices }
+    val prices: LiveData<List<PriceDetails>> by lazy {
+        Transformations.switchMap(_filterItemChoice) {
+            applyFilter(it)
+        }
+    }
 
     private val _gameInformation by lazy { SingleLiveEvent<GameInformation>() }
     val gameInformation: LiveData<GameInformation> by lazy { _gameInformation }
 
     private val _sideEffect by lazy { SingleLiveEvent<SideEffect>() }
     val sideEffect: LiveData<SideEffect> by lazy { _sideEffect }
+
+    private val _filterItemChoice by lazy { MutableLiveData<Int>().apply { value = R.id.menu_item_current_best } }
+    val currentFilterItemChoice: Int
+        get() = _filterItemChoice.value!!
 
     init {
         stateMachineDelegate.onTransition { _sideEffect.postValue(it) }
@@ -72,25 +87,47 @@ class DetailsViewModel(
         navigator.navigateToUrl(buyUrl)
     }
 
-    fun onRestoreState(plainDetailsModel: PlainDetailsModel) {
+    fun onFilterChange(filterItemId: Int) {
+        _filterItemChoice.postValue(filterItemId)
+    }
+
+    fun onRestoreState(detailsViewModelState: DetailsViewModelState) {
         uiScope.launch(dispatchers.Default) {
-            postDetailsInfo(plainDetailsModel)
+            postDetailsInfo(detailsViewModelState.plainDetailsModel)
+            _filterItemChoice.postValue(detailsViewModelState.filterSelection)
         }
     }
 
-    fun onSaveState(): PlainDetailsModel? = loadedPlainDetailsModel
+    fun onSaveState(): DetailsViewModelState? =
+        loadedPlainDetailsModel?.let { DetailsViewModelState(currentFilterItemChoice, it) }
 
-    fun loadPlainDetails(plainId: String) = uiScope.launch(dispatchers.IO) {
-        try {
-            stateMachineDelegate.transition(Event.OnLoadingStart)
+    fun loadPlainDetails(plainId: String) = uiScope.launchWithCatching(dispatchers.IO, {
 
-            val details = getPlainDetails(TypeParameter(plainId))
-            postDetailsInfo(details)
+        stateMachineDelegate.transition(Event.OnLoadingStart)
 
-            stateMachineDelegate.transition(Event.OnLoadingEnded)
-        } catch (e: Exception) {
-            stateMachineDelegate.transition(Event.OnError(e))
+        val details = getPlainDetails(TypeParameter(plainId))
+        postDetailsInfo(details)
+
+        stateMachineDelegate.transition(Event.OnLoadingEnded)
+
+    }) {
+        stateMachineDelegate.transition(Event.OnError(it))
+    }
+
+    private fun applyFilter(filterChoice: Int): LiveData<List<PriceDetails>> {
+        uiScope.launchWithCatching(dispatchers.Default, {
+            _prices.value?.sortedBy {
+                when (filterChoice) {
+                    R.id.menu_item_current_best -> it.priceModel.newPrice
+                    R.id.menu_item_historical_low -> it.historicalLowModel?.price
+                    else -> throw IllegalArgumentException("filterChoice is invalid")
+                }
+            }?.also { sorted -> _prices.postValue(sorted) }
+        }) {
+            stateMachineDelegate.transition(Event.OnError(it))
         }
+
+        return _prices
     }
 
     private suspend fun postDetailsInfo(details: PlainDetailsModel) {
@@ -104,11 +141,11 @@ class DetailsViewModel(
 
         withContext(dispatchers.Default) {
             // TODO: Refactor this ugly piece of unreadable code.
-            details.shopPrices.map { it.key }
+            val value = details.shopPrices.map { it.key }
                 .zip(details.shopPrices.map { it.value.priceModel })
                 .zip(details.shopPrices.map { it.value.historicalLowModel })
                 .map { PriceDetails(it.first.second, it.first.first, it.second, details.currencyModel) }
-                .run { _prices.postValue(this) }
+            _prices.postValue(value)
         }
         loadedPlainDetailsModel = details
     }

@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="primaryColor">#008578</color>
+    <color name="primaryLightColor">#4cb5a7</color>
+    <color name="primaryDarkColor">#00574c</color>
+    <color name="secondaryColor">#D81B60</color>
+    <color name="secondaryLightColor">#ff6090</color>
+    <color name="secondaryDarkColor">#b0003a</color>
+
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#000000</color>
 
     <color name="oldPriceColor">@android:color/darker_gray</color>
-    <color name="newPriceColor">@color/colorAccent</color>
+    <color name="newPriceColor">@color/secondaryColor</color>
 
     <color name="divider_color">#1e000000</color>
 </resources>

@@ -20,6 +20,9 @@ allprojects {
         compileSdk = 28
         targetSdk = 28
     }
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
 
 ext.versions = [
