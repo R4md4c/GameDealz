@@ -29,8 +29,8 @@ import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
+import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.detail.DetailsViewModel
-import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
@@ -41,8 +41,8 @@ import org.koin.dsl.module.module
 
 val MAIN = module {
 
-    factory<DataSource.Factory<Int, DealModel>> { (stateMachineDelegate: StateMachineDelegate) ->
-        DealsDataSourceFactory(get(), stateMachineDelegate)
+    factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
+        DealsDataSourceFactory(get(), stateMachineDelegate, get())
     }
 
     factory<StateMachineDelegate> {

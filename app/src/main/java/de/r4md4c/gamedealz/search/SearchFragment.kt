@@ -26,6 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.commonproviders.date.DateFormatter
@@ -38,7 +39,10 @@ import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragmentArgs.fromBundle
+import de.r4md4c.gamedealz.search.model.toRenderModel
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -62,9 +66,9 @@ class SearchFragment : BaseFragment() {
     private var searchResultsLoaded = false
 
     private val searchAdapter by lazy {
-        SearchAdapter(layoutInflater, resourcesProvider, dateFormatter) {
-            it.prices.firstOrNull()?.let { priceModel ->
-                listener?.onFragmentInteraction(DetailsFragment.toUri(it.title, it.gameId, priceModel.url))
+        SearchAdapter(layoutInflater) {
+            it.currentBestPriceModel?.let { priceModel ->
+                listener?.onFragmentInteraction(DetailsFragment.toUri(it.title.toString(), it.gameId, priceModel.url))
             }
         }
     }
@@ -101,9 +105,17 @@ class SearchFragment : BaseFragment() {
         }
 
         viewModel.searchResults.observe(this, Observer {
-            searchAdapter.submitList(it)
-            searchResultsLoaded = true
-            searchView?.clearFocus()
+            viewScope.launch {
+                progress.isVisible = true
+                withContext(dispatchers.Default) {
+                    it.map { searchResult -> searchResult.toRenderModel(resourcesProvider, dateFormatter) }
+                }.also { renderModels ->
+                    searchAdapter.submitList(renderModels)
+                    searchResultsLoaded = true
+                    searchView?.clearFocus()
+                    progress.isVisible = false
+                }
+            }
         })
         viewModel.sideEffects.observe(this, Observer {
             stateVisibilityHandler.onSideEffect(it)

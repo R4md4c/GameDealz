@@ -27,7 +27,7 @@ import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
-import de.r4md4c.gamedealz.domain.model.DealModel
+import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.drop
@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 
 class DealsViewModel(
     private val dispatchers: IDispatchers,
-    private val factory: DataSource.Factory<Int, DealModel>,
+    private val factory: DataSource.Factory<Int, DealRenderModel>,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val uiStateMachineDelegate: StateMachineDelegate
 ) : AbstractViewModel(dispatchers) {

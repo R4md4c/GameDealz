@@ -30,10 +30,10 @@ import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 
-fun PriceModel.newAndOldPriceSpan(currencyModel: CurrencyModel, @ColorInt newPriceColor: Int, @ColorInt oldPriceColor: Int): Spannable? =
+fun PriceModel.newAndOldPriceSpan(currencyModel: CurrencyModel, @ColorInt newPriceColor: Int, @ColorInt oldPriceColor: Int): CharSequence? =
     newAndOldPriceSpannableString(newPrice, oldPrice, currencyModel, oldPriceColor, newPriceColor)
 
-fun DealModel.newAndOldPriceSpan(@ColorInt newPriceColor: Int, @ColorInt oldPriceColor: Int): Spannable? =
+fun DealModel.newAndOldPriceSpan(@ColorInt newPriceColor: Int, @ColorInt oldPriceColor: Int): CharSequence? =
     newAndOldPriceSpannableString(newPrice, oldPrice, currencyModel, oldPriceColor, newPriceColor)
 
 private fun newAndOldPriceSpannableString(

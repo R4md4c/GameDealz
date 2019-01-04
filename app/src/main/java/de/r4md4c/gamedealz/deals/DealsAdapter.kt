@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.deals.item.ProgressViewHolder
-import de.r4md4c.gamedealz.domain.model.DealModel
+import de.r4md4c.gamedealz.deals.model.DealRenderModel
 
-class DealsAdapter(private val dealClick: (deal: DealModel) -> Unit) :
-    PagedListAdapter<DealModel, RecyclerView.ViewHolder>(COMPARATOR) {
+class DealsAdapter(private val dealClick: (deal: DealRenderModel) -> Unit) :
+    PagedListAdapter<DealRenderModel, RecyclerView.ViewHolder>(COMPARATOR) {
     private var progress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -79,10 +79,10 @@ class DealsAdapter(private val dealClick: (deal: DealModel) -> Unit) :
 
 }
 
-private val COMPARATOR = object : DiffUtil.ItemCallback<DealModel>() {
+private val COMPARATOR = object : DiffUtil.ItemCallback<DealRenderModel>() {
 
-    override fun areItemsTheSame(oldItem: DealModel, newItem: DealModel): Boolean =
+    override fun areItemsTheSame(oldItem: DealRenderModel, newItem: DealRenderModel): Boolean =
         oldItem.gameId == newItem.gameId
 
-    override fun areContentsTheSame(oldItem: DealModel, newItem: DealModel): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: DealRenderModel, newItem: DealRenderModel): Boolean = oldItem == newItem
 }

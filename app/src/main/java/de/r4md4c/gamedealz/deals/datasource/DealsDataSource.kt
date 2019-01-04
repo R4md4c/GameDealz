@@ -19,11 +19,14 @@ package de.r4md4c.gamedealz.deals.datasource
 
 import androidx.paging.PositionalDataSource
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
+import de.r4md4c.commonproviders.res.ResourcesProvider
+import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.State
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.deals.model.DealRenderModel
+import de.r4md4c.gamedealz.deals.model.toRenderModel
 import de.r4md4c.gamedealz.domain.PageParameter
-import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -33,13 +36,14 @@ import timber.log.Timber
 
 class DealsDataSource(
     private val getDealsUseCase: GetDealsUseCase,
-    private val stateMachineDelegate: StateMachineDelegate
-) : PositionalDataSource<DealModel>() {
+    private val stateMachineDelegate: StateMachineDelegate,
+    private val resourcesProvider: ResourcesProvider
+) : PositionalDataSource<DealRenderModel>() {
 
     private var job: Job? = null
     private val scope = CoroutineScope(IO)
 
-    override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<DealModel>) {
+    override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<DealRenderModel>) {
         if (params.startPosition == 0 || stateMachineDelegate.state is State.LoadingMore) {
             return
         }
@@ -53,7 +57,13 @@ class DealsDataSource(
             }.onSuccess {
                 stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
                 if (!it.second.isEmpty()) {
-                    callback.onResult(it.second)
+                    callback.onResult(it.second.map { d ->
+                        d.toRenderModel(
+                            resourcesProvider,
+                            R.color.newPriceColor,
+                            R.color.oldPriceColor
+                        )
+                    })
                 }
             }.onFailure {
                 stateMachineDelegate.transition(Event.OnError(it))
@@ -65,7 +75,7 @@ class DealsDataSource(
         }
     }
 
-    override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<DealModel>) {
+    override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<DealRenderModel>) {
         job?.cancel()
         job = scope.launch {
             stateMachineDelegate.transition(Event.OnLoadingStart)
@@ -79,7 +89,16 @@ class DealsDataSource(
                 if (deals.second.isEmpty()) {
                     stateMachineDelegate.transition(Event.OnShowEmpty)
                 }
-                callback.onResult(deals.second, deals.second.size)
+                callback.onResult(
+                    deals.second.map {
+                        it.toRenderModel(
+                            resourcesProvider,
+                            R.color.newPriceColor,
+                            R.color.oldPriceColor
+                        )
+                    },
+                    deals.second.size
+                )
             }.onFailure {
 
                 stateMachineDelegate.transition(Event.OnError(it))
