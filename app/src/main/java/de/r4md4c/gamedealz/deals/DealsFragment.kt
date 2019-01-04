@@ -57,7 +57,7 @@ class DealsFragment : BaseFragment() {
 
     private val adapter by lazy {
         DealsAdapter {
-            listener?.onFragmentInteraction(DetailsFragment.toUri(it.title, it.gameId, it.urls.buyUrl))
+            listener?.onFragmentInteraction(DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl))
         }
     }
 
