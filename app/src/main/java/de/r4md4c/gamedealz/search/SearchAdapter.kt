@@ -21,18 +21,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import de.r4md4c.commonproviders.date.DateFormatter
-import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.domain.model.SearchResultModel
+import de.r4md4c.gamedealz.search.model.SearchItemRenderModel
 
 class SearchAdapter(
     private val layoutInflater: LayoutInflater,
-    private val resourcesProvider: ResourcesProvider,
-    private val dateFormatter: DateFormatter,
-    private val onClickListener: (SearchResultModel) -> Unit
+    private val onClickListener: (SearchItemRenderModel) -> Unit
 ) :
-    ListAdapter<SearchResultModel, SearchItemViewHolder>(COMPARATOR) {
+    ListAdapter<SearchItemRenderModel, SearchItemViewHolder>(COMPARATOR) {
 
     init {
         setHasStableIds(true)
@@ -40,7 +36,7 @@ class SearchAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchItemViewHolder {
         return layoutInflater.inflate(R.layout.layout_search_result_item, parent, false).run {
-            SearchItemViewHolder(this, resourcesProvider, dateFormatter)
+            SearchItemViewHolder(this)
         }
     }
 
@@ -50,15 +46,15 @@ class SearchAdapter(
         holder.itemView.setOnClickListener { onClickListener(searchItem) }
     }
 
-    override fun getItemId(position: Int): Long = getItem(position).gameId.hashCode().toLong()
+    override fun getItemId(position: Int): Long = getItem(position).hashCode().toLong()
 
 }
 
-private val COMPARATOR = object : DiffUtil.ItemCallback<SearchResultModel>() {
+private val COMPARATOR = object : DiffUtil.ItemCallback<SearchItemRenderModel>() {
 
-    override fun areItemsTheSame(oldItem: SearchResultModel, newItem: SearchResultModel): Boolean =
+    override fun areItemsTheSame(oldItem: SearchItemRenderModel, newItem: SearchItemRenderModel): Boolean =
         oldItem.gameId == newItem.gameId
 
-    override fun areContentsTheSame(oldItem: SearchResultModel, newItem: SearchResultModel): Boolean =
+    override fun areContentsTheSame(oldItem: SearchItemRenderModel, newItem: SearchItemRenderModel): Boolean =
         oldItem == newItem
 }

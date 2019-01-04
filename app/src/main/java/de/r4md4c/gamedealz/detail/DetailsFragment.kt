@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -40,6 +41,8 @@ import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
 import de.r4md4c.gamedealz.detail.item.*
 import kotlinx.android.synthetic.main.fragment_game_detail.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -118,12 +121,18 @@ class DetailsFragment : BaseFragment() {
         })
 
         detailsViewModel.prices.observe(this, Observer {
+            renderPrices(it)
+        })
+    }
+
+    private fun renderPrices(it: List<PriceDetails>) {
+        viewScope.launch(dispatchers.Default) {
+            withContext(dispatchers.Main) { progress.isVisible = true }
             val filterHeaderItem = FilterHeaderItem(
                 getString(R.string.prices),
                 R.menu.details_prices_sort_menu,
-                detailsViewModel.currentFilterItemChoice,
-                this::handleFilterItemClick
-            )
+                detailsViewModel.currentFilterItemChoice
+            ) { sortId -> handleFilterItemClick(sortId) }
 
             val desiredState = if (detailsViewModel.currentFilterItemChoice == R.id.menu_item_current_best) {
                 R.id.state_current_best
@@ -131,12 +140,19 @@ class DetailsFragment : BaseFragment() {
                 R.id.state_historical_low
             }
 
-            pricesAdapter.set(listOf(filterHeaderItem) + it.map { priceDetails ->
-                PriceItem(priceDetails, resourcesProvider, dateFormatter, desiredState) { clickedDetails ->
-                    detailsViewModel.onBuyButtonClick(clickedDetails.priceModel.url)
-                }
-            })
-        })
+            val pricesItems = listOf(filterHeaderItem) + it.map { priceDetails ->
+                priceDetails.toPriceItem(
+                    resourcesProvider,
+                    dateFormatter,
+                    desiredState,
+                    detailsViewModel::onBuyButtonClick
+                )
+            }
+            withContext(dispatchers.Main) {
+                pricesAdapter.set(pricesItems)
+                progress.isVisible = false
+            }
+        }
     }
 
     private fun setupFab() {
