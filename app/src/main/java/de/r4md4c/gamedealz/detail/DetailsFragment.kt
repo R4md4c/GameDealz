@@ -161,7 +161,7 @@ class DetailsFragment : BaseFragment() {
     private fun setupFab() {
         addToWatchList.setOnClickListener {
             //            detailsViewModel.onBuyButtonClick(buyUrl)
-            AddToWatchListDialog.newInstance(title, plainId, priceModel).show(childFragmentManager, null)
+            AddToWatchListDialog.newInstance(plainId, title, priceModel).show(childFragmentManager, null)
         }
     }
 

@@ -3,9 +3,10 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/addToWatchList"
+            android:id="@+id/menu_item_add_to_watch_list"
             android:title="@string/add_to_watch_list"
-            android:icon="@drawable/ic_add"
+            android:icon="@drawable/ic_check_black"
+            app:iconTint="?colorOnPrimary"
             app:showAsAction="always"/>
 
 </menu>

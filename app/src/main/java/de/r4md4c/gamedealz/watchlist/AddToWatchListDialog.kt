@@ -17,19 +17,28 @@
 
 package de.r4md4c.gamedealz.watchlist
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextWatcher
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.lifecycle.Observer
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -40,6 +49,7 @@ import de.r4md4c.gamedealz.domain.model.PriceModel
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
@@ -67,23 +77,19 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(toolbar) {
-            setBackgroundColor(Color.TRANSPARENT)
-            setNavigationIcon(R.drawable.ic_close_white)
-            setNavigationOnClickListener { dismiss() }
-            DrawableCompat.setTint(navigationIcon!!, Color.TRANSPARENT)
-            setTitle(R.string.add_to_watch_list)
-            setTitleTextColor(Color.TRANSPARENT)
-            inflateMenu(R.menu.menu_add_to_watch_list)
-            menu.forEach { DrawableCompat.setTint(it.icon, Color.TRANSPARENT) }
-        }
+        styleNotifyMeHeader()
+        priceEditText.addTextChangedListener(MoneyTextWatcher())
+        prepareToolbar()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        addToWatchListViewModel.dismiss.observe(this, Observer { dismiss() })
+        addToWatchListViewModel.emptyPriceError.observe(this, Observer { priceEditText.error = it })
 
         addToWatchListViewModel.loadStores().observe(this, Observer { stores ->
+
             storesChipGroup.removeAllViews()
 
             stores.map { store ->
@@ -113,6 +119,54 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         })
     }
 
+    private fun styleNotifyMeHeader() {
+        notifyMeHeader.text = getString(R.string.notify_when_price_reaches, title).let {
+            val indexOfTitle = it.indexOf(title)
+            SpannableString(it).apply {
+                setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    indexOfTitle,
+                    indexOfTitle + title.length,
+                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+                )
+            }
+        }
+    }
+
+    private fun prepareToolbar() = with(toolbar) {
+        setOnClickListener { dismiss() }
+        setBackgroundColor(Color.TRANSPARENT)
+        setNavigationIcon(R.drawable.ic_close_white)
+        setNavigationOnClickListener { dismiss() }
+        DrawableCompat.setTint(navigationIcon!!, Color.TRANSPARENT)
+        setTitle(R.string.add_to_watch_list)
+        setTitleTextColor(Color.TRANSPARENT)
+        inflateMenu(R.menu.menu_add_to_watch_list)
+        menu.forEach { DrawableCompat.setTint(it.icon, Color.TRANSPARENT) }
+        menu.findItem(R.id.menu_item_add_to_watch_list).setOnMenuItemClickListener { onSubmit(); true }
+    }
+
+    private fun onSubmit() {
+        addToWatchListViewModel.onSubmit(priceEditText.text.toString(), title, plainId, priceModel)
+    }
+
+    inner class MoneyTextWatcher : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(editable: Editable) {
+            val s = editable.toString()
+            if (s.isEmpty()) return
+            priceEditText.removeTextChangedListener(this)
+
+            val formatted = addToWatchListViewModel.formatPrice(s)
+            priceEditText.setText(formatted)
+            priceEditText.setSelection(formatted?.length ?: 0)
+            priceEditText.addTextChangedListener(this)
+        }
+    }
+
     private inner class AddToWatchListBottomSheetCallback : BottomSheetBehavior.BottomSheetCallback() {
         private val startColor = Color.TRANSPARENT
         private val endColorOnToolbar = requireActivity().resolveThemeColor(R.attr.colorOnPrimary)
@@ -132,22 +186,29 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
             }
         }
 
+        @SuppressLint("SwitchIntDef")
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (newState == STATE_HIDDEN) dismiss()
+            when (newState) {
+                STATE_HIDDEN -> dismiss()
+                STATE_EXPANDED -> toolbar.setOnClickListener(null)
+                else -> toolbar.setOnClickListener { dismiss() }
+            }
         }
     }
 
     companion object {
         fun newInstance(plainId: String, title: String, priceModel: PriceModel) = AddToWatchListDialog().apply {
-            arguments = Bundle().apply {
-                putString(ARG_PLAIN_ID, plainId)
-                putString(ARG_TITLE, title)
-                putParcelable(ARG_PRICE_MODEL, priceModel)
-            }
+            arguments = bundleOf(
+                ARG_PLAIN_ID to plainId,
+                ARG_TITLE to title,
+                ARG_PRICE_MODEL to priceModel
+            )
         }
 
         private const val ARG_TITLE = "title"
         private const val ARG_PLAIN_ID = "plain_id"
         private const val ARG_PRICE_MODEL = "price_model"
     }
+
+
 }
