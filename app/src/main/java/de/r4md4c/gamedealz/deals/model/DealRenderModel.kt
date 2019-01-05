@@ -28,6 +28,8 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.DealModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.toPriceModel
 
 data class DealRenderModel(
     val gameId: String,
@@ -35,7 +37,8 @@ data class DealRenderModel(
     val newPrice: CharSequence?,
     val storesAndTime: CharSequence?,
     val imageUrl: String?,
-    val buyUrl: String
+    val buyUrl: String,
+    val priceModel: PriceModel
 )
 
 /**
@@ -53,7 +56,8 @@ fun DealModel.toRenderModel(
         newAndOldPriceSpan(resourcesProvider.getColor(newPriceColorRes), resourcesProvider.getColor(oldPriceColorRest)),
         storeAndTimeSpan(resourcesProvider),
         urls.imageUrl,
-        urls.buyUrl
+        urls.buyUrl,
+        toPriceModel()
     )
 
 private fun DealModel.storeAndTimeSpan(resourcesProvider: ResourcesProvider): Spannable {

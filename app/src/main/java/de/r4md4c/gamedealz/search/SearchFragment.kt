@@ -69,7 +69,10 @@ class SearchFragment : BaseFragment() {
     private val searchAdapter by lazy {
         SearchAdapter(layoutInflater) {
             it.currentBestPriceModel?.let { priceModel ->
-                listener?.onFragmentInteraction(DetailsFragment.toUri(it.title.toString(), it.gameId, priceModel.url))
+                listener?.onFragmentInteraction(
+                    DetailsFragment.toUri(it.title.toString(), it.gameId, priceModel.url),
+                    priceModel
+                )
             }
         }
     }

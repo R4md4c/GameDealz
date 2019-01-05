@@ -39,7 +39,6 @@ import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
-import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
 import org.koin.android.ext.android.inject
@@ -59,7 +58,10 @@ class DealsFragment : BaseFragment() {
 
     private val adapter by lazy {
         DealsAdapter {
-            listener?.onFragmentInteraction(DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl))
+            listener?.onFragmentInteraction(
+                DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl),
+                it.priceModel
+            )
         }
     }
 
