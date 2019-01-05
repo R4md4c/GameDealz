@@ -21,13 +21,24 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * An entity that describes a watched game.
+ *
+ * @param id The local id of the watchee.
+ * @param plainId ITAD plain id.
+ * @param title the title of the game.
+ * @param dateAdded When it was added in the database.
+ * @param lastCheckDate the last timestamp that this game was checked in.
+ * @param currentPrice the old price when that game was added to the DB.
+ * @param targetPrice the target price that will trigger the alert.
+ */
 @Entity(tableName = "Watchlist", indices = [Index(value = ["plainId"], unique = true)])
 data class Watchee(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val plainId: String,
     val title: String,
     val dateAdded: Long,
-    val lastCheckDate: Long,
-    val oldPrice: Float,
+    val lastCheckDate: Long = 0,
+    val currentPrice: Float,
     val targetPrice: Float
 )

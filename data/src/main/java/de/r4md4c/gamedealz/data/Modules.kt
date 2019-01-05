@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.data
 
 import androidx.room.Room
 import de.r4md4c.gamedealz.data.GameDealzDatabase.Companion.DATABASE_NAME
+import de.r4md4c.gamedealz.data.migrations.MIGRATION_1_2
 import de.r4md4c.gamedealz.data.repository.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
@@ -27,6 +28,7 @@ val DATA = module {
 
     single {
         Room.databaseBuilder(androidContext(), GameDealzDatabase::class.java, DATABASE_NAME)
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
@@ -45,6 +47,12 @@ val DATA = module {
     factory {
         get<GameDealzDatabase>().countriesDao()
     }
+
+    factory {
+        get<GameDealzDatabase>().watchlistDao()
+    }
+
+    factory<WatchlistRepository> { WatchlistLocalRepository(get()) }
 
     factory<PlainsRepository> { PlainsLocalRepository(get()) }
 
