@@ -70,8 +70,7 @@ class SearchFragment : BaseFragment() {
         SearchAdapter(layoutInflater) {
             it.currentBestPriceModel?.let { priceModel ->
                 listener?.onFragmentInteraction(
-                    DetailsFragment.toUri(it.title.toString(), it.gameId, priceModel.url),
-                    priceModel
+                    DetailsFragment.toUri(it.title.toString(), it.gameId, priceModel.url), null
                 )
             }
         }

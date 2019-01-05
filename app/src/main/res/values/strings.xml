@@ -21,6 +21,7 @@
 
     <string name="watchlist_error_empty_price">Empty target price!</string>
     <string name="watchlist_error_wrong_number_format">Wrong number format.</string>
+    <string name="watchlist_already_better_deal">There is already better deal than your target price! (%1$s at %2$s)</string>
 
     <!-- Error Activity -->
     <string name="sorry">Sorry, that should not have happened.</string>

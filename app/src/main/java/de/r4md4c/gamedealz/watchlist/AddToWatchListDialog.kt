@@ -59,7 +59,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val plainId: String by lazy { arguments!!.getString(ARG_PLAIN_ID) }
 
-    private val priceModel: PriceModel by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
+    private val priceModel: PriceModel? by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
@@ -197,7 +197,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(plainId: String, title: String, priceModel: PriceModel) = AddToWatchListDialog().apply {
+        fun newInstance(plainId: String, title: String, priceModel: PriceModel?) = AddToWatchListDialog().apply {
             arguments = bundleOf(
                 ARG_PLAIN_ID to plainId,
                 ARG_TITLE to title,

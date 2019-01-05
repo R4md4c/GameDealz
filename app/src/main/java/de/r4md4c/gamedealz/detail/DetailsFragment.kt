@@ -50,8 +50,6 @@ import org.koin.core.parameter.parametersOf
 
 class DetailsFragment : BaseFragment() {
 
-    private val priceModel by lazy { fromBundle(arguments!!).priceModel }
-
     private val title by lazy { fromBundle(arguments!!).title }
 
     private val plainId by lazy { fromBundle(arguments!!).plainId }
@@ -160,8 +158,10 @@ class DetailsFragment : BaseFragment() {
 
     private fun setupFab() {
         addToWatchList.setOnClickListener {
+            val lowestPriceModel = detailsViewModel.prices.value?.firstOrNull()
             //            detailsViewModel.onBuyButtonClick(buyUrl)
-            AddToWatchListDialog.newInstance(plainId, title, priceModel).show(childFragmentManager, null)
+            AddToWatchListDialog.newInstance(plainId, title, lowestPriceModel?.priceModel)
+                .show(childFragmentManager, null)
         }
     }
 

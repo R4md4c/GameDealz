@@ -15,27 +15,19 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.res
+package de.r4md4c.gamedealz.data.entity
 
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.IntegerRes
-import androidx.annotation.StringRes
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
-/**
- * A wrapper around the needed functionality of [android.content.res.Resources]
- */
-interface ResourcesProvider {
-
-    fun getColor(@ColorRes colorRes: Int): Int
-
-    fun getString(@StringRes stringRes: Int): String
-
-    fun getString(@StringRes stringRes: Int, vararg args: String): String
-
-    fun getDimenPixelSize(@DimenRes dimensionRes: Int): Int
-
-    fun getDimension(@DimenRes dimensionRes: Int): Float
-
-    fun getInteger(@IntegerRes integerRes: Int): Int
-}
+@Entity(tableName = "Watchlist", indices = [Index(value = ["plainId"], unique = true)])
+data class Watchee(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    val plainId: String,
+    val title: String,
+    val dateAdded: Long,
+    val lastCheckDate: Long,
+    val oldPrice: Float,
+    val targetPrice: Float
+)

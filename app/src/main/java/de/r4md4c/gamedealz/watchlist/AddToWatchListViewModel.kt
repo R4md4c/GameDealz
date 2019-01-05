@@ -32,6 +32,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import kotlinx.coroutines.channels.first
 import timber.log.Timber
 import java.math.BigDecimal
+import java.text.NumberFormat
 import java.util.*
 
 class AddToWatchListViewModel(
@@ -61,17 +62,29 @@ class AddToWatchListViewModel(
         return _availableStores
     }
 
-    fun onSubmit(priceString: String, title: String, plainId: String, priceModel: PriceModel) {
+    fun onSubmit(priceString: String, title: String, plainId: String, priceModel: PriceModel?) {
         if (priceString.isBlank()) {
             emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_empty_price))
             return
         }
         val targetPrice = priceString.runCatching {
-            replace("[${activeRegion?.currency?.toCurrencySymbol()}]".toRegex(), "").toFloat()
+
+            val cleaned = replace("[${activeRegion?.currency?.toCurrencySymbol()}]".toRegex(), "")
+            val numberFormat = NumberFormat.getNumberInstance()
+            numberFormat.parse(cleaned).toFloat()
         }
             .onFailure { emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_wrong_number_format)) }
             .getOrNull() ?: return
 
+        if (priceModel != null && targetPrice >= priceModel.newPrice) {
+            emptyPriceError.postValue(
+                resourcesProvider.getString(
+                    R.string.watchlist_already_better_deal,
+                    priceModel.newPrice.formatCurrency(activeRegion!!.currency)!!, priceModel.shop.name
+                )
+            )
+            return
+        }
         _dismiss.postValue(Unit)
     }
 

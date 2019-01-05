@@ -26,7 +26,6 @@ import androidx.navigation.NavDirections
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.deals.DealsFragmentDirections
 import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
-import de.r4md4c.gamedealz.domain.model.PriceModel
 
 class AndroidNavigator(
     private val context: Context,
@@ -52,9 +51,6 @@ class AndroidNavigator(
                 DealsFragmentDirections.actionDealsFragmentToSearchFragment(searchQuery)
             }
             DeepLinks.PATH_DETAIL -> {
-                requireNotNull(extras) { "extras == null" }
-                require(extras is PriceModel) { "extras needs to be of type ${PriceModel::class.java.simpleName}" }
-
                 val title =
                     requireNotNull(parsedUri.getQueryParameter(DeepLinks.QUERY_TITLE)) { "title is required to open details" }
                 val plainId =
@@ -62,7 +58,7 @@ class AndroidNavigator(
                 val buyUrl =
                     requireNotNull(parsedUri.getQueryParameter(DeepLinks.QUERY_BUY_URL)) { "buyUrl is required to open details." }
 
-                DetailsFragmentDirections.actionGlobalGameDetailFragment(plainId, title, buyUrl, extras)
+                DetailsFragmentDirections.actionGlobalGameDetailFragment(plainId, title, buyUrl)
             }
             else -> {
                 throw IllegalArgumentException("Unknown Deeplink: $parsedUri")
