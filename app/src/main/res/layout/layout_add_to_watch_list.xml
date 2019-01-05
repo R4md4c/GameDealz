@@ -1,80 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                                       android:layout_width="match_parent"
-                                       android:layout_height="wrap_content">
+<FrameLayout android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                       xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                       android:layout_width="match_parent"
-                                                       android:layout_height="wrap_content"
-                                                       android:padding="@dimen/baseline_2x"
-                                                       android:theme="@style/AppTheme">
+    <include layout="@layout/layout_toolbar"/>
 
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                           android:layout_width="match_parent"
+                                           android:background="?android:attr/colorBackground"
+                                           android:layout_marginTop="?actionBarSize"
+                                           android:layout_height="wrap_content">
 
-        <TextView
-                android:id="@+id/text1"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:text="@string/notify_when_price_reaches"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                           xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                           android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:padding="@dimen/baseline_2x"
+                                                           android:theme="@style/AppTheme">
 
 
-        <TextView
-                android:id="@+id/subtitle1"
-                android:layout_marginTop="@dimen/baseline_1x"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                android:text="@string/notify_when_price_reaches_subtitle"
-                app:layout_constraintLeft_toLeftOf="@+id/text1"
-                app:layout_constraintTop_toBottomOf="@+id/text1"
-                app:layout_constraintRight_toRightOf="@+id/text1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
-
-        <SeekBar
-                android:id="@+id/seekbar"
-                android:layout_marginTop="@dimen/baseline_1x"
-                android:layout_width="0dp"
-                app:layout_constraintWidth_percent="0.75"
-                app:layout_constraintRight_toRightOf="@+id/text1"
-                app:layout_constraintTop_toBottomOf="@+id/subtitle1"
-                android:layout_height="wrap_content"/>
+            <TextView
+                    android:id="@+id/text1"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:text="@string/notify_when_price_reaches"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
 
 
-        <TextView
-                android:id="@+id/followingStoresTitle"
-                android:layout_width="0dp"
-                android:text="On the following stores"
-                app:layout_constraintTop_toTopOf="@+id/storeAllSwitch"
-                app:layout_constraintBottom_toBottomOf="@+id/storeAllSwitch"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_height="wrap_content"/>
+            <TextView
+                    android:id="@+id/subtitle1"
+                    android:layout_marginTop="@dimen/baseline_1x"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    android:text="@string/notify_when_price_reaches_subtitle"
+                    app:layout_constraintLeft_toLeftOf="@+id/text1"
+                    app:layout_constraintTop_toBottomOf="@+id/text1"
+                    app:layout_constraintRight_toRightOf="@+id/text1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/storeAllSwitch"
-                android:layout_width="wrap_content"
-                android:checked="true"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/seekbar"
-                android:layout_height="wrap_content"/>
+            <SeekBar
+                    android:id="@+id/seekbar"
+                    android:layout_marginTop="@dimen/baseline_1x"
+                    android:layout_width="0dp"
+                    app:layout_constraintWidth_percent="0.75"
+                    app:layout_constraintRight_toRightOf="@+id/text1"
+                    app:layout_constraintTop_toBottomOf="@+id/subtitle1"
+                    android:layout_height="wrap_content"/>
 
-        <com.google.android.material.chip.ChipGroup
-                android:id="@+id/storesChipGroup"
-                android:layout_width="0dp"
-                style="@style/Widget.MaterialComponents.ChipGroup"
-                android:layout_marginTop="@dimen/baseline_1x"
-                app:layout_constraintTop_toBottomOf="@+id/storeAllSwitch"
-                app:layout_constraintLeft_toLeftOf="@+id/text1"
-                app:layout_constraintRight_toRightOf="@+id/text1"
-                android:layout_height="wrap_content"/>
 
-        <com.google.android.material.button.MaterialButton
-                android:layout_width="wrap_content"
-                android:text="Apply"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/storesChipGroup"
-                android:layout_height="wrap_content"/>
+            <TextView
+                    android:id="@+id/followingStoresTitle"
+                    android:layout_width="0dp"
+                    android:text="On the following stores"
+                    app:layout_constraintTop_toTopOf="@+id/storeAllSwitch"
+                    app:layout_constraintBottom_toBottomOf="@+id/storeAllSwitch"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:layout_height="wrap_content"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/storeAllSwitch"
+                    android:layout_width="wrap_content"
+                    android:checked="true"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seekbar"
+                    android:layout_height="wrap_content"/>
+
+            <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/storesChipGroup"
+                    android:layout_width="0dp"
+                    style="@style/Widget.MaterialComponents.ChipGroup"
+                    android:layout_marginTop="@dimen/baseline_1x"
+                    app:layout_constraintTop_toBottomOf="@+id/storeAllSwitch"
+                    app:layout_constraintLeft_toLeftOf="@+id/text1"
+                    app:layout_constraintRight_toRightOf="@+id/text1"
+                    android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:text="Apply"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/storesChipGroup"
+                    android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
+</FrameLayout>

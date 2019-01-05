@@ -15,4 +15,11 @@
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
     </style>
 
+    <style name="AppTheme.AddToWatchListDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetTransparent</item>
+    </style>
+
+    <style name="AppTheme.BottomSheetTransparent" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@null</item>
+    </style>
 </resources>

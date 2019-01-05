@@ -17,16 +17,28 @@
 
 package de.r4md4c.gamedealz.watchlist
 
+import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.math.MathUtils
+import androidx.core.view.forEach
+import androidx.core.view.get
 import androidx.lifecycle.Observer
+import com.google.android.material.animation.ArgbEvaluatorCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
+import kotlinx.android.synthetic.main.layout_toolbar.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddToWatchListDialog : BottomSheetDialogFragment() {
@@ -41,6 +53,31 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return BottomSheetDialog(requireContext(), R.style.AppTheme_AddToWatchListDialog).apply {
+            setOnShowListener {
+                val bottomSheet = (dialog as? BottomSheetDialog)?.findViewById(R.id.design_bottom_sheet) as? View
+                BottomSheetBehavior.from(bottomSheet).apply {
+                    setBottomSheetCallback(AddToWatchListBottomSheetCallback())
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        with(toolbar) {
+            setBackgroundColor(Color.TRANSPARENT)
+            setNavigationIcon(R.drawable.ic_close_white)
+            setNavigationOnClickListener { dismiss() }
+            DrawableCompat.setTint(navigationIcon!!, Color.TRANSPARENT)
+            setTitle(R.string.add_to_watch_list)
+            setTitleTextColor(Color.TRANSPARENT)
+            inflateMenu(R.menu.menu_add_to_watch_list)
+            menu.forEach { DrawableCompat.setTint(it.icon, Color.TRANSPARENT) }
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -74,6 +111,30 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                 }
             }
         })
+    }
+
+    private inner class AddToWatchListBottomSheetCallback : BottomSheetBehavior.BottomSheetCallback() {
+        private val startColor = Color.TRANSPARENT
+        private val endColorOnToolbar = requireActivity().resolveThemeColor(R.attr.colorOnPrimary)
+        private val endColor = requireActivity().resolveThemeColor(R.attr.colorPrimary)
+        private val colorEvaluator = ArgbEvaluatorCompat()
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            val value = MathUtils.clamp(slideOffset, 0f, 1f)
+            val colorOnToolbar = colorEvaluator.evaluate(value, startColor, endColorOnToolbar)
+            val toolbarColor = colorEvaluator.evaluate(value, startColor, endColor)
+
+            with(toolbar) {
+                setBackgroundColor(toolbarColor)
+                setTitleTextColor(colorOnToolbar)
+                DrawableCompat.setTint(menu[0].icon, colorOnToolbar)
+                DrawableCompat.setTint(navigationIcon!!, colorOnToolbar)
+            }
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == STATE_HIDDEN) dismiss()
+        }
     }
 
     companion object {
