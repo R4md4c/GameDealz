@@ -93,6 +93,7 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:${versions.koin}"
     implementation "org.koin:koin-androidx-viewmodel:${versions.koin}"
 
+    implementation project(':workers')
     implementation project(':common')
     implementation project(':commonproviders')
     implementation project(':domain')

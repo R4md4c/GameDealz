@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion project.ext.compileSdk
+
+    defaultConfig {
+        minSdkVersion project.ext.minSdk
+        targetSdkVersion project.ext.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(':domain')
+    implementation ("android.arch.work:work-runtime:${versions.workmanager}")
+    implementation ("android.arch.work:work-runtime-ktx:${versions.workmanager}") {
+        exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
+    }
+    implementation "org.koin:koin-core:${versions.koin}"
+    implementation "org.koin:koin-android:${versions.koin}"
+
+    androidTestImplementation "android.arch.work:work-testing:${versions.workmanager}"
+}

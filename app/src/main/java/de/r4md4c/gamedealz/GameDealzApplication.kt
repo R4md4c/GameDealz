@@ -21,6 +21,7 @@ import android.content.Context
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
+import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
 import org.koin.android.ext.android.startKoin
@@ -42,7 +43,7 @@ class GameDealzApplication : MultiDexApplication() {
             Timber.plant(Timber.DebugTree())
         }
 
-        startKoin(this, listOf(MAIN) + DOMAIN, logger = if (isDebug) AndroidLogger() else EmptyLogger())
+        startKoin(this, listOf(MAIN) + DOMAIN + WORK_MANAGER, logger = if (isDebug) AndroidLogger() else EmptyLogger())
     }
 
     override fun attachBaseContext(base: Context?) {
