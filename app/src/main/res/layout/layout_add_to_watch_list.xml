@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
     <include layout="@layout/layout_toolbar"/>
 
@@ -41,19 +41,25 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
 
-            <EditText
-                    android:id="@+id/priceEditText"
-                    android:inputType="numberDecimal"
-                    tools:text="45.45"
-                    android:minWidth="66dp"
-                    android:layout_marginLeft="@dimen/baseline_2x"
-                    android:layout_marginRight="@dimen/baseline_2x"
+            <FrameLayout
+                    android:id="@+id/priceContainer"
+                    android:layout_width="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/subtitle1"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+
+                <EditText
+                        android:id="@+id/priceEditText"
+                        android:inputType="numberDecimal"
+                        tools:text="45.45"
+                        android:minWidth="66dp"
+                        android:layout_marginLeft="@dimen/baseline_2x"
+                        android:layout_marginRight="@dimen/baseline_2x"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+            </FrameLayout>
 
             <TextView
                     android:id="@+id/followingStoresTitle"
@@ -69,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:checked="true"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/priceEditText"
+                    app:layout_constraintTop_toBottomOf="@+id/priceContainer"
                     android:layout_height="wrap_content"/>
 
             <com.google.android.material.chip.ChipGroup
@@ -83,5 +89,5 @@
                     android:layout_height="wrap_content"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </FrameLayout>

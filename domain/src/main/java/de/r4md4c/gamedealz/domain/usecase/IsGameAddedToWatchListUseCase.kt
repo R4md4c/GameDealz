@@ -15,24 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.domain.usecase
 
-import java.util.*
+import de.r4md4c.gamedealz.domain.TypeParameter
+import kotlinx.coroutines.channels.ReceiveChannel
 
-interface DateProvider {
-
-    /**
-     * Provide now's date with time.
-     */
-    fun now(): Date
-
-    /**
-     * Provide today's date without any time information.
-     */
-    fun today(): Date
-
-    /**
-     * Time In Millis.
-     */
-    fun timeInMillis(): Long
-}
+/**
+ * Checks if the Plain Id is already added to watch list or not.
+ */
+interface IsGameAddedToWatchListUseCase : UseCase<TypeParameter<String>, ReceiveChannel<Boolean>>

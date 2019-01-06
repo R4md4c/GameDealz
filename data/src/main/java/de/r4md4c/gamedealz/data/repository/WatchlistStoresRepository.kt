@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.data.repository
 
+import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 
@@ -29,4 +30,6 @@ interface WatchlistStoresRepository {
      * @return the watchee along with its stores.
      */
     suspend fun findWatcheeWithStores(watchee: Watchee): WatcheeWithStores?
+
+    suspend fun saveWatcheeWithStores(watchee: Watchee, stores: List<Store>)
 }

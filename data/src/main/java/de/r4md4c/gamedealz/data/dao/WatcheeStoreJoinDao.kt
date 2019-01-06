@@ -20,7 +20,9 @@ package de.r4md4c.gamedealz.data.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import de.r4md4c.gamedealz.data.entity.Store
+import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
 
 @Dao
@@ -31,4 +33,10 @@ internal interface WatcheeStoreJoinDao {
 
     @Query("SELECT * FROM Store INNER JOIN watchlist_store_join ON Store.id = watchlist_store_join.storeId WHERE watchlist_store_join.watcheeId=:watcheeId")
     suspend fun getStoresForWatchee(watcheeId: Long): List<Store>
+
+    @Transaction
+    suspend fun saveWatcheeWithStores(watcheeDao: WatchlistDao, watchee: Watchee, stores: List<Store>) {
+        val insertedId = watcheeDao.insert(watchee)
+        stores.map { WatcheeStoreJoin(insertedId, it.id) }.run { insert(this) }
+    }
 }

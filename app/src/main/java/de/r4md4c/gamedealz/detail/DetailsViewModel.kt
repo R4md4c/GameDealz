@@ -33,9 +33,12 @@ import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
+import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @Parcelize
 data class DetailsViewModelState(val filterSelection: Int, val plainDetailsModel: PlainDetailsModel) : Parcelable
@@ -54,7 +57,9 @@ class DetailsViewModel(
     private val dispatchers: IDispatchers,
     private val navigator: Navigator,
     private val getPlainDetails: GetPlainDetails,
-    private val stateMachineDelegate: StateMachineDelegate
+    private val stateMachineDelegate: StateMachineDelegate,
+    private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase,
+    private val addedToWatchListUseCase: IsGameAddedToWatchListUseCase
 ) : AbstractViewModel(dispatchers) {
 
     private var loadedPlainDetailsModel: PlainDetailsModel? = null
@@ -79,6 +84,8 @@ class DetailsViewModel(
     val currentFilterItemChoice: Int
         get() = _filterItemChoice.value!!
 
+    private val _isAddedToWatchList by lazy { MutableLiveData<Boolean>().apply { value = false } }
+
     init {
         stateMachineDelegate.onTransition { _sideEffect.postValue(it) }
     }
@@ -89,6 +96,22 @@ class DetailsViewModel(
 
     fun onFilterChange(filterItemId: Int) {
         _filterItemChoice.postValue(filterItemId)
+    }
+
+    fun isAddedToWatchList(plainId: String): LiveData<Boolean> {
+        uiScope.launchWithCatching(dispatchers.IO, {
+
+            isGameAddedToWatchListUseCase(TypeParameter(plainId)).run {
+                _isAddedToWatchList.postValue(receiveOrNull() ?: false)
+                consumeEach {
+                    _isAddedToWatchList.postValue(it)
+                }
+            }
+
+        }) {
+            Timber.e(it, "Failed while watching watchee with plainId=$plainId")
+        }
+        return _isAddedToWatchList
     }
 
     fun onRestoreState(detailsViewModelState: DetailsViewModelState) {

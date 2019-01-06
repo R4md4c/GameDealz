@@ -57,6 +57,8 @@ val DATA = module {
 
     factory<WatchlistRepository> { WatchlistLocalRepository(get(), get()) }
 
+    factory<WatchlistStoresRepository> { WatchlistLocalRepository(get(), get()) }
+
     factory<PlainsRepository> { PlainsLocalRepository(get()) }
 
     factory<RegionsRepository> { RegionLocalRepository(get()) }

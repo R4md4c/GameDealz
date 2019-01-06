@@ -15,24 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.domain.model
 
-import java.util.*
-
-interface DateProvider {
-
-    /**
-     * Provide now's date with time.
-     */
-    fun now(): Date
-
-    /**
-     * Provide today's date without any time information.
-     */
-    fun today(): Date
-
-    /**
-     * Time In Millis.
-     */
-    fun timeInMillis(): Long
-}
+/**
+ * A Value type that describe a request to add a game to the watchlist.
+ *
+ * @param watcheeModel the watchee information.
+ * @param stores the stores that will be observed for the price change
+ */
+data class AddToWatchListArgument(val watcheeModel: WatcheeModel, val stores: List<StoreModel>)

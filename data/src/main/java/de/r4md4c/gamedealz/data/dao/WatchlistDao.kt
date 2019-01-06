@@ -27,7 +27,7 @@ import io.reactivex.Flowable
 interface WatchlistDao {
 
     @Query("SELECT * FROM Watchlist WHERE plainId = :plainId")
-    suspend fun findOne(plainId: String): Watchee?
+    fun findOne(plainId: String): Flowable<Watchee>
 
     @Query("SELECT * FROM Watchlist WHERE id = :id")
     suspend fun findOne(id: Long): Watchee?
@@ -41,8 +41,14 @@ interface WatchlistDao {
     @Query("DELETE FROM Watchlist WHERE id = :id")
     fun delete(id: Long): Int
 
+    @Query("DELETE FROM Watchlist WHERE plainId = :plainId")
+    fun delete(plainId: String): Int
+
     @Insert
     suspend fun insert(watchees: List<Watchee>)
+
+    @Insert
+    suspend fun insert(watchee: Watchee): Long
 
     @Query("UPDATE Watchlist SET currentPrice = :currentPrice, lastCheckDate = :lastChecked WHERE id = :id")
     fun updateWatchee(id: Long, currentPrice: Float, lastChecked: Long): Int

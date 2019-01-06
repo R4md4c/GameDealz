@@ -15,31 +15,20 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.data.repository
+package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.map
 
-interface WatchlistRepository : Repository<Watchee, Long> {
+internal class IsGameAddedToWatchListUseCaseImpl(private val watchlistRepository: WatchlistRepository) :
+    IsGameAddedToWatchListUseCase {
 
-    /**
-     * Removes a watched game by id.
-     *
-     * @return 1 if success 0 otherwise
-     */
-    suspend fun removeById(id: Long): Int
+    override suspend fun invoke(param: TypeParameter<String>?): ReceiveChannel<Boolean> {
+        val plainId = requireNotNull(param).value
 
-    /**
-     * Removes a watched game by plain Id
-     *
-     * @return 1 if success 0 otherwise
-     */
-    suspend fun removeById(plainId: String): Int
-
-    /**
-     * Finds a single model by id.
-     *
-     * @param plainId the id that will be used to retrieve the model form.
-     */
-    suspend fun findById(plainId: String): ReceiveChannel<Watchee>
+        return watchlistRepository.findById(plainId).map { true }
+    }
 }

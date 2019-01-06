@@ -27,6 +27,7 @@ import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
+import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import kotlinx.coroutines.channels.first
@@ -39,14 +40,19 @@ class AddToWatchListViewModel(
     private val dispatchers: IDispatchers,
     private val resourcesProvider: ResourcesProvider,
     private val getCurrentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val getStoresUseCase: GetStoresUseCase
+    private val getStoresUseCase: GetStoresUseCase,
+    private val addToWatchListUseCase: AddToWatchListUseCase
 ) : AbstractViewModel(dispatchers) {
 
     private val _availableStores by lazy { MutableLiveData<List<StoreModel>>() }
     private var activeRegion: ActiveRegion? = null
 
     private val _emptyPriceError by lazy { SingleLiveEvent<String>() }
-    val emptyPriceError by lazy { _emptyPriceError }
+    val emptyPriceError: LiveData<String> by lazy { _emptyPriceError }
+
+    private val _generalError by lazy { SingleLiveEvent<String>() }
+    val generalError: LiveData<String> by lazy { _generalError }
+
     private val _dismiss by lazy { SingleLiveEvent<Unit>() }
     val dismiss: LiveData<Unit> by lazy { _dismiss }
 
@@ -62,9 +68,15 @@ class AddToWatchListViewModel(
         return _availableStores
     }
 
-    fun onSubmit(priceString: String, title: String, plainId: String, priceModel: PriceModel?) {
+    fun onSubmit(
+        priceString: String,
+        title: String,
+        plainId: String,
+        priceModel: PriceModel?,
+        selectedStores: List<StoreModel>
+    ) {
         if (priceString.isBlank()) {
-            emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_empty_price))
+            _emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_empty_price))
             return
         }
         val targetPrice = priceString.runCatching {
@@ -73,11 +85,11 @@ class AddToWatchListViewModel(
             val numberFormat = NumberFormat.getNumberInstance()
             numberFormat.parse(cleaned).toFloat()
         }
-            .onFailure { emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_wrong_number_format)) }
+            .onFailure { _emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_wrong_number_format)) }
             .getOrNull() ?: return
 
         if (priceModel != null && targetPrice >= priceModel.newPrice) {
-            emptyPriceError.postValue(
+            _emptyPriceError.postValue(
                 resourcesProvider.getString(
                     R.string.watchlist_already_better_deal,
                     priceModel.newPrice.formatCurrency(activeRegion!!.currency)!!, priceModel.shop.name
@@ -85,7 +97,45 @@ class AddToWatchListViewModel(
             )
             return
         }
-        _dismiss.postValue(Unit)
+
+        if (selectedStores.isEmpty()) {
+            _generalError.postValue(resourcesProvider.getString(R.string.watchlist_error_stores))
+            return
+        }
+
+        doAddToWatchList(plainId, title, priceModel, targetPrice, selectedStores)
+
+    }
+
+    private fun doAddToWatchList(
+        plainId: String,
+        title: String,
+        priceModel: PriceModel?,
+        targetPrice: Float,
+        selectedStores: List<StoreModel>
+    ) {
+        uiScope.launchWithCatching(dispatchers.Default, {
+            val watcheeModel = WatcheeModel(
+                plainId = plainId,
+                title = title,
+                currentPrice = priceModel!!.newPrice,
+                targetPrice = targetPrice
+            )
+            val addToWatchListArgument = AddToWatchListArgument(watcheeModel, selectedStores)
+
+            addToWatchListUseCase(TypeParameter(addToWatchListArgument))
+
+            _dismiss.postValue(Unit)
+        }) {
+            Timber.e(it, "Failed to save game to watch list.")
+            _generalError.postValue(
+                resourcesProvider.getString(
+                    R.string.watchlist_general_error,
+                    title,
+                    it.localizedMessage
+                )
+            )
+        }
     }
 
     fun formatPrice(editTextString: String): String? {

@@ -103,6 +103,10 @@ class DetailsFragment : BaseFragment() {
                 ?.let { detailsViewModel.onRestoreState(it) }
         }
 
+        detailsViewModel.isAddedToWatchList(plainId).observe(this, Observer {
+            addToWatchList.setImageResource(if (it) R.drawable.ic_remove_from_watch_list else R.drawable.ic_add_to_watch_list)
+        })
+
         detailsViewModel.sideEffect.observe(this, Observer {
             stateVisibilityHandler.onSideEffect(it)
         })

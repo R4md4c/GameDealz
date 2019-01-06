@@ -43,7 +43,6 @@
             app:fabSize="normal"
             app:tint="@color/primaryTextColor"
             app:srcCompat="@drawable/ic_add_to_watch_list"
-            android:contentDescription="@string/add_to_watch_list"
             android:layout_height="wrap_content"/>
 
 

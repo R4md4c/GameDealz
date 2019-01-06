@@ -15,24 +15,22 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.domain.model
 
-import java.util.*
+import de.r4md4c.gamedealz.data.entity.Watchee
 
-interface DateProvider {
+data class WatcheeModel(
+    val id: Long? = null,
+    val plainId: String,
+    val title: String,
+    val dateAdded: Long = 0,
+    val lastCheckDate: Long = 0,
+    val currentPrice: Float,
+    val targetPrice: Float
+)
 
-    /**
-     * Provide now's date with time.
-     */
-    fun now(): Date
+internal fun Watchee.toModel() =
+    WatcheeModel(id, plainId, title, dateAdded, lastCheckDate, currentPrice, targetPrice)
 
-    /**
-     * Provide today's date without any time information.
-     */
-    fun today(): Date
-
-    /**
-     * Time In Millis.
-     */
-    fun timeInMillis(): Long
-}
+internal fun WatcheeModel.toRepositoryModel() =
+    Watchee(id ?: 0, plainId, title, dateAdded, lastCheckDate, currentPrice, targetPrice)

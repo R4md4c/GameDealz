@@ -30,11 +30,11 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
 import androidx.core.os.bundleOf
-import androidx.core.view.forEach
-import androidx.core.view.get
+import androidx.core.view.children
 import androidx.lifecycle.Observer
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -46,11 +46,15 @@ import com.google.android.material.chip.Chip
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
+//TODO: Handle removal of the Watchlisted game.
+//TODO: Ensure that PriceModel is filled.
+//TODO: Handle all switch.
+//TODO: Don't save all the stores in the join table.
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val addToWatchListViewModel by viewModel<AddToWatchListViewModel>()
@@ -87,37 +91,13 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
         addToWatchListViewModel.dismiss.observe(this, Observer { dismiss() })
         addToWatchListViewModel.emptyPriceError.observe(this, Observer { priceEditText.error = it })
+        addToWatchListViewModel.generalError.observe(
+            this,
+            Observer { Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show() })
 
-        addToWatchListViewModel.loadStores().observe(this, Observer { stores ->
-
-            storesChipGroup.removeAllViews()
-
-            stores.map { store ->
-                (LayoutInflater.from(activity).inflate(
-                    R.layout.layout_add_to_watch_list_chip_item,
-                    storesChipGroup,
-                    false
-                ) as Chip).also { chip ->
-                    chip.text = store.name
-                    chip.tag = store.id
-                    chip.id = Math.abs(store.id.hashCode())
-                    chip.isChecked = true
-                    storesChipGroup.addView(chip)
-                }
-            }
-
-            storeAllSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (!isChecked) {
-                    storesChipGroup.clearCheck()
-                } else {
-                    stores.forEach {
-                        (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked = true
-                    }
-
-                }
-            }
-        })
+        observeStores()
     }
+
 
     private fun styleNotifyMeHeader() {
         notifyMeHeader.text = getString(R.string.notify_when_price_reaches, title).let {
@@ -136,18 +116,55 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     private fun prepareToolbar() = with(toolbar) {
         setOnClickListener { dismiss() }
         setBackgroundColor(Color.TRANSPARENT)
-        setNavigationIcon(R.drawable.ic_close_white)
-        setNavigationOnClickListener { dismiss() }
+        setNavigationIcon(R.drawable.ic_check_black)
+        setNavigationOnClickListener { onSubmit() }
         DrawableCompat.setTint(navigationIcon!!, Color.TRANSPARENT)
         setTitle(R.string.add_to_watch_list)
         setTitleTextColor(Color.TRANSPARENT)
-        inflateMenu(R.menu.menu_add_to_watch_list)
-        menu.forEach { DrawableCompat.setTint(it.icon, Color.TRANSPARENT) }
-        menu.findItem(R.id.menu_item_add_to_watch_list).setOnMenuItemClickListener { onSubmit(); true }
     }
 
     private fun onSubmit() {
-        addToWatchListViewModel.onSubmit(priceEditText.text.toString(), title, plainId, priceModel)
+        kotlin.runCatching {
+            storesChipGroup.children.mapNotNull {
+                (it as? Chip)?.takeIf { chip -> chip.isChecked }?.let { chip -> chip.tag as StoreModel }
+            }.toList()
+        }.onSuccess {
+            addToWatchListViewModel.onSubmit(priceEditText.text.toString(), title, plainId, priceModel, it)
+        }.onFailure {
+            Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun observeStores() {
+        addToWatchListViewModel.loadStores().observe(this, Observer { stores ->
+
+            storesChipGroup.removeAllViews()
+
+            stores.map { store ->
+                (LayoutInflater.from(activity).inflate(
+                    R.layout.layout_add_to_watch_list_chip_item,
+                    storesChipGroup,
+                    false
+                ) as Chip).also { chip ->
+                    chip.text = store.name
+                    chip.tag = store
+                    chip.id = Math.abs(store.id.hashCode())
+                    chip.isChecked = true
+                    storesChipGroup.addView(chip)
+                }
+            }
+
+            storeAllSwitch.setOnCheckedChangeListener { _, isChecked ->
+                if (!isChecked) {
+                    storesChipGroup.clearCheck()
+                } else {
+                    stores.forEach {
+                        (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked = true
+                    }
+
+                }
+            }
+        })
     }
 
     inner class MoneyTextWatcher : TextWatcher {
@@ -181,7 +198,6 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
             with(toolbar) {
                 setBackgroundColor(toolbarColor)
                 setTitleTextColor(colorOnToolbar)
-                DrawableCompat.setTint(menu[0].icon, colorOnToolbar)
                 DrawableCompat.setTint(navigationIcon!!, colorOnToolbar)
             }
         }

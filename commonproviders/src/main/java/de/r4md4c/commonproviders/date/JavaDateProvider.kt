@@ -19,7 +19,7 @@ package de.r4md4c.commonproviders.date
 
 import java.util.*
 
-class JavaDateProvider : DateProvider {
+internal class JavaDateProvider : DateProvider {
 
     override fun now(): Date = Date()
 
@@ -35,4 +35,5 @@ class JavaDateProvider : DateProvider {
         }
     }
 
+    override fun timeInMillis(): Long = System.currentTimeMillis()
 }
