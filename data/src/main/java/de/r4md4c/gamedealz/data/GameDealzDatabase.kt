@@ -28,7 +28,8 @@ import de.r4md4c.gamedealz.data.entity.*
         Currency::class,
         Store::class,
         Plain::class,
-        Watchee::class]
+        Watchee::class,
+        WatcheeStoreJoin::class]
 )
 internal abstract class GameDealzDatabase : RoomDatabase() {
 
@@ -41,6 +42,8 @@ internal abstract class GameDealzDatabase : RoomDatabase() {
     abstract fun countriesDao(): CountriesDao
 
     abstract fun watchlistDao(): WatchlistDao
+
+    abstract fun watcheeStoreJoinDao(): WatcheeStoreJoinDao
 
     companion object {
         const val DATABASE_NAME = "game_dealz.db"

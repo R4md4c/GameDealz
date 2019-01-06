@@ -51,8 +51,11 @@ val DATA = module {
     factory {
         get<GameDealzDatabase>().watchlistDao()
     }
+    factory {
+        get<GameDealzDatabase>().watcheeStoreJoinDao()
+    }
 
-    factory<WatchlistRepository> { WatchlistLocalRepository(get()) }
+    factory<WatchlistRepository> { WatchlistLocalRepository(get(), get()) }
 
     factory<PlainsRepository> { PlainsLocalRepository(get()) }
 

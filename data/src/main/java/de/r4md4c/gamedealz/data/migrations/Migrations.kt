@@ -21,10 +21,10 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.beginTransaction()
+    override fun migrate(database: SupportSQLiteDatabase) = with(database) {
+        beginTransaction()
         try {
-            database.execSQL(
+            execSQL(
                 """CREATE TABLE IF NOT EXISTS `Watchlist` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             |`plainId` TEXT NOT NULL,
             |`title` TEXT NOT NULL,
@@ -35,7 +35,20 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         """.trimMargin()
             )
 
-            database.execSQL("CREATE UNIQUE INDEX `index_Watchlist_plainId` ON `Watchlist` (`plainId`)")
+            execSQL("CREATE UNIQUE INDEX `index_Watchlist_plainId` ON `Watchlist` (`plainId`)")
+
+            execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `watchlist_store_join` (`watcheeId` INTEGER NOT NULL,
+                `storeId` TEXT NOT NULL,
+                PRIMARY KEY(`watcheeId`, `storeId`),
+                FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE ,
+                FOREIGN KEY(`storeId`) REFERENCES `Store`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )
+            """.trimIndent()
+            )
+
+            execSQL("CREATE  INDEX `index_watchlist_store_join_storeId` ON `watchlist_store_join` (`storeId`)")
+
             database.setTransactionSuccessful()
         } finally {
             database.endTransaction()

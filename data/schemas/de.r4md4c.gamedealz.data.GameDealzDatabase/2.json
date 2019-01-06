@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "c0ec63dc96a6f0f187c06c4296b2a64a",
+    "identityHash": "68cfd3bf0c960f8b9143df896427c9d4",
     "entities": [
       {
         "tableName": "Region",
@@ -252,12 +252,71 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "watchlist_store_join",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`watcheeId` INTEGER NOT NULL, `storeId` TEXT NOT NULL, PRIMARY KEY(`watcheeId`, `storeId`), FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`storeId`) REFERENCES `Store`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "watcheeId",
+            "columnName": "watcheeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "storeId",
+            "columnName": "storeId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "watcheeId",
+            "storeId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_watchlist_store_join_storeId",
+            "unique": false,
+            "columnNames": [
+              "storeId"
+            ],
+            "createSql": "CREATE  INDEX `index_watchlist_store_join_storeId` ON `${TABLE_NAME}` (`storeId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Watchlist",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "watcheeId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "Store",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "storeId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c0ec63dc96a6f0f187c06c4296b2a64a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"68cfd3bf0c960f8b9143df896427c9d4\")"
     ]
   }
 }

@@ -18,20 +18,15 @@
 package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 
-interface WatchlistRepository : Repository<Watchee, Long> {
-
-    /**
-     * Removes a watched game by id.
-     *
-     * @return 1 if success 0 otherwise
-     */
-    suspend fun removeById(id: Long): Int
+interface WatchlistStoresRepository {
 
     /**
-     * Finds a single model by id.
+     * Augments the watchee with the stores.
      *
-     * @param plainId the id that will be used to retrieve the model form.
+     * @param watchee The watchee that its stores needs to be retrieved.
+     * @return the watchee along with its stores.
      */
-    suspend fun findById(plainId: String): Watchee?
+    suspend fun findWatcheeWithStores(watchee: Watchee): WatcheeWithStores?
 }

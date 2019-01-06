@@ -17,12 +17,17 @@
 
 package de.r4md4c.gamedealz.data.repository
 
+import de.r4md4c.gamedealz.data.dao.WatcheeStoreJoinDao
 import de.r4md4c.gamedealz.data.dao.WatchlistDao
 import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.reactive.openSubscription
 
-class WatchlistLocalRepository(private val watchlistDao: WatchlistDao) : WatchlistRepository {
+internal class WatchlistLocalRepository(
+    private val watchlistDao: WatchlistDao,
+    private val watchlistStoresDao: WatcheeStoreJoinDao
+) : WatchlistRepository, WatchlistStoresRepository {
 
     override suspend fun findById(plainId: String): Watchee? = watchlistDao.findOne(plainId)
 
@@ -35,4 +40,11 @@ class WatchlistLocalRepository(private val watchlistDao: WatchlistDao) : Watchli
 
     override suspend fun findById(id: Long): Watchee? = watchlistDao.findOne(id)
 
+    override suspend fun findWatcheeWithStores(watchee: Watchee): WatcheeWithStores? {
+        val retrievedWatchee = findById(watchee.id) ?: return null
+        return WatcheeWithStores(
+            retrievedWatchee,
+            watchlistStoresDao.getStoresForWatchee(watcheeId = retrievedWatchee.id)
+        )
+    }
 }

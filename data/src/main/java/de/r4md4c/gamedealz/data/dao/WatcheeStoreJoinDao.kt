@@ -15,23 +15,20 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.data.repository
+package de.r4md4c.gamedealz.data.dao
 
-import de.r4md4c.gamedealz.data.entity.Watchee
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import de.r4md4c.gamedealz.data.entity.Store
+import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
 
-interface WatchlistRepository : Repository<Watchee, Long> {
+@Dao
+internal interface WatcheeStoreJoinDao {
 
-    /**
-     * Removes a watched game by id.
-     *
-     * @return 1 if success 0 otherwise
-     */
-    suspend fun removeById(id: Long): Int
+    @Insert
+    suspend fun insert(joins: Collection<WatcheeStoreJoin>)
 
-    /**
-     * Finds a single model by id.
-     *
-     * @param plainId the id that will be used to retrieve the model form.
-     */
-    suspend fun findById(plainId: String): Watchee?
+    @Query("SELECT * FROM Store INNER JOIN watchlist_store_join ON Store.id = watchlist_store_join.storeId WHERE watchlist_store_join.watcheeId=:watcheeId")
+    suspend fun getStoresForWatchee(watcheeId: Long): List<Store>
 }
