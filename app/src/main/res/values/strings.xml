@@ -25,6 +25,12 @@
     <string name="watchlist_general_error">Failed to save %1$s to Watchlist. Error: %2$s</string>
     <string name="watchlist_already_better_deal">There is already better deal than your target price! (%1$s at %2$s)</string>
 
+    <string name="watchlist_notification_summary">You\'ve %1$s Price Alerts!</string>
+    <string name="watchlist_notification_title">Price Alert!</string>
+    <string name="watchlist_notification_content">%1$s has reached %2$s on %3$s!</string>
+    <string name="watchlist_channel_name">Watchlist</string>
+    <string name="watchlist_channel_description">Notifies you when a game\'s price in your Watchlist reaches the specified threshold.</string>
+
     <!-- Error Activity -->
     <string name="sorry">Sorry, that should not have happened.</string>
     <string name="what_happened">What happened:</string>

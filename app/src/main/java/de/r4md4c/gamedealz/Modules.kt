@@ -61,7 +61,7 @@ val MAIN = module {
         )
     }
 
-    factory<Notifier<WatcheeModel>> { WatcheesPushNotifier(androidContext()) }
+    factory<Notifier<WatcheeModel>> { WatcheesPushNotifier(androidContext(), get()) }
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()

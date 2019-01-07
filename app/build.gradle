@@ -108,7 +108,17 @@ dependencies {
     testImplementation "org.koin:koin-test:${versions.koin}"
     testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
 
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestImplementation project(':commontest')
     androidTestImplementation "androidx.test:rules:1.1.1"
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }
+
+configurations.all {
+    resolutionStrategy {
+        force 'net.bytebuddy:byte-buddy:1.8.22'
+        force 'net.bytebuddy:byte-buddy-agent:1.8.22'
+    }
+}
+

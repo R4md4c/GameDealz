@@ -40,6 +40,7 @@ internal class PriceCheckerWorker(
         get() = dispatchers.IO
 
     override suspend fun doWork(): Result {
+        Timber.i("Starting PriceCheckerWorker")
         val result = kotlin.runCatching {
             getPriceThresholdUseCase()
         }.onFailure {
@@ -51,6 +52,7 @@ internal class PriceCheckerWorker(
         }
 
         return if (result.isSuccess) {
+            Timber.i("PriceCheckerWorker finished successfully!")
             Result.success()
         } else {
             result.exceptionOrNull()?.takeIf { it.cause is SocketTimeoutException }?.let {

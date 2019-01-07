@@ -41,6 +41,7 @@ internal class CheckPriceThresholdUseCaseImpl(
 ) : CheckPriceThresholdUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeModel> {
+        Timber.i("Starting checking for Prices.")
         val activeRegion = currentActiveRegionUseCase()
         val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
             // Filter out the Watchees that have already reached its target price.
@@ -79,6 +80,7 @@ internal class CheckPriceThresholdUseCaseImpl(
             return emptySet()
         }
 
+        Timber.d("Found new prices in these watchees $thresholdWatchees")
         // Get the most refreshed Snapshots.
         return watchlistRepository.all(thresholdWatchees.map { it.id }).first().map { it.toModel() }.toSet()
     }
