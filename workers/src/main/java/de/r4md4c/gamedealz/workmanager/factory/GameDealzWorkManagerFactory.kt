@@ -21,7 +21,9 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import de.r4md4c.gamedealz.workmanager.worker.PriceCheckerWorker
 import org.koin.standalone.KoinComponent
+import org.koin.standalone.get
 
 class GameDealzWorkManagerFactory : WorkerFactory(), KoinComponent {
 
@@ -29,7 +31,9 @@ class GameDealzWorkManagerFactory : WorkerFactory(), KoinComponent {
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    ): ListenableWorker? =
+        when (workerClassName) {
+            PriceCheckerWorker::class.java.name -> PriceCheckerWorker(appContext, workerParameters, get(), get(), get())
+            else -> throw IllegalArgumentException("$workerClassName is not supported.")
+        }
 }

@@ -17,26 +17,10 @@
 
 package de.r4md4c.gamedealz.workmanager
 
-import androidx.work.Configuration
-import androidx.work.WorkManager
-import de.r4md4c.gamedealz.workmanager.factory.GameDealzWorkManagerFactory
-import org.koin.android.ext.koin.androidContext
-import org.koin.dsl.module.module
+/**
+ * Inits the workers at the start of the application.
+ */
+interface WorkerJobsInitializer {
 
-val WORK_MANAGER = module {
-
-    single {
-        WorkManager.initialize(
-            androidContext(),
-            Configuration.Builder()
-                .setWorkerFactory(GameDealzWorkManagerFactory())
-                .build()
-        )
-        WorkManager.getInstance()
-    }
-
-    factory<WorkerJobsInitializer> {
-        WorkManagerJobsInitializer(get(), get())
-    }
-
+    suspend fun init()
 }

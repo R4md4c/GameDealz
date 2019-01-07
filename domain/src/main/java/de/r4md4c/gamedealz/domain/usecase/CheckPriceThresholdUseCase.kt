@@ -15,28 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.workmanager
+package de.r4md4c.gamedealz.domain.usecase
 
-import androidx.work.Configuration
-import androidx.work.WorkManager
-import de.r4md4c.gamedealz.workmanager.factory.GameDealzWorkManagerFactory
-import org.koin.android.ext.koin.androidContext
-import org.koin.dsl.module.module
+import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.gamedealz.domain.model.WatcheeModel
 
-val WORK_MANAGER = module {
-
-    single {
-        WorkManager.initialize(
-            androidContext(),
-            Configuration.Builder()
-                .setWorkerFactory(GameDealzWorkManagerFactory())
-                .build()
-        )
-        WorkManager.getInstance()
-    }
-
-    factory<WorkerJobsInitializer> {
-        WorkManagerJobsInitializer(get(), get())
-    }
-
-}
+/**
+ * Loops through the Watchlist, gets the latest prices and outputs all the Watchees that have reached the threshold.
+ */
+interface CheckPriceThresholdUseCase : UseCase<VoidParameter, Set<WatcheeModel>>

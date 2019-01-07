@@ -38,7 +38,7 @@ interface PricesRemoteRepository {
         shops: Set<String> = emptySet(),
         regionCode: String? = null,
         countryCode: String? = null,
-        added: Int? = null
+        added: Long? = null
     ): Map<String, List<Price>>
 
 

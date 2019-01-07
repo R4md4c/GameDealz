@@ -55,7 +55,7 @@ internal class IsThereAnyDealRepository(private val service: IsThereAnyDealServi
         shops: Set<String>,
         regionCode: String?,
         countryCode: String?,
-        added: Int?
+        added: Long?
     ): Map<String, List<Price>> =
         service.prices(
             plains = plainIds.toCommaSeparated(),

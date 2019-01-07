@@ -23,6 +23,7 @@ import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.reactive.openSubscription
 
 internal class WatchlistLocalRepository(
@@ -52,7 +53,15 @@ internal class WatchlistLocalRepository(
         )
     }
 
+    override suspend fun allWatcheesWithStores(): List<WatcheeWithStores> =
+        all().first().mapNotNull {
+            WatcheeWithStores(it, watchlistStoresDao.getStoresForWatchee(watcheeId = it.id))
+        }
+
     override suspend fun saveWatcheeWithStores(watchee: Watchee, stores: List<Store>) {
         watchlistStoresDao.saveWatcheeWithStores(watchlistDao, watchee, stores)
     }
+
+    override suspend fun updateWatchee(id: Long, currentPrice: Float, lastChecked: Long): Int =
+        watchlistDao.updateWatchee(id, currentPrice, lastChecked)
 }

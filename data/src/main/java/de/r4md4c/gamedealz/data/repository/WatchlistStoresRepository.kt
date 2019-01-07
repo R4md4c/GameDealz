@@ -31,5 +31,7 @@ interface WatchlistStoresRepository {
      */
     suspend fun findWatcheeWithStores(watchee: Watchee): WatcheeWithStores?
 
+    suspend fun allWatcheesWithStores(): List<WatcheeWithStores>
+
     suspend fun saveWatcheeWithStores(watchee: Watchee, stores: List<Store>)
 }

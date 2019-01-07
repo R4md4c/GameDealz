@@ -23,6 +23,12 @@
         <activity
                 android:name=".common.acra.ErrorActivity"
                 android:label="@string/title_submit_error_report"/>
+
+        <provider
+                android:name="androidx.work.impl.WorkManagerInitializer"
+                android:authorities="${applicationId}.workmanager-init"
+                android:enabled="false"
+                android:exported="false"/>
     </application>
 
 </manifest>
