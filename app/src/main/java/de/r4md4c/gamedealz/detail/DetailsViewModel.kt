@@ -58,8 +58,7 @@ class DetailsViewModel(
     private val navigator: Navigator,
     private val getPlainDetails: GetPlainDetails,
     private val stateMachineDelegate: StateMachineDelegate,
-    private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase,
-    private val addedToWatchListUseCase: IsGameAddedToWatchListUseCase
+    private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
 ) : AbstractViewModel(dispatchers) {
 
     private var loadedPlainDetailsModel: PlainDetailsModel? = null

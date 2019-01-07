@@ -82,7 +82,6 @@ val MAIN = module {
             get(parameters = { parametersOf(activity) }),
             get(),
             get(),
-            get(),
             get()
         )
     }

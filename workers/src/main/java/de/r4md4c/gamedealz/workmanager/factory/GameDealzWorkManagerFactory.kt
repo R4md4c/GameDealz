@@ -25,7 +25,7 @@ import de.r4md4c.gamedealz.workmanager.worker.PriceCheckerWorker
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
 
-class GameDealzWorkManagerFactory : WorkerFactory(), KoinComponent {
+internal class GameDealzWorkManagerFactory : WorkerFactory(), KoinComponent {
 
     override fun createWorker(
         appContext: Context,

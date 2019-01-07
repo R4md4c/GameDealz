@@ -43,8 +43,8 @@ internal class CheckPriceThresholdUseCaseImpl(
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeModel> {
         val activeRegion = currentActiveRegionUseCase()
         val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
-            // Filter out the Watchees that has already reached its target price.
-            it.watchee.currentPrice >= it.watchee.targetPrice
+            // Filter out the Watchees that have already reached its target price.
+            it.watchee.currentPrice > it.watchee.targetPrice
         }
 
 

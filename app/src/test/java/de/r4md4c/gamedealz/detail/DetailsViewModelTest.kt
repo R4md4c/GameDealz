@@ -30,7 +30,9 @@ import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
+import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -53,13 +55,22 @@ class DetailsViewModelTest {
     @Mock
     private lateinit var stateMachineDelegate: StateMachineDelegate
 
+    @Mock
+    private lateinit var isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
+
     private lateinit var testSubject: DetailsViewModel
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        testSubject = DetailsViewModel(TestDispatchers, navigator, getPlainDetails, stateMachineDelegate)
+        testSubject = DetailsViewModel(
+            TestDispatchers,
+            navigator,
+            getPlainDetails,
+            stateMachineDelegate,
+            isGameAddedToWatchListUseCase
+        )
     }
 
     @Test
@@ -67,6 +78,22 @@ class DetailsViewModelTest {
         testSubject.onBuyButtonClick("aUrl")
 
         verify(navigator).navigateToUrl("aUrl")
+    }
+
+    @Test
+    fun `isAddedToWatchList LiveData returns true when plainId is added to watchlist`() {
+        ArrangeBuilder()
+            .withGameAddedToWatchList(true)
+
+        assertThat(testSubject.isAddedToWatchList("").value).isTrue()
+    }
+
+    @Test
+    fun `isAddedToWatchList LiveData returns false when plainId is not added to watchlist`() {
+        ArrangeBuilder()
+            .withGameAddedToWatchList(false)
+
+        assertThat(testSubject.isAddedToWatchList("").value).isFalse()
     }
 
     @Test
@@ -277,6 +304,12 @@ class DetailsViewModelTest {
                     ), HistoricalLowModel(it.value.first, it.value.third, 0, 0)
                 )
             }.run { useCasePriceDetails.copy(shopPrices = this) }
+        }
+
+        fun withGameAddedToWatchList(isAdded: Boolean) = apply {
+            runBlocking {
+                whenever(isGameAddedToWatchListUseCase.invoke(any())).thenReturn(produce(capacity = 1) { send(isAdded) })
+            }
         }
     }
 
