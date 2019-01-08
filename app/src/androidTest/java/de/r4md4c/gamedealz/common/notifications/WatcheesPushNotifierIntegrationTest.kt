@@ -61,7 +61,10 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
                 dateAdded = it.toLong(),
                 lastCheckDate = it.toLong(),
                 targetPrice = it.toFloat(),
-                currentPrice = it.toFloat()
+                currentPrice = it.toFloat(),
+                regionCode = "EU1",
+                countryCode = "DE",
+                currencyCode = "EUR"
             )
         }
 

@@ -21,11 +21,10 @@ import android.content.Context
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
-import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.domain.DOMAIN
 import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
 import de.r4md4c.gamedealz.workmanager.WorkerJobsInitializer
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
 import org.koin.android.ext.android.inject
@@ -57,9 +56,11 @@ class GameDealzApplication : MultiDexApplication() {
     }
 
     private fun initializeWorkManager() {
-        GlobalScope.launchWithCatching(dispatchers.Default, {
-            workerJobsInitializer.init()
-        }) {
+        kotlin.runCatching {
+            runBlocking {
+                workerJobsInitializer.init()
+            }
+        }.onFailure {
             Timber.e(it, "Failed to init() WorkerJobsInitializer")
         }
     }

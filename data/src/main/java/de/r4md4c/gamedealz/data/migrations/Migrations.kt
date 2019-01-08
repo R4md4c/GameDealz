@@ -26,13 +26,15 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         try {
             execSQL(
                 """CREATE TABLE IF NOT EXISTS `Watchlist` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            |`plainId` TEXT NOT NULL,
-            |`title` TEXT NOT NULL,
-            |`dateAdded` INTEGER NOT NULL,
-            |`lastCheckDate` INTEGER NOT NULL,
-            |`currentPrice` REAL NOT NULL,
-            |`targetPrice` REAL NOT NULL)
-        """.trimMargin()
+                |`plainId` TEXT NOT NULL, `title` TEXT NOT NULL,
+                |`dateAdded` INTEGER NOT NULL,
+                |`lastCheckDate` INTEGER NOT NULL,
+                |`currentPrice` REAL NOT NULL,
+                |`targetPrice` REAL NOT NULL,
+                |`regionCode` TEXT NOT NULL,
+                |`countryCode` TEXT NOT NULL,
+                |`currencyCode` TEXT NOT NULL)
+                |""".trimMargin()
             )
 
             execSQL("CREATE UNIQUE INDEX `index_Watchlist_plainId` ON `Watchlist` (`plainId`)")

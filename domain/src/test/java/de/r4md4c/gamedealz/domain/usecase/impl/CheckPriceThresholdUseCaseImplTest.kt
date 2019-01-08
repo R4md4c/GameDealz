@@ -35,6 +35,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
+import de.r4md4c.gamedealz.test.TestTransactor
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -71,6 +72,7 @@ class CheckPriceThresholdUseCaseImplTest {
             watchlistStoresRepository,
             pricesRemoteRepository,
             currentActiveRegionUseCase,
+            TestTransactor,
             dateProvider
         )
     }
@@ -188,6 +190,25 @@ class CheckPriceThresholdUseCaseImplTest {
         }
     }
 
+
+    @Test
+    fun `it should always update the lastTimeCheck and lastChecked of the checked watchees`() {
+        runBlocking {
+            val targetWatchee = WATCHEE.copy(currentPrice = 10f, targetPrice = 6f)
+            val currentTimeInMillis = System.currentTimeMillis()
+            ArrangeBuilder()
+                .withWatcheesWithStores((1..5).map { WATCHEES_WITH_STORES.copy(watchee = targetWatchee) })
+                .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 10f))))
+                .withFoundWatcheeInRepository("plainId", targetWatchee)
+                .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
+                .withCurrentTime(currentTimeInMillis)
+
+            subject.invoke()
+
+            verify(watchlistRepository).updateWatchee(1L, 10f, TimeUnit.MILLISECONDS.toSeconds(currentTimeInMillis))
+        }
+    }
+
     @Test
     fun `it should not return emptySet when the retrieved prices is less than target price`() {
         runBlocking {
@@ -199,25 +220,6 @@ class CheckPriceThresholdUseCaseImplTest {
                 .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
 
             assertThat(subject.invoke()).isNotEmpty()
-        }
-    }
-
-    @Test
-    fun `it should update the lastTimeCheck and lastChecked of the returned watchees`() {
-        runBlocking {
-            val targetWatchee = WATCHEE.copy(currentPrice = 10f, targetPrice = 6f)
-            val currentTimeInMillis = System.currentTimeMillis()
-            ArrangeBuilder()
-                .withWatcheesWithStores((1..5).map { WATCHEES_WITH_STORES.copy(watchee = targetWatchee) })
-                .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 5f))))
-                .withFoundWatcheeInRepository("plainId", targetWatchee)
-                .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
-                .withCurrentTime(currentTimeInMillis)
-
-            val watchees = subject.invoke()
-
-            assertThat(watchees).isNotEmpty()
-            verify(watchlistRepository).updateWatchee(1L, 5f, TimeUnit.MILLISECONDS.toSeconds(currentTimeInMillis))
         }
     }
 
@@ -270,7 +272,7 @@ class CheckPriceThresholdUseCaseImplTest {
     private companion object {
         val ACTIVE_REGION = ActiveRegion("US", CountryModel("US"), CurrencyModel("", ""))
 
-        val WATCHEE = Watchee(1, "plainId", "title", 0, 0, 50f, 15f)
+        val WATCHEE = Watchee(1, "plainId", "title", 0, 0, 50f, 15f, "", "", "")
 
         val STORES = (1..10).map { Store("$it", "name$it", "color$it") }
 

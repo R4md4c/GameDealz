@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.date.DateProvider
+import de.r4md4c.gamedealz.common.data.Transactor
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
@@ -29,6 +30,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.channels.firstOrNull
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -37,6 +39,7 @@ internal class CheckPriceThresholdUseCaseImpl(
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val pricesRemoteRepository: PricesRemoteRepository,
     private val currentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
+    private val transactor: Transactor,
     private val dateProvider: DateProvider
 ) : CheckPriceThresholdUseCase {
 
@@ -62,19 +65,25 @@ internal class CheckPriceThresholdUseCaseImpl(
             added = allWatcheesWithStores.asSequence().map { it.watchee.lastCheckDate }.min()
         )
 
-        val thresholdWatchees = mutableSetOf<Watchee>()
-        plainIdPricesMap.forEach {
-            val minPrice = it.value.firstOrNull() ?: return@forEach
-            val watchee = watchlistRepository.findById(it.key).firstOrNull() ?: return@forEach
 
-            if (minPrice.newPrice <= watchee.targetPrice) {
-                thresholdWatchees.add(watchee)
-                watchlistRepository.updateWatchee(
-                    watchee.id, minPrice.newPrice,
-                    TimeUnit.MILLISECONDS.toSeconds(dateProvider.timeInMillis())
-                )
+        val thresholdWatchees = mutableSetOf<Watchee>()
+        transactor.runBlockInTransaction {
+            runBlocking {
+                plainIdPricesMap.forEach {
+                    val minPrice = it.value.firstOrNull() ?: return@forEach
+                    val watchee = watchlistRepository.findById(it.key).firstOrNull() ?: return@forEach
+                    watchlistRepository.updateWatchee(
+                        watchee.id, minPrice.newPrice,
+                        TimeUnit.MILLISECONDS.toSeconds(dateProvider.timeInMillis())
+                    )
+
+                    if (minPrice.newPrice <= watchee.targetPrice) {
+                        thresholdWatchees.add(watchee)
+                    }
+                }
             }
         }
+
 
         if (thresholdWatchees.isEmpty()) {
             return emptySet()

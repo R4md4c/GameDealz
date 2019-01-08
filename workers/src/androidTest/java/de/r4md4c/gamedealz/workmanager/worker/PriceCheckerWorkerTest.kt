@@ -82,7 +82,12 @@ class PriceCheckerWorkerTest {
     @Test
     fun doWorkNotifies_whenUseCase_ReturnsWatchees() {
         val mocks = (1..5)
-            .map { WatcheeModel(it.toLong(), "$it", "$it", currentPrice = it.toFloat(), targetPrice = it.toFloat()) }
+            .map {
+                WatcheeModel(
+                    it.toLong(), "$it", "$it", currentPrice = it.toFloat(), targetPrice = it.toFloat(),
+                    regionCode = "EU1", countryCode = "DE", currencyCode = "EU"
+                )
+            }
             .toSet()
         ArrangeBuilder()
             .withWatchees(mocks)

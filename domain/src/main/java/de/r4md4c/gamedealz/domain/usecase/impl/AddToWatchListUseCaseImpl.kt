@@ -24,8 +24,10 @@ import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.AddToWatchListArgument
+import de.r4md4c.gamedealz.domain.model.WatcheeModel
 import de.r4md4c.gamedealz.domain.model.toRepositoryModel
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -34,6 +36,7 @@ internal class AddToWatchListUseCaseImpl(
     private val dispatchers: IDispatchers,
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val watchlistRepository: WatchlistRepository,
+    private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val storesRepository: StoresRepository,
     private val dateProvider: DateProvider
 ) : AddToWatchListUseCase {
@@ -43,14 +46,27 @@ internal class AddToWatchListUseCaseImpl(
         val stores = parameter.stores
 
         withContext(dispatchers.IO) {
+            val activeRegion = activeRegionUseCase()
+            val watcheeModel = with(parameter) {
+                WatcheeModel(
+                    plainId = plainId,
+                    title = title,
+                    currentPrice = currentPrice,
+                    targetPrice = targetPrice,
+                    regionCode = activeRegion.regionCode,
+                    countryCode = activeRegion.country.code,
+                    currencyCode = activeRegion.currency.currencyCode
+                )
+            }
             val savedRepositoryStores = storesRepository.all(stores.map { it.id }).first()
-            val repositoryModel = parameter.watcheeModel.toRepositoryModel()
+            val repositoryModel = watcheeModel
                 .copy(dateAdded = TimeUnit.MILLISECONDS.toMillis(dateProvider.timeInMillis()))
+                .toRepositoryModel()
 
             runCatching {
                 watchlistStoresRepository.saveWatcheeWithStores(repositoryModel, savedRepositoryStores)
             }.onFailure {
-                watchlistRepository.removeById(parameter.watcheeModel.plainId)
+                watchlistRepository.removeById(parameter.plainId)
             }.getOrThrow()
         }
     }

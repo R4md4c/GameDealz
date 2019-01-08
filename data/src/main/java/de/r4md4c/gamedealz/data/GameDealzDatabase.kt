@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import de.r4md4c.gamedealz.common.data.Transactor
 import de.r4md4c.gamedealz.data.dao.*
 import de.r4md4c.gamedealz.data.entity.*
 
@@ -31,7 +32,7 @@ import de.r4md4c.gamedealz.data.entity.*
         Watchee::class,
         WatcheeStoreJoin::class]
 )
-internal abstract class GameDealzDatabase : RoomDatabase() {
+internal abstract class GameDealzDatabase : RoomDatabase(), Transactor {
 
     abstract fun regionWithCountriesDao(): RegionWithCountriesDao
 
@@ -44,6 +45,8 @@ internal abstract class GameDealzDatabase : RoomDatabase() {
     abstract fun watchlistDao(): WatchlistDao
 
     abstract fun watcheeStoreJoinDao(): WatcheeStoreJoinDao
+
+    override fun runBlockInTransaction(block: () -> Unit) = runInTransaction(block)
 
     companion object {
         const val DATABASE_NAME = "game_dealz.db"

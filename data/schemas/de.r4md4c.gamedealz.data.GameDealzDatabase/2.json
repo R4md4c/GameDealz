@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "68cfd3bf0c960f8b9143df896427c9d4",
+    "identityHash": "37285c06a98278c31637561d6c48d21f",
     "entities": [
       {
         "tableName": "Region",
@@ -190,7 +190,7 @@
       },
       {
         "tableName": "Watchlist",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `plainId` TEXT NOT NULL, `title` TEXT NOT NULL, `dateAdded` INTEGER NOT NULL, `lastCheckDate` INTEGER NOT NULL, `currentPrice` REAL NOT NULL, `targetPrice` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `plainId` TEXT NOT NULL, `title` TEXT NOT NULL, `dateAdded` INTEGER NOT NULL, `lastCheckDate` INTEGER NOT NULL, `currentPrice` REAL NOT NULL, `targetPrice` REAL NOT NULL, `regionCode` TEXT NOT NULL, `countryCode` TEXT NOT NULL, `currencyCode` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -232,6 +232,24 @@
             "fieldPath": "targetPrice",
             "columnName": "targetPrice",
             "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regionCode",
+            "columnName": "regionCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countryCode",
+            "columnName": "countryCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currencyCode",
+            "columnName": "currencyCode",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -316,7 +334,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"68cfd3bf0c960f8b9143df896427c9d4\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"37285c06a98278c31637561d6c48d21f\")"
     ]
   }
 }

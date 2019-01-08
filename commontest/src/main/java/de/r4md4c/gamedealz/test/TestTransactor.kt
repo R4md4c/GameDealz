@@ -15,22 +15,13 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.model
+package de.r4md4c.gamedealz.test
 
-/**
- * A Value type that describe a request to add a game to the watchlist.
- *
- * @param plainId the plain id of the game.
- * @param title the title of the game.
- * @param currentPrice the currentPrice of the game at the time that it was added.
- * @param targetPrice the desired price that you want to set the alert for.
- * @param stores the stores that will be observed for the price change
- */
-data class AddToWatchListArgument(
-    val plainId: String,
-    val title: String,
-    val currentPrice: Float,
-    val targetPrice: Float,
-    val stores: List<StoreModel>
-)
+import de.r4md4c.gamedealz.common.data.Transactor
 
+object TestTransactor : Transactor {
+
+    override fun runBlockInTransaction(block: () -> Unit) {
+        block()
+    }
+}

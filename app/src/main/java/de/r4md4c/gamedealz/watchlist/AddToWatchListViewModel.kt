@@ -115,15 +115,10 @@ class AddToWatchListViewModel(
         selectedStores: List<StoreModel>
     ) {
         uiScope.launchWithCatching(dispatchers.Default, {
-            val watcheeModel = WatcheeModel(
-                plainId = plainId,
-                title = title,
-                currentPrice = priceModel!!.newPrice,
-                targetPrice = targetPrice
-            )
-            val addToWatchListArgument = AddToWatchListArgument(watcheeModel, selectedStores)
+            val addToWatchListArgument =
+                AddToWatchListArgument(plainId, title, priceModel!!.newPrice, targetPrice, selectedStores)
 
-            addToWatchListUseCase(TypeParameter(addToWatchListArgument))
+            addToWatchListUseCase.invoke(TypeParameter(addToWatchListArgument))
 
             _dismiss.postValue(Unit)
         }) {

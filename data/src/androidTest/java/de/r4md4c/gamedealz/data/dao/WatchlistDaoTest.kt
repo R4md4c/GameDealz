@@ -91,11 +91,11 @@ class WatchlistDaoTest : KoinTest {
         runBlocking {
             watchlistDao.insert(watcheesList)
 
-            val watchee = watchlistDao.findOne("plainId5")!!
+            val watchee = watchlistDao.findOne("plainId5").blockingFirst()
 
             val timeStamp = System.currentTimeMillis()
             assertThat(watchlistDao.updateWatchee(watchee.id, 500f, timeStamp)).isEqualTo(1)
-            assertThat(watchlistDao.findOne("plainId5")).isEqualTo(
+            assertThat(watchlistDao.findOne("plainId5").blockingFirst()).isEqualTo(
                 watchee.copy(
                     currentPrice = 500f,
                     lastCheckDate = timeStamp
@@ -110,7 +110,10 @@ class WatchlistDaoTest : KoinTest {
             title = "title:$it",
             currentPrice = 0f,
             dateAdded = 0,
-            targetPrice = 0f
+            targetPrice = 0f,
+            regionCode = "EU1",
+            countryCode = "DE",
+            currencyCode = "EUR"
         )
     }
 }

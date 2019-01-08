@@ -26,11 +26,36 @@ data class WatcheeModel(
     val dateAdded: Long = 0,
     val lastCheckDate: Long = 0,
     val currentPrice: Float,
-    val targetPrice: Float
+    val targetPrice: Float,
+    val regionCode: String,
+    val countryCode: String,
+    val currencyCode: String
 )
 
 internal fun Watchee.toModel() =
-    WatcheeModel(id, plainId, title, dateAdded, lastCheckDate, currentPrice, targetPrice)
+    WatcheeModel(
+        id,
+        plainId,
+        title,
+        dateAdded,
+        lastCheckDate,
+        currentPrice,
+        targetPrice,
+        regionCode,
+        countryCode,
+        currencyCode
+    )
 
 internal fun WatcheeModel.toRepositoryModel() =
-    Watchee(id ?: 0, plainId, title, dateAdded, lastCheckDate, currentPrice, targetPrice)
+    Watchee(
+        id ?: 0,
+        plainId,
+        title,
+        dateAdded,
+        lastCheckDate,
+        currentPrice,
+        targetPrice,
+        regionCode,
+        countryCode,
+        currencyCode
+    )

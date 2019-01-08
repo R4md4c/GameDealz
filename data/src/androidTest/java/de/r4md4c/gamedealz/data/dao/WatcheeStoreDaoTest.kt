@@ -126,7 +126,10 @@ class WatcheeStoreDaoTest : KoinTest {
             title = "title:$it",
             currentPrice = 0f,
             dateAdded = 0,
-            targetPrice = 0f
+            targetPrice = 0f,
+            regionCode = "EU1",
+            countryCode = "DE",
+            currencyCode = "EUR"
         )
     }
     private val storesList = (1..10).map {

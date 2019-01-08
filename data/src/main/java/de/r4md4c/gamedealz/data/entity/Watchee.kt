@@ -31,6 +31,9 @@ import androidx.room.PrimaryKey
  * @param lastCheckDate the last timestamp that this game was checked in.
  * @param currentPrice the old price when that game was added to the DB.
  * @param targetPrice the target price that will trigger the alert.
+ * @param regionCode the regionCode that was active when that watchee was added.
+ * @param countryCode the countryCode that was active when that watchee was added.
+ * @param currencyCode the currency code that was active when that watchee was added.
  */
 @Entity(tableName = "Watchlist", indices = [Index(value = ["plainId"], unique = true)])
 data class Watchee(
@@ -40,5 +43,8 @@ data class Watchee(
     val dateAdded: Long,
     val lastCheckDate: Long = 0,
     val currentPrice: Float,
-    val targetPrice: Float
+    val targetPrice: Float,
+    val regionCode: String,
+    val countryCode: String,
+    val currencyCode: String
 )
