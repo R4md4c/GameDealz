@@ -18,14 +18,10 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.commonproviders.date.DateProvider
-import de.r4md4c.gamedealz.data.entity.Store
-import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
+import de.r4md4c.gamedealz.data.entity.*
+import de.r4md4c.gamedealz.data.repository.RegionsRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
@@ -61,6 +57,9 @@ class CheckPriceThresholdUseCaseImplTest {
     @Mock
     private lateinit var dateProvider: DateProvider
 
+    @Mock
+    private lateinit var regionsRepostiory: RegionsRepository
+
     private lateinit var subject: CheckPriceThresholdUseCaseImpl
 
     @Before
@@ -73,7 +72,8 @@ class CheckPriceThresholdUseCaseImplTest {
             pricesRemoteRepository,
             currentActiveRegionUseCase,
             TestTransactor,
-            dateProvider
+            dateProvider,
+            regionsRepostiory
         )
     }
 
@@ -226,6 +226,7 @@ class CheckPriceThresholdUseCaseImplTest {
     inner class ArrangeBuilder {
         init {
             runBlocking {
+                whenever(regionsRepostiory.findById(any())).thenReturn(RegionWithCountries(mock(), CURRENCY, emptySet()))
                 whenever(currentActiveRegionUseCase.invoke(anyOrNull())).thenReturn(ACTIVE_REGION)
                 whenever(watchlistRepository.findById(any<String>())).thenReturn(produce(capacity = 1) { close() })
             }
@@ -270,7 +271,7 @@ class CheckPriceThresholdUseCaseImplTest {
     }
 
     private companion object {
-        val ACTIVE_REGION = ActiveRegion("US", CountryModel("US"), CurrencyModel("", ""))
+        val ACTIVE_REGION = ActiveRegion("US", CountryModel("US"), CurrencyModel("EUR", ""))
 
         val WATCHEE = Watchee(1, "plainId", "title", 0, 0, 50f, 15f, "", "", "")
 
@@ -279,5 +280,7 @@ class CheckPriceThresholdUseCaseImplTest {
         val WATCHEES_WITH_STORES = WatcheeWithStores(WATCHEE, STORES)
 
         val PRICE = Price(1f, 1f, 2, "", Shop("", ""), emptySet())
+
+        val CURRENCY = Currency("EUR", "")
     }
 }

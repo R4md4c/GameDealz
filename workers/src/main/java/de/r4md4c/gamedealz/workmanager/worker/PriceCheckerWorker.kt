@@ -22,7 +22,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
@@ -32,7 +32,7 @@ internal class PriceCheckerWorker(
     appContext: Context,
     params: WorkerParameters,
     private val dispatchers: IDispatchers,
-    private val notifier: Notifier<WatcheeModel>,
+    private val notifier: Notifier<WatcheeNotificationModel>,
     private val getPriceThresholdUseCase: CheckPriceThresholdUseCase
 ) : CoroutineWorker(appContext, params) {
 

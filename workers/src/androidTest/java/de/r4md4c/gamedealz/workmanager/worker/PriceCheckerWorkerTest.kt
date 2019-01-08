@@ -26,7 +26,7 @@ import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
 import de.r4md4c.gamedealz.workmanager.WorkManagerJobsInitializer
@@ -49,7 +49,7 @@ class PriceCheckerWorkerTest {
     lateinit var testWorkManager: WorkManager
 
     @Mock
-    lateinit var notifier: Notifier<WatcheeModel>
+    lateinit var notifier: Notifier<WatcheeNotificationModel>
 
     @Mock
     lateinit var checkPriceThresholdUseCase: CheckPriceThresholdUseCase
@@ -83,14 +83,22 @@ class PriceCheckerWorkerTest {
     fun doWorkNotifies_whenUseCase_ReturnsWatchees() {
         val mocks = (1..5)
             .map {
-                WatcheeModel(
-                    it.toLong(), "$it", "$it", currentPrice = it.toFloat(), targetPrice = it.toFloat(),
-                    regionCode = "EU1", countryCode = "DE", currencyCode = "EU"
+                WatcheeNotificationModel(
+                    watcheeModel =
+                    WatcheeModel(
+                        it.toLong(), "$it", "$it", currentPrice = it.toFloat(), targetPrice = it.toFloat(),
+                        regionCode = "EU1", countryCode = "DE", currencyCode = "EU"
+                    ),
+                    priceModel = PriceModel(
+                        it.toFloat(), it.toFloat(), 0, "",
+                        ShopModel("shop$it", "name$it", ""), emptySet()
+                    ),
+                    currencyModel = CurrencyModel("EUR", "")
                 )
             }
             .toSet()
         ArrangeBuilder()
-            .withWatchees(mocks)
+            .withNotificationModels(mocks)
             .arrange()
 
         verify(notifier).notify(mocks)
@@ -99,7 +107,7 @@ class PriceCheckerWorkerTest {
     @Test
     fun doWorkDoesNotNotify_whenUseCase_ReturnsEmptyWatchees() {
         ArrangeBuilder()
-            .withWatchees(emptySet())
+            .withNotificationModels(emptySet())
             .arrange()
 
         verify(notifier, never()).notify(any())
@@ -107,7 +115,7 @@ class PriceCheckerWorkerTest {
 
     inner class ArrangeBuilder {
 
-        fun withWatchees(watcheeModel: Set<WatcheeModel>) = apply {
+        fun withNotificationModels(watcheeModel: Set<WatcheeNotificationModel>) = apply {
             runBlocking {
                 whenever(checkPriceThresholdUseCase.invoke(anyOrNull())).thenReturn(watcheeModel.toSet())
             }

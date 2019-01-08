@@ -24,7 +24,7 @@ import androidx.test.uiautomator.Until
 import com.google.common.truth.Truth.assertThat
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -54,17 +54,24 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
     fun testShowingNotification_showsSummary() {
         clearAllNotifications()
         val data = (1..10).map {
-            WatcheeModel(
-                id = it.toLong(),
-                plainId = "plainId$it",
-                title = "title$it",
-                dateAdded = it.toLong(),
-                lastCheckDate = it.toLong(),
-                targetPrice = it.toFloat(),
-                currentPrice = it.toFloat(),
-                regionCode = "EU1",
-                countryCode = "DE",
-                currencyCode = "EUR"
+            WatcheeNotificationModel(
+                watcheeModel = WatcheeModel(
+                    id = it.toLong(),
+                    plainId = "plainId$it",
+                    title = "title$it",
+                    dateAdded = it.toLong(),
+                    lastCheckDate = it.toLong(),
+                    targetPrice = it.toFloat(),
+                    currentPrice = it.toFloat(),
+                    regionCode = "EU1",
+                    countryCode = "DE",
+                    currencyCode = "EUR"
+                ),
+                priceModel = PriceModel(
+                    10f, 10f, 0, "http://google.com",
+                    ShopModel("", "Steam", ""), emptySet()
+                ),
+                currencyModel = CurrencyModel("EUR", "")
             )
         }
 

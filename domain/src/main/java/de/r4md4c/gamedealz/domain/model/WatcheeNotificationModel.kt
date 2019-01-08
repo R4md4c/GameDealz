@@ -15,12 +15,15 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
-
-import de.r4md4c.gamedealz.domain.VoidParameter
-import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+package de.r4md4c.gamedealz.domain.model
 
 /**
- * Loops through the Watchlist, gets the latest prices and outputs all the Watchees that have reached the threshold.
+ * Contains information needed to render notifications.
+ *
+ * @param watcheeModel the watchee that needs to be notification.
+ * @param priceModel the price model that contains the shop information that triggered the alert.
+ * @param currencyModel the currency that will be used to display the price.
  */
-interface CheckPriceThresholdUseCase : UseCase<VoidParameter, Set<WatcheeNotificationModel>>
+data class WatcheeNotificationModel(val watcheeModel: WatcheeModel,
+                                    val priceModel: PriceModel,
+                                    val currencyModel: CurrencyModel)

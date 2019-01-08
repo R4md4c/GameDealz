@@ -34,6 +34,7 @@ import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
 import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.detail.DetailsViewModel
 import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
@@ -61,7 +62,7 @@ val MAIN = module {
         )
     }
 
-    factory<Notifier<WatcheeModel>> { WatcheesPushNotifier(androidContext(), get()) }
+    factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get()) }
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()

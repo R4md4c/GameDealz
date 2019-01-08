@@ -20,13 +20,17 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.common.data.Transactor
 import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.repository.RegionsRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
-import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import de.r4md4c.gamedealz.domain.model.toCurrencyModel
 import de.r4md4c.gamedealz.domain.model.toModel
+import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
+import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.channels.firstOrNull
@@ -40,10 +44,11 @@ internal class CheckPriceThresholdUseCaseImpl(
     private val pricesRemoteRepository: PricesRemoteRepository,
     private val currentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
     private val transactor: Transactor,
-    private val dateProvider: DateProvider
+    private val dateProvider: DateProvider,
+    private val regionsRepository: RegionsRepository
 ) : CheckPriceThresholdUseCase {
 
-    override suspend fun invoke(param: VoidParameter?): Set<WatcheeModel> {
+    override suspend fun invoke(param: VoidParameter?): Set<WatcheeNotificationModel> {
         Timber.i("Starting checking for Prices.")
         val activeRegion = currentActiveRegionUseCase()
         val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
@@ -66,7 +71,7 @@ internal class CheckPriceThresholdUseCaseImpl(
         )
 
 
-        val thresholdWatchees = mutableSetOf<Watchee>()
+        val watcheesPriceModelMap = mutableMapOf<Price, Watchee>()
         transactor.runBlockInTransaction {
             runBlocking {
                 plainIdPricesMap.forEach {
@@ -78,19 +83,33 @@ internal class CheckPriceThresholdUseCaseImpl(
                     )
 
                     if (minPrice.newPrice <= watchee.targetPrice) {
-                        thresholdWatchees.add(watchee)
+                        watcheesPriceModelMap[minPrice] = watchee
                     }
                 }
             }
         }
 
 
-        if (thresholdWatchees.isEmpty()) {
+        if (watcheesPriceModelMap.isEmpty()) {
             return emptySet()
         }
 
-        Timber.d("Found new prices in these watchees $thresholdWatchees")
-        // Get the most refreshed Snapshots.
-        return watchlistRepository.all(thresholdWatchees.map { it.id }).first().map { it.toModel() }.toSet()
+        val watcheesNotificationModel = watcheesPriceModelMap.toSet().mapNotNull {
+            // Get the most refreshed Snapshots.
+            val refreshedSnapShot = watchlistRepository.findById(it.watcheeModel.id!!) ?: return@mapNotNull null
+            it.copy(watcheeModel = refreshedSnapShot.toModel())
+        }
+
+        Timber.d("Found new prices in these watchees $watcheesPriceModelMap")
+
+        return watcheesNotificationModel.toSet()
     }
+
+    private suspend fun Map<Price, Watchee>.toSet(): Set<WatcheeNotificationModel> =
+        this.mapNotNull {
+            val watcheeModel = it.value.toModel()
+            val priceModel = it.key.toPriceModel("") // We don't need the store color.
+            val region = regionsRepository.findById(watcheeModel.regionCode) ?: return@mapNotNull null
+            WatcheeNotificationModel(watcheeModel, priceModel, region.currency.toCurrencyModel())
+        }.toSet()
 }
