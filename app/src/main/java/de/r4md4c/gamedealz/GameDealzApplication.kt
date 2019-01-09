@@ -19,7 +19,6 @@ package de.r4md4c.gamedealz
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
-import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
 import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
@@ -40,8 +39,6 @@ import timber.log.Timber
 class GameDealzApplication : MultiDexApplication() {
 
     private val workerJobsInitializer by inject<WorkerJobsInitializer>()
-
-    private val dispatchers: IDispatchers by inject()
 
     override fun onCreate() {
         super.onCreate()

@@ -94,10 +94,14 @@ internal class WatcheesPushNotifier(
                         priceModel.shop.name
                     )
                 )
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setGroup(GROUP_KEY)
-                .setContentIntent(notificationModel.toBuyUrlPendingIntent())
-                .addAction(0, resourcesProvider.getString(R.string.details), notificationModel.toDetailsPendingIntent())
+                .setContentIntent(notificationModel.toDetailsPendingIntent())
+                .addAction(
+                    0, resourcesProvider.getString(R.string.check_on, priceModel.shop.name).capitalize(),
+                    notificationModel.toBuyUrlPendingIntent()
+                )
                 .also {
                     notificationsSparseArray.put(watcheeModel.id!!.toInt(), it.build())
                 }
@@ -137,12 +141,13 @@ internal class WatcheesPushNotifier(
         Intent(Intent.ACTION_VIEW, Uri.parse(priceModel.url))
             .run { PendingIntent.getActivity(context, 0, this, 0) }
 
-    private fun WatcheeNotificationModel.toDetailsPendingIntent(): PendingIntent =
+    private fun WatcheeNotificationModel.toDetailsPendingIntent(): PendingIntent? =
         NavDeepLinkBuilder(context)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.gameDetailFragment)
             .setArguments(toBundle())
-            .createPendingIntent()
+            .createTaskStackBuilder()
+            .getPendingIntent(watcheeModel.id!!.toInt(), PendingIntent.FLAG_UPDATE_CURRENT)
 
     private companion object {
         private const val GROUP_KEY = "watchlist_notification_group"

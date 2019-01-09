@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="de.r4md4c.gamedealz">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -27,8 +28,8 @@
         <provider
                 android:name="androidx.work.impl.WorkManagerInitializer"
                 android:authorities="${applicationId}.workmanager-init"
-                android:enabled="false"
-                android:exported="false"/>
+                tools:node="remove"/>
+
     </application>
 
 </manifest>

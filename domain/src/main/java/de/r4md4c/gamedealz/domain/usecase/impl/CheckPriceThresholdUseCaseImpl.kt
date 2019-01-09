@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.date.DateProvider
-import de.r4md4c.gamedealz.common.data.Transactor
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.repository.RegionsRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
@@ -32,9 +31,7 @@ import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
-import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.channels.firstOrNull
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -43,7 +40,6 @@ internal class CheckPriceThresholdUseCaseImpl(
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val pricesRemoteRepository: PricesRemoteRepository,
     private val currentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val transactor: Transactor,
     private val dateProvider: DateProvider,
     private val regionsRepository: RegionsRepository
 ) : CheckPriceThresholdUseCase {
@@ -67,25 +63,23 @@ internal class CheckPriceThresholdUseCaseImpl(
             shops = allWatcheesWithStores.asSequence().flatMap { it.stores.asSequence() }.map { it.id }.toSet(),
             regionCode = activeRegion.regionCode,
             countryCode = activeRegion.country.code,
-            added = allWatcheesWithStores.asSequence().map { it.watchee.lastCheckDate }.min()
+            added = allWatcheesWithStores.asSequence()
+                .map { if (it.watchee.lastCheckDate == 0L) it.watchee.dateAdded else it.watchee.lastCheckDate }
+                .max()
         )
 
 
         val watcheesPriceModelMap = mutableMapOf<Price, Watchee>()
-        transactor.runBlockInTransaction {
-            runBlocking {
-                plainIdPricesMap.forEach {
-                    val minPrice = it.value.firstOrNull() ?: return@forEach
-                    val watchee = watchlistRepository.findById(it.key).firstOrNull() ?: return@forEach
-                    watchlistRepository.updateWatchee(
-                        watchee.id, minPrice.newPrice,
-                        TimeUnit.MILLISECONDS.toSeconds(dateProvider.timeInMillis())
-                    )
+        plainIdPricesMap.forEach {
+            val minPrice = it.value.firstOrNull() ?: return@forEach
+            val watchee = watchlistRepository.findById(it.key).firstOrNull() ?: return@forEach
+            watchlistRepository.updateWatchee(
+                watchee.id, minPrice.newPrice,
+                TimeUnit.MILLISECONDS.toSeconds(dateProvider.timeInMillis())
+            )
 
-                    if (minPrice.newPrice <= watchee.targetPrice) {
-                        watcheesPriceModelMap[minPrice] = watchee
-                    }
-                }
+            if (minPrice.newPrice <= watchee.targetPrice) {
+                watcheesPriceModelMap[minPrice] = watchee
             }
         }
 
@@ -94,22 +88,22 @@ internal class CheckPriceThresholdUseCaseImpl(
             return emptySet()
         }
 
-        val watcheesNotificationModel = watcheesPriceModelMap.toSet().mapNotNull {
+        val watcheesNotificationModelsList = watcheesPriceModelMap.toList().mapNotNull {
             // Get the most refreshed Snapshots.
             val refreshedSnapShot = watchlistRepository.findById(it.watcheeModel.id!!) ?: return@mapNotNull null
             it.copy(watcheeModel = refreshedSnapShot.toModel())
         }
 
-        Timber.d("Found new prices in these watchees $watcheesPriceModelMap")
+        Timber.d("Found new prices in these watchees $watcheesNotificationModelsList")
 
-        return watcheesNotificationModel.toSet()
+        return watcheesNotificationModelsList.toSet()
     }
 
-    private suspend fun Map<Price, Watchee>.toSet(): Set<WatcheeNotificationModel> =
+    private suspend fun Map<Price, Watchee>.toList(): List<WatcheeNotificationModel> =
         this.mapNotNull {
             val watcheeModel = it.value.toModel()
             val priceModel = it.key.toPriceModel("") // We don't need the store color.
             val region = regionsRepository.findById(watcheeModel.regionCode) ?: return@mapNotNull null
             WatcheeNotificationModel(watcheeModel, priceModel, region.currency.toCurrencyModel())
-        }.toSet()
+        }
 }

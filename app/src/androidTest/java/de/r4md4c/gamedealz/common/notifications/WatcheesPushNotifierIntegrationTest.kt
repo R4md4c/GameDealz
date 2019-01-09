@@ -24,11 +24,13 @@ import androidx.test.uiautomator.Until
 import com.google.common.truth.Truth.assertThat
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.domain.DOMAIN
 import de.r4md4c.gamedealz.domain.model.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.koin.standalone.KoinComponent
+import org.koin.standalone.StandAloneContext.startKoin
 import org.koin.standalone.StandAloneContext.stopKoin
 import org.koin.standalone.get
 import org.koin.standalone.inject
@@ -43,6 +45,7 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
 
     @Before
     fun beforeEach() {
+        startKoin(DOMAIN)
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         watcheesPushNotifier = WatcheesPushNotifier(
             InstrumentationRegistry.getInstrumentation().targetContext,
@@ -51,7 +54,7 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
     }
 
     @Test
-    fun testShowingNotification_showsSummary() {
+    fun showingMore10Notifications_showsSummary() {
         clearAllNotifications()
         val data = (1..10).map {
             WatcheeNotificationModel(
@@ -88,6 +91,41 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
             )
         ).also {
             assertThat(it).isNotNull()
+        }
+    }
+
+    @Test
+    fun showing1Notification() {
+        clearAllNotifications()
+        val data = WatcheeNotificationModel(
+            watcheeModel = WatcheeModel(
+                id = 1,
+                plainId = "plainId1",
+                title = "title$1",
+                dateAdded = 1,
+                lastCheckDate = 1,
+                targetPrice = 1f,
+                currentPrice = 1f,
+                regionCode = "EU1",
+                countryCode = "DE",
+                currencyCode = "EUR"
+            ),
+            priceModel = PriceModel(
+                10f, 10f, 0, "http://google.com",
+                ShopModel("", "Steam", ""), emptySet()
+            ),
+            currencyModel = CurrencyModel("EUR", "")
+        )
+
+        watcheesPushNotifier.notify(setOf(data))
+
+        uiDevice.openNotification()
+        uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
+        uiDevice.findObject(
+            By.textStartsWith("title1 has reached")
+        ).also {
+            assertThat(it).isNotNull()
+            it.click()
         }
     }
 

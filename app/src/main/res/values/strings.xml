@@ -10,7 +10,7 @@
     <string name="results_empty">Returned results were empty.</string>
     <string name="current_best">Current Best:</string>
     <string name="historical_low">Historical low was</string>
-    <string name="details">Details</string>
+    <string name="check_on">Check On %s</string>
     <string name="sort_current_best">Current Best</string>
     <string name="sort_historical_low">Historical Low</string>
     <string name="prices">Prices</string>

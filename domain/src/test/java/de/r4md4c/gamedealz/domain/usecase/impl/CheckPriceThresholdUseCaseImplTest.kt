@@ -31,7 +31,6 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
-import de.r4md4c.gamedealz.test.TestTransactor
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -71,7 +70,6 @@ class CheckPriceThresholdUseCaseImplTest {
             watchlistStoresRepository,
             pricesRemoteRepository,
             currentActiveRegionUseCase,
-            TestTransactor,
             dateProvider,
             regionsRepostiory
         )
@@ -183,7 +181,8 @@ class CheckPriceThresholdUseCaseImplTest {
             ArrangeBuilder()
                 .withWatcheesWithStores((1..5).map { WATCHEES_WITH_STORES.copy(watchee = targetWatchee) })
                 .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 6f))))
-                .withFoundWatcheeInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByPlainIdInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByRowIdInRepository(targetWatchee.id, targetWatchee)
                 .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
 
             assertThat(subject.invoke()).isNotEmpty()
@@ -199,7 +198,8 @@ class CheckPriceThresholdUseCaseImplTest {
             ArrangeBuilder()
                 .withWatcheesWithStores((1..5).map { WATCHEES_WITH_STORES.copy(watchee = targetWatchee) })
                 .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 10f))))
-                .withFoundWatcheeInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByPlainIdInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByRowIdInRepository(targetWatchee.id, targetWatchee)
                 .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
                 .withCurrentTime(currentTimeInMillis)
 
@@ -216,17 +216,64 @@ class CheckPriceThresholdUseCaseImplTest {
             ArrangeBuilder()
                 .withWatcheesWithStores((1..5).map { WATCHEES_WITH_STORES.copy(watchee = targetWatchee) })
                 .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 5f))))
-                .withFoundWatcheeInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByPlainIdInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByRowIdInRepository(targetWatchee.id, targetWatchee)
                 .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
 
             assertThat(subject.invoke()).isNotEmpty()
         }
     }
 
+    @Test
+    fun `it should retrieve prices by having the most recent last check timestamp `() {
+        runBlocking {
+            val targetWatchee = WATCHEE.copy(currentPrice = 10f, targetPrice = 6f)
+            ArrangeBuilder()
+                .withWatcheesWithStores((1..5).map {
+                    WATCHEES_WITH_STORES.copy(
+                        watchee = targetWatchee.copy(
+                            lastCheckDate = it.toLong()
+                        )
+                    )
+                })
+                .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 5f))))
+                .withFoundWatcheeByPlainIdInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByRowIdInRepository(targetWatchee.id, targetWatchee)
+                .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
+
+            subject.invoke()
+
+            verify(pricesRemoteRepository).retrievesPrices(any(), anyOrNull(), anyOrNull(), anyOrNull(), eq(5))
+        }
+    }
+
+    @Test
+    fun `it should retrieve prices by having the most recent date added timestamp when never was checked`() {
+        runBlocking {
+            val targetWatchee = WATCHEE.copy(currentPrice = 10f, targetPrice = 6f)
+            ArrangeBuilder()
+                .withWatcheesWithStores((1..5).map { WATCHEES_WITH_STORES.copy(watchee = targetWatchee.copy(dateAdded = it.toLong())) })
+                .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 5f))))
+                .withFoundWatcheeByPlainIdInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByRowIdInRepository(targetWatchee.id, targetWatchee)
+                .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
+
+            subject.invoke()
+
+            verify(pricesRemoteRepository).retrievesPrices(any(), anyOrNull(), anyOrNull(), anyOrNull(), eq(5))
+        }
+    }
+
     inner class ArrangeBuilder {
         init {
             runBlocking {
-                whenever(regionsRepostiory.findById(any())).thenReturn(RegionWithCountries(mock(), CURRENCY, emptySet()))
+                whenever(regionsRepostiory.findById(any())).thenReturn(
+                    RegionWithCountries(
+                        mock(),
+                        CURRENCY,
+                        emptySet()
+                    )
+                )
                 whenever(currentActiveRegionUseCase.invoke(anyOrNull())).thenReturn(ACTIVE_REGION)
                 whenever(watchlistRepository.findById(any<String>())).thenReturn(produce(capacity = 1) { close() })
             }
@@ -253,9 +300,15 @@ class CheckPriceThresholdUseCaseImplTest {
             }
         }
 
-        fun withFoundWatcheeInRepository(plainId: String, returnedWatchee: Watchee) = apply {
+        fun withFoundWatcheeByPlainIdInRepository(plainId: String, returnedWatchee: Watchee) = apply {
             runBlocking {
                 whenever(watchlistRepository.findById(plainId)).thenReturn(produce(capacity = 1) { send(returnedWatchee) })
+            }
+        }
+
+        fun withFoundWatcheeByRowIdInRepository(rowId: Long, returnedWatchee: Watchee) = apply {
+            runBlocking {
+                whenever(watchlistRepository.findById(rowId)).thenReturn(returnedWatchee)
             }
         }
 

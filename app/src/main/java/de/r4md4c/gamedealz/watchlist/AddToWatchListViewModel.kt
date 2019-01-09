@@ -127,7 +127,7 @@ class AddToWatchListViewModel(
                 resourcesProvider.getString(
                     R.string.watchlist_general_error,
                     title,
-                    it.localizedMessage
+                    it.message ?: it.localizedMessage ?: ""
                 )
             )
         }

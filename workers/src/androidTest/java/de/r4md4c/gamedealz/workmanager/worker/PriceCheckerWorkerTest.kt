@@ -57,7 +57,6 @@ class PriceCheckerWorkerTest {
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-
         WorkManagerTestInitHelper.initializeTestWorkManager(
             InstrumentationRegistry.getInstrumentation().targetContext,
             Configuration.Builder()

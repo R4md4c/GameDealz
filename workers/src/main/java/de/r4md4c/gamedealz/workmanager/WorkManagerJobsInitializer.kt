@@ -43,7 +43,7 @@ internal class WorkManagerJobsInitializer(
     private fun enqueuePriceChecker(): Operation =
         workManager.enqueueUniquePeriodicWork(
             PRICE_CHECKER_UNIQUE_NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.REPLACE,
             PeriodicWorkRequestBuilder<PriceCheckerWorker>(
                 preferenences.priceCheckerPeriodicIntervalInHours.toLong(),
                 TimeUnit.HOURS

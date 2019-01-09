@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.data
 
 import androidx.room.Room
-import de.r4md4c.gamedealz.common.data.Transactor
 import de.r4md4c.gamedealz.data.GameDealzDatabase.Companion.DATABASE_NAME
 import de.r4md4c.gamedealz.data.migrations.MIGRATION_1_2
 import de.r4md4c.gamedealz.data.repository.*
@@ -32,8 +31,6 @@ val DATA = module {
             .addMigrations(MIGRATION_1_2)
             .build()
     }
-
-    factory<Transactor> { get<GameDealzDatabase>() }
 
     factory {
         get<GameDealzDatabase>().regionWithCountriesDao()
