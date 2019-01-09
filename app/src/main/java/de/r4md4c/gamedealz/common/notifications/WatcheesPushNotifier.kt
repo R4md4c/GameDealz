@@ -69,7 +69,7 @@ internal class WatcheesPushNotifier(
     override fun notify(data: Collection<WatcheeNotificationModel>) {
         val notifications = data.notificationsFromWatchees().takeIf { it.size() > 0 } ?: return
 
-        buildSummaryNotification(notifications.size()).also {
+        buildSummaryNotification(notifications.size())?.also {
             notifications.put(notifications.size() + 1, it)
         }
 
@@ -109,8 +109,11 @@ internal class WatcheesPushNotifier(
         return notificationsSparseArray
     }
 
-    private fun buildSummaryNotification(notificationsTotalSize: Int) =
-        NotificationCompat.Builder(context, CHANNEL_ID)
+    private fun buildSummaryNotification(notificationsTotalSize: Int): Notification? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return null
+        }
+        return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(
                 resourcesProvider.getString(
                     R.string.watchlist_notification_summary,
@@ -121,6 +124,7 @@ internal class WatcheesPushNotifier(
             .setGroup(GROUP_KEY)
             .setGroupSummary(true)
             .build()
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

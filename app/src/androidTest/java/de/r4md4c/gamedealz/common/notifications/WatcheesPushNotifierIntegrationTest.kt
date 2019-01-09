@@ -17,21 +17,20 @@
 
 package de.r4md4c.gamedealz.common.notifications
 
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.google.common.truth.Truth.assertThat
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.domain.DOMAIN
 import de.r4md4c.gamedealz.domain.model.*
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.koin.standalone.KoinComponent
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
 import org.koin.standalone.get
 import org.koin.standalone.inject
 
@@ -45,7 +44,6 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
 
     @Before
     fun beforeEach() {
-        startKoin(DOMAIN)
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         watcheesPushNotifier = WatcheesPushNotifier(
             InstrumentationRegistry.getInstrumentation().targetContext,
@@ -80,8 +78,7 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
 
         watcheesPushNotifier.notify(data)
 
-        uiDevice.openNotification()
-        uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
+        waitForNotification()
         uiDevice.findObject(
             By.text(
                 resourcesProvider.getString(
@@ -95,7 +92,7 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
     }
 
     @Test
-    fun showing1Notification() {
+    fun showing1Notification_clickOpensDetails() {
         clearAllNotifications()
         val data = WatcheeNotificationModel(
             watcheeModel = WatcheeModel(
@@ -119,25 +116,25 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
 
         watcheesPushNotifier.notify(setOf(data))
 
-        uiDevice.openNotification()
-        uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
+        waitForNotification()
         uiDevice.findObject(
-            By.textStartsWith("title1 has reached")
+            By.textStartsWith("Price Alert")
         ).also {
             assertThat(it).isNotNull()
             it.click()
         }
-    }
-
-    @After
-    fun afterEach() {
-        stopKoin()
+        onView(withId(R.id.toolbar)).check(matches(isDisplayed()))
     }
 
     private fun clearAllNotifications() {
         uiDevice.openNotification()
         uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
         uiDevice.findObject(By.desc("Clear all notifications."))?.let { it.click() }
+    }
+
+    private fun waitForNotification() {
+        uiDevice.openNotification()
+        uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
     }
 
     private companion object {
