@@ -28,7 +28,6 @@ import de.r4md4c.gamedealz.domain.model.toCurrencyModel
 import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import kotlinx.coroutines.channels.firstOrNull
@@ -39,14 +38,12 @@ internal class CheckPriceThresholdUseCaseImpl(
     private val watchlistRepository: WatchlistRepository,
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val pricesRemoteRepository: PricesRemoteRepository,
-    private val currentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
     private val dateProvider: DateProvider,
     private val regionsRepository: RegionsRepository
 ) : CheckPriceThresholdUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeNotificationModel> {
         Timber.i("Starting checking for Prices.")
-        val activeRegion = currentActiveRegionUseCase()
         val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
             // Filter out the Watchees that have already reached its target price.
             it.watchee.currentPrice > it.watchee.targetPrice
@@ -58,16 +55,23 @@ internal class CheckPriceThresholdUseCaseImpl(
             return emptySet()
         }
 
-        val plainIdPricesMap = pricesRemoteRepository.retrievesPrices(
-            plainIds = allWatcheesWithStores.asSequence().map { it.watchee.plainId }.toSet(),
-            shops = allWatcheesWithStores.asSequence().flatMap { it.stores.asSequence() }.map { it.id }.toSet(),
-            regionCode = activeRegion.regionCode,
-            countryCode = activeRegion.country.code,
-            added = allWatcheesWithStores.asSequence()
-                .map { if (it.watchee.lastCheckDate == 0L) it.watchee.dateAdded else it.watchee.lastCheckDate }
-                .max()
-        )
+        // To handle case users having watch list from two different countries and regions.
+        val countryGroupedWatchees = allWatcheesWithStores.groupBy { it.watchee.regionCode to it.watchee.countryCode }
 
+        val plainIdPricesMap = mutableMapOf<String, List<Price>>()
+        countryGroupedWatchees.map { entry ->
+            pricesRemoteRepository.retrievesPrices(
+                plainIds = entry.value.asSequence().map { it.watchee.plainId }.toSet(),
+                shops = entry.value.asSequence().flatMap { it.stores.asSequence() }.map { it.id }.toSet(),
+                regionCode = entry.key.first,
+                countryCode = entry.key.second,
+                added = entry.value.asSequence()
+                    .map { if (it.watchee.lastCheckDate == 0L) it.watchee.dateAdded else it.watchee.lastCheckDate }
+                    .max()
+            )
+        }.forEach {
+            plainIdPricesMap.putAll(it)
+        }
 
         val watcheesPriceModelMap = mutableMapOf<Price, Watchee>()
         plainIdPricesMap.forEach {

@@ -54,7 +54,7 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<IsGameAddedToWatchListUseCase> { IsGameAddedToWatchListUseCaseImpl(get()) }
 
-    factory<CheckPriceThresholdUseCase> { CheckPriceThresholdUseCaseImpl(get(), get(), get(), get(), get(), get()) }
+    factory<CheckPriceThresholdUseCase> { CheckPriceThresholdUseCaseImpl(get(), get(), get(), get(), get()) }
 
     factory<RemoveFromWatchlistUseCase> { RemoveFromWatchlistUseCaseImpl(get()) }
 

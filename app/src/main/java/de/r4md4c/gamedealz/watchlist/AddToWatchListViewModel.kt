@@ -31,6 +31,7 @@ import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -105,6 +106,15 @@ class AddToWatchListViewModel(
 
         doAddToWatchList(plainId, title, priceModel, targetPrice, selectedStores)
 
+    }
+
+    fun formatCurrentBestCurrencyModel(priceModel: PriceModel): LiveData<String> {
+        val currencyData = SingleLiveEvent<String>()
+        uiScope.launch(dispatchers.IO) {
+            val activeRegion = getCurrentActiveRegionUseCase()
+            currencyData.postValue(priceModel.newPrice.formatCurrency(activeRegion.currency))
+        }
+        return currencyData
     }
 
     private fun doAddToWatchList(

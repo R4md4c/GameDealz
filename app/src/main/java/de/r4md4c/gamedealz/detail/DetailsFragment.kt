@@ -38,6 +38,8 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
+import de.r4md4c.gamedealz.common.launchWithCatching
+import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
@@ -49,6 +51,7 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -65,6 +68,8 @@ class DetailsFragment : BaseFragment() {
     private val resourcesProvider: ResourcesProvider by inject()
 
     private val dateFormatter: DateFormatter by inject()
+
+    private val viewNotifier: ViewNotifier by inject()
 
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
@@ -162,20 +167,21 @@ class DetailsFragment : BaseFragment() {
             withContext(dispatchers.Main) {
                 pricesAdapter.set(pricesItems)
                 progress.isVisible = false
+                addToWatchList.show()
             }
         }
     }
 
     private fun setupFab() {
+        addToWatchList.hide()
         addToWatchList.setOnClickListener {
-
             if (detailsViewModel.isAddedToWatchList.value == true) {
                 askToRemove()
             } else {
-                val lowestPriceModel = detailsViewModel.prices.value?.firstOrNull()
-                //            detailsViewModel.onBuyButtonClick(buyUrl)
-                AddToWatchListDialog.newInstance(plainId, title, lowestPriceModel?.priceModel)
-                    .show(childFragmentManager, null)
+                detailsViewModel.prices.value?.firstOrNull()?.let { priceDetails ->
+                    AddToWatchListDialog.newInstance(plainId, title, priceDetails.priceModel)
+                        .show(childFragmentManager, null)
+                }
             }
         }
     }
@@ -188,11 +194,16 @@ class DetailsFragment : BaseFragment() {
         detailsViewModel.onFilterChange(clickedFilterItemId)
     }
 
-    private fun askToRemove() = viewScope.launch {
+    private fun askToRemove() = viewScope.launchWithCatching(dispatchers.Main, {
         val yes = ask()
         if (yes) {
-            detailsViewModel.removeFromWatchlist(plainId)
+            val isRemoved = detailsViewModel.removeFromWatchlist(plainId)
+            if (isRemoved) {
+                viewNotifier.notify(getString(R.string.watchlist_remove_successfully, title))
+            }
         }
+    }) {
+        Timber.e(it, "Failed to remove $plainId from the Watchlist")
     }
 
     private suspend fun ask() = suspendCoroutine<Boolean> { continuation ->

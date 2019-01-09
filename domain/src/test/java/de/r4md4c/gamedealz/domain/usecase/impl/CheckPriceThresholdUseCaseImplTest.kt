@@ -69,7 +69,6 @@ class CheckPriceThresholdUseCaseImplTest {
             watchlistRepository,
             watchlistStoresRepository,
             pricesRemoteRepository,
-            currentActiveRegionUseCase,
             dateProvider,
             regionsRepostiory
         )
@@ -261,6 +260,50 @@ class CheckPriceThresholdUseCaseImplTest {
             subject.invoke()
 
             verify(pricesRemoteRepository).retrievesPrices(any(), anyOrNull(), anyOrNull(), anyOrNull(), eq(5))
+        }
+    }
+
+    @Test
+    fun `it should retrieve prices when having watchees from different regions and countries`() {
+        runBlocking {
+            val targetWatchee = WATCHEE
+            val country = { index: Int ->
+                if (index % 2 == 0) "country1" else "country2"
+            }
+            val region = { index: Int ->
+                if (index % 2 == 0) "region1" else "region2"
+            }
+            val watchesWithStoresFromDifferentCountries = (1..5).map {
+                WATCHEES_WITH_STORES.copy(
+                    watchee = targetWatchee.copy(
+                        plainId = "plainId$it",
+                        id = it.toLong(), dateAdded = it.toLong(), countryCode = country(it), regionCode = region(it)
+                    )
+                )
+            }
+            ArrangeBuilder()
+                .withWatcheesWithStores(watchesWithStoresFromDifferentCountries)
+                .withRetrievedPrices(mapOf("plainId" to listOf(PRICE.copy(newPrice = 5f))))
+                .withFoundWatcheeByPlainIdInRepository("plainId", targetWatchee)
+                .withFoundWatcheeByRowIdInRepository(targetWatchee.id, targetWatchee)
+                .withWatchlistAllResult(setOf(targetWatchee.id), listOf(targetWatchee))
+
+            subject.invoke()
+
+            verify(pricesRemoteRepository).retrievesPrices(
+                eq(setOf("plainId1", "plainId3", "plainId5")),
+                anyOrNull(),
+                eq("region2"),
+                eq("country2"),
+                any()
+            )
+            verify(pricesRemoteRepository).retrievesPrices(
+                eq(setOf("plainId2", "plainId4")),
+                anyOrNull(),
+                eq("region1"),
+                eq("country1"),
+                any()
+            )
         }
     }
 

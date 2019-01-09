@@ -24,6 +24,8 @@ import androidx.paging.DataSource
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.navigator.AndroidNavigator
 import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
+import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.notifications.WatcheesPushNotifier
 import de.r4md4c.gamedealz.common.state.OnRetryClick
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
@@ -45,6 +47,10 @@ import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module.module
 
 val MAIN = module {
+
+    factory<ViewNotifier> {
+        ToastViewNotifier(androidContext())
+    }
 
     factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
         DealsDataSourceFactory(get(), stateMachineDelegate, get())

@@ -15,24 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewmodel
+package de.r4md4c.gamedealz.common.notifications
 
-import androidx.annotation.CallSuper
-import androidx.lifecycle.ViewModel
-import de.r4md4c.gamedealz.common.IDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+/**
+ * Shows notifications on an active view (Fragment or Activity)
+ */
+interface ViewNotifier {
 
-abstract class AbstractViewModel(dispatchers: IDispatchers) : ViewModel() {
-
-    private val viewModelJob = SupervisorJob()
-
-    protected val uiScope = CoroutineScope(dispatchers.Main + viewModelJob)
-
-    @CallSuper
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancelChildren()
-    }
+    fun notify(message: String)
 }

@@ -100,13 +100,9 @@ class DetailsViewModel(
         _filterItemChoice.postValue(filterItemId)
     }
 
-    fun removeFromWatchlist(plainId: String) {
-        uiScope.launchWithCatching(dispatchers.IO, {
-            removeFromWatchlistUseCase(TypeParameter(plainId)).also {
-                Timber.i("Removal of $plainId, from the Watchlist was: $it")
-            }
-        }) {
-            Timber.e(it, "Failed to remove $plainId from the Watchlist.")
+    suspend fun removeFromWatchlist(plainId: String) = withContext(dispatchers.IO) {
+        removeFromWatchlistUseCase(TypeParameter(plainId)).also {
+            Timber.i("Removal of $plainId, from the Watchlist was: $it")
         }
     }
 

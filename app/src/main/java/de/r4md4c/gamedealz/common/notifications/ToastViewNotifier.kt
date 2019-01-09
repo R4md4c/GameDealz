@@ -15,24 +15,15 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.viewmodel
+package de.r4md4c.gamedealz.common.notifications
 
-import androidx.annotation.CallSuper
-import androidx.lifecycle.ViewModel
-import de.r4md4c.gamedealz.common.IDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import android.content.Context
+import android.widget.Toast
 
-abstract class AbstractViewModel(dispatchers: IDispatchers) : ViewModel() {
+internal class ToastViewNotifier(private val context: Context) : ViewNotifier {
 
-    private val viewModelJob = SupervisorJob()
-
-    protected val uiScope = CoroutineScope(dispatchers.Main + viewModelJob)
-
-    @CallSuper
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancelChildren()
+    override fun notify(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
+
 }

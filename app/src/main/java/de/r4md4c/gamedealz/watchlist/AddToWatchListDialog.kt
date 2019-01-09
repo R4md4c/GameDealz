@@ -22,10 +22,7 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Editable
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextWatcher
+import android.text.*
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +32,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
 import androidx.core.os.bundleOf
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -45,14 +43,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-//TODO: Handle removal of the Watchlisted game.
-//TODO: Ensure that PriceModel is filled.
 //TODO: Handle all switch.
 //TODO: Don't save all the stores in the join table.
 class AddToWatchListDialog : BottomSheetDialogFragment() {
@@ -63,7 +61,9 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val plainId: String by lazy { arguments!!.getString(ARG_PLAIN_ID) }
 
-    private val priceModel: PriceModel? by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
+    private val priceModel: PriceModel by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
+
+    private val viewNotifier: ViewNotifier by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
@@ -83,13 +83,17 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         styleNotifyMeHeader()
         priceEditText.addTextChangedListener(MoneyTextWatcher())
+        setCurrentBest()
         prepareToolbar()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        addToWatchListViewModel.dismiss.observe(this, Observer { dismiss() })
+        addToWatchListViewModel.dismiss.observe(this, Observer {
+            viewNotifier.notify(getString(R.string.watchlist_added_successfully, title))
+            dismiss()
+        })
         addToWatchListViewModel.emptyPriceError.observe(this, Observer { priceEditText.error = it })
         addToWatchListViewModel.generalError.observe(
             this,
@@ -167,6 +171,19 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         })
     }
 
+    private fun setCurrentBest() {
+        val currentBestData = addToWatchListViewModel.formatCurrentBestCurrencyModel(priceModel)
+        currentBestData.observe(this, Observer {
+            if (it == null) {
+                currentBest.isVisible = false
+            } else {
+                currentBest.isVisible = true
+                currentBest.text = TextUtils.concat(getString(R.string.current_best), " ", it)
+            }
+        })
+
+    }
+
     inner class MoneyTextWatcher : TextWatcher {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
@@ -213,7 +230,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(plainId: String, title: String, priceModel: PriceModel?) = AddToWatchListDialog().apply {
+        fun newInstance(plainId: String, title: String, priceModel: PriceModel) = AddToWatchListDialog().apply {
             arguments = bundleOf(
                 ARG_PLAIN_ID to plainId,
                 ARG_TITLE to title,
