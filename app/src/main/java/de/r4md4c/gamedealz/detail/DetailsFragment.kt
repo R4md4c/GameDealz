@@ -23,11 +23,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
@@ -47,6 +49,8 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class DetailsFragment : BaseFragment() {
 
@@ -103,8 +107,10 @@ class DetailsFragment : BaseFragment() {
                 ?.let { detailsViewModel.onRestoreState(it) }
         }
 
-        detailsViewModel.isAddedToWatchList(plainId).observe(this, Observer {
-            addToWatchList.setImageResource(if (it) R.drawable.ic_remove_from_watch_list else R.drawable.ic_add_to_watch_list)
+        detailsViewModel.loadIsAddedToWatchlist(plainId)
+
+        detailsViewModel.isAddedToWatchList.observe(this, Observer {
+            addToWatchList.setImageResource(if (it) R.drawable.ic_added_to_watch_list else R.drawable.ic_add_to_watch_list)
         })
 
         detailsViewModel.sideEffect.observe(this, Observer {
@@ -162,10 +168,15 @@ class DetailsFragment : BaseFragment() {
 
     private fun setupFab() {
         addToWatchList.setOnClickListener {
-            val lowestPriceModel = detailsViewModel.prices.value?.firstOrNull()
-            //            detailsViewModel.onBuyButtonClick(buyUrl)
-            AddToWatchListDialog.newInstance(plainId, title, lowestPriceModel?.priceModel)
-                .show(childFragmentManager, null)
+
+            if (detailsViewModel.isAddedToWatchList.value == true) {
+                askToRemove()
+            } else {
+                val lowestPriceModel = detailsViewModel.prices.value?.firstOrNull()
+                //            detailsViewModel.onBuyButtonClick(buyUrl)
+                AddToWatchListDialog.newInstance(plainId, title, lowestPriceModel?.priceModel)
+                    .show(childFragmentManager, null)
+            }
         }
     }
 
@@ -175,6 +186,26 @@ class DetailsFragment : BaseFragment() {
 
     private fun handleFilterItemClick(@IdRes clickedFilterItemId: Int) {
         detailsViewModel.onFilterChange(clickedFilterItemId)
+    }
+
+    private fun askToRemove() = viewScope.launch {
+        val yes = ask()
+        if (yes) {
+            detailsViewModel.removeFromWatchlist(plainId)
+        }
+    }
+
+    private suspend fun ask() = suspendCoroutine<Boolean> { continuation ->
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(
+                HtmlCompat.fromHtml(
+                    getString(R.string.dialog_ask_remove_from_watch_list, title),
+                    HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
+            )
+            .setPositiveButton(android.R.string.yes) { dialog, _ -> continuation.resume(true); dialog.dismiss() }
+            .setNegativeButton(android.R.string.no) { dialog, _ -> continuation.resume(false); dialog.dismiss() }
+            .show()
     }
 
     companion object {

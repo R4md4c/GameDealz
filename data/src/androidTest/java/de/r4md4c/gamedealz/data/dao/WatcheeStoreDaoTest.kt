@@ -119,6 +119,21 @@ class WatcheeStoreDaoTest : KoinTest {
         }
     }
 
+    @Test
+    fun removingFromWatchlist_CascadeDelete() {
+        runBlocking {
+            val storesList = storesList
+            val watchlist = watcheesList
+            ArrangeBuilder()
+                .withInsertedJoinInformation(watchlist, storesList)
+
+            watchlistDao.delete(1)
+
+
+            assertThat(watcheeStoreJoinDao.getStoresForWatchee(1)).isEmpty()
+        }
+    }
+
     private val watcheesList = (1..10).map {
         Watchee(
             id = it.toLong(),

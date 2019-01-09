@@ -27,7 +27,7 @@ import io.reactivex.Flowable
 interface WatchlistDao {
 
     @Query("SELECT * FROM Watchlist WHERE plainId = :plainId")
-    fun findOne(plainId: String): Flowable<Watchee>
+    fun findOne(plainId: String): Flowable<List<Watchee>>
 
     @Query("SELECT * FROM Watchlist WHERE id = :id")
     suspend fun findOne(id: Long): Watchee?

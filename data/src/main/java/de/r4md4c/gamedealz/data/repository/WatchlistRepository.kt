@@ -41,7 +41,7 @@ interface WatchlistRepository : Repository<Watchee, Long> {
      *
      * @param plainId the id that will be used to retrieve the model form.
      */
-    suspend fun findById(plainId: String): ReceiveChannel<Watchee>
+    suspend fun findById(plainId: String): ReceiveChannel<Watchee?>
 
     /**
      * Update the currentPrice and the lastChecked timestamp of a Watchee.

@@ -24,6 +24,7 @@ import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.reactive.openSubscription
 
 internal class WatchlistLocalRepository(
@@ -31,8 +32,8 @@ internal class WatchlistLocalRepository(
     private val watchlistStoresDao: WatcheeStoreJoinDao
 ) : WatchlistRepository, WatchlistStoresRepository {
 
-    override suspend fun findById(plainId: String): ReceiveChannel<Watchee> =
-        watchlistDao.findOne(plainId).openSubscription()
+    override suspend fun findById(plainId: String): ReceiveChannel<Watchee?> =
+        watchlistDao.findOne(plainId).openSubscription().map { it.firstOrNull() }
 
     override suspend fun all(ids: Collection<Long>?): ReceiveChannel<List<Watchee>> =
         (ids?.let { watchlistDao.findAll(it) } ?: watchlistDao.findAll()).openSubscription()

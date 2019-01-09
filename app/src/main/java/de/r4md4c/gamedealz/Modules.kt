@@ -33,7 +33,6 @@ import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
 import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.detail.DetailsViewModel
-import de.r4md4c.gamedealz.domain.model.WatcheeModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
@@ -81,6 +80,7 @@ val MAIN = module {
         DetailsViewModel(
             get(),
             get(parameters = { parametersOf(activity) }),
+            get(),
             get(),
             get(),
             get()

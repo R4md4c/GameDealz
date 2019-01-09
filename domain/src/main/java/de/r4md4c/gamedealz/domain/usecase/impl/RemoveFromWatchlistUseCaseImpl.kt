@@ -19,16 +19,14 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.map
+import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 
-internal class IsGameAddedToWatchListUseCaseImpl(private val watchlistRepository: WatchlistRepository) :
-    IsGameAddedToWatchListUseCase {
+internal class RemoveFromWatchlistUseCaseImpl(private val watchlistRepository: WatchlistRepository) :
+    RemoveFromWatchlistUseCase {
 
-    override suspend fun invoke(param: TypeParameter<String>?): ReceiveChannel<Boolean> {
+    override suspend fun invoke(param: TypeParameter<String>?): Boolean {
         val plainId = requireNotNull(param).value
 
-        return watchlistRepository.findById(plainId).map { it != null }
+        return watchlistRepository.removeById(plainId) > 0
     }
 }

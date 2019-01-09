@@ -32,6 +32,8 @@
     <string name="watchlist_channel_name">Watchlist</string>
     <string name="watchlist_channel_description">Notifies you when a game\'s price in your Watchlist reaches the specified threshold.</string>
 
+    <string name="dialog_ask_remove_from_watch_list"><![CDATA[Are you sure that you want to remove <b>%s</b> from your Watchlist?]]></string>
+
     <!-- Error Activity -->
     <string name="sorry">Sorry, that should not have happened.</string>
     <string name="what_happened">What happened:</string>

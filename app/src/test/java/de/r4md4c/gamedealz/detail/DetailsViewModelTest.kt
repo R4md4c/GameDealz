@@ -28,9 +28,11 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
@@ -58,6 +60,9 @@ class DetailsViewModelTest {
     @Mock
     private lateinit var isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
 
+    @Mock
+    private lateinit var removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
+
     private lateinit var testSubject: DetailsViewModel
 
     @Before
@@ -69,7 +74,8 @@ class DetailsViewModelTest {
             navigator,
             getPlainDetails,
             stateMachineDelegate,
-            isGameAddedToWatchListUseCase
+            isGameAddedToWatchListUseCase,
+            removeFromWatchlistUseCase
         )
     }
 
@@ -85,7 +91,9 @@ class DetailsViewModelTest {
         ArrangeBuilder()
             .withGameAddedToWatchList(true)
 
-        assertThat(testSubject.isAddedToWatchList("").value).isTrue()
+        testSubject.loadIsAddedToWatchlist("")
+
+        assertThat(testSubject.isAddedToWatchList.value).isTrue()
     }
 
     @Test
@@ -93,7 +101,9 @@ class DetailsViewModelTest {
         ArrangeBuilder()
             .withGameAddedToWatchList(false)
 
-        assertThat(testSubject.isAddedToWatchList("").value).isFalse()
+        testSubject.loadIsAddedToWatchlist("")
+
+        assertThat(testSubject.isAddedToWatchList.value).isFalse()
     }
 
     @Test
@@ -237,6 +247,15 @@ class DetailsViewModelTest {
                 )
             }).reversed()
         )
+    }
+
+    @Test
+    fun `removeFromWatchlist invokes remove from watchlist usecase`() {
+        testSubject.removeFromWatchlist("plainId")
+
+        runBlocking {
+            verify(removeFromWatchlistUseCase).invoke(TypeParameter("plainId"))
+        }
     }
 
     inner class ArrangeBuilder {

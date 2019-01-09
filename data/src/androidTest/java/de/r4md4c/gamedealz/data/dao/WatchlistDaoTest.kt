@@ -25,6 +25,8 @@ import com.google.common.truth.Truth.assertThat
 import de.r4md4c.gamedealz.data.DATA
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Watchee
+import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -82,7 +84,7 @@ class WatchlistDaoTest : KoinTest {
         runBlocking {
             watchlistDao.insert(watcheesList)
 
-            assertThat(watchlistDao.findOne("plainId5")).isNotNull()
+            assertThat(watchlistDao.findOne("plainId5").awaitFirstOrNull()).isNotEmpty()
         }
     }
 
@@ -91,16 +93,34 @@ class WatchlistDaoTest : KoinTest {
         runBlocking {
             watchlistDao.insert(watcheesList)
 
-            val watchee = watchlistDao.findOne("plainId5").blockingFirst()
+            val watchee = watchlistDao.findOne("plainId5").awaitFirst().first()
 
             val timeStamp = System.currentTimeMillis()
             assertThat(watchlistDao.updateWatchee(watchee.id, 500f, timeStamp)).isEqualTo(1)
-            assertThat(watchlistDao.findOne("plainId5").blockingFirst()).isEqualTo(
+            assertThat(watchlistDao.findOne("plainId5").awaitFirst().first()).isEqualTo(
                 watchee.copy(
                     currentPrice = 500f,
                     lastCheckDate = timeStamp
                 )
             )
+        }
+    }
+
+    @Test
+    fun removeByPlainId() {
+        runBlocking {
+            watchlistDao.insert(watcheesList.first())
+
+            assertThat(watchlistDao.delete("plainId1")).isEqualTo(1)
+        }
+    }
+
+    @Test
+    fun removeById() {
+        runBlocking {
+            watchlistDao.insert(watcheesList.first())
+
+            assertThat(watchlistDao.delete(1)).isEqualTo(1)
         }
     }
 
