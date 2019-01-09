@@ -22,6 +22,7 @@ android {
         multiDexEnabled true
 
         buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     buildTypes {
@@ -39,6 +40,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 }
 
@@ -93,6 +98,7 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:${versions.koin}"
     implementation "org.koin:koin-androidx-viewmodel:${versions.koin}"
 
+    implementation project(':workers')
     implementation project(':common')
     implementation project(':commonproviders')
     implementation project(':domain')
@@ -107,7 +113,18 @@ dependencies {
     testImplementation "org.koin:koin-test:${versions.koin}"
     testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
 
+    androidTestUtil 'androidx.test:orchestrator:1.1.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestImplementation project(':commontest')
     androidTestImplementation "androidx.test:rules:1.1.1"
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }
+
+configurations.all {
+    resolutionStrategy {
+        force 'net.bytebuddy:byte-buddy:1.8.22'
+        force 'net.bytebuddy:byte-buddy-agent:1.8.22'
+    }
+}
+

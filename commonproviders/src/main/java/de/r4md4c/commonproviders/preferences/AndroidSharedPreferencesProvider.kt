@@ -20,6 +20,7 @@ package de.r4md4c.commonproviders.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 
 internal class AndroidSharedPreferencesProvider(context: Context) : SharedPreferencesProvider {
@@ -57,8 +58,28 @@ internal class AndroidSharedPreferencesProvider(context: Context) : SharedPrefer
             }
         }
 
+    override val reactivePriceCheckerPeriodicIntervalInHours: ReceiveChannel<Int>
+        get() = ConflatedBroadcastChannel(priceCheckerPeriodicIntervalInHours)
+            .also { channel ->
+                val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                    if (key == KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL) {
+                        channel.offer(priceCheckerPeriodicIntervalInHours)
+                    }
+                }
+                sharedPreferences.registerOnSharedPreferenceChangeListener(callback)
+                channel.invokeOnClose {
+                    sharedPreferences.unregisterOnSharedPreferenceChangeListener(callback)
+                }
+            }.openSubscription()
+
+    override var priceCheckerPeriodicIntervalInHours: Int
+        get() = sharedPreferences.getInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, 6)
+        set(value) {
+            sharedPreferences.edit().putInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, value).apply()
+        }
 
     private companion object {
+        private const val KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL = "price_checker_hourly_interval"
         private const val KEY_ACTIVE_REGION_COUNTRY = "active_region_country"
     }
 }

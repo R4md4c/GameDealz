@@ -10,17 +10,40 @@
     <string name="results_empty">Returned results were empty.</string>
     <string name="current_best">Current Best:</string>
     <string name="historical_low">Historical low was</string>
+    <string name="check_on">Check On %s</string>
     <string name="sort_current_best">Current Best</string>
     <string name="sort_historical_low">Historical Low</string>
     <string name="prices">Prices</string>
     <string name="screenshots">Screenshots</string>
     <string name="shop">Shop</string>
     <string name="about_game">About the Game</string>
+    <string name="add_to_watch_list">Add to Watchlist</string>
     <string name="filter_sort_by">Sort by</string>
+
+    <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>
+    <string name="watchlist_remove_successfully">%s was removed successfully from your Watchlist</string>
+    <string name="watchlist_error_empty_price">Empty target price!</string>
+    <string name="watchlist_error_wrong_number_format">Wrong number format.</string>
+    <string name="watchlist_error_stores">You have to select stores to be able to add to the Watchlist.</string>
+    <string name="watchlist_general_error">Failed to save %1$s to Watchlist. Error: %2$s</string>
+    <string name="watchlist_already_better_deal">There is already better deal than your target price! (%1$s at %2$s)</string>
+
+    <string name="watchlist_notification_summary">You\'ve %1$s Price Alerts!</string>
+    <string name="watchlist_notification_title">Price Alert!</string>
+    <string name="watchlist_notification_content">%1$s has reached %2$s on %3$s!</string>
+    <string name="watchlist_channel_name">Watchlist</string>
+    <string name="watchlist_channel_description">Notifies you when a game\'s price in your Watchlist reaches the specified threshold.</string>
+
+    <string name="dialog_ask_remove_from_watch_list"><![CDATA[Are you sure that you want to remove <b>%s</b> from your Watchlist?]]></string>
+
     <!-- Error Activity -->
     <string name="sorry">Sorry, that should not have happened.</string>
     <string name="what_happened">What happened:</string>
     <string name="your_comment">Your comment:</string>
     <string name="additional_info">Additional Information…</string>
     <string name="error_report_button_text">Report via E-Mail</string>
+
+    <string name="notify_when_price_reaches">Notify me when %s price reaches below…</string>
+    <string name="notify_when_price_reaches_subtitle">A notification will be displayed when the price reaches the specified threshold.</string>
+    <string name="on_the_following_stores">On the following stores</string>
 </resources>

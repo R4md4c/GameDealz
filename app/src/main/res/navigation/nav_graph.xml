@@ -36,7 +36,7 @@
     <fragment
             android:id="@+id/gameDetailFragment"
             android:name="de.r4md4c.gamedealz.detail.DetailsFragment"
-            app:layout="@layout/fragment_game_detail">
+            tools:layout="@layout/fragment_game_detail">
         <argument
                 android:name="plain_id"
                 app:argType="string"/>
@@ -47,7 +47,6 @@
         <argument
                 android:name="buy_url"
                 app:argType="string"/>
-
     </fragment>
     <action
             android:id="@+id/action_global_gameDetailFragment"

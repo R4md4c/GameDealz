@@ -21,7 +21,7 @@ import kotlinx.coroutines.*
 
 inline fun CoroutineScope.launchWithCatching(
     context: CoroutineDispatcher,
-    crossinline block: suspend () -> Unit,
+    noinline block: suspend () -> Unit,
     crossinline errorBlock: (Throwable) -> Unit
 ) {
     launch(CoroutineExceptionHandler { _, throwable -> errorBlock(throwable) }) {

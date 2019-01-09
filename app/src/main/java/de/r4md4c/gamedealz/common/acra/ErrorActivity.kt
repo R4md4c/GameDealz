@@ -106,6 +106,7 @@ class ErrorActivity : AppCompatActivity() {
             put("app_version_code", appVersionCode)
             put("current_timestamp", currentTimestamp)
             put("package_name", packageName)
+            put("comment", yourCommentEditText.text.toString())
             put("stacktrace", stacktrace)
         }
 

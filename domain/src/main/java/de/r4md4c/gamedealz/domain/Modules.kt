@@ -49,4 +49,13 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
     factory<GetPlainDetails> { GetPlainDetailsImpl(get(), get(), get(), get(), get()) }
 
     factory<SearchUseCase> { SearchUseCaseImpl(get(), get(), get(), get(), get()) }
+
+    factory<AddToWatchListUseCase> { AddToWatchListUseCaseImpl(get(), get(), get(), get(), get(), get()) }
+
+    factory<IsGameAddedToWatchListUseCase> { IsGameAddedToWatchListUseCaseImpl(get()) }
+
+    factory<CheckPriceThresholdUseCase> { CheckPriceThresholdUseCaseImpl(get(), get(), get(), get(), get()) }
+
+    factory<RemoveFromWatchlistUseCase> { RemoveFromWatchlistUseCaseImpl(get()) }
+
 })

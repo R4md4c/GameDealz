@@ -31,6 +31,8 @@ interface ResourcesProvider {
 
     fun getString(@StringRes stringRes: Int): String
 
+    fun getString(@StringRes stringRes: Int, vararg args: String): String
+
     fun getDimenPixelSize(@DimenRes dimensionRes: Int): Int
 
     fun getDimension(@DimenRes dimensionRes: Int): Float

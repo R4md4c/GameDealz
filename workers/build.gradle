@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion project.ext.compileSdk
+
+    defaultConfig {
+        minSdkVersion project.ext.minSdk
+        targetSdkVersion project.ext.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(':commonproviders')
+    implementation project(':common')
+    implementation project(':domain')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+    implementation "com.jakewharton.timber:timber:${versions.timber}"
+
+    implementation ("android.arch.work:work-runtime-ktx:${versions.workmanager}") {
+        exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+    implementation "org.koin:koin-core:${versions.koin}"
+    implementation "org.koin:koin-android:${versions.koin}"
+
+    androidTestImplementation 'org.mockito:mockito-android:2.23.4'
+    androidTestImplementation project(":commontest")
+    androidTestImplementation "androidx.test.ext:junit:1.1.0"
+    androidTestImplementation "com.google.truth:truth:${versions.truth}"
+    androidTestImplementation ("org.koin:koin-test:${versions.koin}") { exclude group: 'org.mockito' }
+    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation ("android.arch.work:work-testing:${versions.workmanager}")  {
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+}

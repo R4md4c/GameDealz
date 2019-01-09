@@ -28,9 +28,13 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigator.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
+import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -53,13 +57,26 @@ class DetailsViewModelTest {
     @Mock
     private lateinit var stateMachineDelegate: StateMachineDelegate
 
+    @Mock
+    private lateinit var isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
+
+    @Mock
+    private lateinit var removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
+
     private lateinit var testSubject: DetailsViewModel
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        testSubject = DetailsViewModel(TestDispatchers, navigator, getPlainDetails, stateMachineDelegate)
+        testSubject = DetailsViewModel(
+            TestDispatchers,
+            navigator,
+            getPlainDetails,
+            stateMachineDelegate,
+            isGameAddedToWatchListUseCase,
+            removeFromWatchlistUseCase
+        )
     }
 
     @Test
@@ -67,6 +84,26 @@ class DetailsViewModelTest {
         testSubject.onBuyButtonClick("aUrl")
 
         verify(navigator).navigateToUrl("aUrl")
+    }
+
+    @Test
+    fun `isAddedToWatchList LiveData returns true when plainId is added to watchlist`() {
+        ArrangeBuilder()
+            .withGameAddedToWatchList(true)
+
+        testSubject.loadIsAddedToWatchlist("")
+
+        assertThat(testSubject.isAddedToWatchList.value).isTrue()
+    }
+
+    @Test
+    fun `isAddedToWatchList LiveData returns false when plainId is not added to watchlist`() {
+        ArrangeBuilder()
+            .withGameAddedToWatchList(false)
+
+        testSubject.loadIsAddedToWatchlist("")
+
+        assertThat(testSubject.isAddedToWatchList.value).isFalse()
     }
 
     @Test
@@ -212,6 +249,17 @@ class DetailsViewModelTest {
         )
     }
 
+    @Test
+    fun `removeFromWatchlist invokes remove from watchlist usecase`() {
+        runBlocking {
+            ArrangeBuilder()
+
+            testSubject.removeFromWatchlist("plainId")
+
+            verify(removeFromWatchlistUseCase).invoke(TypeParameter("plainId"))
+        }
+    }
+
     inner class ArrangeBuilder {
         private val templatePriceDetails = PlainDetailsModel(
             currencyModel = CurrencyModel("", ""),
@@ -225,6 +273,12 @@ class DetailsViewModelTest {
         )
         private var useCasePriceDetails by Delegates.observable(templatePriceDetails) { _, _, newValue ->
             runBlocking { whenever(getPlainDetails.invoke(any())).thenReturn(newValue) }
+        }
+
+        init {
+            runBlocking {
+                whenever(removeFromWatchlistUseCase.invoke(any())).thenReturn(true)
+            }
         }
 
         fun withShortDescription(shortDescription: String?) = apply {
@@ -277,6 +331,12 @@ class DetailsViewModelTest {
                     ), HistoricalLowModel(it.value.first, it.value.third, 0, 0)
                 )
             }.run { useCasePriceDetails.copy(shopPrices = this) }
+        }
+
+        fun withGameAddedToWatchList(isAdded: Boolean) = apply {
+            runBlocking {
+                whenever(isGameAddedToWatchListUseCase.invoke(any())).thenReturn(produce(capacity = 1) { send(isAdded) })
+            }
         }
     }
 

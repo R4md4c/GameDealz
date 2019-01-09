@@ -28,5 +28,6 @@ data class DealModel(
     val shop: ShopModel,
     val urls: Urls,
     val added: Long,
+    val drm: Set<String>,
     val currencyModel: CurrencyModel
 )

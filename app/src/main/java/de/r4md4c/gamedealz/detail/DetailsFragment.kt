@@ -23,11 +23,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
@@ -36,16 +38,22 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
+import de.r4md4c.gamedealz.common.launchWithCatching
+import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
 import de.r4md4c.gamedealz.detail.item.*
+import de.r4md4c.gamedealz.watchlist.AddToWatchListDialog
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class DetailsFragment : BaseFragment() {
 
@@ -60,6 +68,8 @@ class DetailsFragment : BaseFragment() {
     private val resourcesProvider: ResourcesProvider by inject()
 
     private val dateFormatter: DateFormatter by inject()
+
+    private val viewNotifier: ViewNotifier by inject()
 
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
@@ -101,6 +111,12 @@ class DetailsFragment : BaseFragment() {
             savedInstanceState.getParcelable<DetailsViewModelState>(STATE_DETAILS)
                 ?.let { detailsViewModel.onRestoreState(it) }
         }
+
+        detailsViewModel.loadIsAddedToWatchlist(plainId)
+
+        detailsViewModel.isAddedToWatchList.observe(this, Observer {
+            addToWatchList.setImageResource(if (it) R.drawable.ic_added_to_watch_list else R.drawable.ic_add_to_watch_list)
+        })
 
         detailsViewModel.sideEffect.observe(this, Observer {
             stateVisibilityHandler.onSideEffect(it)
@@ -151,13 +167,22 @@ class DetailsFragment : BaseFragment() {
             withContext(dispatchers.Main) {
                 pricesAdapter.set(pricesItems)
                 progress.isVisible = false
+                addToWatchList.show()
             }
         }
     }
 
     private fun setupFab() {
-        buyFab.setOnClickListener {
-            detailsViewModel.onBuyButtonClick(buyUrl)
+        addToWatchList.hide()
+        addToWatchList.setOnClickListener {
+            if (detailsViewModel.isAddedToWatchList.value == true) {
+                askToRemove()
+            } else {
+                detailsViewModel.prices.value?.firstOrNull()?.let { priceDetails ->
+                    AddToWatchListDialog.newInstance(plainId, title, priceDetails.priceModel)
+                        .show(childFragmentManager, null)
+                }
+            }
         }
     }
 
@@ -167,6 +192,31 @@ class DetailsFragment : BaseFragment() {
 
     private fun handleFilterItemClick(@IdRes clickedFilterItemId: Int) {
         detailsViewModel.onFilterChange(clickedFilterItemId)
+    }
+
+    private fun askToRemove() = viewScope.launchWithCatching(dispatchers.Main, {
+        val yes = ask()
+        if (yes) {
+            val isRemoved = detailsViewModel.removeFromWatchlist(plainId)
+            if (isRemoved) {
+                viewNotifier.notify(getString(R.string.watchlist_remove_successfully, title))
+            }
+        }
+    }) {
+        Timber.e(it, "Failed to remove $plainId from the Watchlist")
+    }
+
+    private suspend fun ask() = suspendCoroutine<Boolean> { continuation ->
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(
+                HtmlCompat.fromHtml(
+                    getString(R.string.dialog_ask_remove_from_watch_list, title),
+                    HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
+            )
+            .setPositiveButton(android.R.string.yes) { dialog, _ -> continuation.resume(true); dialog.dismiss() }
+            .setNegativeButton(android.R.string.no) { dialog, _ -> continuation.resume(false); dialog.dismiss() }
+            .show()
     }
 
     companion object {

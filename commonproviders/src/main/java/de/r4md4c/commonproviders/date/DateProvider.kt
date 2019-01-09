@@ -30,4 +30,9 @@ interface DateProvider {
      * Provide today's date without any time information.
      */
     fun today(): Date
+
+    /**
+     * Time In Millis.
+     */
+    fun timeInMillis(): Long
 }

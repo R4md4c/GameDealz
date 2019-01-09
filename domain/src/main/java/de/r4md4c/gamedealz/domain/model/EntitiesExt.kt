@@ -49,6 +49,7 @@ internal fun Deal.toDealModel(currencyModel: CurrencyModel, colorRgb: String): D
         shop.toShopModel(colorRgb),
         urls.toUrls(),
         added,
+        drm,
         currencyModel
     )
 
@@ -60,6 +61,9 @@ internal fun Store.toStoreModel(): StoreModel = StoreModel(id, name, selected)
 
 internal fun Price.toPriceModel(storeColor: String): PriceModel =
     PriceModel(newPrice, oldPrice, priceCutPercentage, url, shop.toShopModel(storeColor), drm)
+
+fun DealModel.toPriceModel(): PriceModel =
+    PriceModel(newPrice, oldPrice, priceCutPercentage, urls.buyUrl, shop, drm)
 
 internal fun HistoricalLow.toModel(colorRgb: String): HistoricalLowModel? {
     val shop = shop ?: return null

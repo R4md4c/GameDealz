@@ -42,7 +42,8 @@ ext.versions = [
     'glide': '4.8.0',
     'androidX': '1.1.0-alpha01',
     'material': '1.1.0-alpha02',
-    'robolectric': '4.1-beta-2'
+    'robolectric': '4.1',
+    'workmanager': '1.0.0-beta01'
 ]
 
 allprojects {

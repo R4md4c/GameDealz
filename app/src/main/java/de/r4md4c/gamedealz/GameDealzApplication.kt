@@ -21,8 +21,12 @@ import android.content.Context
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
+import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
+import de.r4md4c.gamedealz.workmanager.WorkerJobsInitializer
+import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.startKoin
 import org.koin.android.logger.AndroidLogger
 import org.koin.log.EmptyLogger
@@ -34,6 +38,8 @@ import timber.log.Timber
 )
 class GameDealzApplication : MultiDexApplication() {
 
+    private val workerJobsInitializer by inject<WorkerJobsInitializer>()
+
     override fun onCreate() {
         super.onCreate()
         val isDebug = BuildConfig.DEBUG
@@ -42,7 +48,18 @@ class GameDealzApplication : MultiDexApplication() {
             Timber.plant(Timber.DebugTree())
         }
 
-        startKoin(this, listOf(MAIN) + DOMAIN, logger = if (isDebug) AndroidLogger() else EmptyLogger())
+        startKoin(this, listOf(MAIN) + DOMAIN + WORK_MANAGER, logger = if (isDebug) AndroidLogger() else EmptyLogger())
+        initializeWorkManager()
+    }
+
+    private fun initializeWorkManager() {
+        kotlin.runCatching {
+            runBlocking {
+                workerJobsInitializer.init()
+            }
+        }.onFailure {
+            Timber.e(it, "Failed to init() WorkerJobsInitializer")
+        }
     }
 
     override fun attachBaseContext(base: Context?) {

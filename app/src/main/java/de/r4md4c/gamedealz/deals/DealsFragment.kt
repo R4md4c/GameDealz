@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.deals
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -57,7 +58,9 @@ class DealsFragment : BaseFragment() {
 
     private val adapter by lazy {
         DealsAdapter {
-            listener?.onFragmentInteraction(DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl))
+            listener?.onFragmentInteraction(
+                DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl), null
+            )
         }
     }
 
@@ -118,7 +121,7 @@ class DealsFragment : BaseFragment() {
     }
 
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri)
+        fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
     }
 
     private fun setupRecyclerView() {
@@ -131,7 +134,7 @@ class DealsFragment : BaseFragment() {
     private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {
 
         override fun onQueryTextSubmit(query: String): Boolean {
-            listener?.onFragmentInteraction(SearchFragment.toUri(query))
+            listener?.onFragmentInteraction(SearchFragment.toUri(query), null)
             searchMenuItem.collapseActionView()
             return true
         }

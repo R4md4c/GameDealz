@@ -75,7 +75,7 @@ internal interface IsThereAnyDealService {
         @Query("region") region: String? = null,
         @Query("country") country: String? = null,
         @Query("shops") shops: String? = null,
-        @Query("added") added: Int? = null
+        @Query("added") added: Long? = null
     )
             : Deferred<DataWrapper<PlainPriceList>>
 

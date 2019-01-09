@@ -17,9 +17,11 @@
 
 package de.r4md4c.gamedealz.common.navigator
 
+import android.os.Parcelable
+
 interface Navigator {
 
-    fun navigate(uri: String)
+    fun navigate(uri: String, extras: Parcelable? = null)
 
     fun navigateUp(): Boolean
 

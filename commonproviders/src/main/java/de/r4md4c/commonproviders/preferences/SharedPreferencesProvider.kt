@@ -38,4 +38,10 @@ interface SharedPreferencesProvider {
      */
     var activeRegionAndCountry: Pair<String, String>?
 
+    /**
+     * Returns the periodic hourly interval in which the price checker runs. By default the checker runs every 6 hours
+     */
+    val reactivePriceCheckerPeriodicIntervalInHours: ReceiveChannel<Int>
+
+    var priceCheckerPeriodicIntervalInHours: Int
 }
