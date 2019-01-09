@@ -251,9 +251,11 @@ class DetailsViewModelTest {
 
     @Test
     fun `removeFromWatchlist invokes remove from watchlist usecase`() {
-        testSubject.removeFromWatchlist("plainId")
-
         runBlocking {
+            ArrangeBuilder()
+
+            testSubject.removeFromWatchlist("plainId")
+
             verify(removeFromWatchlistUseCase).invoke(TypeParameter("plainId"))
         }
     }
@@ -271,6 +273,12 @@ class DetailsViewModelTest {
         )
         private var useCasePriceDetails by Delegates.observable(templatePriceDetails) { _, _, newValue ->
             runBlocking { whenever(getPlainDetails.invoke(any())).thenReturn(newValue) }
+        }
+
+        init {
+            runBlocking {
+                whenever(removeFromWatchlistUseCase.invoke(any())).thenReturn(true)
+            }
         }
 
         fun withShortDescription(shortDescription: String?) = apply {
