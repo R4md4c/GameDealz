@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.repository.RegionsRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
@@ -28,18 +27,17 @@ import de.r4md4c.gamedealz.domain.model.toCurrencyModel
 import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
+import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
+import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
-import kotlinx.coroutines.channels.firstOrNull
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 internal class CheckPriceThresholdUseCaseImpl(
     private val watchlistRepository: WatchlistRepository,
     private val watchlistStoresRepository: WatchlistStoresRepository,
-    private val pricesRemoteRepository: PricesRemoteRepository,
-    private val dateProvider: DateProvider,
-    private val regionsRepository: RegionsRepository
+    private val regionsRepository: RegionsRepository,
+    private val retrievePricesGroupedByCountriesHelper: RetrievePricesGroupedByCountriesHelper,
+    private val pickMinimalWatcheesPricesHelper: PickMinimalWatcheesPricesHelper
 ) : CheckPriceThresholdUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeNotificationModel> {
@@ -55,38 +53,10 @@ internal class CheckPriceThresholdUseCaseImpl(
             return emptySet()
         }
 
-        // To handle case users having watch list from two different countries and regions.
-        val countryGroupedWatchees = allWatcheesWithStores.groupBy { it.watchee.regionCode to it.watchee.countryCode }
+        val retrievedPrices: Map<String, List<Price>> =
+            retrievePricesGroupedByCountriesHelper.prices(allWatcheesWithStores.map { it.watchee })
 
-        val plainIdPricesMap = mutableMapOf<String, List<Price>>()
-        countryGroupedWatchees.map { entry ->
-            pricesRemoteRepository.retrievesPrices(
-                plainIds = entry.value.asSequence().map { it.watchee.plainId }.toSet(),
-                shops = entry.value.asSequence().flatMap { it.stores.asSequence() }.map { it.id }.toSet(),
-                regionCode = entry.key.first,
-                countryCode = entry.key.second,
-                added = entry.value.asSequence()
-                    .map { if (it.watchee.lastCheckDate == 0L) it.watchee.dateAdded else it.watchee.lastCheckDate }
-                    .max()
-            )
-        }.forEach {
-            plainIdPricesMap.putAll(it)
-        }
-
-        val watcheesPriceModelMap = mutableMapOf<Price, Watchee>()
-        plainIdPricesMap.forEach {
-            val minPrice = it.value.firstOrNull() ?: return@forEach
-            val watchee = watchlistRepository.findById(it.key).firstOrNull() ?: return@forEach
-            watchlistRepository.updateWatchee(
-                watchee.id, minPrice.newPrice,
-                TimeUnit.MILLISECONDS.toSeconds(dateProvider.timeInMillis())
-            )
-
-            if (minPrice.newPrice <= watchee.targetPrice) {
-                watcheesPriceModelMap[minPrice] = watchee
-            }
-        }
-
+        val watcheesPriceModelMap = pickMinimalWatcheesPricesHelper.pick(retrievedPrices)
 
         if (watcheesPriceModelMap.isEmpty()) {
             return emptySet()

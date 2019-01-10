@@ -50,13 +50,13 @@ internal class WatchlistLocalRepository(
         val retrievedWatchee = findById(watchee.id) ?: return null
         return WatcheeWithStores(
             retrievedWatchee,
-            watchlistStoresDao.getStoresForWatchee(watcheeId = retrievedWatchee.id)
+            watchlistStoresDao.getStoresForWatchee(watcheeId = retrievedWatchee.id).toSet()
         )
     }
 
     override suspend fun allWatcheesWithStores(): List<WatcheeWithStores> =
         all().first().mapNotNull {
-            WatcheeWithStores(it, watchlistStoresDao.getStoresForWatchee(watcheeId = it.id))
+            WatcheeWithStores(it, watchlistStoresDao.getStoresForWatchee(watcheeId = it.id).toSet())
         }
 
     override suspend fun saveWatcheeWithStores(watchee: Watchee, stores: List<Store>) {
