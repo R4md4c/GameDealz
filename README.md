@@ -1,9 +1,9 @@
 # GameDealz
 
-GameDealz is a **non-official** client for [IsThereAnyDeals.com](https://isthereanydeal.com/), it uses its [API](https://itad.docs.apiary.io/#) 
+GameDealz is a **non-official** client for [IsThereAnyDeal.com](https://isthereanydeal.com/), it uses its [API](https://itad.docs.apiary.io/#) 
 to retrieve/search for deals and compare prices.
 
-**Disclaimer**: GameDealz is not affiliated in any way with [IsThereAnyDeals.com](https://isthereanydeal.com/).
+**Disclaimer**: GameDealz is not affiliated in any way with [IsThereAnyDeal.com](https://isthereanydeal.com/).
 
 ## Screenshots
 
