@@ -46,4 +46,4 @@ internal data class WatcheeStoreJoin(
 )
 
 
-data class WatcheeWithStores(val watchee: Watchee, val stores: List<Store>)
+data class WatcheeWithStores(val watchee: Watchee, val stores: Set<Store>)
