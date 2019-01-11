@@ -33,6 +33,7 @@ import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.deals.DealsViewModel
 import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
+import de.r4md4c.gamedealz.deals.filter.DealsFilterViewModel
 import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.detail.DetailsViewModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
@@ -73,6 +74,8 @@ val MAIN = module {
         val stateMachineDelegate = get<StateMachineDelegate>()
         DealsViewModel(get(), get(parameters = { parametersOf(stateMachineDelegate) }), get(), stateMachineDelegate)
     }
+
+    viewModel<DealsFilterViewModel>()
 
     viewModel<HomeViewModel>()
 

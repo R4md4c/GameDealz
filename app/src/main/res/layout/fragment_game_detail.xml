@@ -41,7 +41,7 @@
             android:layout_margin="@dimen/baseline_2x"
             app:layout_anchorGravity="end|bottom"
             app:fabSize="normal"
-            app:tint="@color/primaryTextColor"
+            app:tint="?colorOnPrimary"
             app:srcCompat="@drawable/ic_add_to_watch_list"
             android:layout_height="wrap_content"/>
 

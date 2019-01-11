@@ -19,6 +19,7 @@
     <string name="about_game">About the Game</string>
     <string name="add_to_watch_list">Add to Watchlist</string>
     <string name="filter_sort_by">Sort by</string>
+    <string name="filter_by_stores">Filter by Stores</string>
 
     <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>
     <string name="watchlist_remove_successfully">%s was removed successfully from your Watchlist</string>

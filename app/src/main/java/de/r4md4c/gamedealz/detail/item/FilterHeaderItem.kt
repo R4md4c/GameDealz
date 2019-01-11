@@ -52,7 +52,7 @@ class FilterHeaderItem(
 
         with(holder.itemView) {
             header.text = headerString
-            val icon = AppCompatResources.getDrawable(context, R.drawable.ic_filter_list)?.apply {
+            val icon = AppCompatResources.getDrawable(context, R.drawable.ic_sort_list)?.apply {
                 DrawableCompat.setTint(this, context.resolveThemeColor(R.attr.colorOnSurface))
             }
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
