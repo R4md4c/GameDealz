@@ -17,13 +17,17 @@
 
 package de.r4md4c.gamedealz.deals.filter
 
+import androidx.collection.ArraySet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
+import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.deals.item.FilterItem
+import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
@@ -38,8 +42,15 @@ class DealsFilterViewModel(
     private val toggleStoresUseCase: ToggleStoresUseCase
 ) : AbstractViewModel(dispatchers) {
 
+    private val toggleSet: MutableSet<StoreModel> by lazy {
+        ArraySet<StoreModel>()
+    }
+
     private val _stores by lazy { MutableLiveData<List<FilterItem>>() }
     val stores: LiveData<List<FilterItem>> by lazy { _stores }
+
+    private val _dismiss by lazy { SingleLiveEvent<Unit>() }
+    val dismiss: LiveData<Unit> by lazy { _dismiss }
 
     fun loadStores() = uiScope.launchWithCatching(dispatchers.Main, {
         val stores = withContext(dispatchers.IO) {
@@ -49,10 +60,29 @@ class DealsFilterViewModel(
 
         stores?.let { storeModels ->
             val filterItems =
-                withContext(dispatchers.Default) { storeModels.map { FilterItem(it).withSetSelected(it.selected) } }
+                withContext(dispatchers.Default) {
+                    storeModels.map {
+                        FilterItem(it).withSetSelected(it.selected)
+                    }
+                }
             _stores.postValue(filterItems)
         }
     }) {
         Timber.e(it, "Failed to load stores in DealsFilterViewModel.")
+    }
+
+    fun onSelection(item: FilterItem, selected: Boolean) {
+        if (item.storeModel.selected != selected) {
+            toggleSet.add(item.storeModel)
+        } else {
+            toggleSet.remove(item.storeModel)
+        }
+    }
+
+    fun submit() = uiScope.launchWithCatching(dispatchers.IO, {
+        toggleStoresUseCase(CollectionParameter(toggleSet))
+        _dismiss.postValue(Unit)
+    }) {
+        Timber.e("Failed to toggle stores.")
     }
 }

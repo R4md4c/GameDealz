@@ -19,20 +19,21 @@ package de.r4md4c.gamedealz.deals.item
 
 import android.annotation.SuppressLint
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.android.synthetic.main.layout_deals_filter_item.view.*
 
-data class FilterItem(private val storeModel: StoreModel) : AbstractItem<FilterItem, FilterItem.ViewHolder>() {
+data class FilterItem(val storeModel: StoreModel) : AbstractItem<FilterItem, FilterItem.ViewHolder>() {
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
         val isSelected = isSelected
         with(holder.itemView) {
             text.text = storeModel.name
-            text.isChecked = isSelected
+            image.isVisible = isSelected
         }
     }
 

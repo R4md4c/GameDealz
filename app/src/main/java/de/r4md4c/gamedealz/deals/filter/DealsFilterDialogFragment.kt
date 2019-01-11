@@ -50,16 +50,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DealsFilterDialogFragment : BottomSheetDialogFragment() {
 
     private val itemAdapter by lazy {
-        FastItemAdapter<FilterItem>().apply { addExtension(filterItemsSelectExtension) }
+        FastItemAdapter<FilterItem>().also { it.addExtension(filterItemsSelectExtension) }
     }
 
     private val filterItemsSelectExtension: SelectExtension<FilterItem> by lazy { SelectExtension<FilterItem>() }
 
     private val filtersViewModel by viewModel<DealsFilterViewModel>()
 
-    override fun getTheme(): Int {
-        return R.style.AppTheme_BottomSheetDialog
-    }
+    override fun getTheme(): Int = R.style.AppTheme_BottomSheetDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         layoutInflater.inflate(R.layout.fragment_dialog_deals_filter, container, false)
@@ -69,11 +67,18 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         with(content) {
             adapter = itemAdapter
         }
-        itemAdapter.withOnClickListener { v, adapter, item, position ->
+        itemAdapter.withOnClickListener { _, _, _, position ->
             filterItemsSelectExtension.toggleSelection(
                 position
-            ); true
+            )
+            true
         }
+
+        filterItemsSelectExtension.withSelectionListener { item, selected ->
+            item?.let { filtersViewModel.onSelection(it, selected) }
+        }
+
+        toolbar.setNavigationOnClickListener { filtersViewModel.submit() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -82,5 +87,6 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
             filtersViewModel.loadStores()
         }
         filtersViewModel.stores.observe(this, Observer { itemAdapter.set(it) })
+        filtersViewModel.dismiss.observe(this, Observer { dismiss() })
     }
 }
