@@ -56,17 +56,13 @@ class DealsFilterViewModel(
         val stores = withContext(dispatchers.IO) {
             val activeRegion = getCurrentActiveRegion()
             getStoresUseCase(TypeParameter(activeRegion)).firstOrNull()
-        }
+        } ?: return@launchWithCatching
 
-        stores?.let { storeModels ->
-            val filterItems =
-                withContext(dispatchers.Default) {
-                    storeModels.map {
-                        FilterItem(it).withSetSelected(it.selected)
-                    }
-                }
-            _stores.postValue(filterItems)
+
+        val filterItems = withContext(dispatchers.Default) {
+            stores.map { FilterItem(it).withSetSelected(it.selected) }
         }
+        _stores.postValue(filterItems)
     }) {
         Timber.e(it, "Failed to load stores in DealsFilterViewModel.")
     }

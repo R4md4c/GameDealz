@@ -41,7 +41,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.select.SelectExtension
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.deals.item.FilterItem
 import kotlinx.android.synthetic.main.fragment_dialog_deals_filter.*
@@ -50,10 +49,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DealsFilterDialogFragment : BottomSheetDialogFragment() {
 
     private val itemAdapter by lazy {
-        FastItemAdapter<FilterItem>().also { it.addExtension(filterItemsSelectExtension) }
+        FastItemAdapter<FilterItem>().also {
+            it.withSelectable(true)
+            it.setHasStableIds(true)
+            it.withSelectWithItemUpdate(true)
+            it.withMultiSelect(true)
+        }
     }
-
-    private val filterItemsSelectExtension: SelectExtension<FilterItem> by lazy { SelectExtension<FilterItem>() }
 
     private val filtersViewModel by viewModel<DealsFilterViewModel>()
 
@@ -67,18 +69,17 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         with(content) {
             adapter = itemAdapter
         }
-        itemAdapter.withOnClickListener { _, _, _, position ->
-            filterItemsSelectExtension.toggleSelection(
-                position
-            )
-            true
-        }
 
-        filterItemsSelectExtension.withSelectionListener { item, selected ->
+        itemAdapter.withSelectionListener { item, selected ->
             item?.let { filtersViewModel.onSelection(it, selected) }
         }
 
         toolbar.setNavigationOnClickListener { filtersViewModel.submit() }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        itemAdapter.saveInstanceState(outState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -88,5 +89,6 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         }
         filtersViewModel.stores.observe(this, Observer { itemAdapter.set(it) })
         filtersViewModel.dismiss.observe(this, Observer { dismiss() })
+        savedInstanceState?.let { itemAdapter.withSavedInstanceState(it) }
     }
 }
