@@ -15,12 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.workmanager
+package de.r4md4c.gamedealz.domain.usecase
 
-/**
- * Inits the workers at the start of the application.
- */
-interface WorkerJobsInitializer {
+import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
+import kotlinx.coroutines.channels.ReceiveChannel
 
-    suspend fun init()
-}
+interface GetWatchlistToManageUseCase : UseCase<VoidParameter, ReceiveChannel<List<ManageWatchlistModel>>>

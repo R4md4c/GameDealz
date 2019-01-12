@@ -23,7 +23,7 @@ import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion

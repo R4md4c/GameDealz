@@ -22,8 +22,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
 import de.r4md4c.commonproviders.notification.Notifier
-import de.r4md4c.gamedealz.common.navigator.AndroidNavigator
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.AndroidNavigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.notifications.WatcheesPushNotifier
@@ -41,6 +41,7 @@ import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
 import de.r4md4c.gamedealz.watchlist.AddToWatchListViewModel
+import de.r4md4c.gamedealz.watchlist.ManageWatchlistViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
@@ -84,6 +85,8 @@ val MAIN = module {
     viewModel<RegionSelectionViewModel>()
 
     viewModel<AddToWatchListViewModel>()
+
+    viewModel<ManageWatchlistViewModel>()
 
     viewModel { (activity: Activity) ->
         DetailsViewModel(

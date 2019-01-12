@@ -35,7 +35,7 @@ val WORK_MANAGER = module {
         WorkManager.getInstance()
     }
 
-    factory<WorkerJobsInitializer> {
+    factory<PricesCheckerWorker> {
         WorkManagerJobsInitializer(get(), get())
     }
 

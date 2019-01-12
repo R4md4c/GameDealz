@@ -15,15 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.navigator
+package de.r4md4c.gamedealz.workmanager
 
-import android.os.Parcelable
+/**
+ * Main interface to access the PriceChecker's Worker capabilities.
+ */
+interface PricesCheckerWorker {
 
-interface Navigator {
+    /**
+     * Enqueues the Worker to run periodically.
+     */
+    suspend fun schedulePeriodically()
 
-    fun navigate(uri: String, extras: Parcelable? = null)
-
-    fun navigateUp(): Boolean
-
-    fun navigateToUrl(url: String)
 }

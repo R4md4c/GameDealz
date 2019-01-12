@@ -21,8 +21,8 @@ import android.content.Context
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
+import de.r4md4c.gamedealz.workmanager.PricesCheckerWorker
 import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
-import de.r4md4c.gamedealz.workmanager.WorkerJobsInitializer
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
@@ -38,7 +38,7 @@ import timber.log.Timber
 )
 class GameDealzApplication : MultiDexApplication() {
 
-    private val workerJobsInitializer by inject<WorkerJobsInitializer>()
+    private val pricesCheckerWorker by inject<PricesCheckerWorker>()
 
     override fun onCreate() {
         super.onCreate()
@@ -55,7 +55,7 @@ class GameDealzApplication : MultiDexApplication() {
     private fun initializeWorkManager() {
         kotlin.runCatching {
             runBlocking {
-                workerJobsInitializer.init()
+                pricesCheckerWorker.schedulePeriodically()
             }
         }.onFailure {
             Timber.e(it, "Failed to init() WorkerJobsInitializer")

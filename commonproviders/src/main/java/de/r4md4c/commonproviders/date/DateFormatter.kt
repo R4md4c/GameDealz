@@ -17,6 +17,8 @@
 
 package de.r4md4c.commonproviders.date
 
+import android.text.format.DateUtils.MINUTE_IN_MILLIS
+
 /**
  * A wrapper around the needed functionality of [android.text.format.DateUtils]
  */
@@ -29,4 +31,10 @@ interface DateFormatter {
      * @param flags Check the FORMAT_* in [android.text.format.DateUtils] for the available values.
      */
     fun formatDateTime(millis: Long, flags: Int): String
+
+    /**
+     * Get relative time to the provided millis, eg. 5 minutes ago.
+     * @param minResolution the minimum timespan to report. For example MINUTES_IN_MILLIS yields "minutes ago".
+     */
+    fun getRelativeTimeSpanString(millis: Long, minResolution: Long = MINUTE_IN_MILLIS): String
 }

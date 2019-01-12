@@ -36,7 +36,7 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragmentArgs.fromBundle

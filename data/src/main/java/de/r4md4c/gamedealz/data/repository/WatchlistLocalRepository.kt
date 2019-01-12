@@ -38,7 +38,7 @@ internal class WatchlistLocalRepository(
     override suspend fun all(ids: Collection<Long>?): ReceiveChannel<List<Watchee>> =
         (ids?.let { watchlistDao.findAll(it) } ?: watchlistDao.findAll()).openSubscription()
 
-    override suspend fun removeById(id: Long): Int = watchlistDao.delete(id)
+    override suspend fun removeById(ids: Collection<Long>): Int = watchlistDao.delete(ids)
 
     override suspend fun removeById(plainId: String): Int = watchlistDao.delete(plainId)
 
@@ -65,4 +65,7 @@ internal class WatchlistLocalRepository(
 
     override suspend fun updateWatchee(id: Long, currentPrice: Float, lastChecked: Long): Int =
         watchlistDao.updateWatchee(id, currentPrice, lastChecked)
+
+    override suspend fun mostRecentCheckDate(): ReceiveChannel<Long> =
+        watchlistDao.mostRecentLastCheckDate().distinctUntilChanged().openSubscription()
 }

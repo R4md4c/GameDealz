@@ -15,17 +15,15 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.common.navigation
 
-import android.content.Context
-import android.text.format.DateUtils
+import android.os.Parcelable
 
-internal class AndroidDateFormatter(private val context: Context) : DateFormatter {
+interface Navigator {
 
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
+    fun navigate(uri: String, extras: Parcelable? = null)
 
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
+    fun navigateUp(): Boolean
 
+    fun navigateToUrl(url: String)
 }

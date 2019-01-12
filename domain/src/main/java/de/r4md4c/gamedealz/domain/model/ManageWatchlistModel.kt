@@ -15,17 +15,17 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.domain.model
 
-import android.content.Context
-import android.text.format.DateUtils
-
-internal class AndroidDateFormatter(private val context: Context) : DateFormatter {
-
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
-
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
-
-}
+/**
+ * Used to describe list items in the ManageWatchlist screen.
+ *
+ * @param watcheeModel contains the information about the watched game.
+ * @param hasNotification Indicates if this model has something to notify the user about. (Like highlighting the ListItem)
+ * @param currencyModel the currency that this model was watched for.
+ */
+data class ManageWatchlistModel(
+    val watcheeModel: WatcheeModel,
+    val hasNotification: Boolean = false,
+    val currencyModel: CurrencyModel
+)

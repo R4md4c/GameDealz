@@ -29,12 +29,12 @@ import kotlin.properties.Delegates
 internal class WorkManagerJobsInitializer(
     private val workManager: WorkManager,
     private val preferenences: SharedPreferencesProvider
-) : WorkerJobsInitializer {
+) : PricesCheckerWorker {
 
     @VisibleForTesting
     internal var priceCheckerId: UUID by Delegates.notNull()
 
-    override suspend fun init() {
+    override suspend fun schedulePeriodically() {
         if (enqueuePriceChecker().await() == Operation.SUCCESS) {
             Timber.i("Enqueuing Price Checker Success")
         }

@@ -25,7 +25,7 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate

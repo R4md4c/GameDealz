@@ -20,6 +20,7 @@
     <string name="add_to_watch_list">Add to Watchlist</string>
     <string name="filter_sort_by">Sort by</string>
     <string name="filter_by_stores">Filter by Stores</string>
+    <string name="action_undo">Undo</string>
 
     <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>
     <string name="watchlist_remove_successfully">%s was removed successfully from your Watchlist</string>
@@ -28,14 +29,18 @@
     <string name="watchlist_error_stores">You have to select stores to be able to add to the Watchlist.</string>
     <string name="watchlist_general_error">Failed to save %1$s to Watchlist. Error: %2$s</string>
     <string name="watchlist_already_better_deal">There is already better deal than your target price! (%1$s at %2$s)</string>
-
     <string name="watchlist_notification_summary">You\'ve %1$s Price Alerts!</string>
     <string name="watchlist_notification_title">Price Alert!</string>
     <string name="watchlist_notification_content">%1$s has reached %2$s on %3$s!</string>
     <string name="watchlist_channel_name">Watchlist</string>
     <string name="watchlist_channel_description">Notifies you when a game\'s price in your Watchlist reaches the specified threshold.</string>
-
     <string name="dialog_ask_remove_from_watch_list"><![CDATA[Are you sure that you want to remove <b>%s</b> from your Watchlist?]]></string>
+    <string name="watchlist_removed_watchee">%s has been removed.</string>
+    <string name="watchlist_empty">Your Watchlist is Empty</string>
+
+    <string name="manage_watch_list_target_price">Target price is</string>
+    <string name="manage_watch_list_last_checked">Last update: %s</string>
+    <string name="managed_watch_list_current_price">Last fetched price was</string>
 
     <!-- Error Activity -->
     <string name="sorry">Sorry, that should not have happened.</string>
@@ -47,4 +52,6 @@
     <string name="notify_when_price_reaches">Notify me when %s price reaches below…</string>
     <string name="notify_when_price_reaches_subtitle">A notification will be displayed when the price reaches the specified threshold.</string>
     <string name="on_the_following_stores">On the following stores</string>
+    <string name="title_manage_your_watchlist">Manage your Watchlist</string>
+    <string name="add_home_shortcut">Add Home Shortcut</string>
 </resources>

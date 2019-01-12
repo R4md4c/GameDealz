@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.navigator
+package de.r4md4c.gamedealz.common.navigation
 
 import android.content.Context
 import android.content.Intent

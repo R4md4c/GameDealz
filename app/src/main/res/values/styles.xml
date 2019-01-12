@@ -11,6 +11,8 @@
         <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
 
+        <item name="material_drawer_selected">?colorOnPrimary</item>
+        <item name="material_drawer_selected_text">?colorPrimary</item>
     </style>
 
     <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">

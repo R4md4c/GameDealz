@@ -60,9 +60,15 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
         CheckPriceThresholdUseCaseImpl(get(), get(), get(), get(), get())
     }
 
+    factory<GetLatestWatchlistCheckDate> { GetLatestWatchlistCheckDateImpl(get()) }
+
+    factory<RemoveWatcheesUseCase> { RemoveWatcheesUseCaseImpl(get()) }
+
     factory { RetrievePricesGroupedByCountriesHelper(get()) }
 
     factory { PickMinimalWatcheesPricesHelper(get(), get(), get()) }
+
+    factory<GetWatchlistToManageUseCase> { GetWatchlistToManageUseCaseImpl(get(), get()) }
 
     factory<RemoveFromWatchlistUseCase> { RemoveFromWatchlistUseCaseImpl(get()) }
 

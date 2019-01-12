@@ -22,7 +22,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter

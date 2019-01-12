@@ -124,6 +124,14 @@ class WatchlistDaoTest : KoinTest {
         }
     }
 
+    @Test
+    fun mostRecentLastCheckDate() {
+        runBlocking {
+            watchlistDao.insert(watcheesList.mapIndexed { index: Int, watchee: Watchee -> watchee.copy(lastCheckDate = index.toLong() + 1) })
+
+            watchlistDao.mostRecentLastCheckDate().test().assertValue(10)
+        }
+    }
     private val watcheesList = (1..10).map {
         Watchee(
             plainId = "plainId$it",

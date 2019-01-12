@@ -15,17 +15,18 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.domain.usecase.impl
 
-import android.content.Context
-import android.text.format.DateUtils
+import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
 
-internal class AndroidDateFormatter(private val context: Context) : DateFormatter {
+internal class RemoveWatcheesUseCaseImpl(private val watchlistRepository: WatchlistRepository) : RemoveWatcheesUseCase {
 
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
+    override suspend fun invoke(param: TypeParameter<List<WatcheeModel>>?): Int {
+        val list = requireNotNull(param).value
 
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
-
+        return watchlistRepository.removeById(list.mapNotNull { it.id })
+    }
 }

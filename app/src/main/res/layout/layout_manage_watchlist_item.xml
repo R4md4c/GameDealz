@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content"
+                                                   app:contentPadding="@dimen/baseline_1x"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textAppearance="?textAppearanceHeadline6"
+                tools:text="Grand Theft Auto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/targetPrice"
+                app:layout_constraintLeft_toLeftOf="@+id/title"
+                app:layout_constraintRight_toRightOf="@+id/title"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                tools:text="Target price: 45.0, last checked on December"
+                android:textAppearance="?textAppearanceSubtitle1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/currentPrice"
+                android:layout_width="0dp"
+                app:layout_constraintLeft_toLeftOf="@+id/title"
+                app:layout_constraintRight_toRightOf="@+id/title"
+                app:layout_constraintTop_toBottomOf="@+id/targetPrice"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Latest fetched price: "
+                android:textAppearance="?textAppearanceSubtitle1"
+                android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

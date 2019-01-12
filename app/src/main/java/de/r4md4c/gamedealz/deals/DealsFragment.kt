@@ -135,7 +135,7 @@ class DealsFragment : BaseFragment() {
                 StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) filterFab.hide() else filterFab.show()
+                if (dy > 0) filterFab?.hide() else filterFab?.show()
             }
         })
     }
