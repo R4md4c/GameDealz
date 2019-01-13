@@ -44,7 +44,8 @@ internal class CheckPriceThresholdUseCaseImpl(
         Timber.i("Starting checking for Prices.")
         val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
             // Filter out the Watchees that have already reached its target price.
-            it.watchee.currentPrice > it.watchee.targetPrice
+//            it.watchee.currentPrice > it.watchee.targetPrice
+            true
         }
 
 

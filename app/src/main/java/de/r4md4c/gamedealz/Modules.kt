@@ -27,6 +27,8 @@ import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.notifications.WatcheesPushNotifier
+import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
+import de.r4md4c.gamedealz.common.shortcut.ShortcutManagerImpl
 import de.r4md4c.gamedealz.common.state.OnRetryClick
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
@@ -53,6 +55,8 @@ val MAIN = module {
     factory<ViewNotifier> {
         ToastViewNotifier(androidContext())
     }
+
+    factory<ShortcutManager> { ShortcutManagerImpl(androidContext(), get()) }
 
     factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
         DealsDataSourceFactory(get(), stateMachineDelegate, get())

@@ -36,8 +36,11 @@
     <string name="watchlist_channel_description">Notifies you when a game\'s price in your Watchlist reaches the specified threshold.</string>
     <string name="dialog_ask_remove_from_watch_list"><![CDATA[Are you sure that you want to remove <b>%s</b> from your Watchlist?]]></string>
     <string name="watchlist_removed_watchee">%s has been removed.</string>
+    <string name="watchlist">Watchlist</string>
     <string name="watchlist_empty">Your Watchlist is Empty</string>
+    <string name="watchlist_shortcut_dialog_message">Do you want to add a shortcut to this screen so that you can keep the tabs more closely on your watched games?</string>
 
+    <string name="shortcut_created_successfully">Your shortcut has been created successfully</string>
     <string name="manage_watch_list_target_price">Target price is</string>
     <string name="manage_watch_list_last_checked">Last update: %s</string>
     <string name="managed_watch_list_current_price">Last fetched price was</string>

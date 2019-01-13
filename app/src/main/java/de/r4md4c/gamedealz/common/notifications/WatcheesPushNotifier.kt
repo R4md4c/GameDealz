@@ -55,6 +55,7 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
+import java.util.*
 
 
 internal class WatcheesPushNotifier(
@@ -97,6 +98,7 @@ internal class WatcheesPushNotifier(
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setGroup(GROUP_KEY)
+                .setAutoCancel(true)
                 .setContentIntent(notificationModel.toDetailsPendingIntent())
                 .addAction(
                     0, resourcesProvider.getString(R.string.check_on, priceModel.shop.name).capitalize(),
@@ -120,9 +122,11 @@ internal class WatcheesPushNotifier(
                     notificationsTotalSize.toString()
                 )
             )
+            .setAutoCancel(true)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setGroup(GROUP_KEY)
             .setGroupSummary(true)
+            .setContentIntent(summaryIntent())
             .build()
     }
 
@@ -152,6 +156,13 @@ internal class WatcheesPushNotifier(
             .setArguments(toBundle())
             .createTaskStackBuilder()
             .getPendingIntent(watcheeModel.id!!.toInt(), PendingIntent.FLAG_UPDATE_CURRENT)
+
+    private fun summaryIntent() =
+        NavDeepLinkBuilder(context)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.manageWatchlistFragment)
+            .createTaskStackBuilder()
+            .getPendingIntent(UUID.randomUUID().hashCode(), PendingIntent.FLAG_ONE_SHOT)
 
     private companion object {
         private const val GROUP_KEY = "watchlist_notification_group"

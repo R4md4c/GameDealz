@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.watchlist
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
@@ -31,6 +32,7 @@ import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
@@ -49,7 +51,8 @@ class ManageWatchlistViewModel(
     private val stateMachineDelegate: StateMachineDelegate,
     private val dateFormatter: DateFormatter,
     private val checkPricesUseCase: CheckPriceThresholdUseCase,
-    private val resourcesProvider: ResourcesProvider
+    private val resourcesProvider: ResourcesProvider,
+    private val notifier: Notifier<WatcheeNotificationModel>
 ) : AbstractViewModel(dispatchers) {
 
     private val _watchlistLiveData by lazy { MutableLiveData<List<ManageWatchlistModel>>() }
@@ -82,7 +85,10 @@ class ManageWatchlistViewModel(
     fun onSwipeToRefresh() {
         uiScope.launchWithCatching(dispatchers.Main, {
             stateMachineDelegate.transition(Event.OnLoadingStart)
-            withContext(dispatchers.IO) { checkPricesUseCase() }
+            val notificationModels = withContext(dispatchers.IO) { checkPricesUseCase() }
+            if (notificationModels.isNotEmpty()) {
+                notifier.notify(notificationModels)
+            }
             stateMachineDelegate.transition(Event.OnLoadingEnded)
         }) {
             stateMachineDelegate.transition(Event.OnError(it))

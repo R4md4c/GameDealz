@@ -55,7 +55,7 @@ internal class WatchlistLocalRepository(
     }
 
     override suspend fun allWatcheesWithStores(): List<WatcheeWithStores> =
-        all().first().mapNotNull {
+        all().first().map {
             WatcheeWithStores(it, watchlistStoresDao.getStoresForWatchee(watcheeId = it.id).toSet())
         }
 

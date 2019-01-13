@@ -28,6 +28,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
@@ -39,6 +40,7 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
+import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
@@ -52,6 +54,8 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCallback {
 
@@ -82,6 +86,8 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
             .withLeaveBehindSwipeRight(drawable)
             .withLeaveBehindSwipeLeft(drawable)
     }
+
+    private val shortcutManager: ShortcutManager by inject()
 
     private val itemTouchHelper by lazy { ItemTouchHelper(swipeCallback) }
 
@@ -154,12 +160,29 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_add_shortcut -> {
+                    askUser()
                     true
                 }
                 else -> false
             }
 
         }
+    }
+
+    private fun askUser() {
+        viewScope.launch {
+            showDialog().takeIf { it }?.let {
+                shortcutManager.addManageWatchlistShortcut()
+            }
+        }
+    }
+
+    private suspend fun showDialog(): Boolean = suspendCoroutine { continuation ->
+        MaterialAlertDialogBuilder(context)
+            .setMessage(R.string.watchlist_shortcut_dialog_message)
+            .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss(); continuation.resume(true) }
+            .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss(); continuation.resume(false) }
+            .show()
     }
 
     private inner class UndoListener : UndoHelper.UndoListener<ManageWatchlistItem> {
