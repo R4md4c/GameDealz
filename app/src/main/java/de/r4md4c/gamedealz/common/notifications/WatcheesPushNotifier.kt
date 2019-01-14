@@ -39,10 +39,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.util.SparseArray
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -51,7 +48,6 @@ import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import java.util.*
@@ -139,22 +135,11 @@ internal class WatcheesPushNotifier(
         }
     }
 
-    private fun WatcheeNotificationModel.toBundle(): Bundle =
-        DetailsFragmentArgs.Builder(watcheeModel.plainId, watcheeModel.title, priceModel.url)
-            .build()
-            .toBundle()
-
     private fun WatcheeNotificationModel.toBuyUrlPendingIntent(): PendingIntent =
-        Intent(Intent.ACTION_VIEW, Uri.parse(priceModel.url))
-            .run { PendingIntent.getActivity(context, 0, this, 0) }
+        NotificationsBroadcastReceiver.toBuyUrlIntent(context, this)
 
-    private fun WatcheeNotificationModel.toDetailsPendingIntent(): PendingIntent? =
-        NavDeepLinkBuilder(context)
-            .setGraph(R.navigation.nav_graph)
-            .setDestination(R.id.gameDetailFragment)
-            .setArguments(toBundle())
-            .createTaskStackBuilder()
-            .getPendingIntent(watcheeModel.id!!.toInt(), PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun WatcheeNotificationModel.toDetailsPendingIntent(): PendingIntent =
+        NotificationsBroadcastReceiver.toPendingIntent(context, this)
 
     private fun summaryIntent() =
         NavDeepLinkBuilder(context)

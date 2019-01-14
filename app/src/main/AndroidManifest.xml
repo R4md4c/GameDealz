@@ -21,11 +21,9 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".watchlist.shortcut.ShortcutCreatedBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.CREATE_SHORTCUT"/>
-            </intent-filter>
-        </receiver>
+        <receiver
+                android:name=".common.notifications.NotificationsBroadcastReceiver"
+                android:exported="false"/>
 
         <activity
                 android:name=".common.acra.ErrorActivity"
