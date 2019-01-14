@@ -49,10 +49,13 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         GlobalScope.launch(dispatchers.Default) {
             val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL)
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
+
             if (intent.action == ACTION_VIEW_GAME_DETAILS) {
                 notificationModel.toDetailsPendingIntent(context)?.send()
             } else if (intent.action == ACTION_VIEW_BUY_URL) {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(notificationModel.priceModel.url)))
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(notificationModel.priceModel.url)).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
             }
         }
     }
@@ -75,7 +78,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         fun toBuyUrlIntent(context: Context, notificationModel: WatcheeNotificationModel): PendingIntent =
             PendingIntent.getBroadcast(
                 context, notificationModel.watcheeModel.id!!.toInt(),
-                notificationModel.intent(context), PendingIntent.FLAG_UPDATE_CURRENT
+                notificationModel.buyIntent(context), PendingIntent.FLAG_UPDATE_CURRENT
             )
 
         fun toPendingIntent(context: Context, notificationModel: WatcheeNotificationModel): PendingIntent =

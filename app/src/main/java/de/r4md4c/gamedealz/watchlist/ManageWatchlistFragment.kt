@@ -116,6 +116,11 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
         watchlistViewModel.lastCheckDate.observe(this, Observer { toolbar.subtitle = it })
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewScope.launch(dispatchers.Default) { watchlistViewModel.refreshWatchlist() }
+    }
+
     @SuppressLint("Range")
     override fun itemSwiped(position: Int, direction: Int) {
         view?.let {

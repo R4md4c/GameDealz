@@ -127,7 +127,7 @@ class ManageWatchlistViewModel(
         }
     }
 
-    private suspend fun refreshWatchlist() {
+    suspend fun refreshWatchlist() {
         getWatchlistUseCase().firstOrNull()?.let { postWatchlist(it) }
     }
 
