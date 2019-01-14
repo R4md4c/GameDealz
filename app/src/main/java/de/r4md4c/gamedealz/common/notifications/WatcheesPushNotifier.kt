@@ -46,7 +46,6 @@ import android.os.Bundle
 import android.util.SparseArray
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.getSystemService
 import androidx.core.util.forEach
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.notification.Notifier
@@ -64,7 +63,7 @@ internal class WatcheesPushNotifier(
 ) : Notifier<WatcheeNotificationModel> {
 
     private val notificationManager by lazy {
-        NotificationManagerCompat.from(context).also { createNotificationChannel() }
+        NotificationManagerCompat.from(context).apply { createNotificationChannel() }
     }
 
     override fun notify(data: Collection<WatcheeNotificationModel>) {
@@ -130,13 +129,13 @@ internal class WatcheesPushNotifier(
             .build()
     }
 
-    private fun createNotificationChannel() {
+    private fun NotificationManagerCompat.createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = resourcesProvider.getString(R.string.watchlist_channel_name)
             val descriptionText = resourcesProvider.getString(R.string.watchlist_channel_description)
             val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
             channel.description = descriptionText
-            context.getSystemService<NotificationManager>()?.createNotificationChannel(channel)
+            createNotificationChannel(channel)
         }
     }
 

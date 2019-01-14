@@ -12,6 +12,7 @@
             android:id="@+id/toolbar"
             app:layout_constraintTop_toTopOf="parent"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             android:layout_height="?actionBarSize"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
