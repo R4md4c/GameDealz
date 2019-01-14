@@ -30,10 +30,7 @@ import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
-import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.*
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
@@ -62,6 +59,9 @@ class HomeViewModelTest {
     @Mock
     private lateinit var toggleStoresUseCase: ToggleStoresUseCase
 
+    @Mock
+    private lateinit var getAlertsCountUseCase: GetAlertsCountUseCase
+
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
@@ -71,7 +71,8 @@ class HomeViewModelTest {
             getCurrentActiveRegion,
             onActiveRegionChange,
             getStoresUseCase,
-            toggleStoresUseCase
+            toggleStoresUseCase,
+            getAlertsCountUseCase
         )
     }
 
