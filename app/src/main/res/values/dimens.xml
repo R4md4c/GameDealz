@@ -4,7 +4,6 @@
     <dimen name="baseline_2x">16dp</dimen>
     <dimen name="baseline_0_5x">4dp</dimen>
     <dimen name="grid_cell_min_height">160dp</dimen>
-    <dimen name="image_height">120dp</dimen>
     <dimen name="progress_stroke_size">5dp</dimen>
     <dimen name="progress_size">16dp</dimen>
 </resources>

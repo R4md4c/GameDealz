@@ -131,6 +131,8 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
             .withIconTintingEnabled(true)
 
         drawer.setItems(listOf(dealsDrawerItem, managedWatchlistDrawerItem))
+
+        observePriceAlertsUnreadCount()
     }
 
     private fun observeRegionSelectionDialog() {
@@ -142,6 +144,16 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     private fun observeRegionsLoading() {
         viewModel.regionsLoading.observe(this, Observer {
             showProgress(it)
+        })
+    }
+
+    private fun observePriceAlertsUnreadCount() {
+        viewModel.priceAlertsCount.observe(this, Observer { count ->
+            (drawer.getDrawerItem(R.id.manageWatchlistFragment.toLong()) as? PrimaryDrawerItem)?.let {
+                val adapter = drawer.adapter
+                it.withBadge(count)
+                adapter.notifyAdapterItemChanged(adapter.getPosition(it.identifier))
+            }
         })
     }
 

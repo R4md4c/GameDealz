@@ -46,9 +46,7 @@ internal class WorkManagerJobsInitializer(
             ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<PriceCheckerWorker>(
                 preferenences.priceCheckerPeriodicIntervalInHours.toLong(),
-                TimeUnit.HOURS,
-                FLEX_INTERVAL_MINUTES,
-                TimeUnit.MINUTES
+                TimeUnit.HOURS
             ).apply {
                 setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             }.build().apply {
@@ -58,6 +56,5 @@ internal class WorkManagerJobsInitializer(
 
     private companion object {
         private const val PRICE_CHECKER_UNIQUE_NAME = "price_checker_unique"
-        private const val FLEX_INTERVAL_MINUTES = 30L
     }
 }

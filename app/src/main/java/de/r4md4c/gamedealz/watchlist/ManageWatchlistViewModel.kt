@@ -33,12 +33,10 @@ import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
-import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
-import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
-import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
+import de.r4md4c.gamedealz.domain.usecase.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.filter
+import kotlinx.coroutines.channels.firstOrNull
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -52,6 +50,7 @@ class ManageWatchlistViewModel(
     private val dateFormatter: DateFormatter,
     private val checkPricesUseCase: CheckPriceThresholdUseCase,
     private val resourcesProvider: ResourcesProvider,
+    private val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase,
     private val notifier: Notifier<WatcheeNotificationModel>
 ) : AbstractViewModel(dispatchers) {
 
@@ -75,8 +74,7 @@ class ManageWatchlistViewModel(
 
     fun onRemoveWatchee(tobeRemoved: List<ManageWatchlistModel>) {
         uiScope.launchWithCatching(dispatchers.IO, {
-            val count = removeWatcheesUseCase(TypeParameter(tobeRemoved.map { it.watcheeModel }))
-            Timber.d("Remove $count items from Watchlist.")
+            removeWatcheesUseCase(TypeParameter(tobeRemoved.map { it.watcheeModel }))
         }) {
             Timber.e(it, "Failed to remove watchees")
         }
@@ -88,6 +86,7 @@ class ManageWatchlistViewModel(
             val notificationModels = withContext(dispatchers.IO) { checkPricesUseCase() }
             if (notificationModels.isNotEmpty()) {
                 notifier.notify(notificationModels)
+                refreshWatchlist()
             }
             stateMachineDelegate.transition(Event.OnLoadingEnded)
         }) {
@@ -96,13 +95,19 @@ class ManageWatchlistViewModel(
         }
     }
 
+    fun markAsRead(model: ManageWatchlistModel) {
+        uiScope.launchWithCatching(dispatchers.IO, {
+            markNotificationAsReadUseCase(TypeParameter(model.watcheeModel))
+            refreshWatchlist()
+        }) {
+            Timber.e(it, "Failed to mark alert as read.")
+        }
+    }
+
     private fun observeWatchlistData() {
         uiScope.launchWithCatching(dispatchers.IO, {
             getWatchlistUseCase().consumeEach {
-                _watchlistLiveData.postValue(it)
-                if (it.isEmpty()) {
-                    stateMachineDelegate.transition(Event.OnShowEmpty)
-                }
+                postWatchlist(it)
             }
         }) {
             Timber.e(it, "Failed to observeWatchlistData")
@@ -122,4 +127,15 @@ class ManageWatchlistViewModel(
         }
     }
 
+    private suspend fun refreshWatchlist() {
+        getWatchlistUseCase().firstOrNull()?.let { postWatchlist(it) }
+    }
+
+    private fun postWatchlist(manageWatchlistModel: List<ManageWatchlistModel>) {
+        Timber.d("Posting $manageWatchlistModel")
+        _watchlistLiveData.postValue(manageWatchlistModel)
+        if (manageWatchlistModel.isEmpty()) {
+            stateMachineDelegate.transition(Event.OnShowEmpty)
+        }
+    }
 }

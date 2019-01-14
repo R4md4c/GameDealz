@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "81b40928d99c8f42d3b16633bde35d43",
+    "identityHash": "2171baef4934f5cb414c5b83523cf242",
     "entities": [
       {
         "tableName": "Region",
@@ -318,12 +318,77 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "PriceAlert",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `watcheeId` INTEGER NOT NULL, `buyUrl` TEXT NOT NULL, `storeName` TEXT NOT NULL, `dateCreated` INTEGER NOT NULL, FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "watcheeId",
+            "columnName": "watcheeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buyUrl",
+            "columnName": "buyUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "storeName",
+            "columnName": "storeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateCreated",
+            "columnName": "dateCreated",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_PriceAlert_watcheeId",
+            "unique": true,
+            "columnNames": [
+              "watcheeId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_PriceAlert_watcheeId` ON `${TABLE_NAME}` (`watcheeId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Watchlist",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "watcheeId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"81b40928d99c8f42d3b16633bde35d43\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2171baef4934f5cb414c5b83523cf242\")"
     ]
   }
 }

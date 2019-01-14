@@ -10,8 +10,7 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
 
+    <color name="badgeColor">@android:color/tertiary_text_dark</color>
     <color name="oldPriceColor">@android:color/darker_gray</color>
     <color name="newPriceColor">@color/secondaryColor</color>
-
-    <color name="divider_color">#1e000000</color>
 </resources>

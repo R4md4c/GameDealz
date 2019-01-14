@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
 import de.r4md4c.gamedealz.data.repository.RegionsRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
@@ -27,10 +28,12 @@ import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
+import kotlin.collections.mapNotNull
 
 internal class GetWatchlistToManageUseCaseImpl(
     private val watchlistRepository: WatchlistRepository,
-    private val regionsRepository: RegionsRepository
+    private val regionsRepository: RegionsRepository,
+    private val priceAlertRepository: PriceAlertRepository
 ) : GetWatchlistToManageUseCase {
 
     override suspend fun invoke(param: VoidParameter?): ReceiveChannel<List<ManageWatchlistModel>> {
@@ -39,6 +42,8 @@ internal class GetWatchlistToManageUseCaseImpl(
 
     private suspend fun List<Watchee>.toManageWatchlistModel(): List<ManageWatchlistModel> = mapNotNull {
         val region = regionsRepository.findById(it.regionCode) ?: return@mapNotNull null
-        ManageWatchlistModel(it.toModel(), false, region.currency.toCurrencyModel())
+        val hasNotification = priceAlertRepository.findByWatcheeId(it.id) != null
+        ManageWatchlistModel(it.toModel(), hasNotification, region.currency.toCurrencyModel())
     }
 }
+

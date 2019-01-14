@@ -134,7 +134,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
         viewScope.launch {
             val transformedList = withContext(dispatchers.Default) {
                 modelsList.mapNotNull { model ->
-                    model.toManageWatchlistItem(resourcesProvider, dateFormatter)?.withTag(model)
+                    model.toManageWatchlistItem(resourcesProvider)?.withTag(model)
                 }
             }
             itemsAdapter.set(transformedList)
@@ -150,6 +150,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
             val direction = DetailsFragmentDirections
                 .actionGlobalGameDetailFragment(model.watcheeModel.plainId, model.watcheeModel.title, "")
             findNavController().navigate(direction)
+            watchlistViewModel.markAsRead(model)
             true
         }
     }
@@ -180,7 +181,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     private suspend fun showDialog(): Boolean = suspendCoroutine { continuation ->
         MaterialAlertDialogBuilder(context)
             .setMessage(R.string.watchlist_shortcut_dialog_message)
-            .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss(); continuation.resume(true) }
+            .setPositiveButton(android.R.string.yes) { dialog, _ -> dialog.dismiss(); continuation.resume(true) }
             .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss(); continuation.resume(false) }
             .show()
     }

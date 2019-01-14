@@ -25,14 +25,13 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
-import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import kotlinx.android.synthetic.main.layout_manage_watchlist_item.view.*
 
-class ManageWatchlistItem(
+data class ManageWatchlistItem(
     private val watchModelTitle: CharSequence,
     private val watchModelTargetPrice: CharSequence,
     private val watchModelCurrentPrice: CharSequence
@@ -61,13 +60,28 @@ class ManageWatchlistItem(
 
 @WorkerThread
 fun ManageWatchlistModel.toManageWatchlistItem(
-    resourcesProvider: ResourcesProvider,
-    dateFormatter: DateFormatter
+    resourcesProvider: ResourcesProvider
 ): ManageWatchlistItem? {
     val formattedTargetPrice = watcheeModel.targetPrice.formatCurrency(currencyModel) ?: return null
     val formattedCurrentPrice = watcheeModel.currentPrice.formatCurrency(currencyModel) ?: return null
-    val targetPriceString = resourcesProvider.getString(R.string.manage_watch_list_target_price)
-    val lastFetchedPrice = resourcesProvider.getString(R.string.managed_watch_list_current_price)
+    val targetPriceString = buildSpannedString {
+        val targetPriceString = resourcesProvider.getString(R.string.manage_watch_list_target_price)
+        if (hasNotification) {
+            bold {
+                append(targetPriceString)
+            }
+        } else {
+            append(targetPriceString)
+        }
+    }
+    val lastFetchedPrice = buildSpannedString {
+        val lastFetchedPriceString = resourcesProvider.getString(R.string.managed_watch_list_current_price)
+        if (hasNotification) {
+            bold { append(lastFetchedPriceString) }
+        } else {
+            append(lastFetchedPriceString)
+        }
+    }
 
     return ManageWatchlistItem(
         watcheeModel.title,
@@ -77,7 +91,7 @@ fun ManageWatchlistModel.toManageWatchlistItem(
         .withIdentifier(watcheeModel.id ?: return null)
 }
 
-private fun String.concatWithLastChecked(
+private fun CharSequence.concatWithLastChecked(
     formattedPrice: String,
     resourcesProvider: ResourcesProvider
 ): CharSequence {
@@ -93,7 +107,7 @@ private fun String.concatWithLastChecked(
     }
 }
 
-private fun String.concatWithPrice(formattedPrice: String, resourcesProvider: ResourcesProvider): CharSequence {
+private fun CharSequence.concatWithPrice(formattedPrice: String, resourcesProvider: ResourcesProvider): CharSequence {
     val currentString = this
     return buildSpannedString {
         append(currentString)
