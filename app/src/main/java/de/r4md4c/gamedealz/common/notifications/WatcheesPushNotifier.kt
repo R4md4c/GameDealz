@@ -66,7 +66,7 @@ internal class WatcheesPushNotifier(
         val notifications = data.notificationsFromWatchees().takeIf { it.size() > 0 } ?: return
 
         buildSummaryNotification(notifications.size())?.also {
-            notifications.put(notifications.size() + 1, it)
+            notifications.put(SUMMARY_ID, it)
         }
 
         notifications.forEach { key, value ->
@@ -149,6 +149,7 @@ internal class WatcheesPushNotifier(
             .getPendingIntent(UUID.randomUUID().hashCode(), PendingIntent.FLAG_ONE_SHOT)
 
     private companion object {
+        private const val SUMMARY_ID = Integer.MAX_VALUE - 1
         private const val GROUP_KEY = "watchlist_notification_group"
         private const val CHANNEL_ID = "watchlist_notification_channel_id"
     }

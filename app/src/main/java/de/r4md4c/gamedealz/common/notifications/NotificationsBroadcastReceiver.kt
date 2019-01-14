@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
@@ -47,12 +48,15 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     override fun onReceive(context: Context, intent: Intent) {
         GlobalScope.launch(dispatchers.Default) {
+            val notificationManager = NotificationManagerCompat.from(context)
+
             val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL)
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
 
             if (intent.action == ACTION_VIEW_GAME_DETAILS) {
                 notificationModel.toDetailsPendingIntent(context)?.send()
             } else if (intent.action == ACTION_VIEW_BUY_URL) {
+                notificationManager.cancel(notificationModel.watcheeModel.id!!.toInt())
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(notificationModel.priceModel.url)).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 })

@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
@@ -42,6 +43,8 @@ class GameDealzApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+
         val isDebug = BuildConfig.DEBUG
 
         if (isDebug) {

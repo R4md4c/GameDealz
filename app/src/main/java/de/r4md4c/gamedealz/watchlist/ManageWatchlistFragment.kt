@@ -34,7 +34,6 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter_extensions.UndoHelper
 import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback
-import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
@@ -63,12 +62,10 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
     private val watchlistViewModel: ManageWatchlistViewModel by viewModel()
 
-    private val dateFormatter by inject<DateFormatter>()
-
     private val resourcesProvider by inject<ResourcesProvider>()
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
-        parametersOf(this, { })
+        parametersOf(this, { watchlistViewModel.onSwipeToRefresh() })
     }
 
     private val undoHelper by lazy {

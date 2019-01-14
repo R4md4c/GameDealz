@@ -102,6 +102,7 @@ class SearchFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        savedInstanceState?.let { searchResultsLoaded = it.getBoolean(EXTRA_ALREADY_LOADED, false) }
 
         if (!searchResultsLoaded) {
             viewModel.startSearch(searchTerm)
@@ -125,6 +126,12 @@ class SearchFragment : BaseFragment() {
         })
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (activity?.isChangingConfigurations == true) {
+            outState.putBoolean(EXTRA_ALREADY_LOADED, searchResultsLoaded)
+        }
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
@@ -185,5 +192,7 @@ class SearchFragment : BaseFragment() {
     companion object {
         @JvmStatic
         fun toUri(searchTerm: String): Uri = DeepLinks.buildSearchUri(searchTerm)
+
+        private const val EXTRA_ALREADY_LOADED = "alread_loaded"
     }
 }
