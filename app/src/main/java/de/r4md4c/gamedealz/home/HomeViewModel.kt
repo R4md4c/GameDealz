@@ -71,8 +71,7 @@ class HomeViewModel(
                 getCurrentActiveRegion().also { activeRegion ->
                     _currentRegion.postValue(activeRegion.copy(regionCode = activeRegion.regionCode.toUpperCase()))
                 }
-            }.onSuccess { listenForStoreChanges(it) }
-                .onFailure(onFailureHandler)
+            }.onSuccess { listenForStoreChanges(it) }.onFailure(onFailureHandler)
         }
 
         listenForRegionChanges()

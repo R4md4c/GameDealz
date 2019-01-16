@@ -50,7 +50,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         GlobalScope.launch(dispatchers.Default) {
             val notificationManager = NotificationManagerCompat.from(context)
 
-            val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL)
+            val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL) ?: return@launch
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
 
             if (intent.action == ACTION_VIEW_GAME_DETAILS) {

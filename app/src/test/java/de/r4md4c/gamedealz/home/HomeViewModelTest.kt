@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -102,7 +103,7 @@ class HomeViewModelTest {
 
         homeViewModel.init()
 
-        assertThat(homeViewModel.onError.value).isNotNull()
+        homeViewModel.onError.test().assertHasValue()
         assertThat(homeViewModel.currentRegion.value).isNull()
     }
 
@@ -132,9 +133,10 @@ class HomeViewModelTest {
         ArrangeBuilder()
             .withFailedGetStores()
 
+        val errorTS = homeViewModel.onError.test()
         homeViewModel.init()
 
-        assertThat(homeViewModel.onError.value).isNotNull()
+        errorTS.assertHasValue()
     }
 
     @Test
@@ -210,7 +212,7 @@ class HomeViewModelTest {
 
         fun withFailedCurrentRegion() = apply {
             runBlocking {
-                whenever(getCurrentActiveRegion.invoke(anyOrNull())).thenThrow(NullPointerException(""))
+                whenever(getCurrentActiveRegion.invoke(anyOrNull())).thenThrow(RuntimeException(""))
             }
         }
 

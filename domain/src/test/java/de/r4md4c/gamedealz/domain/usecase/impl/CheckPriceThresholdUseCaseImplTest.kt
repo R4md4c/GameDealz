@@ -28,6 +28,7 @@ import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
+import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
@@ -56,6 +57,9 @@ class CheckPriceThresholdUseCaseImplTest {
     private lateinit var pricesGroupedByCountriesHelper: RetrievePricesGroupedByCountriesHelper
 
     @Mock
+    private lateinit var priceAlertsHelper: PriceAlertsHelper
+
+    @Mock
     private lateinit var regionsRepostiory: RegionsRepository
 
     private lateinit var subject: CheckPriceThresholdUseCaseImpl
@@ -69,7 +73,8 @@ class CheckPriceThresholdUseCaseImplTest {
             watchlistStoresRepository,
             regionsRepostiory,
             pricesGroupedByCountriesHelper,
-            pickMinimalWatcheesPricesHelper
+            pickMinimalWatcheesPricesHelper,
+            priceAlertsHelper
         )
     }
 
@@ -188,6 +193,25 @@ class CheckPriceThresholdUseCaseImplTest {
             val result = subject.invoke()
 
             assertThat(result).hasSize(2)
+        }
+    }
+
+    @Test
+    fun `it should priceAlertsHelper to store models in price alerts`() {
+        runBlocking {
+            val priceWatcheeMap = mapOf(PRICE to WATCHEE, PRICE.copy(newPrice = 10f) to WATCHEE.copy(id = 2))
+            ArrangeBuilder()
+                .withWatcheesWithStores((1..5).map {
+                    WATCHEES_WITH_STORES
+                })
+                .withResultFromPricesGroupedByCountriesHelper(emptyMap())
+                .withResultFromPricePickerHelper(priceWatcheeMap)
+                .withResultFromFindById(1, WATCHEE)
+
+            subject.invoke()
+
+
+            verify(priceAlertsHelper).storeNotificationModels(any())
         }
     }
 

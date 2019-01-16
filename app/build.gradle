@@ -43,6 +43,9 @@ android {
     }
 
     testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 }
@@ -111,7 +114,9 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:2.0.0"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
     testImplementation "org.koin:koin-test:${versions.koin}"
+    testImplementation "androidx.test:core:1.1.0"
     testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
 
     androidTestUtil 'androidx.test:orchestrator:1.1.1'
