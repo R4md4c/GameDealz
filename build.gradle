@@ -44,6 +44,7 @@ ext.versions = [
     'timber': '4.7.1',
     'lifecycle': '2.0.0',
     'glide': '4.8.0',
+    'mockk': '1.9',
     'appCompat': '1.1.0-alpha01',
     'recyclerView': '1.1.0-alpha01',
     'androidX': '1.1.0-alpha03',

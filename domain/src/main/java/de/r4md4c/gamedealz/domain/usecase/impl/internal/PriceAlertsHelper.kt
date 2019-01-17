@@ -29,6 +29,8 @@ internal class PriceAlertsHelper(
 ) {
 
     suspend fun storeNotificationModels(notificationModel: Collection<WatcheeNotificationModel>) {
+        if (notificationModel.isEmpty()) return
+
         val priceAlertsToBeStored = notificationModel.mapNotNull {
             val watcheeId = it.watcheeModel.id ?: return@mapNotNull null
             PriceAlert(
