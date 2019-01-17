@@ -39,6 +39,7 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
+import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
@@ -52,6 +53,7 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -107,15 +109,16 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
         watchlistViewModel.sideEffects.observe(this, Observer {
             stateVisibilityHandler.onSideEffect(it)
-        }
-        )
+        })
         watchlistViewModel.watchlistLiveData.observe(this, Observer { renderModels(it) })
         watchlistViewModel.lastCheckDate.observe(this, Observer { toolbar.subtitle = it })
     }
 
     override fun onResume() {
         super.onResume()
-        viewScope.launch(dispatchers.Default) { watchlistViewModel.refreshWatchlist() }
+        viewScope.launchWithCatching(dispatchers.Default, { watchlistViewModel.refreshWatchlist() }) {
+            Timber.e(it, "Failed to refresh Watchlist")
+        }
     }
 
     @SuppressLint("Range")

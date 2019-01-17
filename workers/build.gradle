@@ -37,7 +37,6 @@ dependencies {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
 
-    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     implementation "org.koin:koin-core:${versions.koin}"
     implementation "org.koin:koin-android:${versions.koin}"
 

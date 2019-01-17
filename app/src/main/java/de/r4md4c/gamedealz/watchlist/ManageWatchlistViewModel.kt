@@ -89,6 +89,9 @@ class ManageWatchlistViewModel(
                 refreshWatchlist()
             }
             stateMachineDelegate.transition(Event.OnLoadingEnded)
+            if (notificationModels.isEmpty() && _watchlistLiveData.value?.isEmpty() == true) {
+                stateMachineDelegate.transition(Event.OnShowEmpty)
+            }
         }) {
             stateMachineDelegate.transition(Event.OnError(it))
             Timber.e(it, "Failed to do a Swipe to refresh")

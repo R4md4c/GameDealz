@@ -13,7 +13,7 @@
         <TextView
                 android:id="@+id/title"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/notification"
                 app:layout_constraintTop_toTopOf="parent"
                 android:textAppearance="?textAppearanceHeadline6"
                 tools:text="Grand Theft Auto"
@@ -41,6 +41,17 @@
                 android:textAppearance="?textAppearanceSubtitle1"
                 android:layout_height="wrap_content"/>
 
+        <ImageView
+                android:id="@+id/notification"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:tint="@color/badgeColor"
+                app:layout_constraintBottom_toBottomOf="@+id/title"
+                android:layout_width="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:srcCompat="@drawable/ic_alert_circle"
+                android:layout_height="wrap_content"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

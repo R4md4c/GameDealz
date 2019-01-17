@@ -102,8 +102,6 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     private fun listenToViewModel() {
         observeCurrentRegion()
 
-        observeRegionsLoading()
-
         observeRegionSelectionDialog()
 
         observeCloseDrawer()
@@ -141,12 +139,6 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         })
     }
 
-    private fun observeRegionsLoading() {
-        viewModel.regionsLoading.observe(this, Observer {
-            showProgress(it)
-        })
-    }
-
     private fun observePriceAlertsUnreadCount() {
         viewModel.priceAlertsCount.observe(this, Observer { count ->
             (drawer.getDrawerItem(R.id.manageWatchlistFragment.toLong()) as? PrimaryDrawerItem)?.let {
@@ -168,13 +160,6 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
             }
             .apply { savedInstanceState?.let { withSavedInstance(it) } }
             .build()
-    }
-
-    private fun showProgress(show: Boolean) {
-//        drawer.removeAllItems()
-//        if (show) {
-//            drawer.addItem(ProgressDrawerItem())
-//        }
     }
 
     private fun handleAccountHeaderClick() {

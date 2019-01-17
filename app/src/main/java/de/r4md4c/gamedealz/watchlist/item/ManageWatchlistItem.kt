@@ -23,6 +23,7 @@ import androidx.annotation.WorkerThread
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.commonproviders.res.ResourcesProvider
@@ -34,7 +35,8 @@ import kotlinx.android.synthetic.main.layout_manage_watchlist_item.view.*
 data class ManageWatchlistItem(
     private val watchModelTitle: CharSequence,
     private val watchModelTargetPrice: CharSequence,
-    private val watchModelCurrentPrice: CharSequence
+    private val watchModelCurrentPrice: CharSequence,
+    private val hasNotifciation: Boolean
 ) : AbstractItem<ManageWatchlistItem, ManageWatchlistItem.ViewHolder>() {
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
@@ -44,6 +46,7 @@ data class ManageWatchlistItem(
             title.text = watchModelTitle
             targetPrice.text = watchModelTargetPrice
             currentPrice.text = watchModelCurrentPrice
+            notification.isVisible = hasNotifciation
         }
     }
 
@@ -92,7 +95,8 @@ fun ManageWatchlistModel.toManageWatchlistItem(
             watcheeModel.lastFetchedStoreName,
             hasNotification,
             resourcesProvider
-        )
+        ),
+        hasNotification
     )
         .withIdentifier(watcheeModel.id ?: return null)
 }

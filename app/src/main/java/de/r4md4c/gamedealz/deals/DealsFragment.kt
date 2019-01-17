@@ -98,6 +98,14 @@ class DealsFragment : BaseFragment() {
             when (it) {
                 is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
                 is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
+                is SideEffect.ShowLoading, SideEffect.HideLoading -> {
+                    if (it is SideEffect.ShowLoading) {
+                        filterFab.hide()
+                    } else {
+                        filterFab.show()
+                    }
+                    stateVisibilityHandler.onSideEffect(it)
+                }
                 else -> stateVisibilityHandler.onSideEffect(it)
             }
         })

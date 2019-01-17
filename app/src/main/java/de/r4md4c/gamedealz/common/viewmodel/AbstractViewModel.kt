@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 
 abstract class AbstractViewModel(dispatchers: IDispatchers) : ViewModel() {
 
@@ -32,6 +33,6 @@ abstract class AbstractViewModel(dispatchers: IDispatchers) : ViewModel() {
     @CallSuper
     override fun onCleared() {
         super.onCleared()
-        viewModelJob.cancel()
+        viewModelJob.cancelChildren()
     }
 }
