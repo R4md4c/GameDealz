@@ -154,7 +154,7 @@ class NotificationsBroadcastReceiverTest : KoinTest {
         val NOTIFICATION_MODEL = WatcheeNotificationModel(
             watcheeModel =
             WatcheeModel(
-                1, "1", "title1", currentPrice = 10f, targetPrice = 10f,
+                1, "1", "title1", targetPrice = 10f, lastFetchedPrice = 10f, lastFetchedStoreName = "shop1",
                 regionCode = "EU1", countryCode = "DE", currencyCode = "EU"
             ),
             priceModel = PriceModel(

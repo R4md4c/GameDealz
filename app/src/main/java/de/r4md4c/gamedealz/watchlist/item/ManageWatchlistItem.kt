@@ -63,7 +63,7 @@ fun ManageWatchlistModel.toManageWatchlistItem(
     resourcesProvider: ResourcesProvider
 ): ManageWatchlistItem? {
     val formattedTargetPrice = watcheeModel.targetPrice.formatCurrency(currencyModel) ?: return null
-    val formattedCurrentPrice = watcheeModel.currentPrice.formatCurrency(currencyModel) ?: return null
+    val formattedCurrentPrice = watcheeModel.lastFetchedPrice.formatCurrency(currencyModel) ?: return null
     val targetPriceString = buildSpannedString {
         val targetPriceString = resourcesProvider.getString(R.string.manage_watch_list_target_price)
         if (hasNotification) {
@@ -81,37 +81,55 @@ fun ManageWatchlistModel.toManageWatchlistItem(
         } else {
             append(lastFetchedPriceString)
         }
+
     }
 
     return ManageWatchlistItem(
         watcheeModel.title,
         targetPriceString.concatWithPrice(formattedTargetPrice, resourcesProvider),
-        lastFetchedPrice.concatWithLastChecked(formattedCurrentPrice, resourcesProvider)
+        lastFetchedPrice.concatWithLastChecked(
+            formattedCurrentPrice,
+            watcheeModel.lastFetchedStoreName,
+            hasNotification,
+            resourcesProvider
+        )
     )
         .withIdentifier(watcheeModel.id ?: return null)
 }
 
 private fun CharSequence.concatWithLastChecked(
     formattedPrice: String,
+    storeName: String,
+    hasNotification: Boolean,
     resourcesProvider: ResourcesProvider
 ): CharSequence {
     val currentString = this
     return buildSpannedString {
         append(currentString)
         append(' ')
+        val storeNameString = " ${resourcesProvider.getString(R.string.on)} $storeName"
         bold {
             color(resourcesProvider.getColor(R.color.newPriceColor)) {
                 append(formattedPrice)
             }
         }
+        if (hasNotification) {
+            bold { append(storeNameString) }
+        } else {
+            append(storeNameString)
+        }
     }
 }
 
-private fun CharSequence.concatWithPrice(formattedPrice: String, resourcesProvider: ResourcesProvider): CharSequence {
+private fun CharSequence.concatWithPrice(
+    formattedPrice: String,
+
+    resourcesProvider: ResourcesProvider
+): CharSequence {
     val currentString = this
     return buildSpannedString {
         append(currentString)
-        append(" ")
+        append(' ')
         bold {
             color(resourcesProvider.getColor(R.color.newPriceColor)) {
                 append(formattedPrice)

@@ -163,7 +163,7 @@ class PickMinimalWatcheesPricesHelperTest {
 
             helper.pick(retrievedPrices)
 
-            verify(watchlistRepository).updateWatchee(1, 5f, TimeUnit.MILLISECONDS.toSeconds(currentTime))
+            verify(watchlistRepository).updateWatchee(1, 5f, "", TimeUnit.MILLISECONDS.toSeconds(currentTime))
         }
     }
 
@@ -247,7 +247,7 @@ class PickMinimalWatcheesPricesHelperTest {
     private companion object {
         val PRICE = Price(1f, 1f, 2, "", Shop("1", ""), emptySet())
 
-        val WATCHEE = Watchee(1, "plainId", "", 0, 0, 0f, 0f, "", "", "")
+        val WATCHEE = Watchee(1, "plainId", "", 0, 0, 0f, "", 0f, "", "", "")
 
         val STORE = Store("1", "", "")
 

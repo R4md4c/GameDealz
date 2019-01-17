@@ -28,8 +28,9 @@ data class WatcheeModel(
     val title: String,
     val dateAdded: Long = 0,
     val lastCheckDate: Long = 0,
-    val currentPrice: Float,
+    val lastFetchedPrice: Float,
     val targetPrice: Float,
+    val lastFetchedStoreName: String,
     val regionCode: String,
     val countryCode: String,
     val currencyCode: String
@@ -42,8 +43,9 @@ internal fun Watchee.toModel() =
         title,
         dateAdded,
         lastCheckDate,
-        currentPrice,
+        lastFetchedPrice,
         targetPrice,
+        lastFetchedStoreName,
         regionCode,
         countryCode,
         currencyCode
@@ -51,14 +53,15 @@ internal fun Watchee.toModel() =
 
 internal fun WatcheeModel.toRepositoryModel() =
     Watchee(
-        id ?: 0,
-        plainId,
-        title,
-        dateAdded,
-        lastCheckDate,
-        currentPrice,
-        targetPrice,
-        regionCode,
-        countryCode,
-        currencyCode
+        id = id ?: 0,
+        plainId = plainId,
+        title = title,
+        dateAdded = dateAdded,
+        lastCheckDate = lastCheckDate,
+        lastFetchedPrice = lastFetchedPrice,
+        lastFetchedStoreName = lastFetchedStoreName,
+        targetPrice = targetPrice,
+        regionCode = regionCode,
+        countryCode = countryCode,
+        currencyCode = currencyCode
     )

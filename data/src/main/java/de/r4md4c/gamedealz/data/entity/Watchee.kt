@@ -29,7 +29,8 @@ import androidx.room.PrimaryKey
  * @param title the title of the game.
  * @param dateAdded When it was added in the database.
  * @param lastCheckDate the last timestamp that this game was checked in.
- * @param currentPrice the old price when that game was added to the DB.
+ * @param lastFetchedPrice the last fetched price from ITAD.
+ * @param lastFetchedStoreName the name of the store that the last fetch got from.
  * @param targetPrice the target price that will trigger the alert.
  * @param regionCode the regionCode that was active when that watchee was added.
  * @param countryCode the countryCode that was active when that watchee was added.
@@ -42,7 +43,8 @@ data class Watchee(
     val title: String,
     val dateAdded: Long,
     val lastCheckDate: Long = 0,
-    val currentPrice: Float,
+    val lastFetchedPrice: Float,
+    val lastFetchedStoreName: String,
     val targetPrice: Float,
     val regionCode: String,
     val countryCode: String,

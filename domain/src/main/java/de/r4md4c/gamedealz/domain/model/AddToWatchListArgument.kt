@@ -23,6 +23,7 @@ package de.r4md4c.gamedealz.domain.model
  * @param plainId the plain id of the game.
  * @param title the title of the game.
  * @param currentPrice the currentPrice of the game at the time that it was added.
+ * @param currentStoreName the current store that the current price is from.
  * @param targetPrice the desired price that you want to set the alert for.
  * @param stores the stores that will be observed for the price change
  */
@@ -30,6 +31,7 @@ data class AddToWatchListArgument(
     val plainId: String,
     val title: String,
     val currentPrice: Float,
+    val currentStoreName: String,
     val targetPrice: Float,
     val stores: List<StoreModel>
 )

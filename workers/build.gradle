@@ -35,8 +35,9 @@ dependencies {
 
     implementation ("android.arch.work:work-runtime-ktx:${versions.workmanager}") {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
-        exclude group: 'com.google.guava', module: 'listenablefuture'
     }
+
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     implementation "org.koin:koin-core:${versions.koin}"
     implementation "org.koin:koin-android:${versions.koin}"
 
@@ -47,7 +48,5 @@ dependencies {
     androidTestImplementation ("org.koin:koin-test:${versions.koin}") { exclude group: 'org.mockito' }
     androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
     androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation ("android.arch.work:work-testing:${versions.workmanager}")  {
-        exclude group: 'com.google.guava', module: 'listenablefuture'
-    }
+    androidTestImplementation ("android.arch.work:work-testing:${versions.workmanager}")
 }

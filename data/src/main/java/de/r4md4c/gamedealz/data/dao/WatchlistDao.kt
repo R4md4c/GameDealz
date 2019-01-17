@@ -53,8 +53,8 @@ interface WatchlistDao {
     @Insert
     suspend fun insert(watchee: Watchee): Long
 
-    @Query("UPDATE Watchlist SET currentPrice = :currentPrice, lastCheckDate = :lastChecked WHERE id = :id")
-    fun updateWatchee(id: Long, currentPrice: Float, lastChecked: Long): Int
+    @Query("UPDATE Watchlist SET lastFetchedPrice = :lastFetchedPrice, lastCheckDate = :lastChecked, lastFetchedStoreName = :lastFetchedStoreName WHERE id = :id")
+    fun updateWatchee(id: Long, lastFetchedPrice: Float, lastFetchedStoreName: String, lastChecked: Long): Int
 
     @Query("SELECT MAX(lastCheckDate) FROM Watchlist")
     fun mostRecentLastCheckDate(): Flowable<Long>

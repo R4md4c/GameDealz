@@ -83,7 +83,7 @@ class PriceAlertsHelperTest {
     private val notificationModel = WatcheeNotificationModel(
         watcheeModel =
         WatcheeModel(
-            1, "1", "title1", currentPrice = 10f, targetPrice = 10f,
+            1, "1", "title1", targetPrice = 10f, lastFetchedStoreName = "store", lastFetchedPrice = 10f,
             regionCode = "EU1", countryCode = "DE", currencyCode = "EU"
         ),
         priceModel = PriceModel(

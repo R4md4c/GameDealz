@@ -139,8 +139,8 @@ class RetrievePricesGroupedByCountriesHelperTest {
 
     companion object {
         private val WATCHEE = Watchee(
-            1, "plainId", "", 0L, 0L, 0f, 0f,
-            "", "", ""
+            1, "plainId", "", 0L, 0L, 0f, "",
+            0f, "", "", ""
         )
     }
 }
