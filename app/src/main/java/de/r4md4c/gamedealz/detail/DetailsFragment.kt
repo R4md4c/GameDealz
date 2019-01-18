@@ -28,22 +28,27 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.stfalcon.imageviewer.StfalconImageViewer
 import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
+import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
-import de.r4md4c.gamedealz.detail.decorator.DetailsItemDecorator
+import de.r4md4c.gamedealz.detail.decorator.DetailsFragmentItemDecorator
 import de.r4md4c.gamedealz.detail.item.*
+import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.watchlist.AddToWatchListDialog
 import kotlinx.android.synthetic.main.fragment_game_detail.*
 import kotlinx.coroutines.launch
@@ -61,8 +66,6 @@ class DetailsFragment : BaseFragment() {
 
     private val plainId by lazy { fromBundle(arguments!!).plainId }
 
-    private val buyUrl by lazy { fromBundle(arguments!!).buyUrl }
-
     private val detailsViewModel by viewModel<DetailsViewModel> { parametersOf(requireActivity()) }
 
     private val resourcesProvider: ResourcesProvider by inject()
@@ -73,6 +76,14 @@ class DetailsFragment : BaseFragment() {
 
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
+    private val mainAdapter by lazy {
+        FastItemAdapter.with<IItem<*, *>, ItemAdapter<IItem<*, *>>>(listOf(gameDetailsAdapter, pricesAdapter))
+    }
+
+    private val spanCount
+        get() = resourcesProvider.getInteger(R.integer.screenshots_span_count)
+
+    private val itemsDecorator by lazy { DetailsFragmentItemDecorator(requireContext()) }
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
         parametersOf(this, {
@@ -89,11 +100,7 @@ class DetailsFragment : BaseFragment() {
         stateVisibilityHandler.onViewCreated()
         setupTitle()
         setupFab()
-        content.apply {
-            addItemDecoration(DetailsItemDecorator(context))
-            layoutManager = LinearLayoutManager(context)
-            adapter = FastAdapter.with<IItem<*, *>, ItemAdapter<IItem<*, *>>>(listOf(gameDetailsAdapter, pricesAdapter))
-        }
+        setupRecyclerView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -129,12 +136,16 @@ class DetailsFragment : BaseFragment() {
             )
         })
 
-        detailsViewModel.screenshots.observe(this, Observer {
+        detailsViewModel.screenshots.observe(this, Observer { screenshots ->
             gameDetailsAdapter.add(
-                HeaderItem(getString(R.string.screenshots)),
-                ScreenshotsSectionItems(it, resourcesProvider, content.recycledViewPool)
+                ExpandableScreenshotsHeader {
+                    applyRestOfScreenshots(isExpanded).also { isExpanded = !isExpanded }
+                }
             )
+            gameDetailsAdapter.add(screenshots.take(spanCount)
+                .mapIndexed { index, aScreenshot -> ScreenshotItem(aScreenshot, index, this::onScreenShotClick) })
         })
+
 
         detailsViewModel.prices.observe(this, Observer {
             renderPrices(it)
@@ -217,6 +228,63 @@ class DetailsFragment : BaseFragment() {
             .setPositiveButton(android.R.string.yes) { dialog, _ -> continuation.resume(true); dialog.dismiss() }
             .setNegativeButton(android.R.string.no) { dialog, _ -> continuation.resume(false); dialog.dismiss() }
             .show()
+    }
+
+    private fun applyRestOfScreenshots(remove: Boolean) {
+        val allScreenshots = detailsViewModel.screenshots.value ?: return
+        val restScreenshots = detailsViewModel.getRestOfScreenshots().takeIf { it.isNotEmpty() } ?: return
+        val thirdScreenshot = allScreenshots.getOrNull(spanCount - 1) ?: return
+
+        val lastScreenshotPivot = gameDetailsAdapter.getAdapterPosition(thirdScreenshot.hashCode().toLong())
+
+        if (remove) {
+            gameDetailsAdapter.removeRange(lastScreenshotPivot + 1, restScreenshots.size)
+        } else {
+            gameDetailsAdapter.add(restScreenshots.mapIndexed { index, item ->
+                ScreenshotItem(
+                    item,
+                    index + spanCount, this::onScreenShotClick
+                )
+            })
+        }
+    }
+
+    private fun onScreenShotClick(screenshotPosition: Int) {
+        val screenshots = detailsViewModel.screenshots.value ?: return
+        StfalconImageViewer.Builder<ScreenshotModel>(requireContext(), screenshots) { view, image ->
+            val circularProgressDrawable = CircularProgressDrawable(requireContext()).apply {
+                strokeWidth = resourcesProvider.getDimension(R.dimen.progress_stroke_size)
+                centerRadius = resourcesProvider.getDimension(R.dimen.progress_size)
+                setColorSchemeColors(requireContext().resolveThemeColor(R.attr.colorSecondary))
+                start()
+            }
+            GlideApp.with(view)
+                .load(image.full)
+                .placeholder(circularProgressDrawable)
+                .into(view)
+        }.also {
+            it.withStartPosition(screenshotPosition)
+                .show()
+        }
+    }
+
+    private fun setupRecyclerView() {
+        content.apply {
+            addItemDecoration(itemsDecorator)
+            layoutManager =
+                    GridLayoutManager(context, spanCount).apply {
+                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                mainAdapter.getItem(position) ?: return spanCount
+                                return when (mainAdapter.getItemViewType(position)) {
+                                    R.layout.layout_screenshot_item -> 1
+                                    else -> spanCount
+                                }
+                            }
+                        }.apply { isSpanIndexCacheEnabled = true }
+                    }
+            adapter = mainAdapter
+        }
     }
 
     companion object {
