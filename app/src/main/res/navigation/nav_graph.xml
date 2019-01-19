@@ -48,6 +48,7 @@
                 android:name="buy_url"
                 app:argType="string"/>
     </fragment>
+
     <action
             android:id="@+id/action_global_gameDetailFragment"
             app:destination="@id/gameDetailFragment"
@@ -55,4 +56,11 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+
+    <fragment
+            android:id="@+id/manageWatchlistFragment"
+            tools:layout="@layout/fragment_manage_watchlist"
+            android:name="de.r4md4c.gamedealz.watchlist.ManageWatchlistFragment"
+            android:label="@string/title_manage_your_watchlist"/>
+
 </navigation>

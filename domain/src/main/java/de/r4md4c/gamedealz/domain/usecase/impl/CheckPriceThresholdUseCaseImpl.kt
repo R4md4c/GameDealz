@@ -28,6 +28,7 @@ import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
+import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 import de.r4md4c.gamedealz.network.model.Price
 import timber.log.Timber
@@ -37,14 +38,15 @@ internal class CheckPriceThresholdUseCaseImpl(
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val regionsRepository: RegionsRepository,
     private val retrievePricesGroupedByCountriesHelper: RetrievePricesGroupedByCountriesHelper,
-    private val pickMinimalWatcheesPricesHelper: PickMinimalWatcheesPricesHelper
+    private val pickMinimalWatcheesPricesHelper: PickMinimalWatcheesPricesHelper,
+    private val priceAlertsHelper: PriceAlertsHelper
 ) : CheckPriceThresholdUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeNotificationModel> {
         Timber.i("Starting checking for Prices.")
         val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
             // Filter out the Watchees that have already reached its target price.
-            it.watchee.currentPrice > it.watchee.targetPrice
+            it.watchee.lastFetchedPrice > it.watchee.targetPrice
         }
 
 
@@ -69,6 +71,8 @@ internal class CheckPriceThresholdUseCaseImpl(
         }
 
         Timber.d("Found new prices in these watchees $watcheesNotificationModelsList")
+
+        priceAlertsHelper.storeNotificationModels(watcheesNotificationModelsList)
 
         return watcheesNotificationModelsList.toSet()
     }

@@ -51,7 +51,7 @@ internal class PickMinimalWatcheesPricesHelper(
                 it.value.firstOrNull { price -> watcheesStoresIds.contains(price.shop.id) } ?: return@mapNotNull null
 
             watchlistRepository.updateWatchee(
-                watchee.id, minPrice.newPrice,
+                watchee.id, minPrice.newPrice, minPrice.shop.name,
                 TimeUnit.MILLISECONDS.toSeconds(dateProvider.timeInMillis())
             )
 

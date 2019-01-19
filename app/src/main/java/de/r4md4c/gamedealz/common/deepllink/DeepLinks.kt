@@ -24,11 +24,17 @@ object DeepLinks {
 
     const val PATH_SEARCH = "search"
     const val PATH_DETAIL = "detail"
+    private const val PATH_MANAGE_WATCHLIST = "manage_watch_list"
 
     const val QUERY_SEARCH_TERM = "search_term"
     const val QUERY_TITLE = "title"
     const val QUERY_PLAIN_ID = "plain_id"
     const val QUERY_BUY_URL = "buy_url"
+
+    fun manageWatchlistDeepLink(): Uri =
+        appSchemeUri.buildUpon()
+            .appendPath(PATH_MANAGE_WATCHLIST)
+            .build()
 
     fun buildSearchUri(searchTerm: String): Uri = appSchemeUri.buildUpon()
         .appendPath(PATH_SEARCH)

@@ -7,6 +7,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
     implementation project(':common')
 
+    api "io.mockk:mockk:${versions.mockk}"
     api "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
     api "com.google.truth:truth:${versions.truth}"
 }

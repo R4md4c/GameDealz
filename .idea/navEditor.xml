@@ -18,8 +18,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-633" />
-                            <option name="y" value="-167" />
+                            <option name="x" value="-746" />
+                            <option name="y" value="-125" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -46,6 +46,18 @@
                           <Point>
                             <option name="x" value="39" />
                             <option name="y" value="-190" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="manageWatchlistFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-415" />
+                            <option name="y" value="15" />
                           </Point>
                         </option>
                       </LayoutPositions>

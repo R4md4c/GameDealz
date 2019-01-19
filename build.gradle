@@ -8,10 +8,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
+}
+
+plugins {
+    id "com.github.ben-manes.versions" version "0.20.0"
 }
 
 allprojects {
@@ -26,7 +30,7 @@ allprojects {
 }
 
 ext.versions = [
-    'okhttp' : '3.12.0',
+    'okhttp' : '3.12.1',
     'retrofit' : '2.5.0',
     'okio': '2.1.0',
     'acra': '5.2.1',
@@ -40,7 +44,10 @@ ext.versions = [
     'timber': '4.7.1',
     'lifecycle': '2.0.0',
     'glide': '4.8.0',
-    'androidX': '1.1.0-alpha01',
+    'mockk': '1.9',
+    'appCompat': '1.1.0-alpha01',
+    'recyclerView': '1.1.0-alpha01',
+    'androidX': '1.1.0-alpha03',
     'material': '1.1.0-alpha02',
     'robolectric': '4.1',
     'workmanager': '1.0.0-beta01'

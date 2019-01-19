@@ -17,6 +17,9 @@
 
 package de.r4md4c.gamedealz.domain.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 /**
  * Contains information needed to render notifications.
  *
@@ -24,6 +27,8 @@ package de.r4md4c.gamedealz.domain.model
  * @param priceModel the price model that contains the shop information that triggered the alert.
  * @param currencyModel the currency that will be used to display the price.
  */
+@Parcelize
 data class WatcheeNotificationModel(val watcheeModel: WatcheeModel,
                                     val priceModel: PriceModel,
-                                    val currencyModel: CurrencyModel)
+                                    val currencyModel: CurrencyModel
+) : Parcelable

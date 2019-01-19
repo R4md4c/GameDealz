@@ -32,14 +32,17 @@ interface WatchlistDao {
     @Query("SELECT * FROM Watchlist WHERE id = :id")
     suspend fun findOne(id: Long): Watchee?
 
-    @Query("SELECT * FROM Watchlist ORDER BY lastCheckDate")
+    @Query("SELECT * FROM Watchlist ORDER BY dateAdded DESC")
     fun findAll(): Flowable<List<Watchee>>
 
-    @Query("SELECT * FROM Watchlist WHERE id IN (:ids) ORDER BY lastCheckDate")
+    @Query("SELECT * FROM Watchlist WHERE id IN (:ids) ORDER BY dateAdded DESC")
     fun findAll(ids: Collection<Long>): Flowable<List<Watchee>>
 
     @Query("DELETE FROM Watchlist WHERE id = :id")
     fun delete(id: Long): Int
+
+    @Query("DELETE FROM Watchlist WHERE id IN (:ids)")
+    fun delete(ids: Collection<Long>): Int
 
     @Query("DELETE FROM Watchlist WHERE plainId = :plainId")
     fun delete(plainId: String): Int
@@ -50,7 +53,10 @@ interface WatchlistDao {
     @Insert
     suspend fun insert(watchee: Watchee): Long
 
-    @Query("UPDATE Watchlist SET currentPrice = :currentPrice, lastCheckDate = :lastChecked WHERE id = :id")
-    fun updateWatchee(id: Long, currentPrice: Float, lastChecked: Long): Int
+    @Query("UPDATE Watchlist SET lastFetchedPrice = :lastFetchedPrice, lastCheckDate = :lastChecked, lastFetchedStoreName = :lastFetchedStoreName WHERE id = :id")
+    fun updateWatchee(id: Long, lastFetchedPrice: Float, lastFetchedStoreName: String, lastChecked: Long): Int
+
+    @Query("SELECT MAX(lastCheckDate) FROM Watchlist")
+    fun mostRecentLastCheckDate(): Flowable<Long>
 
 }

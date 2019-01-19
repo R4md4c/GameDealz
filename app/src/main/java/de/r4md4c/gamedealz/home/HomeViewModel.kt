@@ -22,16 +22,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
-import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -41,7 +38,8 @@ class HomeViewModel(
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
-    private val toggleStoresUseCase: ToggleStoresUseCase
+    private val toggleStoresUseCase: ToggleStoresUseCase,
+    private val priceAlertsCountUseCase: GetAlertsCountUseCase
 ) : AbstractViewModel(dispatchers) {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
@@ -62,6 +60,9 @@ class HomeViewModel(
     private val _onError by lazy { SingleLiveEvent<String>() }
     val onError: LiveData<String> by lazy { _onError }
 
+    private val _priceAlertsCount by lazy { MutableLiveData<String>() }
+    val priceAlertsCount: LiveData<String> by lazy { _priceAlertsCount }
+
     fun init() {
         uiScope.launch(dispatchers.Default) {
             kotlin.runCatching {
@@ -70,11 +71,11 @@ class HomeViewModel(
                 getCurrentActiveRegion().also { activeRegion ->
                     _currentRegion.postValue(activeRegion.copy(regionCode = activeRegion.regionCode.toUpperCase()))
                 }
-            }.onSuccess { listenForStoreChanges(it) }
-                .onFailure(onFailureHandler)
+            }.onSuccess { listenForStoreChanges(it) }.onFailure(onFailureHandler)
         }
 
         listenForRegionChanges()
+        listenForAlertsCountChanges()
     }
 
 
@@ -113,6 +114,14 @@ class HomeViewModel(
         kotlin.runCatching {
             getStoresUseCase(TypeParameter(activeRegion)).consumeEach {
                 _stores.postValue(it)
+            }
+        }.onFailure(onFailureHandler)
+    }
+
+    private fun listenForAlertsCountChanges() = uiScope.launch(dispatchers.Default) {
+        kotlin.runCatching {
+            priceAlertsCountUseCase().consumeEach {
+                _priceAlertsCount.postValue(if (it == 0) "" else it.toString())
             }
         }.onFailure(onFailureHandler)
     }

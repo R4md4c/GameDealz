@@ -15,12 +15,9 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.workmanager
+package de.r4md4c.gamedealz.domain.usecase
 
-/**
- * Inits the workers at the start of the application.
- */
-interface WorkerJobsInitializer {
+import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.domain.model.WatcheeModel
 
-    suspend fun init()
-}
+interface MarkNotificationAsReadUseCase : UseCase<TypeParameter<WatcheeModel>, Unit>

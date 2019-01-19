@@ -46,7 +46,7 @@ class PriceCheckerWorkerTest {
 
     lateinit var testDriver: TestDriver
 
-    lateinit var testWorkManager: WorkManager
+    private lateinit var testWorkManager: WorkManager
 
     @Mock
     lateinit var notifier: Notifier<WatcheeNotificationModel>
@@ -85,7 +85,12 @@ class PriceCheckerWorkerTest {
                 WatcheeNotificationModel(
                     watcheeModel =
                     WatcheeModel(
-                        it.toLong(), "$it", "$it", currentPrice = it.toFloat(), targetPrice = it.toFloat(),
+                        it.toLong(),
+                        "$it",
+                        "$it",
+                        targetPrice = it.toFloat(),
+                        lastFetchedStoreName = "",
+                        lastFetchedPrice = it.toFloat(),
                         regionCode = "EU1", countryCode = "DE", currencyCode = "EU"
                     ),
                     priceModel = PriceModel(
@@ -127,7 +132,7 @@ class PriceCheckerWorkerTest {
 
             return WorkManagerJobsInitializer(WorkManager.getInstance(), sharedPreferencesProvider).run {
                 runBlocking {
-                    init()
+                    schedulePeriodically()
                 }
                 priceCheckerId.also {
 

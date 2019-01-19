@@ -21,11 +21,12 @@ import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
@@ -60,7 +61,8 @@ class DetailsViewModel(
     private val getPlainDetails: GetPlainDetails,
     private val stateMachineDelegate: StateMachineDelegate,
     private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase,
-    private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
+    private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
+    private val resourcesProvider: ResourcesProvider
 ) : AbstractViewModel(dispatchers) {
 
     private var loadedPlainDetailsModel: PlainDetailsModel? = null
@@ -130,6 +132,15 @@ class DetailsViewModel(
 
     fun onSaveState(): DetailsViewModelState? =
         loadedPlainDetailsModel?.let { DetailsViewModelState(currentFilterItemChoice, it) }
+
+    fun getRestOfScreenshots(): List<ScreenshotModel> {
+        if (_screenshots.value == null) {
+            return emptyList()
+        }
+
+        val spanCount = resourcesProvider.getInteger(R.integer.screenshots_span_count)
+        return _screenshots.value!!.takeLast(_screenshots.value!!.size - spanCount)
+    }
 
     fun loadPlainDetails(plainId: String) = uiScope.launchWithCatching(dispatchers.IO, {
 

@@ -17,20 +17,24 @@
 
 package de.r4md4c.gamedealz.domain.model
 
+import android.os.Parcelable
 import de.r4md4c.gamedealz.data.entity.Watchee
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class WatcheeModel(
     val id: Long? = null,
     val plainId: String,
     val title: String,
     val dateAdded: Long = 0,
     val lastCheckDate: Long = 0,
-    val currentPrice: Float,
+    val lastFetchedPrice: Float,
     val targetPrice: Float,
+    val lastFetchedStoreName: String,
     val regionCode: String,
     val countryCode: String,
     val currencyCode: String
-)
+) : Parcelable
 
 internal fun Watchee.toModel() =
     WatcheeModel(
@@ -39,8 +43,9 @@ internal fun Watchee.toModel() =
         title,
         dateAdded,
         lastCheckDate,
-        currentPrice,
+        lastFetchedPrice,
         targetPrice,
+        lastFetchedStoreName,
         regionCode,
         countryCode,
         currencyCode
@@ -48,14 +53,15 @@ internal fun Watchee.toModel() =
 
 internal fun WatcheeModel.toRepositoryModel() =
     Watchee(
-        id ?: 0,
-        plainId,
-        title,
-        dateAdded,
-        lastCheckDate,
-        currentPrice,
-        targetPrice,
-        regionCode,
-        countryCode,
-        currencyCode
+        id = id ?: 0,
+        plainId = plainId,
+        title = title,
+        dateAdded = dateAdded,
+        lastCheckDate = lastCheckDate,
+        lastFetchedPrice = lastFetchedPrice,
+        lastFetchedStoreName = lastFetchedStoreName,
+        targetPrice = targetPrice,
+        regionCode = regionCode,
+        countryCode = countryCode,
+        currencyCode = currencyCode
     )

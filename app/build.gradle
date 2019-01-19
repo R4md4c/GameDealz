@@ -43,6 +43,9 @@ android {
     }
 
     testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 }
@@ -56,14 +59,14 @@ dependencies {
 
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation "androidx.appcompat:appcompat:${versions.androidX}"
+    implementation "androidx.appcompat:appcompat:${versions.appCompat}"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.lifecycle}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
-    implementation "androidx.recyclerview:recyclerview:${versions.androidX}"
+    implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
     implementation "androidx.paging:paging-runtime-ktx:${versions.paging_version}"
     implementation "androidx.annotation:annotation:1.0.1"
-    implementation 'androidx.core:core-ktx:1.0.1'
+    implementation "androidx.core:core-ktx:${versions.androidX}"
 
     implementation "android.arch.navigation:navigation-fragment-ktx:${versions.nav_version}"
     implementation "android.arch.navigation:navigation-ui-ktx:${versions.nav_version}"
@@ -88,6 +91,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
 
+    implementation 'com.mikepenz:fastadapter-extensions:3.3.1'
     implementation 'com.mikepenz:materialdrawer:6.1.2'
     implementation 'com.github.tinder:statemachine:0.1.2'
     implementation "com.jakewharton.timber:timber:${versions.timber}"
@@ -104,13 +108,15 @@ dependencies {
     implementation project(':domain')
 
     testImplementation project(':commontest')
-    testImplementation 'com.jraska.livedata:testing:0.6.0'
-    testImplementation 'com.jraska.livedata:testing-ktx:0.6.0'
+    testImplementation 'com.jraska.livedata:testing:1.0.0'
+    testImplementation 'com.jraska.livedata:testing-ktx:1.0.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
     testImplementation "androidx.arch.core:core-testing:2.0.0"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
     testImplementation "org.koin:koin-test:${versions.koin}"
+    testImplementation "androidx.test:core:1.1.0"
     testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
 
     androidTestUtil 'androidx.test:orchestrator:1.1.1'

@@ -21,6 +21,10 @@
             </intent-filter>
         </activity>
 
+        <receiver
+                android:name=".common.notifications.NotificationsBroadcastReceiver"
+                android:exported="false"/>
+
         <activity
                 android:name=".common.acra.ErrorActivity"
                 android:label="@string/title_submit_error_report"/>

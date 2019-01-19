@@ -32,12 +32,7 @@ import androidx.room.Index
         parentColumns = ["id"],
         childColumns = ["watcheeId"],
         onDelete = ForeignKey.CASCADE
-    ),
-        ForeignKey(
-            entity = Store::class,
-            parentColumns = ["id"],
-            childColumns = ["storeId"]
-        )],
+    )],
     indices = [Index(value = ["storeId"])]
 )
 internal data class WatcheeStoreJoin(

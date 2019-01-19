@@ -96,10 +96,10 @@ class WatchlistDaoTest : KoinTest {
             val watchee = watchlistDao.findOne("plainId5").awaitFirst().first()
 
             val timeStamp = System.currentTimeMillis()
-            assertThat(watchlistDao.updateWatchee(watchee.id, 500f, timeStamp)).isEqualTo(1)
+            assertThat(watchlistDao.updateWatchee(watchee.id, 500f, "store", timeStamp)).isEqualTo(1)
             assertThat(watchlistDao.findOne("plainId5").awaitFirst().first()).isEqualTo(
                 watchee.copy(
-                    currentPrice = 500f,
+                    lastFetchedPrice = 500f,
                     lastCheckDate = timeStamp
                 )
             )
@@ -124,11 +124,20 @@ class WatchlistDaoTest : KoinTest {
         }
     }
 
+    @Test
+    fun mostRecentLastCheckDate() {
+        runBlocking {
+            watchlistDao.insert(watcheesList.mapIndexed { index: Int, watchee: Watchee -> watchee.copy(lastCheckDate = index.toLong() + 1) })
+
+            watchlistDao.mostRecentLastCheckDate().test().assertValue(10)
+        }
+    }
     private val watcheesList = (1..10).map {
         Watchee(
             plainId = "plainId$it",
             title = "title:$it",
-            currentPrice = 0f,
+            lastFetchedPrice = 0f,
+            lastFetchedStoreName = "store",
             dateAdded = 0,
             targetPrice = 0f,
             regionCode = "EU1",

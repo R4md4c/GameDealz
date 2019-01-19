@@ -15,15 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.navigator
+package de.r4md4c.gamedealz.domain.usecase
 
-import android.os.Parcelable
+import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
+import kotlinx.coroutines.channels.ReceiveChannel
 
-interface Navigator {
-
-    fun navigate(uri: String, extras: Parcelable? = null)
-
-    fun navigateUp(): Boolean
-
-    fun navigateToUrl(url: String)
-}
+interface GetWatchlistToManageUseCase : UseCase<VoidParameter, ReceiveChannel<List<ManageWatchlistModel>>>

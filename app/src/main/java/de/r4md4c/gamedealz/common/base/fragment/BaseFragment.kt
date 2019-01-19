@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_deals.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import org.koin.android.ext.android.inject
 
 abstract class BaseFragment : Fragment() {
@@ -51,7 +52,7 @@ abstract class BaseFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         if (viewScopeDelegate.isInitialized()) {
-            job.cancel()
+            job.cancelChildren()
         }
     }
 

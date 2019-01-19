@@ -32,12 +32,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
+import de.r4md4c.gamedealz.deals.filter.DealsFilterDialogFragment
 import de.r4md4c.gamedealz.detail.DetailsFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import kotlinx.android.synthetic.main.fragment_deals.*
@@ -56,7 +58,7 @@ class DealsFragment : BaseFragment() {
         parametersOf(this, { dealsViewModel.onRefresh() })
     }
 
-    private val adapter by lazy {
+    private val dealsAdapter by lazy {
         DealsAdapter {
             listener?.onFragmentInteraction(
                 DetailsFragment.toUri(it.title.toString(), it.gameId, it.buyUrl), null
@@ -79,21 +81,31 @@ class DealsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
         setupRecyclerView()
+        setupFilterFab()
         stateVisibilityHandler.onViewCreated()
         swipeToRefresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         dealsViewModel.deals.observe(this, Observer {
-            adapter.submitList(it)
+            dealsAdapter.submitList(it)
         })
         dealsViewModel.sideEffect.observe(this, Observer {
             when (it) {
-                is SideEffect.ShowLoadingMore -> adapter.showProgress(true)
-                is SideEffect.HideLoadingMore -> adapter.showProgress(false)
+                is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
+                is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
+                is SideEffect.ShowLoading, SideEffect.HideLoading, SideEffect.ShowEmpty -> {
+                    if (it is SideEffect.ShowLoading) {
+                        filterFab.hide()
+                    } else {
+                        filterFab.show()
+                    }
+                    stateVisibilityHandler.onSideEffect(it)
+                }
                 else -> stateVisibilityHandler.onSideEffect(it)
             }
         })
@@ -124,11 +136,20 @@ class DealsFragment : BaseFragment() {
         fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
     }
 
-    private fun setupRecyclerView() {
-        content.adapter = adapter
-        context?.let { content.addItemDecoration(StaggeredGridDecorator(it)) }
-        content.layoutManager =
+    private fun setupRecyclerView() = with(content) {
+        adapter = dealsAdapter
+        addItemDecoration(StaggeredGridDecorator(requireContext()))
+        layoutManager =
                 StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
+        addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) filterFab?.hide() else filterFab?.show()
+            }
+        })
+    }
+
+    private fun setupFilterFab() {
+        filterFab.setOnClickListener { DealsFilterDialogFragment().show(childFragmentManager, null) }
     }
 
     private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {

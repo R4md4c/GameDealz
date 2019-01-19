@@ -148,7 +148,7 @@ private fun PriceDetails.historicalLowText(
         " ",
         SpannableString(
             dateFormatter.formatDateTime(
-                TimeUnit.SECONDS.toMillis(historicalLowModel?.added ?: 0),
+                TimeUnit.SECONDS.toMillis(historicalLowModel.added),
                 DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_YEAR
             )
         )

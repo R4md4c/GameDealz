@@ -19,21 +19,19 @@ package de.r4md4c.gamedealz.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
-import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.*
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
@@ -62,6 +60,9 @@ class HomeViewModelTest {
     @Mock
     private lateinit var toggleStoresUseCase: ToggleStoresUseCase
 
+    @Mock
+    private lateinit var getAlertsCountUseCase: GetAlertsCountUseCase
+
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
@@ -71,7 +72,8 @@ class HomeViewModelTest {
             getCurrentActiveRegion,
             onActiveRegionChange,
             getStoresUseCase,
-            toggleStoresUseCase
+            toggleStoresUseCase,
+            getAlertsCountUseCase
         )
     }
 
@@ -101,7 +103,7 @@ class HomeViewModelTest {
 
         homeViewModel.init()
 
-        assertThat(homeViewModel.onError.value).isNotNull()
+        homeViewModel.onError.test().assertHasValue()
         assertThat(homeViewModel.currentRegion.value).isNull()
     }
 
@@ -131,9 +133,10 @@ class HomeViewModelTest {
         ArrangeBuilder()
             .withFailedGetStores()
 
+        val errorTS = homeViewModel.onError.test()
         homeViewModel.init()
 
-        assertThat(homeViewModel.onError.value).isNotNull()
+        errorTS.assertHasValue()
     }
 
     @Test
@@ -209,7 +212,7 @@ class HomeViewModelTest {
 
         fun withFailedCurrentRegion() = apply {
             runBlocking {
-                whenever(getCurrentActiveRegion.invoke(anyOrNull())).thenThrow(NullPointerException(""))
+                whenever(getCurrentActiveRegion.invoke(anyOrNull())).thenThrow(RuntimeException(""))
             }
         }
 

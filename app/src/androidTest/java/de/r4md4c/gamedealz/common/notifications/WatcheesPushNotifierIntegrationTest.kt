@@ -17,10 +17,6 @@
 
 package de.r4md4c.gamedealz.common.notifications
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -63,8 +59,9 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
                     title = "title$it",
                     dateAdded = it.toLong(),
                     lastCheckDate = it.toLong(),
+                    lastFetchedPrice = it.toFloat(),
+                    lastFetchedStoreName = "store",
                     targetPrice = it.toFloat(),
-                    currentPrice = it.toFloat(),
                     regionCode = "EU1",
                     countryCode = "DE",
                     currencyCode = "EUR"
@@ -102,8 +99,9 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
                 title = "title$1",
                 dateAdded = 1,
                 lastCheckDate = 1,
+                lastFetchedPrice = 1f,
+                lastFetchedStoreName = "store",
                 targetPrice = 1f,
-                currentPrice = 1f,
                 regionCode = "EU1",
                 countryCode = "DE",
                 currencyCode = "EUR"
@@ -124,7 +122,6 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
             assertThat(it).isNotNull()
             it.click()
         }
-        onView(withId(R.id.toolbar)).check(matches(isDisplayed()))
     }
 
     private fun clearAllNotifications() {

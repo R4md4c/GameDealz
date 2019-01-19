@@ -27,7 +27,7 @@ interface WatchlistRepository : Repository<Watchee, Long> {
      *
      * @return 1 if success 0 otherwise
      */
-    suspend fun removeById(id: Long): Int
+    suspend fun removeById(ids: Collection<Long>): Int
 
     /**
      * Removes a watched game by plain Id
@@ -47,9 +47,15 @@ interface WatchlistRepository : Repository<Watchee, Long> {
      * Update the currentPrice and the lastChecked timestamp of a Watchee.
      *
      * @param id the id that of the watchee that you want to be updated.
-     * @param currentPrice the current price
+     * @param lastFetchedPrice the lastFetchedPrice
+     * @param lastFetchedStoreName the store name that the lastFetchedPrice was fetched from.
      * @param lastChecked the last checked timestamp
      * @return 1 if success else 0
      */
-    suspend fun updateWatchee(id: Long, currentPrice: Float, lastChecked: Long): Int
+    suspend fun updateWatchee(id: Long, lastFetchedPrice: Float, lastFetchedStoreName: String, lastChecked: Long): Int
+
+    /**
+     * @return the most recent lastChecked in Seconds.
+     */
+    suspend fun mostRecentCheckDate(): ReceiveChannel<Long>
 }

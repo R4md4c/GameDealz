@@ -20,22 +20,22 @@ package de.r4md4c.gamedealz.home
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.navigation.navOptions
 import androidx.navigation.ui.NavigationUI
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.common.navigator.Navigator
+import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.deals.DealsFragment
-import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
-import de.r4md4c.gamedealz.home.item.ProgressDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
 import org.koin.android.ext.android.inject
@@ -54,6 +54,9 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
 
     private val navigator: Navigator by inject { parametersOf(this) }
 
+    private val navController
+        get() = findNavController(R.id.nav_host_fragment)
+
     private val accountHeader by lazy {
         AccountHeaderBuilder()
             .withActivity(this)
@@ -66,6 +69,8 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loadDrawer(savedInstanceState)
+        insertMenuItems()
+        listenForDestinationChanges()
 
         listenToViewModel()
     }
@@ -97,11 +102,7 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     private fun listenToViewModel() {
         observeCurrentRegion()
 
-        observeRegionsLoading()
-
         observeRegionSelectionDialog()
-
-        observeStoreSelections()
 
         observeCloseDrawer()
 
@@ -116,21 +117,20 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         })
     }
 
-    private fun observeStoreSelections() {
-        viewModel.stores.observe(this, Observer { storeList ->
-            val drawerItems = storeList.map {
-                PrimaryDrawerItem()
-                    .withName(it.name)
-                    .withTag(it)
-                    .withIdentifier(it.id.hashCode().toLong())
-                    .withSetSelected(it.selected)
-                    .withOnDrawerItemClickListener { _, _, drawerItem ->
-                        viewModel.onStoreSelected(drawerItem.tag as StoreModel)
-                        true
-                    }
-            }
-            drawer.setItems(drawerItems)
-        })
+    private fun insertMenuItems() {
+        val dealsDrawerItem = PrimaryDrawerItem().withName(R.string.title_on_going_deals)
+            .withIdentifier(R.id.dealsFragment.toLong())
+            .withIcon(R.drawable.ic_deal)
+            .withIconTintingEnabled(true)
+
+        val managedWatchlistDrawerItem = PrimaryDrawerItem().withName(R.string.title_manage_your_watchlist)
+            .withIdentifier(R.id.manageWatchlistFragment.toLong())
+            .withIcon(R.drawable.ic_add_to_watch_list)
+            .withIconTintingEnabled(true)
+
+        drawer.setItems(listOf(dealsDrawerItem, managedWatchlistDrawerItem))
+
+        observePriceAlertsUnreadCount()
     }
 
     private fun observeRegionSelectionDialog() {
@@ -139,27 +139,27 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
         })
     }
 
-    private fun observeRegionsLoading() {
-        viewModel.regionsLoading.observe(this, Observer {
-            showProgress(it)
+    private fun observePriceAlertsUnreadCount() {
+        viewModel.priceAlertsCount.observe(this, Observer { count ->
+            (drawer.getDrawerItem(R.id.manageWatchlistFragment.toLong()) as? PrimaryDrawerItem)?.let {
+                val adapter = drawer.adapter
+                it.withBadge(count)
+                adapter.notifyAdapterItemChanged(adapter.getPosition(it.identifier))
+            }
         })
     }
 
     private fun loadDrawer(savedInstanceState: Bundle?) {
         drawer = DrawerBuilder(this)
             .withAccountHeader(accountHeader)
-            .withMultiSelect(true)
-            .withCloseOnClick(false)
+            .withCloseOnClick(true)
             .withHasStableIds(true)
+            .withOnDrawerItemClickListener { _, _, drawerItem ->
+                navigateToDestination(drawerItem.identifier.toInt())
+                false
+            }
             .apply { savedInstanceState?.let { withSavedInstance(it) } }
             .build()
-    }
-
-    private fun showProgress(show: Boolean) {
-        drawer.removeAllItems()
-        if (show) {
-            drawer.addItem(ProgressDrawerItem())
-        }
     }
 
     private fun handleAccountHeaderClick() {
@@ -180,5 +180,27 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
                 viewModel.init()
             })
         })
+    }
+
+    private fun listenForDestinationChanges() {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            drawer.setSelection(destination.id.toLong(), false)
+        }
+    }
+
+    private fun navigateToDestination(@IdRes identifier: Int) {
+        if (identifier == navController.currentDestination?.id) return
+        val navOptionsBuilder = navOptions {
+            anim {
+                popEnter = R.anim.nav_default_pop_enter_anim
+                popExit = R.anim.nav_default_pop_exit_anim
+                enter = R.anim.nav_default_enter_anim
+                exit = R.anim.nav_default_exit_anim
+            }
+            if (identifier == R.id.dealsFragment) {
+                popUpTo(R.id.dealsFragment) { inclusive = false }
+            }
+        }
+        navController.navigate(identifier, null, navOptionsBuilder)
     }
 }

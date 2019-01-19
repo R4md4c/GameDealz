@@ -28,6 +28,7 @@ import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
+import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
@@ -56,6 +57,9 @@ class CheckPriceThresholdUseCaseImplTest {
     private lateinit var pricesGroupedByCountriesHelper: RetrievePricesGroupedByCountriesHelper
 
     @Mock
+    private lateinit var priceAlertsHelper: PriceAlertsHelper
+
+    @Mock
     private lateinit var regionsRepostiory: RegionsRepository
 
     private lateinit var subject: CheckPriceThresholdUseCaseImpl
@@ -69,7 +73,8 @@ class CheckPriceThresholdUseCaseImplTest {
             watchlistStoresRepository,
             regionsRepostiory,
             pricesGroupedByCountriesHelper,
-            pickMinimalWatcheesPricesHelper
+            pickMinimalWatcheesPricesHelper,
+            priceAlertsHelper
         )
     }
 
@@ -91,7 +96,7 @@ class CheckPriceThresholdUseCaseImplTest {
                 .withWatcheesWithStores((1..5).map {
                     WATCHEES_WITH_STORES.copy(
                         watchee = WATCHEE.copy(
-                            currentPrice = 5f,
+                            lastFetchedPrice = 5f,
                             targetPrice = 5f
                         )
                     )
@@ -108,7 +113,7 @@ class CheckPriceThresholdUseCaseImplTest {
                 .withWatcheesWithStores((1..5).map {
                     WATCHEES_WITH_STORES.copy(
                         watchee = WATCHEE.copy(
-                            currentPrice = 5f,
+                            lastFetchedPrice = 5f,
                             targetPrice = 6f
                         )
                     )
@@ -191,6 +196,25 @@ class CheckPriceThresholdUseCaseImplTest {
         }
     }
 
+    @Test
+    fun `it should priceAlertsHelper to store models in price alerts`() {
+        runBlocking {
+            val priceWatcheeMap = mapOf(PRICE to WATCHEE, PRICE.copy(newPrice = 10f) to WATCHEE.copy(id = 2))
+            ArrangeBuilder()
+                .withWatcheesWithStores((1..5).map {
+                    WATCHEES_WITH_STORES
+                })
+                .withResultFromPricesGroupedByCountriesHelper(emptyMap())
+                .withResultFromPricePickerHelper(priceWatcheeMap)
+                .withResultFromFindById(1, WATCHEE)
+
+            subject.invoke()
+
+
+            verify(priceAlertsHelper).storeNotificationModels(any())
+        }
+    }
+
     inner class ArrangeBuilder {
         init {
             runBlocking {
@@ -234,7 +258,10 @@ class CheckPriceThresholdUseCaseImplTest {
     private companion object {
         val ACTIVE_REGION = ActiveRegion("US", CountryModel("US"), CurrencyModel("EUR", ""))
 
-        val WATCHEE = Watchee(1, "plainId", "title", 0, 0, 50f, 15f, "", "", "")
+        val WATCHEE = Watchee(
+            1, "plainId", "title", 0, 0, 50f, targetPrice = 15f,
+            lastFetchedStoreName = "", countryCode = "", regionCode = "", currencyCode = ""
+        )
 
         val STORES = (1..10).map { Store("$it", "name$it", "color$it") }
 

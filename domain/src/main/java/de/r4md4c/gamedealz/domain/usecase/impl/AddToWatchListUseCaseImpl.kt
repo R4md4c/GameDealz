@@ -51,8 +51,9 @@ internal class AddToWatchListUseCaseImpl(
                 WatcheeModel(
                     plainId = plainId,
                     title = title,
-                    currentPrice = currentPrice,
+                    lastFetchedPrice = currentPrice,
                     targetPrice = targetPrice,
+                    lastFetchedStoreName = currentStoreName,
                     regionCode = activeRegion.regionCode,
                     countryCode = activeRegion.country.code,
                     currencyCode = activeRegion.currency.currencyCode

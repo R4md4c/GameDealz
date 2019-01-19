@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "37285c06a98278c31637561d6c48d21f",
+    "identityHash": "c57a37230fd3328e51709e1a046de9e3",
     "entities": [
       {
         "tableName": "Region",
@@ -190,7 +190,7 @@
       },
       {
         "tableName": "Watchlist",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `plainId` TEXT NOT NULL, `title` TEXT NOT NULL, `dateAdded` INTEGER NOT NULL, `lastCheckDate` INTEGER NOT NULL, `currentPrice` REAL NOT NULL, `targetPrice` REAL NOT NULL, `regionCode` TEXT NOT NULL, `countryCode` TEXT NOT NULL, `currencyCode` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `plainId` TEXT NOT NULL, `title` TEXT NOT NULL, `dateAdded` INTEGER NOT NULL, `lastCheckDate` INTEGER NOT NULL, `lastFetchedPrice` REAL NOT NULL, `lastFetchedStoreName` TEXT NOT NULL, `targetPrice` REAL NOT NULL, `regionCode` TEXT NOT NULL, `countryCode` TEXT NOT NULL, `currencyCode` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -223,9 +223,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "currentPrice",
-            "columnName": "currentPrice",
+            "fieldPath": "lastFetchedPrice",
+            "columnName": "lastFetchedPrice",
             "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchedStoreName",
+            "columnName": "lastFetchedStoreName",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -273,7 +279,7 @@
       },
       {
         "tableName": "watchlist_store_join",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`watcheeId` INTEGER NOT NULL, `storeId` TEXT NOT NULL, PRIMARY KEY(`watcheeId`, `storeId`), FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`storeId`) REFERENCES `Store`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`watcheeId` INTEGER NOT NULL, `storeId` TEXT NOT NULL, PRIMARY KEY(`watcheeId`, `storeId`), FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "watcheeId",
@@ -316,13 +322,67 @@
             "referencedColumns": [
               "id"
             ]
+          }
+        ]
+      },
+      {
+        "tableName": "PriceAlert",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `watcheeId` INTEGER NOT NULL, `buyUrl` TEXT NOT NULL, `storeName` TEXT NOT NULL, `dateCreated` INTEGER NOT NULL, FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
-            "table": "Store",
-            "onDelete": "NO ACTION",
+            "fieldPath": "watcheeId",
+            "columnName": "watcheeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buyUrl",
+            "columnName": "buyUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "storeName",
+            "columnName": "storeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateCreated",
+            "columnName": "dateCreated",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_PriceAlert_watcheeId",
+            "unique": true,
+            "columnNames": [
+              "watcheeId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_PriceAlert_watcheeId` ON `${TABLE_NAME}` (`watcheeId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Watchlist",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "storeId"
+              "watcheeId"
             ],
             "referencedColumns": [
               "id"
@@ -334,7 +394,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"37285c06a98278c31637561d6c48d21f\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c57a37230fd3328e51709e1a046de9e3\")"
     ]
   }
 }

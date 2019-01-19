@@ -51,8 +51,6 @@ import kotlinx.android.synthetic.main.layout_toolbar.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-//TODO: Handle all switch.
-//TODO: Don't save all the stores in the join table.
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val addToWatchListViewModel by viewModel<AddToWatchListViewModel>()
