@@ -23,7 +23,7 @@
             android:id="@+id/expand_icon"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="wrap_content"
-            android:rotation="90"
+            android:rotation="270"
             app:layout_constraintBaseline_toBaselineOf="@+id/header"
             app:layout_constraintBottom_toBottomOf="@+id/header"
             android:tint="?colorOnSurface"

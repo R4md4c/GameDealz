@@ -76,7 +76,7 @@ internal class WatcheesPushNotifier(
 
     private fun Collection<WatcheeNotificationModel>.notificationsFromWatchees(): SparseArray<Notification> {
         val notificationsSparseArray = SparseArray<Notification>()
-        forEach { notificationModel ->
+        forEachIndexed { index, notificationModel ->
             val watcheeModel = notificationModel.watcheeModel
             val priceModel = notificationModel.priceModel
             NotificationCompat.Builder(context, CHANNEL_ID)
@@ -90,7 +90,12 @@ internal class WatcheesPushNotifier(
                         priceModel.shop.name
                     )
                 )
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .apply {
+                    // Set defaults for a single notification.
+                    if (index == 0) {
+                        setDefaults(NotificationCompat.DEFAULT_ALL)
+                    }
+                }
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setGroup(GROUP_KEY)
                 .setAutoCancel(true)
@@ -107,7 +112,7 @@ internal class WatcheesPushNotifier(
     }
 
     private fun buildSummaryNotification(notificationsTotalSize: Int): Notification? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || notificationsTotalSize <= 1) {
             return null
         }
         return NotificationCompat.Builder(context, CHANNEL_ID)

@@ -24,6 +24,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
@@ -63,6 +64,9 @@ class DetailsViewModelTest {
     @Mock
     private lateinit var removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
 
+    @Mock
+    private lateinit var resourceProvider: ResourcesProvider
+
     private lateinit var testSubject: DetailsViewModel
 
     @Before
@@ -75,7 +79,8 @@ class DetailsViewModelTest {
             getPlainDetails,
             stateMachineDelegate,
             isGameAddedToWatchListUseCase,
-            removeFromWatchlistUseCase
+            removeFromWatchlistUseCase,
+            resourceProvider
         )
     }
 

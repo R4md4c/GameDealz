@@ -28,6 +28,7 @@ import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.coroutineScope
 import kotlin.collections.mapNotNull
 
 internal class GetWatchlistToManageUseCaseImpl(
@@ -36,8 +37,8 @@ internal class GetWatchlistToManageUseCaseImpl(
     private val priceAlertRepository: PriceAlertRepository
 ) : GetWatchlistToManageUseCase {
 
-    override suspend fun invoke(param: VoidParameter?): ReceiveChannel<List<ManageWatchlistModel>> {
-        return watchlistRepository.all().map { it.toManageWatchlistModel() }
+    override suspend fun invoke(param: VoidParameter?): ReceiveChannel<List<ManageWatchlistModel>> = coroutineScope {
+        watchlistRepository.all().map { it.toManageWatchlistModel() }
     }
 
     private suspend fun List<Watchee>.toManageWatchlistModel(): List<ManageWatchlistModel> = mapNotNull {

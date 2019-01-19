@@ -98,7 +98,7 @@ class DealsFragment : BaseFragment() {
             when (it) {
                 is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
                 is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
-                is SideEffect.ShowLoading, SideEffect.HideLoading -> {
+                is SideEffect.ShowLoading, SideEffect.HideLoading, SideEffect.ShowEmpty -> {
                     if (it is SideEffect.ShowLoading) {
                         filterFab.hide()
                     } else {

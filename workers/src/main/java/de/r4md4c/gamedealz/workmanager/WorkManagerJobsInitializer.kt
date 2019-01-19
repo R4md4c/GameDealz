@@ -21,23 +21,20 @@ import androidx.annotation.VisibleForTesting
 import androidx.work.*
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.workmanager.worker.PriceCheckerWorker
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 internal class WorkManagerJobsInitializer(
     private val workManager: WorkManager,
-    private val preferenences: SharedPreferencesProvider
+    private val preferences: SharedPreferencesProvider
 ) : PricesCheckerWorker {
 
     @VisibleForTesting
     internal var priceCheckerId: UUID by Delegates.notNull()
 
     override suspend fun schedulePeriodically() {
-        if (enqueuePriceChecker().await() == Operation.SUCCESS) {
-            Timber.i("Enqueuing Price Checker Success")
-        }
+        enqueuePriceChecker().await()
     }
 
     private fun enqueuePriceChecker(): Operation =
@@ -45,8 +42,10 @@ internal class WorkManagerJobsInitializer(
             PRICE_CHECKER_UNIQUE_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<PriceCheckerWorker>(
-                preferenences.priceCheckerPeriodicIntervalInHours.toLong(),
-                TimeUnit.HOURS
+                preferences.priceCheckerPeriodicIntervalInHours.toLong(),
+                TimeUnit.HOURS,
+                FLEX_INTERVAL_MINUTES,
+                TimeUnit.MINUTES
             ).apply {
                 setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             }.build().apply {
@@ -55,6 +54,7 @@ internal class WorkManagerJobsInitializer(
         )
 
     private companion object {
+        private const val FLEX_INTERVAL_MINUTES = 30L
         private const val PRICE_CHECKER_UNIQUE_NAME = "price_checker_unique"
     }
 }

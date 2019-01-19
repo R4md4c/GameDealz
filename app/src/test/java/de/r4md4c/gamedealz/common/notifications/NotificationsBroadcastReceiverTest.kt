@@ -30,11 +30,14 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
+import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -61,6 +64,9 @@ class NotificationsBroadcastReceiverTest : KoinTest {
     @Mock
     private lateinit var markNotificationAsReadUseCase: MarkNotificationAsReadUseCase
 
+    @Mock
+    private lateinit var alertsCountUseCase: GetAlertsCountUseCase
+
     private lateinit var shadowNotificationManager: ShadowNotificationManager
 
     private lateinit var shadowApplication: ShadowApplication
@@ -78,6 +84,7 @@ class NotificationsBroadcastReceiverTest : KoinTest {
         loadKoinModules(listOf(module {
             single<IDispatchers> { TestDispatchers }
             single { markNotificationAsReadUseCase }
+            single { alertsCountUseCase }
         }))
     }
 
@@ -145,6 +152,20 @@ class NotificationsBroadcastReceiverTest : KoinTest {
         assertThat(shadowNotificationManager.activeNotifications).isEmpty()
     }
 
+    @Test
+    fun `onReceive should cancel all notifications when the article count becomes 0`() {
+        val builder = ArrangeBuilder()
+            .withExtraModel(NOTIFICATION_MODEL.copy(NOTIFICATION_MODEL.watcheeModel.copy(id = 5)))
+            .withBuyUrlAction()
+            .withNotificationWithId(5)
+            .withNotificationWithId(6)
+            .withAlertsCountUseCase(0)
+
+        notificationsBroadcastReceiver.onReceive(RuntimeEnvironment.systemContext, builder.arrange())
+
+        assertThat(shadowNotificationManager.activeNotifications).isEmpty()
+    }
+
     @After
     fun afterEach() {
         stopKoin()
@@ -167,6 +188,10 @@ class NotificationsBroadcastReceiverTest : KoinTest {
 
     inner class ArrangeBuilder {
         private val intent = Intent()
+
+        init {
+            withAlertsCountUseCase(-1)
+        }
 
         fun withExtraModel(watcheeNotificationModel: WatcheeNotificationModel) = apply {
             intent.putExtra("extra_notification_model", watcheeNotificationModel)
@@ -191,6 +216,12 @@ class NotificationsBroadcastReceiverTest : KoinTest {
                 )
             }
             assertThat(shadowNotificationManager.activeNotifications).isNotEmpty()
+        }
+
+        fun withAlertsCountUseCase(count: Int) = apply {
+            runBlocking {
+                whenever(alertsCountUseCase()).thenReturn(produce(capacity = 1) { send(count) })
+            }
         }
 
         fun arrange() = intent

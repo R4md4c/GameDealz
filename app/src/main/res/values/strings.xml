@@ -59,4 +59,5 @@
     <string name="add_home_shortcut">Add Home Shortcut</string>
     <string name="select_region">Select Region</string>
     <string name="select_country">Select Country</string>
+    <string name="battery_settings">Battery Settings</string>
 </resources>

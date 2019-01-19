@@ -30,8 +30,10 @@ import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.firstOrNull
 import kotlinx.coroutines.launch
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -44,6 +46,8 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     private val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase by inject()
 
+    private val activeAlertsCountUseCase: GetAlertsCountUseCase by inject()
+
     private val dispatchers: IDispatchers by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -52,6 +56,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
             val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL) ?: return@launch
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
+            val alertsCount = activeAlertsCountUseCase().firstOrNull() ?: -1
 
             if (intent.action == ACTION_VIEW_GAME_DETAILS) {
                 notificationModel.toDetailsPendingIntent(context)?.send()
@@ -60,6 +65,10 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(notificationModel.priceModel.url)).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 })
+            }
+
+            if (alertsCount == 0) {
+                notificationManager.cancelAll()
             }
         }
     }
