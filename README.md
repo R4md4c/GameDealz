@@ -11,6 +11,9 @@ to retrieve/search for deals and compare prices.
 [<img src="screenshots/screenshot2.png" width=260>](screenshots/screenshot2.png)
 [<img src="screenshots/screenshot3.png" width=260>](screenshots/screenshot3.png)
 [<img src="screenshots/screenshot4.png" width=260>](screenshots/screenshot4.png)
+[<img src="screenshots/screenshot5.png" width=260>](screenshots/screenshot5.png)
+[<img src="screenshots/screenshot6.png" width=260>](screenshots/screenshot6.png)
+[<img src="screenshots/screenshot7.png" width=260>](screenshots/screenshot7.png)
 
 [![GameDealz on the Google Play Store](https://developer.android.com/images/brand/en_app_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=de.r4md4c.gamedealz)
 
@@ -19,7 +22,8 @@ to retrieve/search for deals and compare prices.
 * List current on going deals according to shops and regions.
 * Compare prices and historical lows across different shops.
 * Supports searching for games.
-* Retrieves from Steam API information such as screenshots and game information. 
+* Retrieves from Steam API information such as screenshots and game information.
+* Add games to your Watchlist and get notified when there prices reach the specified threshold.  
 
 ## Upcoming/Planned Features
 
