@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.detail.item
 import android.annotation.SuppressLint
 import android.view.View
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
@@ -27,7 +28,10 @@ import kotlinx.android.synthetic.main.layout_expandable_screenshot_header_item.v
 
 typealias OnExpandClick = ExpandableScreenshotsHeader.() -> Unit
 
-class ExpandableScreenshotsHeader(private val onExpandClick: OnExpandClick) :
+class ExpandableScreenshotsHeader(
+    private val showExpandIcon: Boolean,
+    private val onExpandClick: OnExpandClick
+) :
     AbstractItem<ExpandableScreenshotsHeader, ExpandableScreenshotsHeader.ViewHolder>() {
 
 
@@ -37,6 +41,7 @@ class ExpandableScreenshotsHeader(private val onExpandClick: OnExpandClick) :
         super.bindView(holder, payloads)
         val item = this
         with(holder.itemView) {
+            expand_icon.isVisible = showExpandIcon
             ViewCompat.animate(expand_icon).cancel()
             expand_icon.setOnClickListener {
                 onExpandClick()
