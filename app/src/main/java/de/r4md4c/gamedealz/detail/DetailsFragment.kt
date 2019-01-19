@@ -138,7 +138,7 @@ class DetailsFragment : BaseFragment() {
 
         detailsViewModel.screenshots.observe(this, Observer { screenshots ->
             gameDetailsAdapter.add(
-                ExpandableScreenshotsHeader {
+                ExpandableScreenshotsHeader(screenshots.size > spanCount) {
                     applyRestOfScreenshots(isExpanded).also { isExpanded = !isExpanded }
                 }
             )
