@@ -50,7 +50,7 @@ ext.versions = [
     'androidX': '1.1.0-alpha03',
     'material': '1.1.0-alpha02',
     'robolectric': '4.1',
-    'workmanager': '1.0.0-beta02'
+    'workmanager': '1.0.0-beta01'
 ]
 
 allprojects {

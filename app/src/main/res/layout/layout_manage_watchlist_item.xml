@@ -45,7 +45,7 @@
                 android:id="@+id/notification"
                 android:visibility="gone"
                 tools:visibility="visible"
-                android:tint="@color/badgeColor"
+                app:tint="@color/badgeColor"
                 app:layout_constraintBottom_toBottomOf="@+id/title"
                 android:layout_width="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"

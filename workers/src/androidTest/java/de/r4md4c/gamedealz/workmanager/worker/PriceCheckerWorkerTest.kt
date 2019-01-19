@@ -46,7 +46,7 @@ class PriceCheckerWorkerTest {
 
     lateinit var testDriver: TestDriver
 
-    lateinit var testWorkManager: WorkManager
+    private lateinit var testWorkManager: WorkManager
 
     @Mock
     lateinit var notifier: Notifier<WatcheeNotificationModel>
