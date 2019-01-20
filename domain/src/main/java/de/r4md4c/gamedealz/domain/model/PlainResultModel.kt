@@ -15,10 +15,13 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.model
 
-import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.PlainResultModel
-
-
-interface SearchUseCase : UseCase<TypeParameter<String>, List<PlainResultModel>>
+data class PlainResultModel(
+    val title: String,
+    val gameId: String,
+    val prices: List<PriceModel>,
+    val currencyModel: CurrencyModel,
+    val historicalLow: HistoricalLowModel?,
+    val imageUrl: String? = null
+)

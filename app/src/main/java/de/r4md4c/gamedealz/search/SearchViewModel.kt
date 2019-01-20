@@ -27,7 +27,7 @@ import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.SearchResultModel
+import de.r4md4c.gamedealz.domain.model.PlainResultModel
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -56,8 +56,8 @@ class SearchViewModel(
             }
     }
 
-    private val _searchResults by lazy { MutableLiveData<List<SearchResultModel>>() }
-    val searchResults: LiveData<List<SearchResultModel>> by lazy { _searchResults }
+    private val _searchResults by lazy { MutableLiveData<List<PlainResultModel>>() }
+    val plainResults: LiveData<List<PlainResultModel>> by lazy { _searchResults }
 
     private val _stateMachineSignals by lazy { MutableLiveData<SideEffect>() }
     val sideEffects: LiveData<SideEffect> by lazy { _stateMachineSignals }

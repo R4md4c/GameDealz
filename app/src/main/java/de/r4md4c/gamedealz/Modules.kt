@@ -77,7 +77,13 @@ val MAIN = module {
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()
-        DealsViewModel(get(), get(parameters = { parametersOf(stateMachineDelegate) }), get(), stateMachineDelegate)
+        DealsViewModel(
+            get(),
+            get(parameters = { parametersOf(stateMachineDelegate) }),
+            get(),
+            stateMachineDelegate,
+            get()
+        )
     }
 
     viewModel<DealsFilterViewModel>()

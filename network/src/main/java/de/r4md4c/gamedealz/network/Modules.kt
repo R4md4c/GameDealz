@@ -25,6 +25,7 @@ import de.r4md4c.gamedealz.network.json.ApplicationJsonAdapterFactory
 import de.r4md4c.gamedealz.network.repository.*
 import de.r4md4c.gamedealz.network.scrapper.JsoupScrapper
 import de.r4md4c.gamedealz.network.scrapper.Scrapper
+import de.r4md4c.gamedealz.network.service.HighlightsService
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealScrappingService
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.SearchService
@@ -107,7 +108,11 @@ val NETWORK = module {
 
     factory<DealsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
-    factory<SearchService> { IsThereAnyDealScrappingService(get(), get()) }
+    factory { IsThereAnyDealScrappingService(get(), get()) }
+
+    factory<SearchService> { get<IsThereAnyDealScrappingService>() }
+
+    factory<HighlightsService> { get<IsThereAnyDealScrappingService>() }
 
     factory<SteamRemoteRepository> { SteamRepository(get()) }
 

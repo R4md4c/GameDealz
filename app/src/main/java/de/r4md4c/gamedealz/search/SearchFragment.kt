@@ -108,7 +108,7 @@ class SearchFragment : BaseFragment() {
             viewModel.startSearch(searchTerm)
         }
 
-        viewModel.searchResults.observe(this, Observer {
+        viewModel.plainResults.observe(this, Observer {
             viewScope.launch {
                 progress.isVisible = true
                 withContext(dispatchers.Default) {

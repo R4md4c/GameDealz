@@ -79,4 +79,6 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
 
     factory<RemoveFromWatchlistUseCase> { RemoveFromWatchlistUseCaseImpl(get()) }
 
+    factory<GetHighlightsUseCase> { GetHighlightsUseCaseImpl(get(), get(), get(), get(), get(), get()) }
+
 })

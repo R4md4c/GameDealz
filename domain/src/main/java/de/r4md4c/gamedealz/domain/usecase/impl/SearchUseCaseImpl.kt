@@ -39,7 +39,7 @@ internal class SearchUseCaseImpl(
     private val imageUrlUseCase: GetImageUrlUseCase
 ) : SearchUseCase {
 
-    override suspend fun invoke(param: TypeParameter<String>?): List<SearchResultModel> = withContext(IO) {
+    override suspend fun invoke(param: TypeParameter<String>?): List<PlainResultModel> = withContext(IO) {
         val searchTerm = requireNotNull(param).value
 
         val activeRegion = activeRegionUseCase()
@@ -49,7 +49,7 @@ internal class SearchUseCaseImpl(
 
         check(isActive) { "Search was cancelled" }
 
-        if (searchResults.isEmpty()) return@withContext emptyList<SearchResultModel>()
+        if (searchResults.isEmpty()) return@withContext emptyList<PlainResultModel>()
 
         val searchResultsPlainId = searchResults.mapTo(mutableSetOf()) { it.plain.value }
 
@@ -70,7 +70,8 @@ internal class SearchUseCaseImpl(
         searchResults
             .filter { prices[it.plain.value]?.isNotEmpty() ?: false }
             .mapNotNull {
-                SearchResultModel(title = it.title, gameId = it.plain.value,
+                PlainResultModel(
+                    title = it.title, gameId = it.plain.value,
                     prices = prices[it.plain.value]?.pricesWithStoreColor() ?: emptyList(),
                     historicalLow = historicalLow[it.plain.value]?.toHistoricalModelWithColor(),
                     imageUrl = imageUrlUseCase(TypeParameter(it.plain.value)),

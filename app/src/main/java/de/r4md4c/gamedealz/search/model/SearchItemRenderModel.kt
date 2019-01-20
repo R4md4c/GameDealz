@@ -30,8 +30,8 @@ import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
+import de.r4md4c.gamedealz.domain.model.PlainResultModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
-import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +45,7 @@ data class SearchItemRenderModel(
 )
 
 @WorkerThread
-fun SearchResultModel.toRenderModel(
+fun PlainResultModel.toRenderModel(
     resourcesProvider: ResourcesProvider,
     dateFormatter: DateFormatter
 ): SearchItemRenderModel =
@@ -58,7 +58,7 @@ fun SearchResultModel.toRenderModel(
     )
 
 
-private fun SearchResultModel.currentBest(
+private fun PlainResultModel.currentBest(
     resourcesProvider: ResourcesProvider,
     @ColorRes newPriceColor: Int,
     @ColorRes oldPriceColor: Int
@@ -86,7 +86,7 @@ private fun SearchResultModel.currentBest(
         }
 }
 
-private fun SearchResultModel.historicalLow(
+private fun PlainResultModel.historicalLow(
     resourcesProvider: ResourcesProvider,
     dateFormatter: DateFormatter,
     @ColorRes newPriceColor: Int
