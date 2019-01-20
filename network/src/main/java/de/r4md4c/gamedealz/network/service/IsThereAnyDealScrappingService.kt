@@ -23,7 +23,10 @@ import de.r4md4c.gamedealz.network.scrapper.Scrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
-internal class IsThereAnyDealScrappingService(private val scrapper: Scrapper) : SearchService {
+internal class IsThereAnyDealScrappingService(
+    private val scrapper: Scrapper,
+    private val isThereAnyDealService: IsThereAnyDealService
+) : SearchService, HighlightsService {
 
     override suspend fun search(searchTerm: String): List<SearchResult> = withContext(IO) {
         require(searchTerm.isNotEmpty()) { "searchTerm should not be empty" }
@@ -39,7 +42,26 @@ internal class IsThereAnyDealScrappingService(private val scrapper: Scrapper) : 
             .map { SearchResult(it.second, Plain(it.first)) }
     }
 
+    override suspend fun highlights(regionCode: String, countryCode: String): Set<Plain> {
+        require(regionCode.isNotEmpty()) { "regionCode should not be empty" }
+        require(countryCode.isNotEmpty()) { "countryCode should not be empty" }
+
+        val response = isThereAnyDealService.highlights("region=$regionCode;country=$countryCode").await()
+        if (response.status != SUCCESS) {
+            throw IllegalArgumentException("ITAD's response returned a failure.")
+        }
+        return response.data.items.mapNotNull {
+            val document = scrapper.scapFragment(it)
+            val hrefLink = document.selectFirst("a").attr("href")
+            hrefLink.substring(hrefLink.lastIndexOf(HIGHLIGHTS_PLAINS_PIVOT) + HIGHLIGHTS_PLAINS_PIVOT.length)
+                .takeIf { plainId -> plainId.isNotEmpty() }
+        }.map { Plain(it) }
+            .toSet()
+    }
+
     private fun String.extractPlainId(): String? = this.split('/')[2]
 }
 
+private const val HIGHLIGHTS_PLAINS_PIVOT = "?plain="
+private const val SUCCESS = "success"
 private const val SEARCH_URL = "https://isthereanydeal.com/search/?q=%s"

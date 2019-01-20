@@ -107,7 +107,7 @@ val NETWORK = module {
 
     factory<DealsRemoteRepository> { get<IsThereAnyDealRepository>() }
 
-    factory<SearchService> { IsThereAnyDealScrappingService(get()) }
+    factory<SearchService> { IsThereAnyDealScrappingService(get(), get()) }
 
     factory<SteamRemoteRepository> { SteamRepository(get()) }
 

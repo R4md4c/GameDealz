@@ -15,19 +15,18 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.network.scrapper
+package de.r4md4c.gamedealz.network.model
 
-import org.jsoup.nodes.Document
+import se.ansman.kotshi.JsonSerializable
 
-internal interface Scrapper {
+/**
+ * The main response structure that will wrap the highlight call.
+ *
+ * @param status the status of the request, success or fialure.
+ * @param data the payload.
+ */
+@JsonSerializable
+internal data class HighlightsXMLHttpResponse(val status: String, val data: XMLHttpResponseData)
 
-    /**
-     * Scrap url and returns a Jsoup [Document].
-     */
-    suspend fun scrap(url: String): Document
-
-    /**
-     * Scraps an html fragment
-     */
-    suspend fun scapFragment(fragment: String): Document
-}
+@JsonSerializable
+internal data class XMLHttpResponseData(val items: List<String>)

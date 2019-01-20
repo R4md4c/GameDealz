@@ -15,19 +15,17 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.network.scrapper
+package de.r4md4c.gamedealz.network.service
 
-import org.jsoup.nodes.Document
+import de.r4md4c.gamedealz.network.model.Plain
 
-internal interface Scrapper {
-
-    /**
-     * Scrap url and returns a Jsoup [Document].
-     */
-    suspend fun scrap(url: String): Document
+interface HighlightsService {
 
     /**
-     * Scraps an html fragment
+     * Retrieve highlights from ITAD front page.
+     * @param regionCode the region code
+     * @param countryCode the country code
+     * @return a set of Plain ids that are returned from the front page.
      */
-    suspend fun scapFragment(fragment: String): Document
+    suspend fun highlights(regionCode: String, countryCode: String): Set<Plain>
 }

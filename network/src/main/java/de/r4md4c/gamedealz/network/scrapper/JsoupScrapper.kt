@@ -39,4 +39,6 @@ internal class JsoupScrapper(okHttpClient: OkHttpClient) : Scrapper {
         return Jsoup.parse(responseString)
     }
 
+    override suspend fun scapFragment(fragment: String): Document =
+        Jsoup.parseBodyFragment(fragment)
 }

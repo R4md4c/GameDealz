@@ -98,6 +98,16 @@ internal interface IsThereAnyDealService {
         @Query("country") country: String?,
         @Query("shops") shops: String
     ): Deferred<DataWrapper<ListWrapper<Deal>>>
+
+    @FormUrlEncoded
+    @POST("$ITAD_WEB_URL/ajax/data/highlights2.php")
+    fun highlights(
+        @Header("Cookie") cookies: String,
+        @Field("count") count: Int = 6,
+        @Field("large") large: Int = 2
+    ): Deferred<HighlightsXMLHttpResponse>
+
 }
 
+private const val ITAD_WEB_URL = "https://isthereanydeal.com"
 private const val GRANT_TYPE = "authorization_code"
