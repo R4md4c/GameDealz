@@ -78,8 +78,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.gameDetailFragment)
             .setArguments(toBundle())
-            .createTaskStackBuilder()
-            .getPendingIntent(watcheeModel.id!!.toInt(), PendingIntent.FLAG_UPDATE_CURRENT)
+            .createPendingIntent()
 
     private fun WatcheeNotificationModel.toBundle(): Bundle =
         DetailsFragmentArgs.Builder(watcheeModel.plainId, watcheeModel.title, priceModel.url)
