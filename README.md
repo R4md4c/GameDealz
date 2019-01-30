@@ -16,6 +16,7 @@ to retrieve/search for deals and compare prices.
 [<img src="screenshots/screenshot7.png" width=260>](screenshots/screenshot7.png)
 
 [![GameDealz on the Google Play Store](https://developer.android.com/images/brand/en_app_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=de.r4md4c.gamedealz)
+[<img src="https://f-droid.org/badge/get-it-on.png" height="60">](https://f-droid.org/en/packages/de.r4md4c.gamedealz/)
 
 ## Features 
 
