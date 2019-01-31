@@ -81,9 +81,8 @@ class AddToWatchListViewModel(
             return
         }
         val targetPrice = priceString.runCatching {
-
             val cleaned = replace("[${activeRegion?.currency?.toCurrencySymbol()}]".toRegex(), "")
-            val numberFormat = NumberFormat.getNumberInstance()
+            val numberFormat = NumberFormat.getNumberInstance(Locale.US)
             numberFormat.parse(cleaned).toFloat()
         }
             .onFailure { _emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_wrong_number_format)) }
@@ -156,8 +155,17 @@ class AddToWatchListViewModel(
         val cleanString = editTextString.replace("[$symbol,.]".toRegex(), "")
         val parsed = BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR)
             .divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
-        return activeRegion?.let { parsed.toFloat().formatCurrency(it.currency) }
+
+        return activeRegion?.let { activeRegion ->
+            numberFormatForCurrencyCode(activeRegion.currency.currencyCode).format(parsed)
+        }
     }
+
+    private fun numberFormatForCurrencyCode(currencyCode: String): NumberFormat =
+        NumberFormat.getCurrencyInstance(Locale.US).apply {
+            val currency = java.util.Currency.getInstance(currencyCode)
+            this.currency = currency
+        }
 
     private fun CurrencyModel.toCurrencySymbol(): String =
         Currency.getInstance(currencyCode).run { symbol }
