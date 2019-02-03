@@ -2,13 +2,13 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   android:layout_width="match_parent"
-                                                   android:minHeight="@dimen/grid_cell_min_height"
                                                    app:cardElevation="4dp"
+                                                   android:layout_width="match_parent"
                                                    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:minHeight="@dimen/grid_cell_min_height"
             android:layout_height="wrap_content">
 
         <ImageView
@@ -16,54 +16,93 @@
                 android:layout_width="0dp"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_height="104dp"
+                android:layout_height="78dp"
                 tools:src="@drawable/ic_placeholder"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/name"/>
+                app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
                 android:id="@+id/name"
                 app:layout_constraintTop_toBottomOf="@+id/image"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:textStyle="bold"
-                android:paddingTop="@dimen/baseline_1x"
-                android:paddingLeft="@dimen/baseline_1x"
-                android:paddingRight="@dimen/baseline_1x"
+                style="@style/DealsBaseTextStyle.Bold"
+                android:layout_marginTop="@dimen/baseline_1x"
+                app:layout_constraintVertical_bias="0"
+                android:layout_marginLeft="@dimen/baseline_1x"
+                android:layout_marginRight="@dimen/baseline_1x"
                 android:layout_width="0dp"
-                android:gravity="center"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 tools:text="Metal gear solid"
-                android:layout_height="wrap_content"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintBottom_toTopOf="@+id/price"/>
+                app:layout_constraintHeight_default="wrap"
+                android:layout_height="0dp"/>
 
         <TextView
                 android:id="@+id/price"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:paddingTop="@dimen/baseline_1x"
-                app:layout_constraintTop_toBottomOf="@+id/name"
+                style="@style/DealsBaseTextStyle"
+                app:layout_constraintLeft_toLeftOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/divider"
                 tools:text="$44.56"
-                android:textStyle="italic"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/stores"/>
+                />
 
         <TextView
                 android:id="@+id/stores"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/price"
-                android:gravity="center"
-                android:textSize="14sp"
-                tools:text="Microsoft since 1 hour ago"
-                android:padding="@dimen/baseline_1x"
-                style="@style/TextAppearance.MaterialComponents.Body2"
-                android:layout_width="wrap_content"
+                app:layout_constraintRight_toRightOf="@+id/name"
+                app:layout_constraintBottom_toTopOf="@+id/divider"
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:gravity="end"
+                tools:text="Microsoft"
+                android:paddingTop="@dimen/baseline_0_5x"
+                android:paddingBottom="@dimen/baseline_0_5x"
+                tools:drawableRight="@drawable/bg_store_color"
+                android:drawablePadding="@dimen/baseline_0_5x"
+                style="@style/DealsBaseTextStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                />
+
+        <TextView
+                android:id="@+id/timestamp"
+                tools:text="2h ago"
+                android:textColor="?dividerColor"
+                app:layout_constraintLeft_toLeftOf="@+id/name"
+                app:layout_constraintHorizontal_bias="0"
+                style="@style/DealsBaseTextStyle"
+                android:paddingTop="@dimen/baseline_0_5x"
+                android:paddingBottom="@dimen/baseline_0_5x"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintRight_toLeftOf="@+id/stores"
+                app:layout_constraintBottom_toTopOf="@+id/divider"
+                app:layout_constraintBottom_toBottomOf="@+id/stores"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <View
+                app:layout_constraintLeft_toLeftOf="@+id/name"
+                app:layout_constraintRight_toRightOf="@id/name"
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:background="?dividerColor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="32dp"
+                android:layout_height="1px"/>
+
+        <TextView
+                android:id="@+id/percentageCut"
+                android:layout_width="wrap_content"
+                app:layout_constraintRight_toRightOf="@+id/name"
+                app:layout_constraintBottom_toBottomOf="parent"
+                style="@style/DealsBaseTextStyle"
+                android:textColor="?colorSecondary"
+                android:fontFamily="@font/font_family_medium"
+                app:layout_constraintTop_toBottomOf="@+id/divider"
+                android:text="-20%"
+                android:layout_height="wrap_content"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

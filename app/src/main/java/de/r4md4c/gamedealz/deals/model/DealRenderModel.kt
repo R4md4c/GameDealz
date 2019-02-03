@@ -17,15 +17,13 @@
 
 package de.r4md4c.gamedealz.deals.model
 
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableStringBuilder
+import android.graphics.Color
 import android.text.format.DateUtils
-import android.text.style.StyleSpan
+import android.text.format.DateUtils.MINUTE_IN_MILLIS
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.WorkerThread
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
@@ -35,9 +33,12 @@ data class DealRenderModel(
     val gameId: String,
     val title: CharSequence,
     val newPrice: CharSequence?,
-    val storesAndTime: CharSequence?,
+    val store: CharSequence,
+    @ColorInt val storeColor: Int,
+    val timestamp: CharSequence,
     val imageUrl: String?,
     val buyUrl: String,
+    val percentageCut: CharSequence,
     val priceModel: PriceModel
 )
 
@@ -54,38 +55,16 @@ fun DealModel.toRenderModel(
         gameId,
         title,
         newAndOldPriceSpan(resourcesProvider.getColor(newPriceColorRes), resourcesProvider.getColor(oldPriceColorRest)),
-        storeAndTimeSpan(resourcesProvider),
+        shop.name,
+        Color.parseColor(shop.rgbColor),
+        DateUtils.getRelativeTimeSpanString(
+            added * 1000,
+            System.currentTimeMillis(),
+            MINUTE_IN_MILLIS,
+            DateUtils.FORMAT_ABBREV_RELATIVE
+        ),
         urls.imageUrl,
         urls.buyUrl,
+        "-$priceCutPercentage%",
         toPriceModel()
     )
-
-private fun DealModel.storeAndTimeSpan(resourcesProvider: ResourcesProvider): Spannable {
-    val timestampString = DateUtils.getRelativeTimeSpanString(added * 1000)
-
-    return SpannableStringBuilder()
-        .append(resourcesProvider.getString(R.string.on))
-        .append(' ')
-        .append(shop.name)
-        .apply {
-            setSpan(
-                StyleSpan(Typeface.BOLD),
-                length - shop.name.length,
-                length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-        .append(' ')
-        .append(resourcesProvider.getString(R.string.since))
-        .append(' ')
-        .append(timestampString)
-        .apply {
-            setSpan(
-                StyleSpan(Typeface.BOLD),
-                length - timestampString.length,
-                length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-
-}

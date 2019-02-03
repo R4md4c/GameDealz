@@ -13,6 +13,18 @@
 
         <item name="material_drawer_selected">?colorOnPrimary</item>
         <item name="material_drawer_selected_text">?colorPrimary</item>
+        <item name="fontFamily">@font/font_family_regular</item>
+
+        <item name="dividerColor">@color/dividerColor</item>
+    </style>
+
+    <style name="DealsBaseTextStyle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?colorOnSurface</item>
+    </style>
+
+    <style name="DealsBaseTextStyle.Bold">
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">

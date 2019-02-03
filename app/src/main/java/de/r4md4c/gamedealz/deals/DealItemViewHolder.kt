@@ -17,7 +17,10 @@
 
 package de.r4md4c.gamedealz.deals
 
+import android.graphics.Typeface
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.image.GlideApp
@@ -26,18 +29,31 @@ import kotlinx.android.synthetic.main.layout_deal_item.view.*
 
 class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+    init {
+        with(itemView) {
+            percentageCut.setTypeface(ResourcesCompat.getFont(context, R.font.font_family_medium), Typeface.BOLD)
+            price.typeface = ResourcesCompat.getFont(context, R.font.font_family_medium)
+        }
+    }
     fun onBind(dealModel: DealRenderModel?, clickListener: (DealRenderModel) -> Unit) {
         with(itemView) {
             setOnClickListener { dealModel?.let { clickListener(dealModel) } }
 
             name.text = dealModel?.title
             price.text = dealModel?.newPrice
-            stores.text = dealModel?.storesAndTime
+            stores.text = dealModel?.store
+            percentageCut.text = dealModel?.percentageCut
+
+            val storeDrawable = ResourcesCompat.getDrawable(resources, R.drawable.bg_store_color, context.theme)
+            DrawableCompat.setTint(storeDrawable!!, dealModel?.storeColor ?: 0)
+            stores.setCompoundDrawablesWithIntrinsicBounds(null, null, storeDrawable, null)
+
+            timestamp.text = dealModel?.timestamp
 
             GlideApp.with(image)
                 .load(dealModel?.imageUrl)
                 .placeholder(R.drawable.ic_placeholder)
-                .fitCenter()
+                .centerCrop()
                 .into(image)
         }
     }

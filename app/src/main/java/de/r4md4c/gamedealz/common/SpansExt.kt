@@ -47,11 +47,11 @@ private fun newAndOldPriceSpannableString(
     val formattedNewPrice = newPrice.formatCurrency(currencyModel) ?: return null
 
     return SpannableStringBuilder()
-        .inSpans(ForegroundColorSpan(oldPriceColor), StrikethroughSpan()) {
-            append(formattedOldPrice)
-        }
-        .append(' ')
         .inSpans(StyleSpan(Typeface.BOLD), ForegroundColorSpan(newPriceColor)) {
             append(formattedNewPrice)
+        }
+        .append(' ')
+        .inSpans(ForegroundColorSpan(oldPriceColor), StrikethroughSpan()) {
+            append(formattedOldPrice)
         }
 }
