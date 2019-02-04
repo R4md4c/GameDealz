@@ -3,8 +3,8 @@
        xmlns:android="http://schemas.android.com/apk/res/android">
 
     <size
-            android:height="12dp"
-            android:width="12dp"/>
+            android:height="8dp"
+            android:width="8dp"/>
     <solid android:color="@android:color/black"/>
 
 </shape>

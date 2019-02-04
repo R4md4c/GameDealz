@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorPrimaryVariant">@color/primaryLightColor</item>
@@ -21,6 +21,10 @@
     <style name="DealsBaseTextStyle">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">?colorOnSurface</item>
+    </style>
+
+    <style name="DealsBaseTextStyle.Small">
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="DealsBaseTextStyle.Bold">

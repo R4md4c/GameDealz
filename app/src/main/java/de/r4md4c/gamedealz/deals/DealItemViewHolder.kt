@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.deals
 
-import android.graphics.Typeface
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -29,12 +28,6 @@ import kotlinx.android.synthetic.main.layout_deal_item.view.*
 
 class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    init {
-        with(itemView) {
-            percentageCut.setTypeface(ResourcesCompat.getFont(context, R.font.font_family_medium), Typeface.BOLD)
-            price.typeface = ResourcesCompat.getFont(context, R.font.font_family_medium)
-        }
-    }
     fun onBind(dealModel: DealRenderModel?, clickListener: (DealRenderModel) -> Unit) {
         with(itemView) {
             setOnClickListener { dealModel?.let { clickListener(dealModel) } }

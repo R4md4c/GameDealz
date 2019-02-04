@@ -39,9 +39,8 @@
                 android:id="@+id/price"
                 style="@style/DealsBaseTextStyle"
                 app:layout_constraintLeft_toLeftOf="@+id/name"
-                app:layout_constraintTop_toBottomOf="@+id/divider"
                 tools:text="$44.56"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/percentageCut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
@@ -49,20 +48,22 @@
         <TextView
                 android:id="@+id/stores"
                 app:layout_constraintRight_toRightOf="@+id/name"
-                app:layout_constraintBottom_toTopOf="@+id/divider"
-                app:layout_constraintVertical_bias="1"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintEnd_toEndOf="@+id/name"
                 app:layout_constraintTop_toBottomOf="@+id/name"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:gravity="end"
                 tools:text="Microsoft"
-                android:paddingTop="@dimen/baseline_0_5x"
-                android:paddingBottom="@dimen/baseline_0_5x"
+                android:layout_marginTop="@dimen/baseline_1x"
                 tools:drawableRight="@drawable/bg_store_color"
                 android:drawablePadding="@dimen/baseline_0_5x"
-                style="@style/DealsBaseTextStyle"
-                android:layout_width="0dp"
+                style="@style/DealsBaseTextStyle.Small"
+                app:layout_constraintHorizontal_bias="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/percentageCut"
+                app:layout_constraintStart_toEndOf="@+id/timestamp"
                 />
 
         <TextView
@@ -70,27 +71,13 @@
                 tools:text="2h ago"
                 android:textColor="?dividerColor"
                 app:layout_constraintLeft_toLeftOf="@+id/name"
-                app:layout_constraintHorizontal_bias="0"
-                style="@style/DealsBaseTextStyle"
-                android:paddingTop="@dimen/baseline_0_5x"
-                android:paddingBottom="@dimen/baseline_0_5x"
+                style="@style/DealsBaseTextStyle.Small"
+                android:layout_marginTop="@dimen/baseline_1x"
                 app:layout_constraintTop_toBottomOf="@+id/name"
-                app:layout_constraintVertical_bias="1"
-                app:layout_constraintRight_toLeftOf="@+id/stores"
-                app:layout_constraintBottom_toTopOf="@+id/divider"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintBottom_toBottomOf="@+id/stores"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-
-        <View
-                app:layout_constraintLeft_toLeftOf="@+id/name"
-                app:layout_constraintRight_toRightOf="@id/name"
-                android:id="@+id/divider"
-                android:layout_width="0dp"
-                android:background="?dividerColor"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="32dp"
-                android:layout_height="1px"/>
 
         <TextView
                 android:id="@+id/percentageCut"
@@ -98,9 +85,9 @@
                 app:layout_constraintRight_toRightOf="@+id/name"
                 app:layout_constraintBottom_toBottomOf="parent"
                 style="@style/DealsBaseTextStyle"
+                android:layout_marginBottom="@dimen/baseline_1x"
                 android:textColor="?colorSecondary"
-                android:fontFamily="@font/font_family_medium"
-                app:layout_constraintTop_toBottomOf="@+id/divider"
+                android:textStyle="bold"
                 android:text="-20%"
                 android:layout_height="wrap_content"/>
 
