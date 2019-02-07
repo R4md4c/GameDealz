@@ -18,22 +18,24 @@
 package de.r4md4c.gamedealz.deals.item
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import kotlinx.android.synthetic.main.layout_deals_filter_item.view.*
 
 data class FilterItem(val storeModel: StoreModel) : AbstractItem<FilterItem, FilterItem.ViewHolder>() {
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
         val isSelected = isSelected
-        with(holder.itemView) {
-            text.text = storeModel.name
-            image.isVisible = isSelected
+        with(holder.itemView as Chip) {
+            text = storeModel.name
+            chipBackgroundColor =
+                if (isSelected) ColorStateList.valueOf(storeModel.color) else ColorStateList.valueOf(Color.parseColor("#e5e5e5"))
         }
     }
 

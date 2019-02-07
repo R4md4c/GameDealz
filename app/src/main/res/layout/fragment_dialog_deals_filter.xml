@@ -1,24 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:animateLayoutChanges="true"
-              android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:orientation="vertical"
+                                                   android:layout_width="match_parent"
+                                                   android:paddingLeft="@dimen/baseline_2x"
+                                                   android:paddingRight="@dimen/baseline_2x"
+                                                   android:animateLayoutChanges="true"
+                                                   android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            app:title="@string/filter_by_stores"
-            app:navigationIcon="@drawable/ic_check_white"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+    <View
+            android:id="@+id/notch"
+            android:layout_width="30dp"
+            android:alpha="0.1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/baseline_1x"
+            android:background="@drawable/shape_notch"
+            android:layout_height="4dp"/>
+
+    <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/baseline_2x"
+            android:text="@string/filter_by_stores"
+            style="@style/BaseTextStyle.Title"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textColor="?colorOnSurface"
+            app:layout_constraintTop_toBottomOf="@+id/notch"
             android:layout_height="wrap_content"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:minHeight="500dp"
+    <TextView
+            android:id="@+id/all"
+            android:layout_width="wrap_content"
+            android:text="@string/all"
+            app:layout_constraintBaseline_toBaselineOf="@+id/title"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toBottomOf="@+id/title"
+            style="@style/BaseTextStyle"
+            android:textColor="?colorSecondary"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/notch"
             android:layout_height="wrap_content"/>
 
-</LinearLayout>
+    <TextView
+            android:id="@+id/separator"
+            android:layout_width="wrap_content"
+            android:text="/"
+            android:paddingLeft="@dimen/baseline_1x"
+            android:paddingRight="@dimen/baseline_1x"
+            style="@style/BaseTextStyle"
+            app:layout_constraintBaseline_toBaselineOf="@+id/all"
+            app:layout_constraintBottom_toBottomOf="@+id/all"
+            app:layout_constraintRight_toLeftOf="@+id/all"
+            android:textColor="?dividerColor"
+            app:layout_constraintTop_toBottomOf="@+id/notch"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText"/>
+
+    <TextView
+            android:id="@+id/none"
+            app:layout_constraintRight_toLeftOf="@+id/separator"
+            android:layout_width="wrap_content"
+            app:layout_constraintBaseline_toBaselineOf="@+id/all"
+            android:text="@string/none"
+            android:textAllCaps="true"
+            android:textColor="?colorSecondary"
+            style="@style/BaseTextStyle"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/notch"
+            android:layout_height="wrap_content"/>
+
+    <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            style="@style/Widget.AppCompat.SearchView"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="6dp"
+
+            android:inputType="text"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            android:hint="@string/search_for_store"
+            android:layout_height="wrap_content"/>
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/search"
+            android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,6 +20,8 @@
     <string name="filter_sort_by">Sort by</string>
     <string name="filter_by_stores">Filter by Stores</string>
     <string name="action_undo">Undo</string>
+    <string name="all">All</string>
+    <string name="none">None</string>
 
     <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>
     <string name="watchlist_remove_successfully">%s was removed successfully from your Watchlist</string>
@@ -58,4 +60,5 @@
     <string name="add_home_shortcut">Add Home Shortcut</string>
     <string name="select_region">Select Region</string>
     <string name="select_country">Select Country</string>
+    <string name="search_for_store">Search for store</string>
 </resources>

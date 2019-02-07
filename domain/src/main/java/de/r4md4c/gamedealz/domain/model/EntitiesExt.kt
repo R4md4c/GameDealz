@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.model
 
+import android.graphics.Color
 import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
@@ -57,7 +58,7 @@ internal fun Shop.toShopModel(rgbColor: String): ShopModel = ShopModel(id, name,
 
 internal fun GameUrls.toUrls(): Urls = Urls(buy, gameInfo)
 
-internal fun Store.toStoreModel(): StoreModel = StoreModel(id, name, selected)
+internal fun Store.toStoreModel(): StoreModel = StoreModel(id, name, Color.parseColor(color), selected)
 
 internal fun Price.toPriceModel(storeColor: String): PriceModel =
     PriceModel(newPrice, oldPrice, priceCutPercentage, url, shop.toShopModel(storeColor), drm)

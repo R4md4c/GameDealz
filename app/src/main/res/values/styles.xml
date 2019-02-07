@@ -18,29 +18,50 @@
         <item name="dividerColor">@color/dividerColor</item>
     </style>
 
-    <style name="DealsBaseTextStyle">
+    <style name="BaseTextStyle">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">?colorOnSurface</item>
     </style>
 
-    <style name="DealsBaseTextStyle.Small">
+    <style name="BaseTextStyle.Secondary">
+        <item name="android:textColor">?colorSecondary</item>
+    </style>
+
+    <style name="BaseTextStyle.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="BaseTextStyle.Small">
         <item name="android:textSize">10sp</item>
     </style>
 
-    <style name="DealsBaseTextStyle.Bold">
+    <style name="BaseTextStyle.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="AppTheme.FilterBottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetRoundedCorners</item>
+
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="colorOnSecondary">@color/secondaryTextColor</item>
+
+        <item name="fontFamily">@font/font_family_regular</item>
     </style>
 
     <style name="AppTheme.AddToWatchListDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppTheme.BottomSheetTransparent</item>
+        <item name="fontFamily">@font/font_family_regular</item>
     </style>
 
     <style name="AppTheme.BottomSheetTransparent" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@null</item>
     </style>
+
+    <style name="AppTheme.BottomSheetRoundedCorners" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_rounded</item>
+    </style>
+
 </resources>

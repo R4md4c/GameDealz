@@ -22,6 +22,7 @@ import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
+import de.r4md4c.gamedealz.domain.model.toStoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
@@ -46,7 +47,7 @@ internal class GetStoresUseCaseImpl(
                 storesRepository.save(remoteStores.map { Store(it.id, it.title, it.color) })
             }
 
-            storesRepository.all().map { it.map { item -> StoreModel(item.id, item.name, item.selected) } }
+            storesRepository.all().map { it.map { item -> item.toStoreModel() } }
         }
     }
 }

@@ -3,7 +3,8 @@
     <dimen name="baseline_0_5x">4dp</dimen>
     <dimen name="baseline_1x">8dp</dimen>
     <dimen name="baseline_2x">16dp</dimen>
-    <dimen name="grid_cell_min_height">176dp</dimen>
+    <dimen name="grid_cell_min_height">160dp</dimen>
+    <dimen name="deal_image_cell_height">78dp</dimen>
     <dimen name="progress_stroke_size">5dp</dimen>
     <dimen name="progress_size">16dp</dimen>
     <dimen name="screenshot_cell_size">120dp</dimen>

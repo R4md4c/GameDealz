@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.google.android.material.chip.Chip
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:foreground="?selectableItemBackground"
-        android:layout_width="match_parent"
-        android:layout_height="?listPreferredItemHeightSmall"
-        android:paddingLeft="@dimen/baseline_2x"
-        android:paddingRight="@dimen/baseline_2x"
-        android:gravity="center">
-
-    <TextView
-            android:id="@+id/text"
-            android:layout_gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            tools:text="@tools:sample/lorem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    <ImageView
-            android:id="@+id/image"
-            android:layout_width="wrap_content"
-            app:srcCompat="@drawable/ic_check_black"
-            android:layout_gravity="end|center_vertical"
-            android:layout_height="wrap_content"/>
-</FrameLayout>
+        android:layout_width="wrap_content"
+        app:checkedIconEnabled="false"
+        style="@style/Widget.MaterialComponents.Chip.Filter"
+        tools:text="Humble Bundle"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>

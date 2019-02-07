@@ -34,13 +34,17 @@
 
 package de.r4md4c.gamedealz.deals.filter
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.google.android.material.chip.Chip
+import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.deals.item.FilterItem
 import kotlinx.android.synthetic.main.fragment_dialog_deals_filter.*
@@ -48,47 +52,51 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DealsFilterDialogFragment : BottomSheetDialogFragment() {
 
-    private val itemAdapter by lazy {
-        FastItemAdapter<FilterItem>().also {
-            it.withSelectable(true)
-            it.setHasStableIds(true)
-            it.withSelectWithItemUpdate(true)
-            it.withMultiSelect(true)
-        }
-    }
-
     private val filtersViewModel by viewModel<DealsFilterViewModel>()
 
-    override fun getTheme(): Int = R.style.AppTheme_BottomSheetDialog
+    override fun getTheme(): Int = R.style.AppTheme_FilterBottomSheetDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         layoutInflater.inflate(R.layout.fragment_dialog_deals_filter, container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        with(content) {
-            adapter = itemAdapter
-        }
-
-        itemAdapter.withSelectionListener { item, selected ->
-            item?.let { filtersViewModel.onSelection(it, selected) }
-        }
-
-        toolbar.setNavigationOnClickListener { filtersViewModel.submit() }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        itemAdapter.saveInstanceState(outState)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (savedInstanceState == null) {
             filtersViewModel.loadStores()
         }
-        filtersViewModel.stores.observe(this, Observer { itemAdapter.set(it) })
+        filtersViewModel.stores.observe(this, Observer { items ->
+            items
+                .map { filterItem ->
+                    LayoutInflater.from(context).inflate(R.layout.layout_deals_filter_item, content, false).apply {
+                        tag = filterItem
+                    } as Chip
+                }
+                .forEach {
+                    val filterItem = it.tag as FilterItem
+                    it.id = filterItem.storeModel.id.hashCode()
+                    it.isChecked = filterItem.isSelected
+                    it.text = filterItem.storeModel.name
+                    it.chipBackgroundColor = generateChipBackgroundColor(filterItem.storeModel.color)
+                    content.addView(it)
+                }
+
+            content.setOnCheckedChangeListener { _, checkedId ->
+                (content.findViewById(checkedId) as? Chip)?.isChecked = true
+            }
+        })
         filtersViewModel.dismiss.observe(this, Observer { dismiss() })
-        savedInstanceState?.let { itemAdapter.withSavedInstanceState(it) }
+    }
+
+    private fun generateChipBackgroundColor(@ColorInt storeModelColor: Int): ColorStateList {
+        // 12% Opacity
+        val colorOnSurface =
+            ColorUtils.setAlphaComponent(requireContext().resolveThemeColor(R.attr.colorOnSurface), 0x1F)
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected),
+                intArrayOf(android.R.attr.state_enabled)
+            ),
+            intArrayOf(storeModelColor, colorOnSurface)
+        )
     }
 }

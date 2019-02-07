@@ -43,10 +43,12 @@ class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             timestamp.text = dealModel?.timestamp
 
+            val placeHolder = ResourcesCompat.getDrawable(resources, R.drawable.ic_placeholder, context.theme)?.apply {
+                setBounds(0, 0, image.width, context.resources.getDimensionPixelSize(R.dimen.deal_image_cell_height))
+            }
             GlideApp.with(image)
                 .load(dealModel?.imageUrl)
-                .placeholder(R.drawable.ic_placeholder)
-                .centerCrop()
+                .placeholder(placeHolder)
                 .into(image)
         }
     }
