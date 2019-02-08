@@ -59,7 +59,7 @@ val MAIN = module {
     factory<ShortcutManager> { ShortcutManagerImpl(androidContext(), get()) }
 
     factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
-        DealsDataSourceFactory(get(), stateMachineDelegate, get())
+        DealsDataSourceFactory(get(), stateMachineDelegate, get(), get())
     }
 
     factory<StateMachineDelegate> {

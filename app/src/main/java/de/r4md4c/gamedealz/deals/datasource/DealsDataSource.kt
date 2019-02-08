@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.deals.datasource
 
 import androidx.paging.PositionalDataSource
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.State
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
@@ -37,11 +37,12 @@ import timber.log.Timber
 class DealsDataSource(
     private val getDealsUseCase: GetDealsUseCase,
     private val stateMachineDelegate: StateMachineDelegate,
-    private val resourcesProvider: ResourcesProvider
+    private val resourcesProvider: ResourcesProvider,
+    dispatchers: IDispatchers
 ) : PositionalDataSource<DealRenderModel>() {
 
     private var job: Job? = null
-    private val scope = CoroutineScope(IO)
+    private val scope = CoroutineScope(dispatchers.IO)
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<DealRenderModel>) {
         if (params.startPosition == 0 || stateMachineDelegate.state is State.LoadingMore) {

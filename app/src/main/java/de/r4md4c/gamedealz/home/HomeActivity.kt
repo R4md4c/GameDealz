@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -67,6 +68,8 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         setContentView(R.layout.activity_main)
         loadDrawer(savedInstanceState)
         insertMenuItems()

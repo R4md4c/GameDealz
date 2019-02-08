@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#008578</color>
+    <color name="primaryLightColor">#4cb5a7</color>
+    <color name="primaryDarkColor">#00574c</color>
+    <color name="secondaryColor">#cfff92</color>
+    <color name="secondaryLightColor">#cfff92</color>
+
+    <color name="badgeColor">@android:color/tertiary_text_dark</color>
+    <color name="oldPriceColor">?dividerColor</color>
+    <color name="newPriceColor">#fff</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#000000</color>
+    <color name="dividerColor">#C4ffffff</color>
+</resources>
