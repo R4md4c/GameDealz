@@ -32,6 +32,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import kotlinx.coroutines.channels.firstOrNull
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -45,6 +46,11 @@ class DealsFilterViewModel(
     private val toggleSet: MutableSet<StoreModel> by lazy {
         ArraySet<StoreModel>()
     }
+
+    /**
+     * Holds all the stores that are not filtered.
+     */
+    private var _originalStores: List<FilterItem> = emptyList()
 
     private val _stores by lazy { MutableLiveData<List<FilterItem>>() }
     val stores: LiveData<List<FilterItem>> by lazy { _stores }
@@ -62,9 +68,18 @@ class DealsFilterViewModel(
         val filterItems = withContext(dispatchers.Default) {
             stores.map { FilterItem(it).withSetSelected(it.selected) }
         }
+        _originalStores = filterItems
         _stores.postValue(filterItems)
     }) {
         Timber.e(it, "Failed to load stores in DealsFilterViewModel.")
+    }
+
+    fun onSearchTextChanged(newText: String) {
+        uiScope.launch(dispatchers.Default) {
+            val filteredStore = _originalStores.filter { it.storeModel.name.startsWith(newText, ignoreCase = true) }
+                .map { it.withSetSelected(toggleSet.contains(it.storeModel)) }
+            _stores.postValue(filteredStore)
+        }
     }
 
     fun onSelection(item: FilterItem, selected: Boolean) {

@@ -6,6 +6,7 @@
         android:layout_width="wrap_content"
         app:checkedIconEnabled="false"
         style="@style/Widget.MaterialComponents.Chip.Filter"
+        android:textColor="@color/deals_filter_text_color"
         tools:text="Humble Bundle"
         android:layout_height="wrap_content"
         android:gravity="center"/>

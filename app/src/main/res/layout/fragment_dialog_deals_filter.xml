@@ -41,6 +41,7 @@
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="@+id/title"
             style="@style/BaseTextStyle"
+            android:background="?selectableItemBackgroundBorderless"
             android:textColor="?colorSecondary"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/notch"
@@ -67,6 +68,7 @@
             android:layout_width="wrap_content"
             app:layout_constraintBaseline_toBaselineOf="@+id/all"
             android:text="@string/none"
+            android:background="?selectableItemBackgroundBorderless"
             android:textAllCaps="true"
             android:textColor="?colorSecondary"
             style="@style/BaseTextStyle"
@@ -81,15 +83,18 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="6dp"
-
             android:inputType="text"
-            android:textSize="12sp"
+            android:textSize="14sp"
+            android:drawablePadding="@dimen/baseline_0_5x"
+            android:drawableStart="@drawable/abc_ic_search_api_material"
+            android:drawableTint="?attr/dividerColor"
             app:layout_constraintTop_toBottomOf="@+id/title"
             android:hint="@string/search_for_store"
             android:layout_height="wrap_content"/>
 
     <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
+            android:minHeight="480dp"
             app:layout_constraintTop_toBottomOf="@+id/search"
             android:layout_height="wrap_content">
 

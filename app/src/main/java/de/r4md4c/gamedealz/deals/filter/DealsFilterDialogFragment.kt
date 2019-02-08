@@ -41,6 +41,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.children
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
@@ -59,32 +61,46 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         layoutInflater.inflate(R.layout.fragment_dialog_deals_filter, container, false)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        none.setOnClickListener { onNoneClick() }
+        all.setOnClickListener { onAllClick() }
+        search.addTextChangedListener { editable ->
+            filtersViewModel.onSearchTextChanged(editable.toString())
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (savedInstanceState == null) {
             filtersViewModel.loadStores()
         }
         filtersViewModel.stores.observe(this, Observer { items ->
-            items
-                .map { filterItem ->
-                    LayoutInflater.from(context).inflate(R.layout.layout_deals_filter_item, content, false).apply {
-                        tag = filterItem
-                    } as Chip
-                }
-                .forEach {
-                    val filterItem = it.tag as FilterItem
-                    it.id = filterItem.storeModel.id.hashCode()
-                    it.isChecked = filterItem.isSelected
-                    it.text = filterItem.storeModel.name
-                    it.chipBackgroundColor = generateChipBackgroundColor(filterItem.storeModel.color)
-                    content.addView(it)
-                }
-
-            content.setOnCheckedChangeListener { _, checkedId ->
-                (content.findViewById(checkedId) as? Chip)?.isChecked = true
-            }
+            addFilterItems(items)
         })
         filtersViewModel.dismiss.observe(this, Observer { dismiss() })
+    }
+
+    private fun addFilterItems(filterItems: List<FilterItem>) {
+        content.removeAllViews()
+
+        filterItems.map { filterItem ->
+            LayoutInflater.from(context).inflate(R.layout.layout_deals_filter_item, content, false).apply {
+                tag = filterItem
+            }
+        }
+            .filterIsInstance(Chip::class.java)
+            .forEach {
+                val filterItem = it.tag as FilterItem
+                it.id = filterItem.storeModel.id.hashCode()
+                it.isChecked = filterItem.isSelected
+                it.text = filterItem.storeModel.name
+                it.chipBackgroundColor = generateChipBackgroundColor(filterItem.storeModel.color)
+                content.addView(it)
+                it.setOnCheckedChangeListener { buttonView, isChecked ->
+                    filtersViewModel.onSelection(buttonView.tag as FilterItem, isChecked)
+                }
+            }
     }
 
     private fun generateChipBackgroundColor(@ColorInt storeModelColor: Int): ColorStateList {
@@ -98,5 +114,15 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
             ),
             intArrayOf(storeModelColor, colorOnSurface)
         )
+    }
+
+    private fun onNoneClick() {
+        content.clearCheck()
+    }
+
+    private fun onAllClick() {
+        content.children.filterIsInstance(Chip::class.java).forEach {
+            content.check(it.id)
+        }
     }
 }
