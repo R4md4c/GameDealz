@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.AddToWatchListDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetTransparent</item>
+        <item name="fontFamily">@font/font_family_regular</item>
+    </style>
+
+    <style name="AppTheme.FilterBottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog" >
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetRoundedCorners</item>
+
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="colorOnSecondary">@color/secondaryTextColor</item>
+
+        <item name="fontFamily">@font/font_family_regular</item>
+    </style>
+
+</resources>

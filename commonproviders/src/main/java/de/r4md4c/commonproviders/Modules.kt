@@ -17,6 +17,7 @@
 
 package de.r4md4c.commonproviders
 
+import android.app.Activity
 import de.r4md4c.commonproviders.configuration.AndroidConfigurationImpl
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers
@@ -26,11 +27,15 @@ import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.commonproviders.date.JavaDateProvider
 import de.r4md4c.commonproviders.preferences.AndroidSharedPreferencesProvider
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
+import de.r4md4c.commonproviders.res.ActivityResourcesProvider
 import de.r4md4c.commonproviders.res.AndroidResourcesProvider
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.IDispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
+
+const val FOR_ACTIVITY = "for_activity"
+const val FOR_APPLICATION = "for_application"
 
 val COMMON_PROVIDERS = module {
 
@@ -42,7 +47,9 @@ val COMMON_PROVIDERS = module {
 
     single<SharedPreferencesProvider> { AndroidSharedPreferencesProvider(androidContext()) }
 
-    factory<ResourcesProvider> { AndroidResourcesProvider(androidContext()) }
+    factory<ResourcesProvider>(name = FOR_APPLICATION) { AndroidResourcesProvider(androidContext()) }
+
+    factory<ResourcesProvider>(name = FOR_ACTIVITY) { (activity: Activity) -> ActivityResourcesProvider(activity) }
 
     factory<DateFormatter> { AndroidDateFormatter(androidContext()) }
 }

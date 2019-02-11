@@ -21,6 +21,7 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
+import de.r4md4c.commonproviders.FOR_APPLICATION
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.navigation.AndroidNavigator
 import de.r4md4c.gamedealz.common.navigation.Navigator
@@ -38,6 +39,7 @@ import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
 import de.r4md4c.gamedealz.deals.filter.DealsFilterViewModel
 import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.detail.DetailsViewModel
+import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
@@ -58,8 +60,8 @@ val MAIN = module {
 
     factory<ShortcutManager> { ShortcutManagerImpl(androidContext(), get()) }
 
-    factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
-        DealsDataSourceFactory(get(), stateMachineDelegate, get(), get())
+    factory<DataSource.Factory<Int, DealModel>> { (stateMachineDelegate: StateMachineDelegate) ->
+        DealsDataSourceFactory(get(), stateMachineDelegate, get())
     }
 
     factory<StateMachineDelegate> {
@@ -73,7 +75,7 @@ val MAIN = module {
         )
     }
 
-    factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get()) }
+    factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get(name = FOR_APPLICATION)) }
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()
@@ -88,9 +90,13 @@ val MAIN = module {
 
     viewModel<RegionSelectionViewModel>()
 
-    viewModel<AddToWatchListViewModel>()
+    viewModel {
+        AddToWatchListViewModel(get(), get(name = FOR_APPLICATION), get(), get(), get())
+    }
 
-    viewModel<ManageWatchlistViewModel>()
+    viewModel {
+        ManageWatchlistViewModel(get(), get(), get(), get(), get(), get(), get(), get(name = FOR_APPLICATION), get(), get())
+    }
 
     viewModel { (activity: Activity) ->
         DetailsViewModel(
@@ -100,7 +106,7 @@ val MAIN = module {
             get(),
             get(),
             get(),
-            get()
+            get(name = FOR_APPLICATION)
         )
     }
 

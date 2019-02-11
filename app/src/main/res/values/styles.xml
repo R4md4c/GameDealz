@@ -11,8 +11,14 @@
         <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
 
-        <item name="material_drawer_selected">?colorOnPrimary</item>
-        <item name="material_drawer_selected_text">?colorPrimary</item>
+        <item name="material_drawer_background">@color/material_drawer_background</item>
+        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
+        <item name="material_drawer_primary_text">?colorOnSurface</item>
+        <item name="material_drawer_primary_icon">?colorOnSurface</item>
+        <item name="material_drawer_header_selection_text">?colorOnSurface</item>
+        <item name="material_drawer_header_selection_subtext">?colorOnSurface</item>
+
         <item name="fontFamily">@font/font_family_regular</item>
 
         <item name="dividerColor">@color/dividerColor</item>

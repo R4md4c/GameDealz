@@ -9,6 +9,9 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
 
+    <color name="material_drawer_selected">@android:color/transparent</color>
+    <color name="material_drawer_selected_text">@color/primaryColor</color>
+
     <color name="badgeColor">@android:color/tertiary_text_dark</color>
     <color name="oldPriceColor">@android:color/darker_gray</color>
     <color name="newPriceColor">@color/secondaryColor</color>

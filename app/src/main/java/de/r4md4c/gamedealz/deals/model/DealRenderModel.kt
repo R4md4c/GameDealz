@@ -21,9 +21,7 @@ import android.graphics.Color
 import android.text.format.DateUtils
 import android.text.format.DateUtils.MINUTE_IN_MILLIS
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.annotation.WorkerThread
-import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
@@ -47,14 +45,13 @@ data class DealRenderModel(
  */
 @WorkerThread
 fun DealModel.toRenderModel(
-    resourcesProvider: ResourcesProvider,
-    @ColorRes newPriceColorRes: Int,
-    @ColorRes oldPriceColorRest: Int
+    @ColorInt newPriceColor: Int,
+    @ColorInt oldPriceColorRes: Int
 ) =
     DealRenderModel(
         gameId,
         title,
-        newAndOldPriceSpan(resourcesProvider.getColor(newPriceColorRes), resourcesProvider.getColor(oldPriceColorRest)),
+        newAndOldPriceSpan(newPriceColor, oldPriceColorRes),
         shop.name,
         Color.parseColor(shop.rgbColor),
         DateUtils.getRelativeTimeSpanString(

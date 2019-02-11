@@ -35,6 +35,7 @@ import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.stfalcon.imageviewer.StfalconImageViewer
+import de.r4md4c.commonproviders.FOR_ACTIVITY
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
@@ -68,7 +69,7 @@ class DetailsFragment : BaseFragment() {
 
     private val detailsViewModel by viewModel<DetailsViewModel> { parametersOf(requireActivity()) }
 
-    private val resourcesProvider: ResourcesProvider by inject()
+    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
 
     private val dateFormatter: DateFormatter by inject()
 

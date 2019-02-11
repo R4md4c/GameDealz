@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.deals
 
+import androidx.annotation.ColorInt
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Config
 import androidx.paging.DataSource
@@ -28,31 +29,40 @@ import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.deals.model.DealRenderModel
+import de.r4md4c.gamedealz.deals.model.toRenderModel
+import de.r4md4c.gamedealz.domain.model.DealModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.drop
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class DealsViewModel(
     private val dispatchers: IDispatchers,
-    private val factory: DataSource.Factory<Int, DealRenderModel>,
+    private val factory: DataSource.Factory<Int, DealModel>,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val uiStateMachineDelegate: StateMachineDelegate
 ) : AbstractViewModel(dispatchers) {
 
     val deals by lazy {
-        factory.toLiveData(
-            Config(
-                pageSize = BuildConfig.DEFAULT_PAGE_SIZE,
-                enablePlaceholders = false,
-                initialLoadSizeHint = BuildConfig.DEFAULT_PAGE_SIZE * 2
+        factory
+            .map { it.toRenderModel(newPriceColorInt, oldPriceColorInt) }
+            .toLiveData(
+                Config(
+                    pageSize = BuildConfig.DEFAULT_PAGE_SIZE,
+                    enablePlaceholders = false,
+                    initialLoadSizeHint = BuildConfig.DEFAULT_PAGE_SIZE * 2
+                )
             )
-        )
     }
 
     val sideEffect: MutableLiveData<SideEffect> by lazy {
         MutableLiveData<SideEffect>()
     }
+
+    var newPriceColorInt: Int by Delegates.notNull()
+
+    var oldPriceColorInt: Int by Delegates.notNull()
 
     fun init() {
         uiScope.launch(dispatchers.IO) {
