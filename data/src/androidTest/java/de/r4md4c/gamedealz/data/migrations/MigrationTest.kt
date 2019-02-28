@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.data.migrations
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.platform.app.InstrumentationRegistry
+import com.google.common.truth.Truth.assertThat
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import org.junit.Rule
 import org.junit.Test
@@ -42,6 +43,25 @@ class MigrationTest {
         helper.runMigrationsAndValidate(TEST_DB, 2, true, MIGRATION_1_2)
     }
 
+    @Test
+    @Throws(IOException::class)
+    fun migrate2To3() {
+        helper.createDatabase(TEST_DB, 2)
+
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, Migration2To3())
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate2To3_clearsRegionTable() {
+        helper.createDatabase(TEST_DB, 2).use {
+            it.execSQL("INSERT INTO Region VALUES(?, ?)", arrayOf("US", "USD"))
+        }
+
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, Migration2To3()).use {
+            assertThat(it.query("SELECT * FROM Region").count).isEqualTo(0)
+        }
+    }
 }
 
 private const val TEST_DB = "test.db"
