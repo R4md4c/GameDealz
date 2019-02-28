@@ -65,7 +65,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
     implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
     implementation "androidx.paging:paging-runtime-ktx:${versions.paging_version}"
-    implementation "androidx.annotation:annotation:1.0.1"
+    implementation "androidx.annotation:annotation:1.0.2"
     implementation "androidx.core:core-ktx:${versions.androidX}"
 
     implementation "android.arch.navigation:navigation-fragment-ktx:${versions.nav_version}"

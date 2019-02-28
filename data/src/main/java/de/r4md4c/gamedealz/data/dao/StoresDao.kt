@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.data.dao
 import androidx.room.*
 import de.r4md4c.gamedealz.data.entity.Store
 import io.reactivex.Flowable
+import kotlinx.coroutines.runBlocking
 
 @Dao
 internal interface StoresDao {
@@ -47,9 +48,9 @@ internal interface StoresDao {
     fun all(ids: Set<String>): Flowable<List<Store>>
 
     @Transaction
-    suspend fun replaceAll(stores: Collection<Store>) {
+    fun replaceAll(stores: Collection<Store>) {
         delete()
-        insert(stores)
+        runBlocking { insert(stores) }
     }
 
     /**
