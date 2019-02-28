@@ -20,8 +20,6 @@ package de.r4md4c.gamedealz.data.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.Index
-import androidx.room.PrimaryKey
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -31,9 +29,9 @@ import androidx.room.PrimaryKey
         deferred = true,
         onDelete = CASCADE
     )],
-    indices = [Index(value = ["regionCode"])]
+    primaryKeys = ["code", "regionCode"]
 )
 data class Country(
-    @PrimaryKey val code: String,
+    val code: String,
     val regionCode: String
 )

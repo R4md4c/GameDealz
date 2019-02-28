@@ -23,7 +23,7 @@ import de.r4md4c.gamedealz.data.dao.*
 import de.r4md4c.gamedealz.data.entity.*
 
 @Database(
-    version = 2, entities = [Region::class,
+    version = 3, entities = [Region::class,
         Country::class,
         Currency::class,
         Store::class,
