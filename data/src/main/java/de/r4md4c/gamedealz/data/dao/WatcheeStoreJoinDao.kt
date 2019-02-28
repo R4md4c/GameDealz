@@ -24,6 +24,7 @@ import androidx.room.Transaction
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
+import kotlinx.coroutines.runBlocking
 
 @Dao
 internal interface WatcheeStoreJoinDao {
@@ -35,8 +36,10 @@ internal interface WatcheeStoreJoinDao {
     suspend fun getStoresForWatchee(watcheeId: Long): List<Store>
 
     @Transaction
-    suspend fun saveWatcheeWithStores(watcheeDao: WatchlistDao, watchee: Watchee, stores: List<Store>) {
-        val insertedId = watcheeDao.insert(watchee)
-        stores.map { WatcheeStoreJoin(insertedId, it.id) }.run { insert(this) }
+    fun saveWatcheeWithStores(watcheeDao: WatchlistDao, watchee: Watchee, stores: List<Store>) {
+        runBlocking {
+            val insertedId = watcheeDao.insert(watchee)
+            stores.map { WatcheeStoreJoin(insertedId, it.id) }.run { insert(this) }
+        }
     }
 }
