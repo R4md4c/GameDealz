@@ -1,6 +1,5 @@
 package de.r4md4c.gamedealz.network.service
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -9,6 +8,7 @@ import de.r4md4c.gamedealz.network.scrapper.Scrapper
 import kotlinx.coroutines.runBlocking
 import okio.buffer
 import okio.source
+import org.assertj.core.api.Assertions.assertThat
 import org.jsoup.Jsoup
 import org.junit.Before
 import org.junit.Test

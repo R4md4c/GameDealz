@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.watchlist
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
@@ -28,6 +27,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

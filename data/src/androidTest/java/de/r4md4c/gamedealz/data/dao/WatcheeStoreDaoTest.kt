@@ -37,13 +37,13 @@ package de.r4md4c.gamedealz.data.dao
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
-import com.google.common.truth.Truth.assertThat
 import de.r4md4c.gamedealz.data.DATA
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -113,7 +113,7 @@ class WatcheeStoreDaoTest : KoinTest {
             watchlist.forEach {
                 val stores = watcheeStoreJoinDao.getStoresForWatchee(it.id)
                 assertThat(stores).hasSize(10)
-                assertThat(stores).containsAllIn(storesList)
+                assertThat(stores).containsAll(storesList)
             }
 
         }

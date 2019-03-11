@@ -17,12 +17,12 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

@@ -39,7 +39,7 @@ import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragment
-import de.r4md4c.gamedealz.search.SearchFragmentArgs.fromBundle
+import de.r4md4c.gamedealz.search.SearchFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.search.model.toRenderModel
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.launch

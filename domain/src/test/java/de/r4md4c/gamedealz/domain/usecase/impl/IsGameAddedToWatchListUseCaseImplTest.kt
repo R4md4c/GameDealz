@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -27,6 +26,7 @@ import de.r4md4c.gamedealz.domain.TypeParameter
 import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

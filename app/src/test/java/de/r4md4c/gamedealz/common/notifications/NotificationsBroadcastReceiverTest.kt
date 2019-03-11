@@ -27,7 +27,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.test.core.app.ApplicationProvider
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -39,6 +38,7 @@ import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -135,7 +135,7 @@ class NotificationsBroadcastReceiverTest : KoinTest {
 
         shadowApplication.nextStartedActivity.apply {
             assertThat(action).isEqualTo(Intent.ACTION_VIEW)
-            assertThat(data).isEquivalentAccordingToCompareTo(Uri.parse("http://google.com"))
+            assertThat(data).isEqualTo(Uri.parse("http://google.com"))
             assertThat(flags).isEqualTo(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }

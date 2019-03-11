@@ -24,7 +24,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * This Migration adds an additional primary key to the Country table. I am also clearing the Region table to force
  * a refetch of regions with their countries.
  */
-class Migration2To3 : Migration(2, 3) {
+internal class Migration2To3 : Migration(2, 3) {
 
     override fun migrate(database: SupportSQLiteDatabase) = with(database) {
         try {

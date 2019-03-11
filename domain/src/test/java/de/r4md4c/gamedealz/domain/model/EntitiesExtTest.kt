@@ -1,6 +1,6 @@
 package de.r4md4c.gamedealz.domain.model
 
-import com.google.common.truth.Truth.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EntitiesExtTest {

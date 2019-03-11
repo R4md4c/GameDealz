@@ -45,7 +45,7 @@ import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
-import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.fromBundle
+import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsFragmentItemDecorator
 import de.r4md4c.gamedealz.detail.item.*
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel

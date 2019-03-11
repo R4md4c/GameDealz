@@ -81,8 +81,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
             .createPendingIntent()
 
     private fun WatcheeNotificationModel.toBundle(): Bundle =
-        DetailsFragmentArgs.Builder(watcheeModel.plainId, watcheeModel.title, priceModel.url)
-            .build()
+        DetailsFragmentArgs(watcheeModel.plainId, watcheeModel.title, priceModel.url)
             .toBundle()
 
     companion object {

@@ -20,8 +20,8 @@ package de.r4md4c.gamedealz.data.migrations
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.platform.app.InstrumentationRegistry
-import com.google.common.truth.Truth.assertThat
 import de.r4md4c.gamedealz.data.GameDealzDatabase
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException

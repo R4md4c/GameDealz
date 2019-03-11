@@ -5,7 +5,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.google.common.truth.Truth.assertThat
 import de.r4md4c.gamedealz.data.DATA
 import de.r4md4c.gamedealz.data.Fixtures
 import de.r4md4c.gamedealz.data.GameDealzDatabase
@@ -13,6 +12,7 @@ import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

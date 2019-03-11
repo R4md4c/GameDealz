@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-apply plugin: "androidx.navigation.safeargs"
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion project.ext.compileSdk
@@ -68,8 +68,8 @@ dependencies {
     implementation "androidx.annotation:annotation:1.0.2"
     implementation "androidx.core:core-ktx:${versions.androidX}"
 
-    implementation "android.arch.navigation:navigation-fragment-ktx:${versions.nav_version}"
-    implementation "android.arch.navigation:navigation-ui-ktx:${versions.nav_version}"
+    implementation "androidx.navigation:navigation-fragment-ktx:${versions.nav_version}"
+    implementation "androidx.navigation:navigation-ui-ktx:${versions.nav_version}"
     implementation "com.google.android.material:material:${versions.material}"
 
     implementation 'com.github.stfalcon:stfalcon-imageviewer:0.1.0'
@@ -108,8 +108,8 @@ dependencies {
     implementation project(':domain')
 
     testImplementation project(':commontest')
-    testImplementation 'com.jraska.livedata:testing:1.0.0'
-    testImplementation 'com.jraska.livedata:testing-ktx:1.0.0'
+    testImplementation 'com.jraska.livedata:testing:1.1.0'
+    testImplementation 'com.jraska.livedata:testing-ktx:1.1.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
     testImplementation "androidx.arch.core:core-testing:2.0.0"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
