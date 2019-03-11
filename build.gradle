@@ -39,7 +39,7 @@ ext.versions = [
     'koin': '1.0.2',
     'coroutines': '1.1.1',
     'room': '2.1.0-alpha04',
-    'truth': '0.43',
+    'assertj': '2.9.1',
     'mockito_kotlin': '2.1.0',
     'timber': '4.7.1',
     'lifecycle': '2.0.0',

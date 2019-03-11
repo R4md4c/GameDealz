@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.google.common.truth.Truth.assertThat
 import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
@@ -35,6 +34,7 @@ import de.r4md4c.gamedealz.domain.usecase.*
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

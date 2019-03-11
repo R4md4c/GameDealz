@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.verify
@@ -32,6 +31,7 @@ import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -184,13 +184,14 @@ class PickMinimalWatcheesPricesHelperTest {
 
             val result = helper.pick(retrievedPrices)
 
-            assertThat(result).isNotEmpty()
-            assertThat(result).isEqualTo(
-                mapOf(
+            assertThat(result)
+                .isNotEmpty()
+                .isEqualTo(
+                    mapOf(
                     PRICE.copy(newPrice = 5f) to WATCHEE.copy(id = 1, targetPrice = 10f),
                     PRICE.copy(newPrice = 5f) to WATCHEE.copy(id = 2, targetPrice = 6f)
+                    )
                 )
-            )
         }
     }
 

@@ -41,7 +41,7 @@ dependencies {
     implementation project(':common')
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
     testImplementation "org.koin:koin-test:${versions.koin}"
-    testImplementation "com.google.truth:truth:${versions.truth}"
+    testImplementation "org.assertj:assertj-core:${versions.assertj}"
     testImplementation 'junit:junit:4.12'
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
 }

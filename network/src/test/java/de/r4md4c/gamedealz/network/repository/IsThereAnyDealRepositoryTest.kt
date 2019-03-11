@@ -1,6 +1,5 @@
 package de.r4md4c.gamedealz.network.repository
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.gamedealz.network.model.*
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
@@ -8,6 +7,7 @@ import de.r4md4c.gamedealz.network.service.PlainPriceList
 import de.r4md4c.gamedealz.network.service.RegionCodes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
