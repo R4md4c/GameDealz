@@ -81,7 +81,7 @@ class AddToWatchListViewModel(
             return
         }
         val targetPrice = priceString.runCatching {
-            val cleaned = replace("[${activeRegion?.currency?.toCurrencySymbol()}]".toRegex(), "")
+            val cleaned = cleanPriceText(this, activeRegion?.currency!!, cleanSeparator = false)
             val numberFormat = NumberFormat.getNumberInstance(Locale.US)
             numberFormat.parse(cleaned).toFloat()
         }
@@ -150,9 +150,8 @@ class AddToWatchListViewModel(
     }
 
     fun formatPrice(editTextString: String): String? {
-        val symbol = activeRegion?.currency?.toCurrencySymbol() ?: return null
-
-        val cleanString = editTextString.replace("[$symbol,.]".toRegex(), "")
+        val currencyModel = activeRegion?.currency ?: return null
+        val cleanString = cleanPriceText(editTextString, currencyModel)
         val parsed = BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR)
             .divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
 
@@ -167,7 +166,18 @@ class AddToWatchListViewModel(
             this.currency = currency
         }
 
-    private fun CurrencyModel.toCurrencySymbol(): String =
-        Currency.getInstance(currencyCode).run { symbol }
+    private fun cleanPriceText(
+        text: String,
+        currencyModel: CurrencyModel,
+        cleanSeparator: Boolean = true
+    ): String {
+        val jvmCurrencySymbol = currencyModel.toJVMCurrency().symbol
+        val sign = activeRegion?.currency?.sign
+
+        return text.replace("[$jvmCurrencySymbol${if (cleanSeparator) ",." else ""}$sign]".toRegex(), "")
+    }
+
+    private fun CurrencyModel.toJVMCurrency(): Currency =
+        Currency.getInstance(currencyCode)
 
 }
