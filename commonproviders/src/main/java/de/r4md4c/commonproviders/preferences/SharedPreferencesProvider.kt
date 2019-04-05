@@ -17,6 +17,7 @@
 
 package de.r4md4c.commonproviders.preferences
 
+import de.r4md4c.commonproviders.appcompat.NightMode
 import kotlinx.coroutines.channels.ReceiveChannel
 
 /**
@@ -44,4 +45,8 @@ interface SharedPreferencesProvider {
     val reactivePriceCheckerPeriodicIntervalInHours: ReceiveChannel<Int>
 
     var priceCheckerPeriodicIntervalInHours: Int
+
+
+    var activeNightMode: NightMode
+    val reactiveNightMode: ReceiveChannel<NightMode>
 }

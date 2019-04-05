@@ -48,7 +48,7 @@ ext.versions = [
     'appCompat': '1.1.0-alpha02',
     'recyclerView': '1.1.0-alpha02',
     'androidX': '1.1.0-alpha04',
-    'material': '1.1.0-alpha04',
+    'material': '1.1.0-alpha05',
     'robolectric': '4.2',
     'workmanager': '2.0.0'
 ]

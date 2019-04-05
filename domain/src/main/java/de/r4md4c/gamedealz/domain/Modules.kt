@@ -61,6 +61,10 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
         CheckPriceThresholdUseCaseImpl(get(), get(), get(), get(), get(), get())
     }
 
+    factory<OnNightModeChangeUseCase> { OnNightModeChangeUseCaseImpl(get()) }
+
+    factory<ToggleNightModeUseCase> { ToggleNightModeUseCaseImpl(get(), get()) }
+
     factory<GetLatestWatchlistCheckDate> { GetLatestWatchlistCheckDateImpl(get()) }
 
     factory<RemoveWatcheesUseCase> { RemoveWatcheesUseCaseImpl(get()) }

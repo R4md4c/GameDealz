@@ -9,6 +9,12 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
 
+    <color name="drawerHeaderSelectionSubText">#8A000000</color>
+    <color name="drawerTextColor">@color/secondaryTextColor</color>
+    <color name="drawerSelectedTextColor">@color/primaryColor</color>
+    <color name="drawerSelectedBackgroundColor">@color/primaryTextColor</color>
+    <color name="swipeToRefreshBackground">@android:color/white</color>
+
     <color name="badgeColor">@android:color/tertiary_text_dark</color>
     <color name="oldPriceColor">@android:color/darker_gray</color>
     <color name="newPriceColor">@color/secondaryColor</color>

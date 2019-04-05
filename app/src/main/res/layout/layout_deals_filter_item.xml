@@ -21,7 +21,7 @@
     <ImageView
             android:id="@+id/image"
             android:layout_width="wrap_content"
-            app:srcCompat="@drawable/ic_check_black"
+            app:srcCompat="@drawable/ic_check"
             android:layout_gravity="end|center_vertical"
             android:layout_height="wrap_content"/>
 </FrameLayout>

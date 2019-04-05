@@ -23,6 +23,7 @@ import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
@@ -63,6 +64,12 @@ class HomeViewModelTest {
     @Mock
     private lateinit var getAlertsCountUseCase: GetAlertsCountUseCase
 
+    @Mock
+    private lateinit var toggleNightModeUseCase: ToggleNightModeUseCase
+
+    @Mock
+    private lateinit var onNightModeUseCase: OnNightModeChangeUseCase
+
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
@@ -73,7 +80,9 @@ class HomeViewModelTest {
             onActiveRegionChange,
             getStoresUseCase,
             toggleStoresUseCase,
-            getAlertsCountUseCase
+            getAlertsCountUseCase,
+            toggleNightModeUseCase,
+            onNightModeUseCase
         )
     }
 
@@ -126,6 +135,62 @@ class HomeViewModelTest {
         homeViewModel.init()
 
         assertThat(homeViewModel.stores.value).isNotNull()
+    }
+
+    @Test
+    fun `init starts listening to current night mode and posts true to enableNightMode live data when night mode is enabled`() {
+        ArrangeBuilder()
+            .withActiveNightMode(NightMode.Enabled)
+
+        homeViewModel.init()
+
+        assertThat(homeViewModel.enableNightMode.value).isTrue()
+    }
+
+    @Test
+    fun `init starts listening to current night mode and posts false to enableNightMode live data when night mode is disabled`() {
+        ArrangeBuilder()
+            .withActiveNightMode(NightMode.Disabled)
+
+        homeViewModel.init()
+
+        assertThat(homeViewModel.enableNightMode.value).isFalse()
+    }
+
+    @Test
+    fun `init starts listening to current night mode and posts recreate live data when a night mode is emitted`() {
+        ArrangeBuilder()
+            .withActiveNightMode(NightMode.Disabled)
+
+        homeViewModel.init()
+
+        assertThat(homeViewModel.recreate.value).isNotNull()
+    }
+
+    @Test
+    fun `listenForNightModeChanges only post once when emitted night modes does not change`() {
+        ArrangeBuilder()
+            .withMultipleActiveNightModes(listOf(NightMode.Disabled, NightMode.Disabled))
+        val enabledNightModeTS = homeViewModel.enableNightMode.test()
+        val recreateTS = homeViewModel.recreate.test()
+
+        homeViewModel.init()
+
+        enabledNightModeTS.assertHistorySize(1)
+        recreateTS.assertHistorySize(1)
+    }
+
+    @Test
+    fun `listenForNightModeChanges posts twice when emitted night modes changes`() {
+        ArrangeBuilder()
+            .withMultipleActiveNightModes(listOf(NightMode.Disabled, NightMode.Enabled))
+        val enabledNightModeTS = homeViewModel.enableNightMode.test()
+        val recreateTS = homeViewModel.recreate.test()
+
+        homeViewModel.init()
+
+        enabledNightModeTS.assertHistorySize(2)
+        recreateTS.assertHistorySize(2)
     }
 
     @Test
@@ -206,6 +271,7 @@ class HomeViewModelTest {
                 whenever(getCurrentActiveRegion.invoke(anyOrNull())).thenReturn(activeRegion)
                 whenever(onActiveRegionChange.activeRegionChange()).thenReturn(produce { this.close() })
                 whenever(getStoresUseCase.invoke(anyOrNull())).thenReturn(produce { this.close() })
+                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(produce { this.close() })
                 whenever(toggleStoresUseCase.invoke(anyOrNull())).thenReturn(Unit)
             }
         }
@@ -231,6 +297,24 @@ class HomeViewModelTest {
         fun withFailedToggleStores() = apply {
             runBlocking {
                 whenever(toggleStoresUseCase.invoke(anyOrNull())).thenThrow(RuntimeException(""))
+            }
+        }
+
+        fun withActiveNightMode(nightMode: NightMode) = apply {
+            runBlocking {
+                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(produce(capacity = 1) { send(nightMode) })
+            }
+        }
+
+        fun withMultipleActiveNightModes(nightModes: List<NightMode>) = apply {
+            runBlocking {
+                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(produce(capacity = nightModes.size) {
+                    nightModes.forEach {
+                        send(
+                            it
+                        )
+                    }
+                })
             }
         }
     }

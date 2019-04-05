@@ -31,6 +31,7 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.deals.DealsFragment
@@ -108,12 +109,25 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
 
         observeErrors()
 
+        observeNightModeSwitch()
+
+        viewModel.recreate.observe(this, Observer { recreate() })
+
         viewModel.init()
     }
 
     private fun observeCloseDrawer() {
         viewModel.closeDrawer.observe(this, Observer {
             drawer.closeDrawer()
+        })
+    }
+
+    private fun observeNightModeSwitch() {
+        viewModel.enableNightMode.observe(this, Observer {
+            val position = drawer.getPosition(R.id.home_drawer_night_mode_switch.toLong())
+            val switchItem = drawer.getDrawerItem(R.id.home_drawer_night_mode_switch.toLong()) as SwitchDrawerItem
+            switchItem.withChecked(it)
+            drawer.adapter.notifyAdapterItemChanged(position)
         })
     }
 
@@ -128,7 +142,15 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
             .withIcon(R.drawable.ic_add_to_watch_list)
             .withIconTintingEnabled(true)
 
-        drawer.setItems(listOf(dealsDrawerItem, managedWatchlistDrawerItem))
+        val nightModeDrawerItem = SwitchDrawerItem().withName(R.string.enable_night_mode)
+            .withIcon(R.drawable.ic_weather_night)
+            .withSelectable(false)
+            .withIconTintingEnabled(true)
+            .withIdentifier(R.id.home_drawer_night_mode_switch.toLong())
+            .withOnCheckedChangeListener { _, _, _ ->
+                viewModel.toggleNightMode()
+            }
+        drawer.setItems(listOf(nightModeDrawerItem, dealsDrawerItem, managedWatchlistDrawerItem))
 
         observePriceAlertsUnreadCount()
     }
@@ -155,7 +177,12 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
             .withCloseOnClick(true)
             .withHasStableIds(true)
             .withOnDrawerItemClickListener { _, _, drawerItem ->
-                navigateToDestination(drawerItem.identifier.toInt())
+                when (drawerItem.identifier.toInt()) {
+                    R.id.manageWatchlistFragment, R.id.dealsFragment -> {
+                        navigateToDestination(drawerItem.identifier.toInt())
+                    }
+                }
+
                 false
             }
             .apply { savedInstanceState?.let { withSavedInstance(it) } }
@@ -184,7 +211,9 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
 
     private fun listenForDestinationChanges() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            drawer.setSelection(destination.id.toLong(), false)
+            if (drawer.currentSelectedPosition == -1 || drawer.currentSelection != destination.id.toLong()) {
+                drawer.setSelection(destination.id.toLong(), false)
+            }
         }
     }
 

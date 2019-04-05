@@ -118,7 +118,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     private fun prepareToolbar() = with(toolbar) {
         setOnClickListener { dismiss() }
         setBackgroundColor(Color.TRANSPARENT)
-        setNavigationIcon(R.drawable.ic_check_black)
+        setNavigationIcon(R.drawable.ic_check)
         setNavigationOnClickListener { onSubmit() }
         DrawableCompat.setTint(navigationIcon!!, Color.TRANSPARENT)
         setTitle(R.string.add_to_watch_list)

@@ -10,6 +10,7 @@
             android:layout_width="match_parent"
             app:layout_constraintTop_toTopOf="parent"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            app:subtitleTextColor="?colorOnPrimary"
             android:layout_height="wrap_content"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
