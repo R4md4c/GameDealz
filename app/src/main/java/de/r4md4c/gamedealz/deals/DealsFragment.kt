@@ -27,13 +27,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
@@ -79,11 +79,15 @@ class DealsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val context = requireContext()
         NavigationUI.setupWithNavController(toolbar, findNavController(), drawerLayout)
         setupRecyclerView()
         setupFilterFab()
         stateVisibilityHandler.onViewCreated()
-        swipeToRefresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+        swipeToRefresh.setColorSchemeColors(context.resolveThemeColor(R.attr.colorSecondary))
+        swipeToRefresh.setProgressBackgroundColorSchemeColor(
+            context.resolveThemeColor(R.attr.swipe_refresh_background)
+        )
         swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
 
     }
@@ -116,7 +120,7 @@ class DealsFragment : BaseFragment() {
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
     }
 

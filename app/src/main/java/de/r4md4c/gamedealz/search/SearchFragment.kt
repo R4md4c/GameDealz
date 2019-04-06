@@ -30,6 +30,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import de.r4md4c.commonproviders.FOR_ACTIVITY
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
@@ -60,7 +61,7 @@ class SearchFragment : BaseFragment() {
 
     private val navigator: Navigator by inject { parametersOf(requireActivity()) }
 
-    private val resourcesProvider by inject<ResourcesProvider>()
+    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
 
     private val dateFormatter by inject<DateFormatter>()
 

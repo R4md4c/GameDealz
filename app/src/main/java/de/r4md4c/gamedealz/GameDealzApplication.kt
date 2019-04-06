@@ -20,10 +20,15 @@ package de.r4md4c.gamedealz
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
+import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.domain.DOMAIN
+import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.workmanager.PricesCheckerWorker
 import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
@@ -41,10 +46,11 @@ class GameDealzApplication : MultiDexApplication() {
 
     private val pricesCheckerWorker by inject<PricesCheckerWorker>()
 
+    private val nightModeModeChangeUseCase by inject<OnNightModeChangeUseCase>()
+
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
         val isDebug = BuildConfig.DEBUG
 
         if (isDebug) {
@@ -53,6 +59,7 @@ class GameDealzApplication : MultiDexApplication() {
 
         startKoin(this, listOf(MAIN) + DOMAIN + WORK_MANAGER, logger = if (isDebug) AndroidLogger() else EmptyLogger())
         initializeWorkManager()
+        setNightMode()
     }
 
     private fun initializeWorkManager() {
@@ -68,5 +75,12 @@ class GameDealzApplication : MultiDexApplication() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         ACRA.init(this)
+    }
+
+    private fun setNightMode() {
+        GlobalScope.launch {
+            val currentActiveNightMode = nightModeModeChangeUseCase.activeNightModeChange().first()
+            AppCompatDelegate.setDefaultNightMode(NightMode.toAppCompatNightMode(currentActiveNightMode))
+        }
     }
 }

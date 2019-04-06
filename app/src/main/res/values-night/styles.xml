@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.AlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="colorPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="AppTheme.AddToWatchListDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetTransparent</item>
+    </style>
+
+    <style name="AppTheme.BottomSheetTransparent" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@null</item>
+    </style>
+</resources>

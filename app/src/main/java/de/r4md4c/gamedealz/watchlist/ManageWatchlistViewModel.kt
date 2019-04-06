@@ -21,8 +21,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.notification.Notifier
-import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
@@ -49,7 +47,6 @@ class ManageWatchlistViewModel(
     private val stateMachineDelegate: StateMachineDelegate,
     private val dateFormatter: DateFormatter,
     private val checkPricesUseCase: CheckPriceThresholdUseCase,
-    private val resourcesProvider: ResourcesProvider,
     private val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase,
     private val notifier: Notifier<WatcheeNotificationModel>
 ) : AbstractViewModel(dispatchers) {
@@ -121,9 +118,7 @@ class ManageWatchlistViewModel(
         uiScope.launchWithCatching(dispatchers.IO, {
             getLatestWatchlistCheckDate().filter { it > 0 }.consumeEach {
                 val formattedTimeSpan = dateFormatter.getRelativeTimeSpanString(TimeUnit.SECONDS.toMillis(it))
-                val lastCheckDate =
-                    resourcesProvider.getString(R.string.manage_watch_list_last_checked, formattedTimeSpan)
-                _lastCheckDate.postValue(lastCheckDate)
+                _lastCheckDate.postValue(formattedTimeSpan)
             }
         }) {
             Timber.e(it, "Failed to observeLatestCheckDate")

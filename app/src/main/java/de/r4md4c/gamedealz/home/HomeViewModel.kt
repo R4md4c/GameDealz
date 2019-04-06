@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.home
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigation.Navigator
@@ -39,7 +40,9 @@ class HomeViewModel(
     private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val toggleStoresUseCase: ToggleStoresUseCase,
-    private val priceAlertsCountUseCase: GetAlertsCountUseCase
+    private val priceAlertsCountUseCase: GetAlertsCountUseCase,
+    private val toggleNightModeUseCase: ToggleNightModeUseCase,
+    private val onNightModeChangeUseCase: OnNightModeChangeUseCase
 ) : AbstractViewModel(dispatchers) {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
@@ -63,6 +66,12 @@ class HomeViewModel(
     private val _priceAlertsCount by lazy { MutableLiveData<String>() }
     val priceAlertsCount: LiveData<String> by lazy { _priceAlertsCount }
 
+    private val _enableNightMode by lazy { MutableLiveData<Boolean>() }
+    val enableNightMode: LiveData<Boolean> by lazy { _enableNightMode }
+
+    private val _recreate by lazy { SingleLiveEvent<Unit>() }
+    val recreate by lazy { _recreate }
+
     fun init() {
         uiScope.launch(dispatchers.Default) {
             kotlin.runCatching {
@@ -74,6 +83,7 @@ class HomeViewModel(
             }.onSuccess { listenForStoreChanges(it) }.onFailure(onFailureHandler)
         }
 
+        listenForNightModeChanges()
         listenForRegionChanges()
         listenForAlertsCountChanges()
     }
@@ -83,6 +93,10 @@ class HomeViewModel(
         kotlin.runCatching {
             toggleStoresUseCase(CollectionParameter(setOf(store)))
         }.onFailure(onFailureHandler)
+    }
+
+    fun toggleNightMode() = uiScope.launch {
+        toggleNightModeUseCase()
     }
 
     fun closeDrawer() {
@@ -123,6 +137,19 @@ class HomeViewModel(
             priceAlertsCountUseCase().consumeEach {
                 _priceAlertsCount.postValue(if (it == 0) "" else it.toString())
             }
+        }.onFailure(onFailureHandler)
+    }
+
+    private fun listenForNightModeChanges() = uiScope.launch(dispatchers.Default) {
+        kotlin.runCatching {
+            onNightModeChangeUseCase.activeNightModeChange()
+                .consumeEach {
+                    val newValue = it == NightMode.Enabled
+                    if (newValue != _enableNightMode.value) {
+                        _enableNightMode.postValue(it == NightMode.Enabled)
+                        _recreate.postValue(Unit)
+                    }
+                }
         }.onFailure(onFailureHandler)
     }
 

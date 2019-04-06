@@ -19,6 +19,7 @@ package de.r4md4c.commonproviders.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import de.r4md4c.commonproviders.appcompat.NightMode
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -59,18 +60,8 @@ internal class AndroidSharedPreferencesProvider(context: Context) : SharedPrefer
         }
 
     override val reactivePriceCheckerPeriodicIntervalInHours: ReceiveChannel<Int>
-        get() = ConflatedBroadcastChannel(priceCheckerPeriodicIntervalInHours)
-            .also { channel ->
-                val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                    if (key == KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL) {
-                        channel.offer(priceCheckerPeriodicIntervalInHours)
-                    }
-                }
-                sharedPreferences.registerOnSharedPreferenceChangeListener(callback)
-                channel.invokeOnClose {
-                    sharedPreferences.unregisterOnSharedPreferenceChangeListener(callback)
-                }
-            }.openSubscription()
+        get() = sharedPreferences.createReceiveChannelFromKey(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL)
+        { priceCheckerPeriodicIntervalInHours }
 
     override var priceCheckerPeriodicIntervalInHours: Int
         get() = sharedPreferences.getInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, 6)
@@ -78,7 +69,31 @@ internal class AndroidSharedPreferencesProvider(context: Context) : SharedPrefer
             sharedPreferences.edit().putInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, value).apply()
         }
 
+    override var activeNightMode: NightMode
+        get() = NightMode.fromString(sharedPreferences.getString(KEY_ACTIVE_NIGHT_MODE, NightMode.Disabled.name)!!)
+        set(value) {
+            sharedPreferences.edit().putString(KEY_ACTIVE_NIGHT_MODE, value.name).apply()
+        }
+
+    override val reactiveNightMode: ReceiveChannel<NightMode>
+        get() = sharedPreferences.createReceiveChannelFromKey(KEY_ACTIVE_NIGHT_MODE) { activeNightMode }
+
+    private fun <T> SharedPreferences.createReceiveChannelFromKey(key: String, value: () -> T): ReceiveChannel<T> =
+        ConflatedBroadcastChannel(value())
+            .also { channel ->
+                val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+                    if (changedKey == key) {
+                        channel.offer(value())
+                    }
+                }
+                registerOnSharedPreferenceChangeListener(callback)
+                channel.invokeOnClose {
+                    unregisterOnSharedPreferenceChangeListener(callback)
+                }
+            }.openSubscription()
+
     private companion object {
+        private const val KEY_ACTIVE_NIGHT_MODE = "current_active_night_mode"
         private const val KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL = "price_checker_hourly_interval"
         private const val KEY_ACTIVE_REGION_COUNTRY = "active_region_country"
     }

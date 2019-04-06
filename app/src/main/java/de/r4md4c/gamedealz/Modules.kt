@@ -21,6 +21,7 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
+import de.r4md4c.commonproviders.FOR_APPLICATION
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.navigation.AndroidNavigator
 import de.r4md4c.gamedealz.common.navigation.Navigator
@@ -59,7 +60,7 @@ val MAIN = module {
     factory<ShortcutManager> { ShortcutManagerImpl(androidContext(), get()) }
 
     factory<DataSource.Factory<Int, DealRenderModel>> { (stateMachineDelegate: StateMachineDelegate) ->
-        DealsDataSourceFactory(get(), stateMachineDelegate, get())
+        DealsDataSourceFactory(get(), stateMachineDelegate, get(name = FOR_APPLICATION))
     }
 
     factory<StateMachineDelegate> {
@@ -73,7 +74,7 @@ val MAIN = module {
         )
     }
 
-    factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get()) }
+    factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get(name = FOR_APPLICATION)) }
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()
@@ -88,7 +89,9 @@ val MAIN = module {
 
     viewModel<RegionSelectionViewModel>()
 
-    viewModel<AddToWatchListViewModel>()
+    viewModel {
+        AddToWatchListViewModel(get(), get(name = FOR_APPLICATION), get(), get(), get())
+    }
 
     viewModel<ManageWatchlistViewModel>()
 
@@ -100,7 +103,7 @@ val MAIN = module {
             get(),
             get(),
             get(),
-            get()
+            get(name = FOR_APPLICATION)
         )
     }
 

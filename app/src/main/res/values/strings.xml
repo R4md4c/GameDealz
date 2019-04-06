@@ -55,6 +55,7 @@
     <string name="notify_when_price_reaches_subtitle">A notification will be displayed when the price reaches the specified threshold.</string>
     <string name="on_the_following_stores">On the following stores</string>
     <string name="title_manage_your_watchlist">Manage your Watchlist</string>
+    <string name="enable_night_mode">Night mode</string>
     <string name="add_home_shortcut">Add Home Shortcut</string>
     <string name="select_region">Select Region</string>
     <string name="select_country">Select Country</string>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#212121</color>
+    <color name="primaryLightColor">#484848</color>
+    <color name="primaryDarkColor">#000000</color>
+    <color name="secondaryColor">#9E9E9E</color>
+    <color name="secondaryLightColor">#E0E0E0</color>
+    <color name="swipeToRefreshBackground">#484848</color>
+
+    <color name="drawerTextColor">#80FFFFFF</color>
+    <color name="drawerHeaderSelectionSubText">#8AFFFFFF</color>
+    <color name="drawerSelectedTextColor">@android:color/white</color>
+    <color name="drawerSelectedBackgroundColor">#33E0E0E0</color>
+
+    <color name="newPriceColor">#cfff92</color>
+</resources>

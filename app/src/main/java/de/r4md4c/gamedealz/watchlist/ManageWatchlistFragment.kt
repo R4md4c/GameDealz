@@ -34,6 +34,7 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter_extensions.UndoHelper
 import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback
+import de.r4md4c.commonproviders.FOR_ACTIVITY
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
@@ -64,7 +65,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
     private val watchlistViewModel: ManageWatchlistViewModel by viewModel()
 
-    private val resourcesProvider by inject<ResourcesProvider>()
+    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
         parametersOf(this, { watchlistViewModel.onSwipeToRefresh() })
@@ -111,7 +112,9 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
             stateVisibilityHandler.onSideEffect(it)
         })
         watchlistViewModel.watchlistLiveData.observe(this, Observer { renderModels(it) })
-        watchlistViewModel.lastCheckDate.observe(this, Observer { toolbar.subtitle = it })
+        watchlistViewModel.lastCheckDate.observe(this, Observer {
+            toolbar.subtitle = resourcesProvider.getString(R.string.manage_watch_list_last_checked, it)
+        })
     }
 
     override fun onResume() {
@@ -171,7 +174,6 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
                 }
                 else -> false
             }
-
         }
     }
 
