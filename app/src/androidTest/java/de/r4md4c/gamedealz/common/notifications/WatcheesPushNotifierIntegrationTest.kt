@@ -21,6 +21,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import de.r4md4c.commonproviders.FOR_APPLICATION
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.*
@@ -37,14 +38,14 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
 
     private lateinit var watcheesPushNotifier: WatcheesPushNotifier
 
-    private val resourcesProvider by inject<ResourcesProvider>()
+    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_APPLICATION)
 
     @Before
     fun beforeEach() {
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         watcheesPushNotifier = WatcheesPushNotifier(
             InstrumentationRegistry.getInstrumentation().targetContext,
-            get()
+            get(name = FOR_APPLICATION)
         )
     }
 
