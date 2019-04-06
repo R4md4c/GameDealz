@@ -24,7 +24,8 @@ to retrieve/search for deals and compare prices.
 * Compare prices and historical lows across different shops.
 * Supports searching for games.
 * Retrieves from Steam API information such as screenshots and game information.
-* Add games to your Watchlist and get notified when there prices reach the specified threshold.  
+* Add games to your Watchlist and get notified when there prices reach the specified threshold.
+* Has a Dark theme.
 
 ## Upcoming/Planned Features
 
