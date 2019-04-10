@@ -12,5 +12,5 @@
     <color name="drawerSelectedTextColor">@android:color/white</color>
     <color name="drawerSelectedBackgroundColor">#33E0E0E0</color>
 
-    <color name="newPriceColor">#cfff92</color>
+    <color name="newPriceColor">#1e88e5</color>
 </resources>
