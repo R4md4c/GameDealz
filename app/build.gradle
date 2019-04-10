@@ -14,8 +14,8 @@ android {
         applicationId "de.r4md4c.gamedealz"
         minSdkVersion project.ext.minSdk
         targetSdkVersion project.ext.targetSdk
-        versionCode 10
-        versionName "1.8"
+        versionCode 11
+        versionName "1.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
