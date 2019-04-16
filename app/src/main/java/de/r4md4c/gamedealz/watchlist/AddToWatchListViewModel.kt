@@ -153,7 +153,6 @@ class AddToWatchListViewModel(
     fun formatPrice(editTextString: String): String? {
         val region = activeRegion ?: return null
         val cleanString = cleanPriceText(editTextString, region.currency)
-        Timber.d("formatted price: $cleanString")
         val parsed = toBigDecimal(cleanString)
 
         return activeRegion?.let { activeRegion ->
@@ -165,7 +164,6 @@ class AddToWatchListViewModel(
         getDecimalFormatForCurrencyModel(currencyModel)
 
     private fun cleanPriceText(text: String, currencyModel: CurrencyModel, cleanSeparator: Boolean = true): String {
-        Timber.d("cleanPrice: $text")
         val itadSign = currencyModel.sign
         val decimalFormat = getDecimalFormatForCurrencyModel(currencyModel)
         val separator = decimalFormat.decimalFormatSymbols.decimalSeparator
@@ -183,7 +181,6 @@ class AddToWatchListViewModel(
                     else -> false
                 }
             }.trim()
-            .also { Timber.d("Price after cleaning: $it") }
     }
 
     private fun getDecimalFormatForCurrencyModel(currencyModel: CurrencyModel): DecimalFormat {
