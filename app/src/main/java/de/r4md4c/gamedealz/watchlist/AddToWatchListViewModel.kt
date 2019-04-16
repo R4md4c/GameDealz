@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.math.BigDecimal
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
 
@@ -81,9 +82,9 @@ class AddToWatchListViewModel(
             return
         }
         val targetPrice = priceString.runCatching {
-            val cleaned = cleanPriceText(this, activeRegion?.currency!!, cleanSeparator = false)
-            val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-            numberFormat.parse(cleaned).toFloat()
+            val activeRegion = activeRegion ?: return@runCatching null
+            val cleaned = cleanPriceText(this, activeRegion.currency, cleanSeparator = false)
+            toBigDecimal(cleaned).toFloat()
         }
             .onFailure { _emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_wrong_number_format)) }
             .getOrNull() ?: return
@@ -150,34 +151,50 @@ class AddToWatchListViewModel(
     }
 
     fun formatPrice(editTextString: String): String? {
-        val currencyModel = activeRegion?.currency ?: return null
-        val cleanString = cleanPriceText(editTextString, currencyModel)
-        val parsed = BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR)
-            .divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
+        val region = activeRegion ?: return null
+        val cleanString = cleanPriceText(editTextString, region.currency)
+        Timber.d("formatted price: $cleanString")
+        val parsed = toBigDecimal(cleanString)
 
         return activeRegion?.let { activeRegion ->
-            numberFormatForCurrencyCode(activeRegion.currency.currencyCode).format(parsed)
+            numberFormatForCurrencyCode(activeRegion.currency).format(parsed)
         }
     }
 
-    private fun numberFormatForCurrencyCode(currencyCode: String): NumberFormat =
-        NumberFormat.getCurrencyInstance(Locale.US).apply {
-            val currency = java.util.Currency.getInstance(currencyCode)
+    private fun numberFormatForCurrencyCode(currencyModel: CurrencyModel): NumberFormat =
+        getDecimalFormatForCurrencyModel(currencyModel)
+
+    private fun cleanPriceText(text: String, currencyModel: CurrencyModel, cleanSeparator: Boolean = true): String {
+        Timber.d("cleanPrice: $text")
+        val itadSign = currencyModel.sign
+        val decimalFormat = getDecimalFormatForCurrencyModel(currencyModel)
+        val separator = decimalFormat.decimalFormatSymbols.decimalSeparator
+        val groupingSeparator = decimalFormat.decimalFormatSymbols.groupingSeparator
+        val currencySymbol = decimalFormat.decimalFormatSymbols.currencySymbol
+        return text.replace(currencySymbol, "")
+            .replace(itadSign, "")
+            .replace(currencyModel.currencyCode, "")
+            .replace("\\W+".toRegex(), "")
+            .filter {
+                when {
+                    it.isDigit() -> true
+                    cleanSeparator -> !(it == separator || it == groupingSeparator)
+                    !cleanSeparator -> it == separator || it == groupingSeparator
+                    else -> false
+                }
+            }.trim()
+            .also { Timber.d("Price after cleaning: $it") }
+    }
+
+    private fun getDecimalFormatForCurrencyModel(currencyModel: CurrencyModel): DecimalFormat {
+        return (DecimalFormat.getCurrencyInstance(Locale.US) as DecimalFormat).apply {
+            val currency = Currency.getInstance(currencyModel.currencyCode)
             this.currency = currency
+            this.decimalFormatSymbols.currencySymbol = currencyModel.sign
         }
-
-    private fun cleanPriceText(
-        text: String,
-        currencyModel: CurrencyModel,
-        cleanSeparator: Boolean = true
-    ): String {
-        val jvmCurrencySymbol = currencyModel.toJVMCurrency().symbol
-        val sign = activeRegion?.currency?.sign
-
-        return text.replace("[$jvmCurrencySymbol${if (cleanSeparator) ",." else ""}$sign]".toRegex(), "")
     }
 
-    private fun CurrencyModel.toJVMCurrency(): Currency =
-        Currency.getInstance(currencyCode)
-
+    private fun toBigDecimal(cleanedPrice: String): BigDecimal =
+        BigDecimal(cleanedPrice).setScale(2, BigDecimal.ROUND_FLOOR)
+            .divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
 }
