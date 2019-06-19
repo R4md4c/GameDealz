@@ -41,8 +41,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 
+const val READ_TIMEOUT_IN_SECONDS = 30L
 
 val NETWORK = module {
 
@@ -70,6 +72,7 @@ val NETWORK = module {
 
     single {
         OkHttpClient.Builder()
+            .readTimeout(READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
             .addInterceptor(get<HttpLoggingInterceptor>())
             .enableTls12OnPreLollipop()
             .build()
