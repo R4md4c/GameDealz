@@ -32,6 +32,10 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 kapt {
@@ -47,11 +51,11 @@ dependencies {
     kapt "androidx.room:room-compiler:${versions.room}"
     implementation "androidx.lifecycle:lifecycle-livedata:${versions.lifecycle}"
     implementation "androidx.room:room-rxjava2:${versions.room}"
-    implementation ("androidx.room:room-coroutines:${versions.room}") {
+    implementation ("androidx.room:room-ktx:${versions.room}") {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
 
-    implementation "io.reactivex.rxjava2:rxjava:2.2.7"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.8"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${versions.coroutines}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
@@ -67,11 +71,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
 
-    androidTestImplementation "androidx.test.ext:junit:1.1.0"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation "org.assertj:assertj-core:${versions.assertj}"
     androidTestImplementation "org.koin:koin-test:${versions.koin}"
     androidTestImplementation "androidx.room:room-testing:${versions.room}"
-    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
-    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
+    androidTestImplementation 'androidx.test:runner:1.2.0'
 }
