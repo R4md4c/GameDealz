@@ -13,7 +13,7 @@ function copyEnvVarsToGradleProperties {
         mkdir -p $GRADLE_HOME && touch $GRADLE_PROPERTIES
 
         echo "Writing ITAD_KEYS to gradle.properties..."
-        echo "ITAD_CLIENT_ID=Fuck" >> $GRADLE_PROPERTIES
+        echo "ITAD_CLIENT_ID=$ITAD_CLIENT_ID" >> $GRADLE_PROPERTIES
         echo "ITAD_CLIENT_SECRET=$ITAD_CLIENT_SECRET" >> $GRADLE_PROPERTIES
         echo "ITAD_API_KEY=$ITAD_API_KEY" >> $GRADLE_PROPERTIES
     fi
