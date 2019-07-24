@@ -7,10 +7,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
     implementation project(':common')
 
-    api "io.mockk:mockk:${versions.mockk}"
+    api ("io.mockk:mockk:${versions.mockk}") { exclude module: 'objenesis' }
     api "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
     api "org.assertj:assertj-core:${versions.assertj}"
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
+sourceCompatibility = "8"
+targetCompatibility = "8"
