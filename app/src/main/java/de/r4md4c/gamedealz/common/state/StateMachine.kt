@@ -42,6 +42,7 @@ sealed class SideEffect {
     object HideLoading : SideEffect()
     object ShowLoadingMore : SideEffect()
     object HideLoadingMore : SideEffect()
+    object ShowContent : SideEffect()
     class ShowError(val error: Throwable) : SideEffect()
 }
 
@@ -99,6 +100,9 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
     state<State.Empty> {
         on<Event.OnLoadingStart> {
             transitionTo(State.Loading, SideEffect.ShowLoading)
+        }
+        on<Event.OnLoadingEnded> {
+            transitionTo(State.Idle, SideEffect.ShowContent)
         }
     }
 

@@ -78,6 +78,13 @@ class StateVisibilityHandler(
                     emptyGroup?.isVisible = true
                     content?.isVisible = false
                 }
+                is SideEffect.ShowContent -> {
+                    progress?.isVisible = false
+                    swipeToRefresh?.isRefreshing = false
+                    errorGroup?.isVisible = false
+                    emptyGroup?.isVisible = false
+                    content?.isVisible = true
+                }
             }
         }
     }

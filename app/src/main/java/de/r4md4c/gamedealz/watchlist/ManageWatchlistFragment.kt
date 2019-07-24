@@ -29,6 +29,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
@@ -128,13 +129,14 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     override fun itemSwiped(position: Int, direction: Int) {
         view?.let {
             val item = (itemsAdapter.getAdapterItem(position).tag as? ManageWatchlistModel) ?: return
+            watchlistViewModel.onItemSwiped(item)
             undoHelper.remove(
                 it,
                 resourcesProvider.getString(R.string.watchlist_removed_watchee, item.watcheeModel.title),
                 resourcesProvider.getString(R.string.action_undo),
                 Snackbar.LENGTH_LONG,
                 setOf(position)
-            )
+            ).addCallbackWhenDismissedViaAction { watchlistViewModel.onItemUndone(item) }
         }
     }
 
@@ -175,6 +177,16 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
                 else -> false
             }
         }
+    }
+
+    private inline fun Snackbar.addCallbackWhenDismissedViaAction(crossinline block: () -> Unit) {
+        addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                if (event == DISMISS_EVENT_ACTION) {
+                    block()
+                }
+            }
+        })
     }
 
     private fun askUser() {
