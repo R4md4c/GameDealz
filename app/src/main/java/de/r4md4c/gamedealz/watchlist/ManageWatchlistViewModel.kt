@@ -34,9 +34,13 @@ import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.filter
-import kotlinx.coroutines.channels.firstOrNull
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ManageWatchlistViewModel(
@@ -64,6 +68,8 @@ class ManageWatchlistViewModel(
         stateMachineDelegate.onTransition { _sideEffects.postValue(it) }
     }
 
+    private val removedItems = Collections.synchronizedSet(mutableSetOf<ManageWatchlistModel>())
+
     fun init() {
         observeWatchlistData()
         observeLatestCheckDate()
@@ -72,8 +78,20 @@ class ManageWatchlistViewModel(
     fun onRemoveWatchee(tobeRemoved: List<ManageWatchlistModel>) {
         uiScope.launchWithCatching(dispatchers.IO, {
             removeWatcheesUseCase(TypeParameter(tobeRemoved.map { it.watcheeModel }))
+            removedItems -= tobeRemoved
         }) {
             Timber.e(it, "Failed to remove watchees")
+        }
+    }
+
+    fun onItemSwiped(model: ManageWatchlistModel) {
+        removedItems += model
+    }
+
+    fun onItemUndone(model: ManageWatchlistModel) {
+        removedItems -= model
+        uiScope.launchWithCatching(dispatchers.IO, { refreshWatchlist() }) {
+            Timber.e(it, "Failed to refresh watchlist after undoing operation.%")
         }
     }
 
@@ -106,9 +124,9 @@ class ManageWatchlistViewModel(
 
     private fun observeWatchlistData() {
         uiScope.launchWithCatching(dispatchers.IO, {
-            getWatchlistUseCase().consumeEach {
-                postWatchlist(it)
-            }
+            getWatchlistUseCase().consumeAsFlow()
+                .map { it - removedItems }
+                .collect { postWatchlist(it) }
         }) {
             Timber.e(it, "Failed to observeWatchlistData")
         }
@@ -126,7 +144,7 @@ class ManageWatchlistViewModel(
     }
 
     suspend fun refreshWatchlist() {
-        getWatchlistUseCase().firstOrNull()?.let { postWatchlist(it) }
+        getWatchlistUseCase().consumeAsFlow().first().also { postWatchlist(it) }
     }
 
     private fun postWatchlist(manageWatchlistModel: List<ManageWatchlistModel>) {
@@ -134,6 +152,8 @@ class ManageWatchlistViewModel(
         _watchlistLiveData.postValue(manageWatchlistModel)
         if (manageWatchlistModel.isEmpty()) {
             stateMachineDelegate.transition(Event.OnShowEmpty)
+        } else {
+            stateMachineDelegate.transition(Event.OnLoadingEnded)
         }
     }
 }
