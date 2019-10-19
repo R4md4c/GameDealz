@@ -59,19 +59,32 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val plainId: String by lazy { arguments!!.getString(ARG_PLAIN_ID) }
 
-    private val priceModel: PriceModel by lazy { arguments!!.getParcelable<PriceModel>(ARG_PRICE_MODEL) }
+    private val priceModel: PriceModel by lazy {
+        arguments!!.getParcelable<PriceModel>(
+            ARG_PRICE_MODEL
+        )
+    }
 
     private val viewNotifier: ViewNotifier by inject()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    private val bottomSheetDialog =
+        (dialog as? BottomSheetDialog)?.findViewById(R.id.design_bottom_sheet) as? View
+
+    private val bottomSheetCallback = AddToWatchListBottomSheetCallback()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), R.style.AppTheme_AddToWatchListDialog).apply {
             setOnShowListener {
-                val bottomSheet = (dialog as? BottomSheetDialog)?.findViewById(R.id.design_bottom_sheet) as? View
+                val bottomSheet = bottomSheetDialog ?: return@setOnShowListener
                 BottomSheetBehavior.from(bottomSheet).apply {
-                    setBottomSheetCallback(AddToWatchListBottomSheetCallback())
+                    addBottomSheetCallback(bottomSheetCallback)
                 }
             }
         }
@@ -100,6 +113,11 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         observeStores()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bottomSheetDialog?.let { BottomSheetBehavior.from(it) }
+            ?.removeBottomSheetCallback(bottomSheetCallback)
+    }
 
     private fun styleNotifyMeHeader() {
         notifyMeHeader.text = getString(R.string.notify_when_price_reaches, title).let {
@@ -128,10 +146,17 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     private fun onSubmit() {
         kotlin.runCatching {
             storesChipGroup.children.mapNotNull {
-                (it as? Chip)?.takeIf { chip -> chip.isChecked }?.let { chip -> chip.tag as StoreModel }
+                (it as? Chip)?.takeIf { chip -> chip.isChecked }
+                    ?.let { chip -> chip.tag as StoreModel }
             }.toList()
         }.onSuccess {
-            addToWatchListViewModel.onSubmit(priceEditText.text.toString(), title, plainId, priceModel, it)
+            addToWatchListViewModel.onSubmit(
+                priceEditText.text.toString(),
+                title,
+                plainId,
+                priceModel,
+                it
+            )
         }.onFailure {
             Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
         }
@@ -161,7 +186,8 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                     storesChipGroup.clearCheck()
                 } else {
                     stores.forEach {
-                        (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked = true
+                        (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked =
+                            true
                     }
 
                 }
@@ -199,7 +225,8 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private inner class AddToWatchListBottomSheetCallback : BottomSheetBehavior.BottomSheetCallback() {
+    private inner class AddToWatchListBottomSheetCallback :
+        BottomSheetBehavior.BottomSheetCallback() {
         private val startColor = Color.TRANSPARENT
         private val endColorOnToolbar = requireActivity().resolveThemeColor(R.attr.colorOnPrimary)
         private val endColor = requireActivity().resolveThemeColor(R.attr.colorPrimary)
@@ -228,13 +255,14 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(plainId: String, title: String, priceModel: PriceModel) = AddToWatchListDialog().apply {
-            arguments = bundleOf(
-                ARG_PLAIN_ID to plainId,
-                ARG_TITLE to title,
-                ARG_PRICE_MODEL to priceModel
-            )
-        }
+        fun newInstance(plainId: String, title: String, priceModel: PriceModel) =
+            AddToWatchListDialog().apply {
+                arguments = bundleOf(
+                    ARG_PLAIN_ID to plainId,
+                    ARG_TITLE to title,
+                    ARG_PRICE_MODEL to priceModel
+                )
+            }
 
         private const val ARG_TITLE = "title"
         private const val ARG_PLAIN_ID = "plain_id"
