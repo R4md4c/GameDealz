@@ -32,7 +32,7 @@ val WORK_MANAGER = module {
                 .setWorkerFactory(GameDealzWorkManagerFactory())
                 .build()
         )
-        WorkManager.getInstance()
+        WorkManager.getInstance(androidContext())
     }
 
     factory<PricesCheckerWorker> {

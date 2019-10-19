@@ -17,36 +17,29 @@
 
 package de.r4md4c.gamedealz.workmanager.worker
 
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.work.Configuration
-import androidx.work.WorkManager
-import androidx.work.testing.TestDriver
-import androidx.work.testing.WorkManagerTestInitHelper
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import androidx.work.testing.TestListenableWorkerBuilder
 import com.nhaarman.mockitokotlin2.*
 import de.r4md4c.commonproviders.notification.Notifier
-import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
-import de.r4md4c.gamedealz.workmanager.WorkManagerJobsInitializer
 import de.r4md4c.gamedealz.workmanager.factory.GameDealzWorkManagerFactory
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.koin.dsl.module.module
 import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
+import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import java.util.*
 
-class PriceCheckerWorkerTest {
+class PriceCheckerWorkerTest : AutoCloseKoinTest() {
 
-    lateinit var testDriver: TestDriver
-
-    private lateinit var testWorkManager: WorkManager
+    private val context: Context
+        get() = ApplicationProvider.getApplicationContext()
 
     @Mock
     lateinit var notifier: Notifier<WatcheeNotificationModel>
@@ -57,25 +50,12 @@ class PriceCheckerWorkerTest {
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        WorkManagerTestInitHelper.initializeTestWorkManager(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            Configuration.Builder()
-                .setWorkerFactory(GameDealzWorkManagerFactory())
-                .build()
-        )
-        testDriver = WorkManagerTestInitHelper.getTestDriver()
-        testWorkManager = WorkManager.getInstance()
 
         startKoin(listOf(module {
             factory<IDispatchers> { TestDispatchers }
             factory { notifier }
             factory { checkPriceThresholdUseCase }
         }))
-    }
-
-    @After
-    fun afterEach() {
-        stopKoin()
     }
 
     @Test
@@ -101,23 +81,31 @@ class PriceCheckerWorkerTest {
                 )
             }
             .toSet()
-        ArrangeBuilder()
+        val worker = ArrangeBuilder()
             .withNotificationModels(mocks)
             .arrange()
+
+        runBlocking {
+            worker.doWork()
+        }
 
         verify(notifier).notify(mocks)
     }
 
     @Test
     fun doWorkDoesNotNotify_whenUseCase_ReturnsEmptyWatchees() {
-        ArrangeBuilder()
+        val worker = ArrangeBuilder()
             .withNotificationModels(emptySet())
             .arrange()
+
+        runBlocking {
+            worker.doWork()
+        }
 
         verify(notifier, never()).notify(any())
     }
 
-    inner class ArrangeBuilder {
+    private inner class ArrangeBuilder {
 
         fun withNotificationModels(watcheeModel: Set<WatcheeNotificationModel>) = apply {
             runBlocking {
@@ -125,21 +113,9 @@ class PriceCheckerWorkerTest {
             }
         }
 
-        fun arrange(): UUID {
-            val sharedPreferencesProvider = mock<SharedPreferencesProvider> {
-                on { priceCheckerPeriodicIntervalInHours } doReturn 6
-            }
-
-            return WorkManagerJobsInitializer(WorkManager.getInstance(), sharedPreferencesProvider).run {
-                runBlocking {
-                    schedulePeriodically()
-                }
-                priceCheckerId.also {
-
-                    testDriver.setAllConstraintsMet(it)
-                    testDriver.setPeriodDelayMet(it)
-                }
-            }
-        }
+        fun arrange(): PriceCheckerWorker =
+            TestListenableWorkerBuilder.from<PriceCheckerWorker>(context, PriceCheckerWorker::class.java)
+                .setWorkerFactory(GameDealzWorkManagerFactory())
+                .build() as PriceCheckerWorker
     }
 }

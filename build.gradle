@@ -47,15 +47,15 @@ ext.versions = [
     'mockito_kotlin': '2.1.0',
     'timber': '4.7.1',
     'lifecycle': '2.1.0',
-    'glide': '4.9.0',
+    'glide': '4.10.0',
     'swiperefreshlayout' :'1.0.0',
     'mockk': '1.9.3',
     'appCompat': '1.1.0',
     'recyclerView': '1.1.0-beta05',
     'androidX': '1.2.0-beta01',
     'material': '1.1.0-beta01',
-    'robolectric': '4.3.1',
-    'workmanager': '2.0.0'
+    'robolectric': '4.2.1',
+    'workmanager': '2.2.0'
 ]
 
 allprojects {

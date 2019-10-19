@@ -25,6 +25,7 @@ import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.net.SocketTimeoutException
 
@@ -36,13 +37,10 @@ internal class PriceCheckerWorker(
     private val getPriceThresholdUseCase: CheckPriceThresholdUseCase
 ) : CoroutineWorker(appContext, params) {
 
-    override val coroutineContext: CoroutineDispatcher
-        get() = dispatchers.IO
-
     override suspend fun doWork(): Result {
         Timber.i("Starting PriceCheckerWorker")
         val result = kotlin.runCatching {
-            getPriceThresholdUseCase()
+            withContext(dispatchers.IO) { getPriceThresholdUseCase() }
         }.onFailure {
             Timber.e(it, "Failure in PriceCheckerWorker")
         }.onSuccess {
