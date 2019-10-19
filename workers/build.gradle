@@ -22,6 +22,10 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -49,7 +53,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation "org.assertj:assertj-core:${versions.assertj}"
     androidTestImplementation ("org.koin:koin-test:${versions.koin}") { exclude group: 'org.mockito' }
-    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
+    androidTestImplementation "androidx.arch.core:core-testing:${versions.core_testing}"
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation ("androidx.work:work-testing:${versions.workmanager}")
 }

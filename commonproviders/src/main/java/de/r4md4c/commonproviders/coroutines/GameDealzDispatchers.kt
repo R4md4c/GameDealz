@@ -21,7 +21,6 @@ import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.android.AndroidDispatcherFactory
 
 /**
  * The Main entry point for all dispatchers. Later it should be removed when Kotlin Coroutines android module becomes
@@ -32,7 +31,7 @@ import kotlinx.coroutines.android.AndroidDispatcherFactory
 object GameDealzDispatchers : IDispatchers {
 
     @UseExperimental(InternalCoroutinesApi::class)
-    override val Main: MainCoroutineDispatcher by lazy { AndroidDispatcherFactory().createDispatcher(emptyList()) }
+    override val Main: MainCoroutineDispatcher = Dispatchers.Main
 
     override val IO = Dispatchers.IO
 
