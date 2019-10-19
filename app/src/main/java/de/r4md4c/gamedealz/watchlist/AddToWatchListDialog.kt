@@ -70,7 +70,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     private val bottomSheetDialog =
         (dialog as? BottomSheetDialog)?.findViewById(R.id.design_bottom_sheet) as? View
 
-    private val bottomSheetCallback = AddToWatchListBottomSheetCallback()
+    private val bottomSheetCallback by lazy { AddToWatchListBottomSheetCallback() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,16 +79,12 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     ): View? =
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(requireContext(), R.style.AppTheme_AddToWatchListDialog).apply {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        BottomSheetDialog(requireContext(), R.style.AppTheme_AddToWatchListDialog).apply {
             setOnShowListener {
-                val bottomSheet = bottomSheetDialog ?: return@setOnShowListener
-                BottomSheetBehavior.from(bottomSheet).apply {
-                    addBottomSheetCallback(bottomSheetCallback)
-                }
+                behavior.addBottomSheetCallback(bottomSheetCallback)
             }
         }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -111,12 +107,6 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
             Observer { Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show() })
 
         observeStores()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        bottomSheetDialog?.let { BottomSheetBehavior.from(it) }
-            ?.removeBottomSheetCallback(bottomSheetCallback)
     }
 
     private fun styleNotifyMeHeader() {
