@@ -3,11 +3,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion project.ext.compileSdk
+    compileSdkVersion AndroidSdk.compile
 
     defaultConfig {
-        minSdkVersion project.ext.minSdk
-        targetSdkVersion project.ext.targetSdk
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
         versionCode 1
         versionName "1.0"
 
@@ -37,23 +37,23 @@ dependencies {
     implementation project(':common')
     implementation project(':domain')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.kotlinCoroutines
+    implementation Libraries.timber
 
-    implementation ("androidx.work:work-runtime-ktx:${versions.workmanager}") {
+    implementation (Libraries.workManagerKtx) {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
 
-    implementation "org.koin:koin-core:${versions.koin}"
-    implementation "org.koin:koin-android:${versions.koin}"
+    implementation Libraries.koinCore
+    implementation Libraries.koinAndroid
 
-    androidTestImplementation 'org.mockito:mockito-android:2.25.0'
+    androidTestImplementation TestLibraries.mockitoAndroid
     androidTestImplementation project(":commontest")
-    androidTestImplementation "androidx.test.ext:junit:1.1.1"
-    androidTestImplementation "org.assertj:assertj-core:${versions.assertj}"
-    androidTestImplementation ("org.koin:koin-test:${versions.koin}") { exclude group: 'org.mockito' }
-    androidTestImplementation "androidx.arch.core:core-testing:${versions.core_testing}"
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation ("androidx.work:work-testing:${versions.workmanager}")
+    androidTestImplementation TestLibraries.androidXTestExtJunit
+    androidTestImplementation TestLibraries.assertjCore
+    androidTestImplementation (TestLibraries.koinTest) { exclude group: 'org.mockito' }
+    androidTestImplementation TestLibraries.archComponentsCoreTesting
+    androidTestImplementation TestLibraries.testRunner
+    androidTestImplementation TestLibraries.workManager
 }
