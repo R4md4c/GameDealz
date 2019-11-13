@@ -9,11 +9,11 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion project.ext.compileSdk
+    compileSdkVersion AndroidSdk.compile
     defaultConfig {
         applicationId "de.r4md4c.gamedealz"
-        minSdkVersion project.ext.minSdk
-        targetSdkVersion project.ext.targetSdk
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
         versionCode 13
         versionName "1.11"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -62,50 +62,50 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
 
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation "androidx.appcompat:appcompat:${versions.appCompat}"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
-    implementation "androidx.lifecycle:lifecycle-viewmodel:${versions.lifecycle}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
-    implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
-    implementation "androidx.paging:paging-runtime-ktx:${versions.paging_version}"
-    implementation "androidx.annotation:annotation:1.1.0"
-    implementation "androidx.core:core-ktx:${versions.androidX}"
+    implementation Libraries.multidex
+    implementation Libraries.appCompat
+    implementation Libraries.constraintLayout
+    implementation Libraries.lifecycleViewModel
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.recyclerView
+    implementation Libraries.pagingRuntimeKtx
+    implementation Libraries.androidXAnnotations
+    implementation Libraries.coreKtx
 
-    implementation "androidx.navigation:navigation-fragment-ktx:${versions.nav_version}"
-    implementation "androidx.navigation:navigation-ui-ktx:${versions.nav_version}"
-    implementation "com.google.android.material:material:${versions.material}"
+    implementation Libraries.navigationFragmentKtx
+    implementation Libraries.navigationUiKtx
+    implementation Libraries.material
 
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:${versions.swiperefreshlayout}"
-    implementation 'com.github.stfalcon:stfalcon-imageviewer:0.1.0'
+    implementation Libraries.swipeRefreshLayout
+    implementation Libraries.stfalImageViewer
 
-    implementation("com.github.bumptech.glide:glide:${versions.glide}") {
+    implementation(Libraries.glide) {
         exclude group: "com.android.support"
     }
-    implementation("com.github.bumptech.glide:okhttp3-integration:${versions.glide}") {
+    implementation(Libraries.glideHttpIntegration) {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
-    implementation("com.squareup.okhttp3:okhttp:${versions.okhttp}") {
+    implementation(Libraries.okhttp) {
         because 'Glide okhttp integration needs this.'
     }
-    implementation "com.squareup.okio:okio:${versions.okio}"
-    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    implementation Libraries.okio
+    kapt Libraries.glideCompiler
 
-    implementation "ch.acra:acra-core:${versions.acra}"
+    implementation Libraries.acraCore
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.kotlinCoroutines
 
-    implementation 'com.mikepenz:fastadapter-extensions:3.3.1'
-    implementation 'com.mikepenz:materialdrawer:6.1.2'
-    implementation 'com.github.tinder:statemachine:0.1.2'
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
+    implementation Libraries.fastAdapter
+    implementation Libraries.materialDrawer
+    implementation Libraries.stateMachine
+    implementation Libraries.timber
 
-    implementation "org.koin:koin-core:${versions.koin}"
-    implementation "org.koin:koin-core-ext:${versions.koin}"
-    implementation "org.koin:koin-android:${versions.koin}"
-    implementation "org.koin:koin-androidx-scope:${versions.koin}"
-    implementation "org.koin:koin-androidx-viewmodel:${versions.koin}"
+    implementation Libraries.koinCore
+    implementation Libraries.koinCoreExt
+    implementation Libraries.koinAndroid
+    implementation Libraries.koinAndroidXScope
+    implementation Libraries.koinAndroidXViewModel
 
     implementation project(':workers')
     implementation project(':common')
@@ -113,23 +113,23 @@ dependencies {
     implementation project(':domain')
 
     testImplementation project(':commontest')
-    testImplementation 'com.jraska.livedata:testing:1.1.0'
-    testImplementation 'com.jraska.livedata:testing-ktx:1.1.0'
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
-    testImplementation "androidx.arch.core:core-testing:${versions.core_testing}"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-    testImplementation "org.koin:koin-test:${versions.koin}"
-    testImplementation "androidx.test:core:1.2.0"
-    testImplementation "androidx.paging:paging-common-ktx:${versions.paging_version}"
+    testImplementation TestLibraries.liveDataTesting
+    testImplementation TestLibraries.liveDataTestingKtx
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.archComponentsCoreTesting
+    testImplementation TestLibraries.kotlinReflect
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.robolectric
+    testImplementation TestLibraries.koinTest
+    testImplementation TestLibraries.androidXTestCore
+    testImplementation Libraries.pagingCommonKtx
 
-    androidTestUtil 'androidx.test:orchestrator:1.2.0'
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestUtil TestLibraries.testOrchestrator
+    androidTestImplementation TestLibraries.uiAutomator
     androidTestImplementation project(':commontest')
-    androidTestImplementation "androidx.test:rules:1.2.0"
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation TestLibraries.testRules
+    androidTestImplementation TestLibraries.testRunner
+    androidTestImplementation TestLibraries.espressoCore
 }
 
 configurations.all {

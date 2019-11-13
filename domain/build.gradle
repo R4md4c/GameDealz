@@ -5,15 +5,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion project.ext.compileSdk
+    compileSdkVersion AndroidSdk.compile
 
     defaultConfig {
-        minSdkVersion project.ext.minSdk
-        targetSdkVersion project.ext.targetSdk
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
@@ -36,21 +36,21 @@ androidExtensions {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.kotlinCoroutines
 
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
+    implementation Libraries.timber
 
     implementation project(':common')
     implementation project(':data')
     implementation project(':commonproviders')
     implementation project(':network')
-    implementation "org.koin:koin-core:${versions.koin}"
+    implementation Libraries.koinCore
 
     testImplementation project(':commontest')
     testImplementation project(':commonproviders')
-    testImplementation "org.koin:koin-test:${versions.koin}"
-    testImplementation "org.assertj:assertj-core:${versions.assertj}"
-    testImplementation 'junit:junit:4.12'
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+    testImplementation TestLibraries.koinTest
+    testImplementation TestLibraries.assertjCore
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.mockitoKotlin
 }

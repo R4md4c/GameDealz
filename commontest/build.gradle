@@ -3,13 +3,13 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.kotlinCoroutines
     implementation project(':common')
 
-    api ("io.mockk:mockk:${versions.mockk}") { exclude module: 'objenesis' }
-    api "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
-    api "org.assertj:assertj-core:${versions.assertj}"
+    api (TestLibraries.mockK) { exclude module: 'objenesis' }
+    api TestLibraries.mockitoKotlin
+    api TestLibraries.assertjCore
 }
 
 sourceCompatibility = "8"
