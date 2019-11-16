@@ -18,19 +18,20 @@
 package de.r4md4c.gamedealz.deals
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Config
 import androidx.paging.DataSource
 import androidx.paging.toLiveData
 import de.r4md4c.gamedealz.BuildConfig
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.drop
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 class DealsViewModel(
@@ -38,7 +39,7 @@ class DealsViewModel(
     private val factory: DataSource.Factory<Int, DealRenderModel>,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val uiStateMachineDelegate: StateMachineDelegate
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     val deals by lazy {
         factory.toLiveData(
@@ -55,8 +56,8 @@ class DealsViewModel(
     }
 
     fun init() {
-        uiScope.launch(dispatchers.IO) {
-            selectedStoresUseCase().debounce(uiScope, 500).drop(1).consumeEach {
+        viewModelScope.launch(dispatchers.IO) {
+            selectedStoresUseCase().debounce(500).drop(1).collect {
                 deals.value?.dataSource?.invalidate()
             }
         }

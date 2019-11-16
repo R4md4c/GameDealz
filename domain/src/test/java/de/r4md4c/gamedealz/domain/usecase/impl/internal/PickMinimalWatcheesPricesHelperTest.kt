@@ -29,7 +29,7 @@ import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -220,7 +220,7 @@ class PickMinimalWatcheesPricesHelperTest {
 
         fun withWatchlistRepositoryFindByIdResult(key: String, result: Watchee?) = apply {
             runBlocking {
-                whenever(watchlistRepository.findById(eq(key))).thenReturn(produce(capacity = 1) { send(result) })
+                whenever(watchlistRepository.findById(eq(key))).thenReturn(flowOf(result))
             }
         }
 
@@ -230,7 +230,7 @@ class PickMinimalWatcheesPricesHelperTest {
                     watchlistRepository.findById(
                         key ?: anyOrNull()
                     )
-                ).thenReturn(produce(capacity = 1) { send(null) })
+                ).thenReturn(flowOf(null))
             }
         }
 

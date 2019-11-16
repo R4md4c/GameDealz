@@ -20,17 +20,18 @@ package de.r4md4c.gamedealz.home
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigation.Navigator
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.*
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -43,7 +44,7 @@ class HomeViewModel(
     private val priceAlertsCountUseCase: GetAlertsCountUseCase,
     private val toggleNightModeUseCase: ToggleNightModeUseCase,
     private val onNightModeChangeUseCase: OnNightModeChangeUseCase
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
     val currentRegion: LiveData<ActiveRegion> by lazy { _currentRegion }
@@ -73,7 +74,7 @@ class HomeViewModel(
     val recreate by lazy { _recreate }
 
     fun init() {
-        uiScope.launch(dispatchers.Default) {
+        viewModelScope.launch(dispatchers.Default) {
             kotlin.runCatching {
                 _regionsLoading.postValue(true)
 
@@ -89,13 +90,13 @@ class HomeViewModel(
     }
 
 
-    fun onStoreSelected(store: StoreModel) = uiScope.launch {
+    fun onStoreSelected(store: StoreModel) = viewModelScope.launch {
         kotlin.runCatching {
             toggleStoresUseCase(CollectionParameter(setOf(store)))
         }.onFailure(onFailureHandler)
     }
 
-    fun toggleNightMode() = uiScope.launch {
+    fun toggleNightMode() = viewModelScope.launch {
         toggleNightModeUseCase()
     }
 
@@ -108,7 +109,7 @@ class HomeViewModel(
     }
 
     fun onRegionChangeClicked() =
-        uiScope.launch(dispatchers.IO) {
+        viewModelScope.launch(dispatchers.IO) {
             kotlin.runCatching {
                 val activeRegion = getCurrentActiveRegion()
                 _openRegionSelectionDialog.postValue(activeRegion)
@@ -116,34 +117,34 @@ class HomeViewModel(
         }
 
     private fun listenForRegionChanges() =
-        uiScope.launch(dispatchers.IO) {
+        viewModelScope.launch(dispatchers.IO) {
             kotlin.runCatching {
-                onActiveRegionChange.activeRegionChange().consumeEach {
+                onActiveRegionChange.activeRegionChange().collect {
                     _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
                 }
             }.onFailure(onFailureHandler)
         }
 
-    private fun listenForStoreChanges(activeRegion: ActiveRegion) = uiScope.launch(dispatchers.IO) {
+    private fun listenForStoreChanges(activeRegion: ActiveRegion) = viewModelScope.launch(dispatchers.IO) {
         kotlin.runCatching {
-            getStoresUseCase(TypeParameter(activeRegion)).consumeEach {
+            getStoresUseCase(TypeParameter(activeRegion)).collect {
                 _stores.postValue(it)
             }
         }.onFailure(onFailureHandler)
     }
 
-    private fun listenForAlertsCountChanges() = uiScope.launch(dispatchers.Default) {
+    private fun listenForAlertsCountChanges() = viewModelScope.launch(dispatchers.Default) {
         kotlin.runCatching {
-            priceAlertsCountUseCase().consumeEach {
+            priceAlertsCountUseCase().collect {
                 _priceAlertsCount.postValue(if (it == 0) "" else it.toString())
             }
         }.onFailure(onFailureHandler)
     }
 
-    private fun listenForNightModeChanges() = uiScope.launch(dispatchers.Default) {
+    private fun listenForNightModeChanges() = viewModelScope.launch(dispatchers.Default) {
         kotlin.runCatching {
             onNightModeChangeUseCase.activeNightModeChange()
-                .consumeEach {
+                .collect {
                     val newValue = it == NightMode.Enabled
                     if (newValue != _enableNightMode.value) {
                         _enableNightMode.postValue(it == NightMode.Enabled)

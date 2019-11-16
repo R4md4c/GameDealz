@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.test
 
 import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 
 /**
  * A Singleton that will be used primarily during JUnit tests.
@@ -27,12 +27,14 @@ import kotlinx.coroutines.Dispatchers
  */
 object TestDispatchers : IDispatchers {
 
+    internal val testDispatcher = TestCoroutineDispatcher()
+
     override val Main: CoroutineDispatcher
-        get() = Dispatchers.Unconfined
+        get() = testDispatcher
 
     override val IO: CoroutineDispatcher
-        get() = Dispatchers.Unconfined
+        get() = testDispatcher
 
     override val Default: CoroutineDispatcher
-        get() = Dispatchers.Unconfined
+        get() = testDispatcher
 }

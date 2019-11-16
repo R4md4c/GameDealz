@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.TypeParameter
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Checks if the Plain Id is already added to watch list or not.
  */
-interface IsGameAddedToWatchListUseCase : UseCase<TypeParameter<String>, ReceiveChannel<Boolean>>
+interface IsGameAddedToWatchListUseCase : UseCase<TypeParameter<String>, Flow<Boolean>>

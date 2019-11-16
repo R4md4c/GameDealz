@@ -6,8 +6,8 @@ import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.network.model.Currency
 import de.r4md4c.gamedealz.network.model.Region
 import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -90,9 +90,8 @@ class GetRegionsUseCaseImplTest {
             secondValue: List<RegionWithCountries>? = null
         ) = apply {
             runBlocking {
-                whenever(localRepository.all()).thenReturn(produce(capacity = Channel.UNLIMITED) {
-                    offer(regionWithCountries)
-                }, produce(capacity = Channel.UNLIMITED) { secondValue?.let { offer(it) } })
+                whenever(localRepository.all()).thenReturn(flowOf(regionWithCountries),
+                    flow { secondValue?.let { emit(it) } })
             }
         }
 

@@ -22,7 +22,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import de.r4md4c.gamedealz.data.entity.PriceAlert
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PriceAlertDao {
@@ -31,13 +31,13 @@ interface PriceAlertDao {
     fun insert(priceAlerts: List<PriceAlert>)
 
     @Query("SELECT COUNT(*) FROM PriceAlert")
-    fun unreadCount(): Flowable<Int>
+    fun unreadCount(): Flow<Int>
 
     @Query("SELECT * FROM PriceAlert")
-    fun findAll(): Flowable<List<PriceAlert>>
+    fun findAll(): Flow<List<PriceAlert>>
 
     @Query("SELECT * FROM PriceAlert WHERE id IN (:ids)")
-    fun findAll(ids: Collection<Long>): Flowable<List<PriceAlert>>
+    fun findAll(ids: Collection<Long>): Flow<List<PriceAlert>>
 
     @Query("SELECT * FROM PriceAlert WHERE watcheeId = :watcheeId")
     suspend fun findByWatcheeId(watcheeId: Long): PriceAlert?

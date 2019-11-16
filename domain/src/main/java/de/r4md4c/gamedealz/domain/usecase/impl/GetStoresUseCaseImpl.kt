@@ -25,9 +25,9 @@ import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.first
-import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 internal class GetStoresUseCaseImpl(
     private val storesRemoteRepository: StoresRemoteRepository,
@@ -35,7 +35,7 @@ internal class GetStoresUseCaseImpl(
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase
 ) : GetStoresUseCase {
 
-    override suspend fun invoke(param: TypeParameter<ActiveRegion>?): ReceiveChannel<List<StoreModel>> {
+    override suspend fun invoke(param: TypeParameter<ActiveRegion>?): Flow<List<StoreModel>> {
         val activeRegion = param?.value ?: activeRegionUseCase()
 
         return with(activeRegion) {

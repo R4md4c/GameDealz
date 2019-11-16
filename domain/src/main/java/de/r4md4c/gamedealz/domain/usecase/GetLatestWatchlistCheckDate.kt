@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.VoidParameter
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Retrieve the most recent timestamp in seconds, that the whole watchlist checked against prices.
  */
-interface GetLatestWatchlistCheckDate : UseCase<VoidParameter, ReceiveChannel<Long>>
+interface GetLatestWatchlistCheckDate : UseCase<VoidParameter, Flow<Long>>

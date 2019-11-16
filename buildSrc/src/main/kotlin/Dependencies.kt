@@ -31,7 +31,7 @@ object Libraries {
         const val paging_version = "2.1.0"
         const val koin = "1.0.2"
         const val coroutines = "1.3.2"
-        const val room = "2.2.0"
+        const val room = "2.2.1"
         const val timber = "4.7.1"
         const val lifecycle = "2.1.0"
         const val glide = "4.10.0"
@@ -56,7 +56,6 @@ object Libraries {
 
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
-    const val roomRxJava2 = "androidx.room:room-rxjava2:${Versions.room}"
     const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
 
     const val workManagerKtx = "androidx.work:work-runtime-ktx:${Versions.workmanager}"
@@ -68,7 +67,6 @@ object Libraries {
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val retrofitMoshiAdapter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
 
-    const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rx2}"
     const val multidex = "androidx.multidex:multidex:${Versions.multidex}"
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
@@ -101,7 +99,6 @@ object Libraries {
 
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    const val kotlinCoroutinesRx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
 
     const val fastAdapter = "com.mikepenz:fastadapter-extensions:${Versions.fastAdapter}"
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"

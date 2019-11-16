@@ -19,13 +19,12 @@ package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.dao.StoresDao
 import de.r4md4c.gamedealz.data.entity.Store
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.reactive.openSubscription
+import kotlinx.coroutines.flow.Flow
 
 internal class StoresLocalRepository(private val storesDao: StoresDao) : StoresRepository {
 
-    override suspend fun all(ids: Collection<String>?): ReceiveChannel<List<Store>> =
-        (ids?.let { storesDao.all(it.toSet()) } ?: storesDao.all()).openSubscription()
+    override suspend fun all(ids: Collection<String>?): Flow<List<Store>> =
+        (ids?.let { storesDao.all(it.toSet()) } ?: storesDao.all())
 
     override suspend fun save(models: List<Store>) = storesDao.insert(models)
 
@@ -39,6 +38,6 @@ internal class StoresLocalRepository(private val storesDao: StoresDao) : StoresR
         storesDao.replaceAll(stores)
     }
 
-    override suspend fun selectedStores(): ReceiveChannel<Collection<Store>> =
-        storesDao.allSelected().openSubscription()
+    override suspend fun selectedStores(): Flow<Collection<Store>> =
+        storesDao.allSelected()
 }

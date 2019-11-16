@@ -19,18 +19,19 @@ package de.r4md4c.gamedealz.watchlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.math.BigDecimal
@@ -44,7 +45,7 @@ class AddToWatchListViewModel(
     private val getCurrentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val addToWatchListUseCase: AddToWatchListUseCase
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private val _availableStores by lazy { MutableLiveData<List<StoreModel>>() }
     private var activeRegion: ActiveRegion? = null
@@ -59,7 +60,7 @@ class AddToWatchListViewModel(
     val dismiss: LiveData<Unit> by lazy { _dismiss }
 
     fun loadStores(): LiveData<List<StoreModel>> {
-        uiScope.launchWithCatching(dispatchers.IO, {
+        viewModelScope.launchWithCatching(dispatchers.IO, {
             this.activeRegion = getCurrentActiveRegionUseCase()
             val stores = getStoresUseCase.invoke(TypeParameter(activeRegion!!)).first()
             _availableStores.postValue(stores)
@@ -110,7 +111,7 @@ class AddToWatchListViewModel(
 
     fun formatCurrentBestCurrencyModel(priceModel: PriceModel): LiveData<String> {
         val currencyData = SingleLiveEvent<String>()
-        uiScope.launch(dispatchers.IO) {
+        viewModelScope.launch(dispatchers.IO) {
             val activeRegion = getCurrentActiveRegionUseCase()
             currencyData.postValue(priceModel.newPrice.formatCurrency(activeRegion.currency))
         }
@@ -124,7 +125,7 @@ class AddToWatchListViewModel(
         targetPrice: Float,
         selectedStores: List<StoreModel>
     ) {
-        uiScope.launchWithCatching(dispatchers.Default, {
+        viewModelScope.launchWithCatching(dispatchers.Default, {
             val addToWatchListArgument =
                 AddToWatchListArgument(
                     plainId = plainId,

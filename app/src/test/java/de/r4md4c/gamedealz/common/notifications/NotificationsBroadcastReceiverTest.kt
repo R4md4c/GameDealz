@@ -36,7 +36,7 @@ import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -220,7 +220,7 @@ class NotificationsBroadcastReceiverTest : KoinTest {
 
         fun withAlertsCountUseCase(count: Int) = apply {
             runBlocking {
-                whenever(alertsCountUseCase()).thenReturn(produce(capacity = 1) { send(count) })
+                whenever(alertsCountUseCase()).thenReturn(flowOf(count))
             }
         }
 

@@ -19,15 +19,12 @@ package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.dao.RegionWithCountriesDao
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.reactive.openSubscription
+import kotlinx.coroutines.flow.Flow
 
 internal class RegionLocalRepository(private val regionWithCountriesDao: RegionWithCountriesDao) : RegionsRepository {
 
-    override suspend fun all(ids: Collection<String>?): ReceiveChannel<List<RegionWithCountries>> =
+    override suspend fun all(ids: Collection<String>?): Flow<List<RegionWithCountries>> =
         (ids?.let { regionWithCountriesDao.allRegions(it.toSet()) } ?: regionWithCountriesDao.allRegions())
-            .onBackpressureLatest()
-            .openSubscription()
 
     override suspend fun save(models: List<RegionWithCountries>) {
         regionWithCountriesDao.insertRegionsWithCountries(

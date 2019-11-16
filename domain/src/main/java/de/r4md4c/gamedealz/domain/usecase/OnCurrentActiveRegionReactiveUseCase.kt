@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 interface OnCurrentActiveRegionReactiveUseCase {
 
@@ -27,6 +27,6 @@ interface OnCurrentActiveRegionReactiveUseCase {
      *
      * @return a Channel that emits each time an active region changes.
      */
-    suspend fun activeRegionChange(): ReceiveChannel<ActiveRegion>
+    suspend fun activeRegionChange(): Flow<ActiveRegion>
 }
 

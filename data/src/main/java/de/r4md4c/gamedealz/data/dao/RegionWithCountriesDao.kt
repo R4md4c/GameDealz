@@ -22,7 +22,7 @@ import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface RegionWithCountriesDao {
@@ -43,11 +43,11 @@ internal interface RegionWithCountriesDao {
      */
     @Transaction
     @Query("SELECT * FROM Region LEFT JOIN Currency ON Region.fk_currencyCode = Currency.currencyCode")
-    fun allRegions(): Flowable<List<RegionWithCountries>>
+    fun allRegions(): Flow<List<RegionWithCountries>>
 
     @Transaction
     @Query("SELECT * FROM Region LEFT JOIN Currency ON Region.fk_currencyCode = Currency.currencyCode WHERE Region.regionCode IN (:regionCodes)")
-    fun allRegions(regionCodes: Set<String>): Flowable<List<RegionWithCountries>>
+    fun allRegions(regionCodes: Set<String>): Flow<List<RegionWithCountries>>
 
     /**
      * Selects a region along with their countries by region.

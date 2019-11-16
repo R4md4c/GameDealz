@@ -17,7 +17,7 @@
 
 package de.r4md4c.gamedealz.data.repository
 
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Base interface that will be extended by all repos.
@@ -29,7 +29,7 @@ interface Repository<Model, PrimaryKey> {
      *
      * @param ids An optional collection of ids that needs to be retrieved, if null, all is going to be retrieved.
      */
-    suspend fun all(ids: Collection<PrimaryKey>? = null): ReceiveChannel<List<Model>>
+    suspend fun all(ids: Collection<PrimaryKey>? = null): Flow<List<Model>>
 
     /**
      * Saves all models to the store.

@@ -49,6 +49,7 @@ dependencies {
 
     testImplementation project(':commontest')
     testImplementation project(':commonproviders')
+    testImplementation TestLibraries.coroutinesTest
     testImplementation TestLibraries.koinTest
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit

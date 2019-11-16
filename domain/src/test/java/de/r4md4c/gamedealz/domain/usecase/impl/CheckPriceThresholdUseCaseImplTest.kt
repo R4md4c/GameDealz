@@ -31,7 +31,7 @@ import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Shop
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -226,7 +226,7 @@ class CheckPriceThresholdUseCaseImplTest {
                     )
                 )
                 whenever(currentActiveRegionUseCase.invoke(anyOrNull())).thenReturn(ACTIVE_REGION)
-                whenever(watchlistRepository.findById(any<String>())).thenReturn(produce(capacity = 1) { close() })
+                whenever(watchlistRepository.findById(any<String>())).thenReturn(emptyFlow())
             }
         }
 

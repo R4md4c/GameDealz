@@ -7,8 +7,7 @@ import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -59,7 +58,7 @@ class ToggleStoresUseCaseImplTest {
 
         fun withStoredStores(stores: List<Store>) = apply {
             runBlocking {
-                whenever(storesRepository.all(any())).thenReturn(produce(capacity = Channel.UNLIMITED) { offer(stores) })
+                whenever(storesRepository.all(any())).thenReturn(flowOf(stores))
             }
         }
     }

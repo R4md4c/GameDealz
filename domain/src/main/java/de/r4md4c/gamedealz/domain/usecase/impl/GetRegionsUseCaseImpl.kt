@@ -25,7 +25,7 @@ import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel
 import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
-import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionRepository
@@ -43,7 +43,7 @@ internal class GetRegionsUseCaseImpl(
 
             val localRegions = localRepository.all().first()
 
-            if (!localRegions.isEmpty()) {
+            if (localRegions.isNotEmpty()) {
                 localRegions.map { it.toModel() }
             } else {
                 val regionsWithCountries = loadRegionsFromServer()

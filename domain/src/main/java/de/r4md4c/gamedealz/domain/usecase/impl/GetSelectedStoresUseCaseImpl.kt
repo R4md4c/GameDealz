@@ -23,13 +23,13 @@ import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.toStoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 internal class GetSelectedStoresUseCaseImpl(private val storesRepository: StoresRepository) : GetSelectedStoresUseCase {
 
-    override suspend fun invoke(param: VoidParameter?): ReceiveChannel<List<StoreModel>> =
+    override suspend fun invoke(param: VoidParameter?): Flow<List<StoreModel>> =
         withContext(IO) {
             storesRepository.selectedStores().map { it.map { store -> store.toStoreModel() } }
         }

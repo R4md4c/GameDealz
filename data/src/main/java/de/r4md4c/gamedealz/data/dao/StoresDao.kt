@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.data.dao
 
 import androidx.room.*
 import de.r4md4c.gamedealz.data.entity.Store
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 
 @Dao
@@ -37,7 +37,7 @@ internal interface StoresDao {
      * @return a list of stores.
      */
     @Query("SELECT * FROM Store")
-    fun all(): Flowable<List<Store>>
+    fun all(): Flow<List<Store>>
 
     /**
      * Retrieves all stored stores with ids
@@ -45,7 +45,7 @@ internal interface StoresDao {
      * @return a list of stores.
      */
     @Query("SELECT * FROM Store WHERE id IN (:ids)")
-    fun all(ids: Set<String>): Flowable<List<Store>>
+    fun all(ids: Set<String>): Flow<List<Store>>
 
     @Transaction
     fun replaceAll(stores: Collection<Store>) {
@@ -59,7 +59,7 @@ internal interface StoresDao {
      * @return a list of stores.
      */
     @Query("SELECT * FROM Store WHERE selected = 1")
-    fun allSelected(): Flowable<List<Store>>
+    fun allSelected(): Flow<List<Store>>
 
     /**
      * Retrieves a single store.
