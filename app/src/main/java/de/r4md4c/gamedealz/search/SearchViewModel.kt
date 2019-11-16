@@ -22,7 +22,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.SideEffect
@@ -33,9 +32,7 @@ import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.actor
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.distinct
-import kotlinx.coroutines.channels.filter
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -48,10 +45,12 @@ class SearchViewModel(
     private var currentJob: Job? = null
 
     private val queryChannel = viewModelScope.actor<String>(dispatchers.Default) {
-        filter { it.isNotBlank() }
-            .debounce(viewModelScope, 500)
-            .distinct()
-            .consumeEach {
+        consumeAsFlow()
+            .filter { it.isNotBlank() }
+            .debounce(500)
+            .distinctUntilChanged()
+            .onCompletion { }
+            .collect {
                 currentJob?.cancelAndJoin()
                 loadSearchResults(it)
             }
