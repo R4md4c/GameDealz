@@ -21,22 +21,22 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import de.r4md4c.gamedealz.data.entity.Watchee
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WatchlistDao {
 
     @Query("SELECT * FROM Watchlist WHERE plainId = :plainId")
-    fun findOne(plainId: String): Flowable<List<Watchee>>
+    fun findOne(plainId: String): Flow<List<Watchee>>
 
     @Query("SELECT * FROM Watchlist WHERE id = :id")
     suspend fun findOne(id: Long): Watchee?
 
     @Query("SELECT * FROM Watchlist ORDER BY dateAdded DESC")
-    fun findAll(): Flowable<List<Watchee>>
+    fun findAll(): Flow<List<Watchee>>
 
     @Query("SELECT * FROM Watchlist WHERE id IN (:ids) ORDER BY dateAdded DESC")
-    fun findAll(ids: Collection<Long>): Flowable<List<Watchee>>
+    fun findAll(ids: Collection<Long>): Flow<List<Watchee>>
 
     @Query("DELETE FROM Watchlist WHERE id = :id")
     fun delete(id: Long): Int
@@ -56,7 +56,7 @@ interface WatchlistDao {
     @Query("UPDATE Watchlist SET lastFetchedPrice = :lastFetchedPrice, lastCheckDate = :lastChecked, lastFetchedStoreName = :lastFetchedStoreName WHERE id = :id")
     fun updateWatchee(id: Long, lastFetchedPrice: Float, lastFetchedStoreName: String, lastChecked: Long): Int
 
-    @Query("SELECT MAX(lastCheckDate) FROM Watchlist")
-    fun mostRecentLastCheckDate(): Flowable<Long>
+    @Query("SELECT COALESCE(MAX(lastCheckDate), 0) FROM Watchlist")
+    fun mostRecentLastCheckDate(): Flow<Long>
 
 }

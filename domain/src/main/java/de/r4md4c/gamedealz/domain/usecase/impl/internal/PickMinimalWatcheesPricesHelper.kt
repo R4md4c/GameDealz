@@ -22,7 +22,7 @@ import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import de.r4md4c.gamedealz.network.model.Price
-import kotlinx.coroutines.channels.firstOrNull
+import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 
 /**
@@ -43,7 +43,7 @@ internal class PickMinimalWatcheesPricesHelper(
      */
     suspend fun pick(prices: Map<String, List<Price>>): Map<Price, Watchee> {
         return prices.mapNotNull {
-            val watchee = watchlistRepository.findById(it.key).firstOrNull() ?: return@mapNotNull null
+            val watchee = watchlistRepository.findById(it.key).first() ?: return@mapNotNull null
             val watcheesStoresIds =
                 watchlistStoresRepository.findWatcheeWithStores(watchee)?.stores?.map { s -> s.id }
                     ?: return@mapNotNull null

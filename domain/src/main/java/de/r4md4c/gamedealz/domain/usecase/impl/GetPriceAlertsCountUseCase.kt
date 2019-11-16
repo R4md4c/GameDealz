@@ -20,9 +20,9 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 internal class GetPriceAlertsCountUseCase(private val alertsRepository: PriceAlertRepository) : GetAlertsCountUseCase {
 
-    override suspend fun invoke(param: VoidParameter?): ReceiveChannel<Int> = alertsRepository.unreadCount()
+    override suspend fun invoke(param: VoidParameter?): Flow<Int> = alertsRepository.unreadCount()
 }

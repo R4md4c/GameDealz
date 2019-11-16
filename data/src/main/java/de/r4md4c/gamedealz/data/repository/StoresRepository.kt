@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.entity.Store
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 interface StoresRepository : Repository<Store, String> {
 
@@ -35,7 +35,7 @@ interface StoresRepository : Repository<Store, String> {
      *
      * @return A collection of selected stores.
      */
-    suspend fun selectedStores(): ReceiveChannel<Collection<Store>>
+    suspend fun selectedStores(): Flow<Collection<Store>>
 
     /**
      * Clears the repository then insert the stores.

@@ -7,7 +7,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import de.r4md4c.gamedealz.data.DATA
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Store
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -50,16 +52,13 @@ class StoresDaoTest : KoinTest {
     }
 
     @Test
-    fun all_retrievesAllStores() {
+    fun all_retrievesAllStores() = runBlockingTest {
         ArrangeBuilder()
             .arrange()
 
-        val allStores = storesDao.all().test()
+        val allStores = storesDao.all().first()
 
-        allStores.assertValueCount(1)
-        allStores.assertValue {
-            it.size == 10
-        }
+        assertThat(allStores).hasSize(10)
     }
 
     @Test
@@ -100,17 +99,15 @@ class StoresDaoTest : KoinTest {
     }
 
     @Test
-    fun allSelected() {
-        val storesList = this.storesList.take(5).map { it.copy(selected = true) }
+    fun allSelected() = runBlockingTest {
+        val storesList = storesList.take(5).map { it.copy(selected = true) }
         ArrangeBuilder()
             .withStores(storesList)
             .arrange()
 
-        val result = storesDao.allSelected().test()
+        val result = storesDao.allSelected().first()
 
-        result.assertValue {
-            it.size == 5
-        }
+        assertThat(result).hasSize(5)
     }
 
     private val storesList = (1..10).map { Store("id$it", "name$it", "color$it") }

@@ -20,26 +20,26 @@ package de.r4md4c.commonproviders.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import de.r4md4c.commonproviders.appcompat.NightMode
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 internal class AndroidSharedPreferencesProvider(context: Context) : SharedPreferencesProvider {
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("game_dealz_prefs", Context.MODE_PRIVATE)
 
-    override val activeRegionAndCountryChannel: ReceiveChannel<Pair<String, String>>
-        get() = Channel<Pair<String, String>>(Channel.CONFLATED).also { channel ->
+    override val activeRegionAndCountryChannel: Flow<Pair<String, String>>
+        get() = callbackFlow {
             val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 if (key == KEY_ACTIVE_REGION_COUNTRY) {
                     activeRegionAndCountry?.let {
-                        channel.offer(it)
-                    } ?: channel.close()
+                        offer(it)
+                    } ?: close()
                 }
             }
             sharedPreferences.registerOnSharedPreferenceChangeListener(callback)
-            channel.invokeOnClose {
+            awaitClose {
                 sharedPreferences.unregisterOnSharedPreferenceChangeListener(callback)
             }
         }
@@ -59,42 +59,50 @@ internal class AndroidSharedPreferencesProvider(context: Context) : SharedPrefer
             }
         }
 
-    override val reactivePriceCheckerPeriodicIntervalInHours: ReceiveChannel<Int>
-        get() = sharedPreferences.createReceiveChannelFromKey(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL)
+    override val reactivePriceCheckerPeriodicIntervalInHours: Flow<Int>
+        get() = sharedPreferences.createFlowFromKey(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL)
         { priceCheckerPeriodicIntervalInHours }
 
     override var priceCheckerPeriodicIntervalInHours: Int
         get() = sharedPreferences.getInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, 6)
         set(value) {
-            sharedPreferences.edit().putInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, value).apply()
+            sharedPreferences.edit().putInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, value)
+                .apply()
         }
 
     override var activeNightMode: NightMode
-        get() = NightMode.fromString(sharedPreferences.getString(KEY_ACTIVE_NIGHT_MODE, NightMode.Disabled.name)!!)
+        get() = NightMode.fromString(
+            sharedPreferences.getString(
+                KEY_ACTIVE_NIGHT_MODE,
+                NightMode.Disabled.name
+            )!!
+        )
         set(value) {
             sharedPreferences.edit().putString(KEY_ACTIVE_NIGHT_MODE, value.name).apply()
         }
 
-    override val reactiveNightMode: ReceiveChannel<NightMode>
-        get() = sharedPreferences.createReceiveChannelFromKey(KEY_ACTIVE_NIGHT_MODE) { activeNightMode }
+    override val reactiveNightMode: Flow<NightMode>
+        get() = sharedPreferences.createFlowFromKey(KEY_ACTIVE_NIGHT_MODE) { activeNightMode }
 
-    private fun <T> SharedPreferences.createReceiveChannelFromKey(key: String, value: () -> T): ReceiveChannel<T> =
-        ConflatedBroadcastChannel(value())
-            .also { channel ->
-                val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
-                    if (changedKey == key) {
-                        channel.offer(value())
-                    }
+    private fun <T> SharedPreferences.createFlowFromKey(key: String, value: () -> T): Flow<T> =
+        callbackFlow {
+            offer(value())
+
+            val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+                if (changedKey == key) {
+                    offer(value())
                 }
-                registerOnSharedPreferenceChangeListener(callback)
-                channel.invokeOnClose {
-                    unregisterOnSharedPreferenceChangeListener(callback)
-                }
-            }.openSubscription()
+            }
+            registerOnSharedPreferenceChangeListener(callback)
+            awaitClose {
+                unregisterOnSharedPreferenceChangeListener(callback)
+            }
+        }
 
     private companion object {
         private const val KEY_ACTIVE_NIGHT_MODE = "current_active_night_mode"
-        private const val KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL = "price_checker_hourly_interval"
+        private const val KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL =
+            "price_checker_hourly_interval"
         private const val KEY_ACTIVE_REGION_COUNTRY = "active_region_country"
     }
 }

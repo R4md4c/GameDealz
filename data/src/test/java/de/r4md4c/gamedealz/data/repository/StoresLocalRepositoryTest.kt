@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.dao.StoresDao
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -65,8 +65,8 @@ class StoresLocalRepositoryTest {
 
     inner class ArrangeBuilder {
         init {
-            whenever(storesDao.all()).thenReturn(Flowable.just(emptyList()))
-            whenever(storesDao.all(any())).thenReturn(Flowable.just(emptyList()))
+            whenever(storesDao.all()).thenReturn(flowOf(emptyList()))
+            whenever(storesDao.all(any())).thenReturn(flowOf(emptyList()))
         }
     }
 }

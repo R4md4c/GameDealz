@@ -34,7 +34,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -340,7 +340,7 @@ class DetailsViewModelTest {
 
         fun withGameAddedToWatchList(isAdded: Boolean) = apply {
             runBlocking {
-                whenever(isGameAddedToWatchListUseCase.invoke(any())).thenReturn(produce(capacity = 1) { send(isAdded) })
+                whenever(isGameAddedToWatchListUseCase.invoke(any())).thenReturn(flowOf(isAdded))
             }
         }
     }

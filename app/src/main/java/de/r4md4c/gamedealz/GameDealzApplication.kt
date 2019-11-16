@@ -27,7 +27,7 @@ import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.workmanager.PricesCheckerWorker
 import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA

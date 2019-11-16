@@ -19,11 +19,11 @@ package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.dao.PlainsDao
 import de.r4md4c.gamedealz.data.entity.Plain
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 internal class PlainsLocalRepository(private val plainsDao: PlainsDao) : PlainsRepository {
 
-    override suspend fun all(ids: Collection<String>?): ReceiveChannel<List<Plain>> {
+    override suspend fun all(ids: Collection<String>?): Flow<List<Plain>> {
         throw UnsupportedOperationException("PlainsDao doesn't support retrieving full list")
     }
 

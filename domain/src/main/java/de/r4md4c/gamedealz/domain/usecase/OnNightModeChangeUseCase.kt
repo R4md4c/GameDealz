@@ -18,12 +18,12 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.commonproviders.appcompat.NightMode
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Listens for Night mode change by the user
  */
 interface OnNightModeChangeUseCase {
 
-    suspend fun activeNightModeChange(): ReceiveChannel<NightMode>
+    suspend fun activeNightModeChange(): Flow<NightMode>
 }

@@ -8,7 +8,7 @@ import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -79,8 +79,8 @@ class RegionLocalRepositoryTest {
 
     private inner class ArrangeBuilder {
         init {
-            whenever(regionsWithCountriesDao.allRegions()).thenReturn(Flowable.just(emptyList()))
-            whenever(regionsWithCountriesDao.allRegions(any())).thenReturn(Flowable.just(emptyList()))
+            whenever(regionsWithCountriesDao.allRegions()).thenReturn(flowOf(emptyList()))
+            whenever(regionsWithCountriesDao.allRegions(any())).thenReturn(flowOf(emptyList()))
         }
     }
 }

@@ -19,6 +19,6 @@ package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
-interface GetSelectedStoresUseCase : UseCase<VoidParameter, ReceiveChannel<List<StoreModel>>>
+interface GetSelectedStoresUseCase : UseCase<VoidParameter, Flow<List<StoreModel>>>

@@ -18,6 +18,6 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.VoidParameter
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
-interface GetAlertsCountUseCase : UseCase<VoidParameter, ReceiveChannel<Int>>
+interface GetAlertsCountUseCase : UseCase<VoidParameter, Flow<Int>>

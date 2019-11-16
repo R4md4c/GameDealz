@@ -33,7 +33,7 @@ import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -56,7 +56,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
             val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL) ?: return@launch
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
-            val alertsCount = activeAlertsCountUseCase().firstOrNull() ?: -1
+            val alertsCount = activeAlertsCountUseCase().first()
 
             if (intent.action == ACTION_VIEW_GAME_DETAILS) {
                 notificationModel.toDetailsPendingIntent(context)?.send()

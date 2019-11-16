@@ -19,14 +19,14 @@ package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.dao.CountriesDao
 import de.r4md4c.gamedealz.data.entity.Country
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 class CountriesLocalRepository(private val countriesDao: CountriesDao) : CountriesRepository {
 
     override suspend fun allCountriesUnderRegion(regionCode: String): List<Country> =
         countriesDao.allCountriesUnderRegion(regionCode)
 
-    override suspend fun all(ids: Collection<String>?): ReceiveChannel<List<Country>> {
+    override suspend fun all(ids: Collection<String>?): Flow<List<Country>> {
         throw UnsupportedOperationException("retrieving all countries is not supported")
     }
 

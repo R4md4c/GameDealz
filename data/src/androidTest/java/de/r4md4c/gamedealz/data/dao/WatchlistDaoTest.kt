@@ -24,9 +24,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import de.r4md4c.gamedealz.data.DATA
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Watchee
-import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -53,7 +53,8 @@ class WatchlistDaoTest : KoinTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         startKoin(listOf(DATA, module {
             single(override = true) {
-                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java).build()
+                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java)
+                    .build()
             }
         })).with(context)
     }
@@ -64,46 +65,45 @@ class WatchlistDaoTest : KoinTest {
     }
 
     @Test
-    fun insert() {
-        runBlocking {
-            watchlistDao.insert(watcheesList)
-        }
+    fun insert() = runBlockingTest {
+        watchlistDao.insert(watcheesList)
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insertAbortsTransactionWhenDuplicateErrors() {
-        runBlocking {
-            watchlistDao.insert(watcheesList)
+    fun insertAbortsTransactionWhenDuplicateErrors() = runBlockingTest {
+        watchlistDao.insert(watcheesList)
 
-            watchlistDao.insert(listOf(watcheesList[1]))
-        }
+        watchlistDao.insert(listOf(watcheesList[1]))
     }
 
     @Test
-    fun findOne_findsReallyOne() {
-        runBlocking {
-            watchlistDao.insert(watcheesList)
+    fun findOne_findsReallyOne() = runBlockingTest {
+        watchlistDao.insert(watcheesList)
 
-            assertThat(watchlistDao.findOne("plainId5").awaitFirstOrNull()).isNotEmpty()
-        }
+        assertThat(watchlistDao.findOne("plainId5").first()).isNotEmpty()
     }
 
     @Test
-    fun update() {
-        runBlocking {
-            watchlistDao.insert(watcheesList)
+    fun update() = runBlockingTest {
+        watchlistDao.insert(watcheesList)
 
-            val watchee = watchlistDao.findOne("plainId5").awaitFirst().first()
+        val watchee = watchlistDao.findOne("plainId5").first().first()
 
-            val timeStamp = System.currentTimeMillis()
-            assertThat(watchlistDao.updateWatchee(watchee.id, 500f, "store", timeStamp)).isEqualTo(1)
-            assertThat(watchlistDao.findOne("plainId5").awaitFirst().first()).isEqualTo(
-                watchee.copy(
-                    lastFetchedPrice = 500f,
-                    lastCheckDate = timeStamp
-                )
+        val timeStamp = System.currentTimeMillis()
+        assertThat(
+            watchlistDao.updateWatchee(
+                watchee.id,
+                500f,
+                "store",
+                timeStamp
             )
-        }
+        ).isEqualTo(1)
+        assertThat(watchlistDao.findOne("plainId5").first().first()).isEqualTo(
+            watchee.copy(
+                lastFetchedPrice = 500f,
+                lastCheckDate = timeStamp
+            )
+        )
     }
 
     @Test
@@ -125,13 +125,21 @@ class WatchlistDaoTest : KoinTest {
     }
 
     @Test
-    fun mostRecentLastCheckDate() {
-        runBlocking {
-            watchlistDao.insert(watcheesList.mapIndexed { index: Int, watchee: Watchee -> watchee.copy(lastCheckDate = index.toLong() + 1) })
+    fun mostRecentLastCheckDate() = runBlockingTest {
+        watchlistDao.insert(watcheesList.mapIndexed { index: Int, watchee: Watchee ->
+            watchee.copy(
+                lastCheckDate = index.toLong() + 1
+            )
+        })
 
-            watchlistDao.mostRecentLastCheckDate().test().assertValue(10)
-        }
+        assertThat(watchlistDao.mostRecentLastCheckDate().first()).isEqualTo(10)
     }
+
+    @Test
+    fun mostRecentLastCheckDate_whenEmpty() = runBlockingTest {
+        assertThat(watchlistDao.mostRecentLastCheckDate().first()).isEqualTo(0)
+    }
+
     private val watcheesList = (1..10).map {
         Watchee(
             plainId = "plainId$it",

@@ -23,7 +23,7 @@ import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -43,7 +43,7 @@ class OnNightModeChangeUseCaseImplTest {
 
     @Test
     fun `it should invoke sharedPreferencesProvider`() {
-        coEvery { sharedPreferencesProvider.reactiveNightMode } returns Channel()
+        coEvery { sharedPreferencesProvider.reactiveNightMode } returns emptyFlow()
 
         runBlocking { subject.activeNightModeChange() }
 

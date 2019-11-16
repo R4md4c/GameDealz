@@ -28,8 +28,8 @@ import de.r4md4c.gamedealz.domain.model.findCountry
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.mapNotNull
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
 import java.util.*
 
@@ -63,7 +63,7 @@ internal class GetCurrentActiveRegionUseCaseImpl(
         }
     }
 
-    override suspend fun activeRegionChange(): ReceiveChannel<ActiveRegion> =
+    override suspend fun activeRegionChange(): Flow<ActiveRegion> =
         sharedPreferences.activeRegionAndCountryChannel
             .mapNotNull {
                 val regions = withContext(IO) { getRegionsUseCase() }

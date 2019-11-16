@@ -19,13 +19,13 @@ package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.dao.PriceAlertDao
 import de.r4md4c.gamedealz.data.entity.PriceAlert
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.reactive.openSubscription
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 internal class PriceAlertLocalRepository(private val priceAlertDao: PriceAlertDao) : PriceAlertRepository {
 
-    override suspend fun all(ids: Collection<Long>?): ReceiveChannel<List<PriceAlert>> =
-        (ids?.let { priceAlertDao.findAll(ids) } ?: priceAlertDao.findAll()).distinctUntilChanged().openSubscription()
+    override suspend fun all(ids: Collection<Long>?): Flow<List<PriceAlert>> =
+        (ids?.let { priceAlertDao.findAll(ids) } ?: priceAlertDao.findAll()).distinctUntilChanged()
 
     override suspend fun findByWatcheeId(watcheeId: Long): PriceAlert? =
         priceAlertDao.findByWatcheeId(watcheeId)
@@ -34,8 +34,8 @@ internal class PriceAlertLocalRepository(private val priceAlertDao: PriceAlertDa
 
     override suspend fun removeByWatcheeId(watcheeId: Long): Int = priceAlertDao.deleteByWatcheeId(watcheeId)
 
-    override fun unreadCount(): ReceiveChannel<Int> =
-        priceAlertDao.unreadCount().distinctUntilChanged().openSubscription()
+    override fun unreadCount(): Flow<Int> =
+        priceAlertDao.unreadCount().distinctUntilChanged()
 
     override suspend fun save(models: List<PriceAlert>) {
         priceAlertDao.insert(models)

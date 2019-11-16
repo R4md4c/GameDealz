@@ -37,7 +37,8 @@ import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import kotlinx.android.parcel.Parcelize
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -112,8 +113,8 @@ class DetailsViewModel(
         uiScope.launchWithCatching(dispatchers.IO, {
 
             isGameAddedToWatchListUseCase(TypeParameter(plainId)).run {
-                _isAddedToWatchList.postValue(receiveOrNull() ?: false)
-                consumeEach {
+                _isAddedToWatchList.postValue(first())
+                collect {
                     _isAddedToWatchList.postValue(it)
                 }
             }

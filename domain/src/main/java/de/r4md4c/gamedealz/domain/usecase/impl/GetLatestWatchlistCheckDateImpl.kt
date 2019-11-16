@@ -20,11 +20,11 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 internal class GetLatestWatchlistCheckDateImpl(private val watchlistRepository: WatchlistRepository) :
     GetLatestWatchlistCheckDate {
 
-    override suspend fun invoke(param: VoidParameter?): ReceiveChannel<Long> = watchlistRepository.mostRecentCheckDate()
+    override suspend fun invoke(param: VoidParameter?): Flow<Long> = watchlistRepository.mostRecentCheckDate()
 
 }

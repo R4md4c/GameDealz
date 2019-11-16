@@ -19,6 +19,6 @@ package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
-interface GetWatchlistToManageUseCase : UseCase<VoidParameter, ReceiveChannel<List<ManageWatchlistModel>>>
+interface GetWatchlistToManageUseCase : UseCase<VoidParameter, Flow<List<ManageWatchlistModel>>>

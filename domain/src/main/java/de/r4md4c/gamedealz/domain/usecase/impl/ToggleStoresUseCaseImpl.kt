@@ -22,7 +22,7 @@ import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
-import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 internal class ToggleStoresUseCaseImpl(private val storesRepository: StoresRepository) : ToggleStoresUseCase {

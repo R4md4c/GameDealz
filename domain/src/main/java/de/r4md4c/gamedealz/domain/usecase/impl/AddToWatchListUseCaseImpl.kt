@@ -28,7 +28,7 @@ import de.r4md4c.gamedealz.domain.model.WatcheeModel
 import de.r4md4c.gamedealz.domain.model.toRepositoryModel
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 

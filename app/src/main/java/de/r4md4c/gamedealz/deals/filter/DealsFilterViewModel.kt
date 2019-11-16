@@ -31,7 +31,7 @@ import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
-import kotlinx.coroutines.channels.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -55,9 +55,8 @@ class DealsFilterViewModel(
     fun loadStores() = uiScope.launchWithCatching(dispatchers.Main, {
         val stores = withContext(dispatchers.IO) {
             val activeRegion = getCurrentActiveRegion()
-            getStoresUseCase(TypeParameter(activeRegion)).firstOrNull()
-        } ?: return@launchWithCatching
-
+            getStoresUseCase(TypeParameter(activeRegion)).first()
+        }
 
         val filterItems = withContext(dispatchers.Default) {
             stores.map { FilterItem(it).withSetSelected(it.selected) }

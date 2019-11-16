@@ -26,9 +26,9 @@ import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.toCurrencyModel
 import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlin.collections.mapNotNull
 
 internal class GetWatchlistToManageUseCaseImpl(
@@ -37,7 +37,7 @@ internal class GetWatchlistToManageUseCaseImpl(
     private val priceAlertRepository: PriceAlertRepository
 ) : GetWatchlistToManageUseCase {
 
-    override suspend fun invoke(param: VoidParameter?): ReceiveChannel<List<ManageWatchlistModel>> = coroutineScope {
+    override suspend fun invoke(param: VoidParameter?): Flow<List<ManageWatchlistModel>> = coroutineScope {
         watchlistRepository.all().map { it.toManageWatchlistModel() }
     }
 

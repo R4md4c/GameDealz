@@ -5,6 +5,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation Libraries.kotlinStdLib
     implementation Libraries.kotlinCoroutines
+    implementation TestLibraries.coroutinesTest
+    implementation TestLibraries.junit
     implementation project(':common')
 
     api (TestLibraries.mockK) { exclude module: 'objenesis' }

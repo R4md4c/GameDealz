@@ -23,9 +23,10 @@ import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
-import kotlinx.coroutines.channels.first
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -48,7 +49,7 @@ class IsGameAddedToWatchListUseCaseImplTest {
 
     @Test
     fun `it should return true when findById returns non null`() {
-        runBlocking {
+        runBlockingTest {
             ArrangeBuilder()
                 .withWatchee(mock())
 
@@ -70,7 +71,7 @@ class IsGameAddedToWatchListUseCaseImplTest {
 
         fun withWatchee(watchee: Watchee?) {
             runBlocking {
-                whenever(watchlistRepository.findById(any<String>())).thenReturn(produce(capacity = 1) { offer(watchee) })
+                whenever(watchlistRepository.findById(any<String>())).thenReturn(flowOf(watchee))
             }
         }
 

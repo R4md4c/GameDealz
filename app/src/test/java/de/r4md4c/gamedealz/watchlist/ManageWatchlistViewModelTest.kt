@@ -33,7 +33,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -130,7 +130,7 @@ class ManageWatchlistViewModelTest {
 
         fun withWatchlistModels(models: List<ManageWatchlistModel>) = apply {
             runBlocking {
-                coEvery { getWatchlistUseCase.invoke(any()) } returns produce(capacity = 1) { send(models) }
+                coEvery { getWatchlistUseCase.invoke(any()) } returns flowOf(models)
             }
         }
 

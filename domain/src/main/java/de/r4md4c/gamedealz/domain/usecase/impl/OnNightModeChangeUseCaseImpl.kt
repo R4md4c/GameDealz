@@ -20,11 +20,12 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 internal class OnNightModeChangeUseCaseImpl(private val sharedPreferencesProvider: SharedPreferencesProvider) :
     OnNightModeChangeUseCase {
 
-    override suspend fun activeNightModeChange(): ReceiveChannel<NightMode> =
-        sharedPreferencesProvider.reactiveNightMode
+    override suspend fun activeNightModeChange(): Flow<NightMode> =
+        sharedPreferencesProvider.reactiveNightMode.distinctUntilChanged()
 }

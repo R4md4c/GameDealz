@@ -32,10 +32,8 @@ import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.*
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -124,7 +122,7 @@ class ManageWatchlistViewModel(
 
     private fun observeWatchlistData() {
         uiScope.launchWithCatching(dispatchers.IO, {
-            getWatchlistUseCase().consumeAsFlow()
+            getWatchlistUseCase()
                 .map { it - removedItems }
                 .collect { postWatchlist(it) }
         }) {
@@ -134,7 +132,7 @@ class ManageWatchlistViewModel(
 
     private fun observeLatestCheckDate() {
         uiScope.launchWithCatching(dispatchers.IO, {
-            getLatestWatchlistCheckDate().filter { it > 0 }.consumeEach {
+            getLatestWatchlistCheckDate().filter { it > 0 }.collect {
                 val formattedTimeSpan = dateFormatter.getRelativeTimeSpanString(TimeUnit.SECONDS.toMillis(it))
                 _lastCheckDate.postValue(formattedTimeSpan)
             }
@@ -144,7 +142,7 @@ class ManageWatchlistViewModel(
     }
 
     suspend fun refreshWatchlist() {
-        getWatchlistUseCase().consumeAsFlow().first().also { postWatchlist(it) }
+        getWatchlistUseCase().first().also { postWatchlist(it) }
     }
 
     private fun postWatchlist(manageWatchlistModel: List<ManageWatchlistModel>) {

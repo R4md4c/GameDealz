@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.entity.Watchee
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 interface WatchlistRepository : Repository<Watchee, Long> {
 
@@ -41,7 +41,7 @@ interface WatchlistRepository : Repository<Watchee, Long> {
      *
      * @param plainId the id that will be used to retrieve the model form.
      */
-    suspend fun findById(plainId: String): ReceiveChannel<Watchee?>
+    suspend fun findById(plainId: String): Flow<Watchee?>
 
     /**
      * Update the currentPrice and the lastChecked timestamp of a Watchee.
@@ -57,5 +57,5 @@ interface WatchlistRepository : Repository<Watchee, Long> {
     /**
      * @return the most recent lastChecked in Seconds.
      */
-    suspend fun mostRecentCheckDate(): ReceiveChannel<Long>
+    suspend fun mostRecentCheckDate(): Flow<Long>
 }

@@ -32,8 +32,10 @@ import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.*
+import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Before
@@ -46,6 +48,9 @@ class HomeViewModelTest {
 
     @get:Rule
     val instantTaskRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -269,9 +274,9 @@ class HomeViewModelTest {
         init {
             runBlocking {
                 whenever(getCurrentActiveRegion.invoke(anyOrNull())).thenReturn(activeRegion)
-                whenever(onActiveRegionChange.activeRegionChange()).thenReturn(produce { this.close() })
-                whenever(getStoresUseCase.invoke(anyOrNull())).thenReturn(produce { this.close() })
-                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(produce { this.close() })
+                whenever(onActiveRegionChange.activeRegionChange()).thenReturn(emptyFlow())
+                whenever(getStoresUseCase.invoke(anyOrNull())).thenReturn(emptyFlow())
+                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(emptyFlow())
                 whenever(toggleStoresUseCase.invoke(anyOrNull())).thenReturn(Unit)
             }
         }
@@ -284,7 +289,7 @@ class HomeViewModelTest {
 
         fun withStore(stores: List<StoreModel>) = apply {
             runBlocking {
-                whenever(getStoresUseCase.invoke(anyOrNull())).thenReturn(produce(capacity = 1) { send(stores) })
+                whenever(getStoresUseCase.invoke(anyOrNull())).thenReturn(flowOf(stores))
             }
         }
 
@@ -302,19 +307,13 @@ class HomeViewModelTest {
 
         fun withActiveNightMode(nightMode: NightMode) = apply {
             runBlocking {
-                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(produce(capacity = 1) { send(nightMode) })
+                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(flowOf(nightMode))
             }
         }
 
         fun withMultipleActiveNightModes(nightModes: List<NightMode>) = apply {
             runBlocking {
-                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(produce(capacity = nightModes.size) {
-                    nightModes.forEach {
-                        send(
-                            it
-                        )
-                    }
-                })
+                whenever(onNightModeUseCase.activeNightModeChange()).thenReturn(flowOf(*nightModes.toTypedArray()))
             }
         }
     }

@@ -20,13 +20,13 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 internal class IsGameAddedToWatchListUseCaseImpl(private val watchlistRepository: WatchlistRepository) :
     IsGameAddedToWatchListUseCase {
 
-    override suspend fun invoke(param: TypeParameter<String>?): ReceiveChannel<Boolean> {
+    override suspend fun invoke(param: TypeParameter<String>?): Flow<Boolean> {
         val plainId = requireNotNull(param).value
 
         return watchlistRepository.findById(plainId).map { it != null }

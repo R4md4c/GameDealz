@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.data.repository
 
 import de.r4md4c.gamedealz.data.entity.PriceAlert
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 interface PriceAlertRepository : Repository<PriceAlert, Long> {
 
@@ -28,5 +28,5 @@ interface PriceAlertRepository : Repository<PriceAlert, Long> {
 
     suspend fun removeByWatcheeId(watcheeId: Long): Int
 
-    fun unreadCount(): ReceiveChannel<Int>
+    fun unreadCount(): Flow<Int>
 }

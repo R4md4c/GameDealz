@@ -30,7 +30,7 @@ import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import kotlinx.coroutines.channels.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.math.BigDecimal

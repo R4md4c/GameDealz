@@ -18,7 +18,7 @@
 package de.r4md4c.commonproviders.preferences
 
 import de.r4md4c.commonproviders.appcompat.NightMode
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 /**
  * A wrapper around [android.content.SharedPreferences].
@@ -30,7 +30,7 @@ interface SharedPreferencesProvider {
      *
      * @return A pair that has region as first and country as second, otherwise null.
      */
-    val activeRegionAndCountryChannel: ReceiveChannel<Pair<String, String>>
+    val activeRegionAndCountryChannel: Flow<Pair<String, String>>
 
     /**
      * Returns the current active region and country.
@@ -42,11 +42,11 @@ interface SharedPreferencesProvider {
     /**
      * Returns the periodic hourly interval in which the price checker runs. By default the checker runs every 6 hours
      */
-    val reactivePriceCheckerPeriodicIntervalInHours: ReceiveChannel<Int>
+    val reactivePriceCheckerPeriodicIntervalInHours: Flow<Int>
 
     var priceCheckerPeriodicIntervalInHours: Int
 
 
     var activeNightMode: NightMode
-    val reactiveNightMode: ReceiveChannel<NightMode>
+    val reactiveNightMode: Flow<NightMode>
 }

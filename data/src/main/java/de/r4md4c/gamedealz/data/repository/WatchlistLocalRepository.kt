@@ -22,21 +22,21 @@ import de.r4md4c.gamedealz.data.dao.WatchlistDao
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.first
-import kotlinx.coroutines.channels.map
-import kotlinx.coroutines.reactive.openSubscription
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 internal class WatchlistLocalRepository(
     private val watchlistDao: WatchlistDao,
     private val watchlistStoresDao: WatcheeStoreJoinDao
 ) : WatchlistRepository, WatchlistStoresRepository {
 
-    override suspend fun findById(plainId: String): ReceiveChannel<Watchee?> =
-        watchlistDao.findOne(plainId).openSubscription().map { it.firstOrNull() }
+    override suspend fun findById(plainId: String): Flow<Watchee?> =
+        watchlistDao.findOne(plainId).map { it.firstOrNull() }
 
-    override suspend fun all(ids: Collection<Long>?): ReceiveChannel<List<Watchee>> =
-        (ids?.let { watchlistDao.findAll(it) } ?: watchlistDao.findAll()).openSubscription()
+    override suspend fun all(ids: Collection<Long>?): Flow<List<Watchee>> =
+        (ids?.let { watchlistDao.findAll(it) } ?: watchlistDao.findAll())
 
     override suspend fun removeById(ids: Collection<Long>): Int = watchlistDao.delete(ids)
 
@@ -71,6 +71,6 @@ internal class WatchlistLocalRepository(
     ): Int =
         watchlistDao.updateWatchee(id, lastFetchedPrice, lastFetchedStoreName, lastChecked)
 
-    override suspend fun mostRecentCheckDate(): ReceiveChannel<Long> =
-        watchlistDao.mostRecentLastCheckDate().distinctUntilChanged().openSubscription()
+    override suspend fun mostRecentCheckDate(): Flow<Long> =
+        watchlistDao.mostRecentLastCheckDate().distinctUntilChanged()
 }
