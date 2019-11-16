@@ -19,6 +19,8 @@ package de.r4md4c.gamedealz.watchlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.IDispatchers
@@ -27,7 +29,6 @@ import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
@@ -51,7 +52,7 @@ class ManageWatchlistViewModel(
     private val checkPricesUseCase: CheckPriceThresholdUseCase,
     private val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase,
     private val notifier: Notifier<WatcheeNotificationModel>
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private val _watchlistLiveData by lazy { MutableLiveData<List<ManageWatchlistModel>>() }
     val watchlistLiveData: LiveData<List<ManageWatchlistModel>> by lazy { _watchlistLiveData }
@@ -74,7 +75,7 @@ class ManageWatchlistViewModel(
     }
 
     fun onRemoveWatchee(tobeRemoved: List<ManageWatchlistModel>) {
-        uiScope.launchWithCatching(dispatchers.IO, {
+        viewModelScope.launchWithCatching(dispatchers.IO, {
             removeWatcheesUseCase(TypeParameter(tobeRemoved.map { it.watcheeModel }))
             removedItems -= tobeRemoved
         }) {
@@ -88,13 +89,13 @@ class ManageWatchlistViewModel(
 
     fun onItemUndone(model: ManageWatchlistModel) {
         removedItems -= model
-        uiScope.launchWithCatching(dispatchers.IO, { refreshWatchlist() }) {
+        viewModelScope.launchWithCatching(dispatchers.IO, { refreshWatchlist() }) {
             Timber.e(it, "Failed to refresh watchlist after undoing operation.%")
         }
     }
 
     fun onSwipeToRefresh() {
-        uiScope.launchWithCatching(dispatchers.Main, {
+        viewModelScope.launchWithCatching(dispatchers.Main, {
             stateMachineDelegate.transition(Event.OnLoadingStart)
             val notificationModels = withContext(dispatchers.IO) { checkPricesUseCase() }
             if (notificationModels.isNotEmpty()) {
@@ -112,7 +113,7 @@ class ManageWatchlistViewModel(
     }
 
     fun markAsRead(model: ManageWatchlistModel) {
-        uiScope.launchWithCatching(dispatchers.IO, {
+        viewModelScope.launchWithCatching(dispatchers.IO, {
             markNotificationAsReadUseCase(TypeParameter(model.watcheeModel))
             refreshWatchlist()
         }) {
@@ -121,7 +122,7 @@ class ManageWatchlistViewModel(
     }
 
     private fun observeWatchlistData() {
-        uiScope.launchWithCatching(dispatchers.IO, {
+        viewModelScope.launchWithCatching(dispatchers.IO, {
             getWatchlistUseCase()
                 .map { it - removedItems }
                 .collect { postWatchlist(it) }
@@ -131,7 +132,7 @@ class ManageWatchlistViewModel(
     }
 
     private fun observeLatestCheckDate() {
-        uiScope.launchWithCatching(dispatchers.IO, {
+        viewModelScope.launchWithCatching(dispatchers.IO, {
             getLatestWatchlistCheckDate().filter { it > 0 }.collect {
                 val formattedTimeSpan = dateFormatter.getRelativeTimeSpanString(TimeUnit.SECONDS.toMillis(it))
                 _lastCheckDate.postValue(formattedTimeSpan)

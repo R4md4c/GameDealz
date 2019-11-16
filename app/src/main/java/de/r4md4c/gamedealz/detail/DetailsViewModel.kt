@@ -18,9 +18,7 @@
 package de.r4md4c.gamedealz.detail
 
 import android.os.Parcelable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
@@ -30,7 +28,6 @@ import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
@@ -64,7 +61,7 @@ class DetailsViewModel(
     private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase,
     private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
     private val resourcesProvider: ResourcesProvider
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private var loadedPlainDetailsModel: PlainDetailsModel? = null
 
@@ -110,7 +107,7 @@ class DetailsViewModel(
     }
 
     fun loadIsAddedToWatchlist(plainId: String) {
-        uiScope.launchWithCatching(dispatchers.IO, {
+        viewModelScope.launchWithCatching(dispatchers.IO, {
 
             isGameAddedToWatchListUseCase(TypeParameter(plainId)).run {
                 _isAddedToWatchList.postValue(first())
@@ -125,7 +122,7 @@ class DetailsViewModel(
     }
 
     fun onRestoreState(detailsViewModelState: DetailsViewModelState) {
-        uiScope.launch(dispatchers.Default) {
+        viewModelScope.launch(dispatchers.Default) {
             postDetailsInfo(detailsViewModelState.plainDetailsModel)
             _filterItemChoice.postValue(detailsViewModelState.filterSelection)
         }
@@ -143,7 +140,7 @@ class DetailsViewModel(
         return _screenshots.value!!.takeLast(_screenshots.value!!.size - spanCount)
     }
 
-    fun loadPlainDetails(plainId: String) = uiScope.launchWithCatching(dispatchers.IO, {
+    fun loadPlainDetails(plainId: String) = viewModelScope.launchWithCatching(dispatchers.IO, {
 
         stateMachineDelegate.transition(Event.OnLoadingStart)
 
@@ -157,7 +154,7 @@ class DetailsViewModel(
     }
 
     private fun applyFilter(filterChoice: Int): LiveData<List<PriceDetails>> {
-        uiScope.launchWithCatching(dispatchers.Default, {
+        viewModelScope.launchWithCatching(dispatchers.Default, {
             _prices.value?.sortedBy {
                 when (filterChoice) {
                     R.id.menu_item_current_best -> it.priceModel.newPrice

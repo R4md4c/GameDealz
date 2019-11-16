@@ -20,12 +20,12 @@ package de.r4md4c.gamedealz.home
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.navigation.Navigator
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
@@ -44,7 +44,7 @@ class HomeViewModel(
     private val priceAlertsCountUseCase: GetAlertsCountUseCase,
     private val toggleNightModeUseCase: ToggleNightModeUseCase,
     private val onNightModeChangeUseCase: OnNightModeChangeUseCase
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
     val currentRegion: LiveData<ActiveRegion> by lazy { _currentRegion }

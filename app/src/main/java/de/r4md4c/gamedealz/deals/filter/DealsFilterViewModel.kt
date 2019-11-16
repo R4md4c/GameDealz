@@ -20,10 +20,11 @@ package de.r4md4c.gamedealz.deals.filter
 import androidx.collection.ArraySet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.deals.item.FilterItem
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
@@ -40,7 +41,7 @@ class DealsFilterViewModel(
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val toggleStoresUseCase: ToggleStoresUseCase
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private val toggleSet: MutableSet<StoreModel> by lazy {
         ArraySet<StoreModel>()
@@ -52,7 +53,7 @@ class DealsFilterViewModel(
     private val _dismiss by lazy { SingleLiveEvent<Unit>() }
     val dismiss: LiveData<Unit> by lazy { _dismiss }
 
-    fun loadStores() = uiScope.launchWithCatching(dispatchers.Main, {
+    fun loadStores() = viewModelScope.launchWithCatching(dispatchers.Main, {
         val stores = withContext(dispatchers.IO) {
             val activeRegion = getCurrentActiveRegion()
             getStoresUseCase(TypeParameter(activeRegion)).first()
@@ -74,7 +75,7 @@ class DealsFilterViewModel(
         }
     }
 
-    fun submit() = uiScope.launchWithCatching(dispatchers.IO, {
+    fun submit() = viewModelScope.launchWithCatching(dispatchers.IO, {
         toggleStoresUseCase(CollectionParameter(toggleSet))
         _dismiss.postValue(Unit)
     }) {

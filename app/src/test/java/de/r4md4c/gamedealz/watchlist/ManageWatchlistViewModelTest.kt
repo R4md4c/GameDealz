@@ -28,6 +28,7 @@ import de.r4md4c.gamedealz.common.state.FakeStateMachineDelegate
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.*
+import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -46,6 +47,9 @@ class ManageWatchlistViewModelTest {
     private val dispatchers: IDispatchers = TestDispatchers
 
     private val fakeStateMachineDelegate = FakeStateMachineDelegate()
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     @JvmField
     @Rule

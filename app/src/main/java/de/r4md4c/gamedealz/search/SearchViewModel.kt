@@ -19,13 +19,14 @@ package de.r4md4c.gamedealz.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.debounce
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.common.viewmodel.AbstractViewModel
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
@@ -42,13 +43,13 @@ class SearchViewModel(
     private val dispatchers: IDispatchers,
     private val searchUseCase: SearchUseCase,
     private val stateMachineDelegate: StateMachineDelegate
-) : AbstractViewModel(dispatchers) {
+) : ViewModel() {
 
     private var currentJob: Job? = null
 
-    private val queryChannel = uiScope.actor<String>(dispatchers.Default) {
+    private val queryChannel = viewModelScope.actor<String>(dispatchers.Default) {
         filter { it.isNotBlank() }
-            .debounce(uiScope, 500)
+            .debounce(viewModelScope, 500)
             .distinct()
             .consumeEach {
                 currentJob?.cancelAndJoin()
@@ -79,7 +80,7 @@ class SearchViewModel(
     }
 
     private fun loadSearchResults(searchTerm: String) {
-        currentJob = uiScope.launch(dispatchers.IO) {
+        currentJob = viewModelScope.launch(dispatchers.IO) {
             stateMachineDelegate.transition(Event.OnLoadingStart)
             runCatching { searchUseCase(TypeParameter(searchTerm)) }
                 .onSuccess {

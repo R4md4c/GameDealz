@@ -33,6 +33,7 @@ import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
+import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -45,6 +46,9 @@ import org.mockito.MockitoAnnotations
 import kotlin.properties.Delegates
 
 class DetailsViewModelTest {
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     @get:Rule
     val instantTaskRule = InstantTaskExecutorRule()
