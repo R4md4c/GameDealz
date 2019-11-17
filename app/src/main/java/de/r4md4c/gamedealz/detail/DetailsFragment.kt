@@ -154,7 +154,7 @@ class DetailsFragment : BaseFragment() {
     }
 
     private fun renderPrices(it: List<PriceDetails>) {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             progress.isVisible = true
             val pricesItems = withContext(dispatchers.Default) {
                 val filterHeaderItem = FilterHeaderItem(
@@ -208,7 +208,8 @@ class DetailsFragment : BaseFragment() {
         detailsViewModel.onFilterChange(clickedFilterItemId)
     }
 
-    private fun askToRemove() = lifecycleScope.launchWithCatching(dispatchers.Main, {
+    private fun askToRemove() =
+        viewLifecycleOwner.lifecycleScope.launchWithCatching(dispatchers.Main, {
         val yes = ask()
         if (yes) {
             val isRemoved = detailsViewModel.removeFromWatchlist(plainId)

@@ -111,7 +111,7 @@ class SearchFragment : BaseFragment() {
         }
 
         viewModel.searchResults.observe(this, Observer {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 progress.isVisible = true
                 withContext(dispatchers.Default) {
                     it.map { searchResult -> searchResult.toRenderModel(resourcesProvider, dateFormatter) }

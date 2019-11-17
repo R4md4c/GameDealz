@@ -121,7 +121,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launchWithCatching(
+        viewLifecycleOwner.lifecycleScope.launchWithCatching(
             dispatchers.Default,
             { watchlistViewModel.refreshWatchlist() }) {
             Timber.e(it, "Failed to refresh Watchlist")
@@ -144,7 +144,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     }
 
     private fun renderModels(modelsList: List<ManageWatchlistModel>) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val transformedList = withContext(dispatchers.Default) {
                 modelsList.mapNotNull { model ->
                     model.toManageWatchlistItem(resourcesProvider)?.withTag(model)
@@ -193,7 +193,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     }
 
     private fun askUser() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             showDialog().takeIf { it }?.let {
                 shortcutManager.addManageWatchlistShortcut()
             }
