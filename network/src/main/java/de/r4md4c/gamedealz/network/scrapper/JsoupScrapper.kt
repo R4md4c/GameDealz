@@ -27,9 +27,13 @@ import java.util.concurrent.TimeUnit
 
 internal class JsoupScrapper(okHttpClient: OkHttpClient) : Scrapper {
 
+    companion object {
+        private const val TIMEOUT = 30L
+    }
+
     private val okHttpClient = okHttpClient.newBuilder()
-        .callTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .callTimeout(TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         .build()
 
     override suspend fun scrap(url: String): Document {
@@ -38,5 +42,4 @@ internal class JsoupScrapper(okHttpClient: OkHttpClient) : Scrapper {
         }
         return Jsoup.parse(responseString)
     }
-
 }

@@ -22,7 +22,14 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.squareup.moshi.Moshi
 import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
 import de.r4md4c.gamedealz.network.json.ApplicationJsonAdapterFactory
-import de.r4md4c.gamedealz.network.repository.*
+import de.r4md4c.gamedealz.network.repository.IsThereAnyDealRepository
+import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
+import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
+import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository
+import de.r4md4c.gamedealz.network.repository.DealsRemoteRepository
+import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
+import de.r4md4c.gamedealz.network.repository.SteamRemoteRepository
+import de.r4md4c.gamedealz.network.repository.SteamRepository
 import de.r4md4c.gamedealz.network.scrapper.JsoupScrapper
 import de.r4md4c.gamedealz.network.scrapper.Scrapper
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealScrappingService
@@ -41,14 +48,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import java.io.File
+import java.security.NoSuchAlgorithmException
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 
 const val READ_TIMEOUT_IN_SECONDS = 30L
+const val MB_50: Long = 50 * 1024 * 1024
 
 val NETWORK = module {
 
-    single<IsThereAnyDealService> {
+    single {
         val okHttpClient: OkHttpClient = get()
         Retrofit.Builder()
             .client(okHttpClient.newBuilder().cache(get()).build())
@@ -59,7 +68,7 @@ val NETWORK = module {
             .create(IsThereAnyDealService::class.java)
     }
 
-    single<SteamService> {
+    single {
         val okHttpClient: OkHttpClient = get()
         Retrofit.Builder()
             .client(okHttpClient.newBuilder().cache(get()).build())
@@ -80,7 +89,7 @@ val NETWORK = module {
 
     factory {
         val okHttpCacheDir = File(androidContext().cacheDir, "http-cache")
-        Cache(okHttpCacheDir, 50 * 1024 * 1024) // 50 MB
+        Cache(okHttpCacheDir, MB_50)
     }
 
     single {
@@ -115,7 +124,6 @@ val NETWORK = module {
     factory<SteamRemoteRepository> { SteamRepository(get()) }
 
     factory<Scrapper> { JsoupScrapper(get()) }
-
 }
 
 private fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builder {
@@ -131,7 +139,7 @@ private fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builde
             val specs = arrayListOf(cs, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT)
 
             connectionSpecs(specs)
-        } catch (exc: Exception) {
+        } catch (exc: NoSuchAlgorithmException) {
             Timber.e(exc, "Error while setting TLS 1.2")
         }
     }

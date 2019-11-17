@@ -15,6 +15,7 @@ buildscript {
 
 plugins {
     id "com.github.ben-manes.versions" version "0.21.0"
+    id "io.gitlab.arturbosch.detekt" version "1.1.1"
 }
 
 allprojects {
@@ -22,15 +23,33 @@ allprojects {
         mavenCentral()
         maven { url 'https://jitpack.io' }
         google()
-    }
-}
-
-allprojects {
-    repositories {
-        google()
         jcenter()
     }
 }
+
+subprojects {
+    apply plugin: 'io.gitlab.arturbosch.detekt'
+
+    detekt {
+        input = files("src/main/java")
+        autoCorrect = true
+        reports {
+            html {
+                enabled = true
+                destination = file("$projectDir/build/reports/detekt.html")
+            }
+            xml {
+                enabled = false
+            }
+        }
+        config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
+    }
+
+    dependencies {
+        detektPlugins BuildPlugins.detektFormatting
+    }
+}
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir

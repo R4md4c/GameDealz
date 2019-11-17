@@ -41,7 +41,6 @@ interface PricesRemoteRepository {
         added: Long? = null
     ): Map<String, List<Price>>
 
-
     /**
      * Retrieve the historical low for a list of plain ids.
      *

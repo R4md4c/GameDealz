@@ -17,7 +17,11 @@
 
 package de.r4md4c.gamedealz.network.repository
 
-import de.r4md4c.gamedealz.network.model.*
+import de.r4md4c.gamedealz.network.model.Deal
+import de.r4md4c.gamedealz.network.model.PageResult
+import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.Store
+import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.RegionCodes
 import de.r4md4c.gamedealz.network.service.ShopPlains

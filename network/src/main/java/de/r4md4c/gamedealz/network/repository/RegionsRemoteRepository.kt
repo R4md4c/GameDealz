@@ -25,5 +25,4 @@ interface RegionsRemoteRepository {
      * Retrieves regions from remote repository
      */
     suspend fun regions(): RegionCodes
-
 }
