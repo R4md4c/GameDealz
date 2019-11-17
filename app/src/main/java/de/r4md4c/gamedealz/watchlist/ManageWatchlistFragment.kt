@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -120,7 +121,9 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
     override fun onResume() {
         super.onResume()
-        viewScope.launchWithCatching(dispatchers.Default, { watchlistViewModel.refreshWatchlist() }) {
+        lifecycleScope.launchWithCatching(
+            dispatchers.Default,
+            { watchlistViewModel.refreshWatchlist() }) {
             Timber.e(it, "Failed to refresh Watchlist")
         }
     }
@@ -141,7 +144,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     }
 
     private fun renderModels(modelsList: List<ManageWatchlistModel>) {
-        viewScope.launch {
+        lifecycleScope.launch {
             val transformedList = withContext(dispatchers.Default) {
                 modelsList.mapNotNull { model ->
                     model.toManageWatchlistItem(resourcesProvider)?.withTag(model)
@@ -190,7 +193,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     }
 
     private fun askUser() {
-        viewScope.launch {
+        lifecycleScope.launch {
             showDialog().takeIf { it }?.let {
                 shortcutManager.addManageWatchlistShortcut()
             }

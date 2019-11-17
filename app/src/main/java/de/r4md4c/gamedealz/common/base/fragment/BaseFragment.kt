@@ -26,34 +26,15 @@ import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.home.HomeActivity
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_deals.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import org.koin.android.ext.android.inject
 
 abstract class BaseFragment : Fragment() {
     protected val dispatchers: IDispatchers by inject()
 
-    private val job = SupervisorJob()
-    private val viewScopeDelegate = lazy { CoroutineScope(job + dispatchers.Main) }
-
-    /**
-     * A [CoroutineScope] that binds to the view, that is, clears on [onDestroyView].
-     * You should use that if you want to be sure that the views that you're touching are valid.
-     */
-    protected val viewScope by viewScopeDelegate
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         clearFindViewByIdCache()
         toolbar?.let { onCreateOptionsMenu(it) }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (viewScopeDelegate.isInitialized()) {
-            job.cancelChildren()
-        }
     }
 
     val drawerLayout: DrawerLayout?

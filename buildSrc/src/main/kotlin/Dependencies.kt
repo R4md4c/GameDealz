@@ -33,7 +33,7 @@ object Libraries {
         const val coroutines = "1.3.2"
         const val room = "2.2.1"
         const val timber = "4.7.1"
-        const val lifecycle = "2.1.0"
+        const val lifecycle = "2.2.0-rc02"
         const val glide = "4.10.0"
         const val swiperefreshlayout = "1.0.0"
         const val appCompat = "1.1.0"
@@ -72,6 +72,7 @@ object Libraries {
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
     const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel:${Versions.lifecycle}"
     const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
+    const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata:${Versions.lifecycle}"
     const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
 
