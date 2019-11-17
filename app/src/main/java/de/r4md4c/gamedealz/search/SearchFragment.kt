@@ -29,6 +29,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.commonproviders.FOR_ACTIVITY
 import de.r4md4c.commonproviders.date.DateFormatter
@@ -110,7 +111,7 @@ class SearchFragment : BaseFragment() {
         }
 
         viewModel.searchResults.observe(this, Observer {
-            viewScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 progress.isVisible = true
                 withContext(dispatchers.Default) {
                     it.map { searchResult -> searchResult.toRenderModel(resourcesProvider, dateFormatter) }
@@ -138,7 +139,7 @@ class SearchFragment : BaseFragment() {
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
     }
 

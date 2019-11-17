@@ -67,6 +67,7 @@ dependencies {
     implementation Libraries.constraintLayout
     implementation Libraries.lifecycleViewModel
     implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.lifecycleRuntimeKtx
     implementation Libraries.recyclerView
     implementation Libraries.pagingRuntimeKtx
     implementation Libraries.androidXAnnotations

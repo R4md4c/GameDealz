@@ -26,6 +26,7 @@ import androidx.annotation.IdRes
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
@@ -52,7 +53,6 @@ import de.r4md4c.gamedealz.detail.item.*
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.watchlist.AddToWatchListDialog
 import kotlinx.android.synthetic.main.fragment_game_detail.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -154,33 +154,35 @@ class DetailsFragment : BaseFragment() {
     }
 
     private fun renderPrices(it: List<PriceDetails>) {
-        viewScope.launch(dispatchers.Default) {
-            withContext(dispatchers.Main) { progress.isVisible = true }
-            val filterHeaderItem = FilterHeaderItem(
-                getString(R.string.prices),
-                R.menu.details_prices_sort_menu,
-                detailsViewModel.currentFilterItemChoice
-            ) { sortId -> handleFilterItemClick(sortId) }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            progress.isVisible = true
+            val pricesItems = withContext(dispatchers.Default) {
+                val filterHeaderItem = FilterHeaderItem(
+                    getString(R.string.prices),
+                    R.menu.details_prices_sort_menu,
+                    detailsViewModel.currentFilterItemChoice
+                ) { sortId -> handleFilterItemClick(sortId) }
 
-            val desiredState = if (detailsViewModel.currentFilterItemChoice == R.id.menu_item_current_best) {
-                R.id.state_current_best
-            } else {
-                R.id.state_historical_low
+                val desiredState =
+                    if (detailsViewModel.currentFilterItemChoice == R.id.menu_item_current_best) {
+                        R.id.state_current_best
+                    } else {
+                        R.id.state_historical_low
+                    }
+
+                listOf(filterHeaderItem) + it.map { priceDetails ->
+                    priceDetails.toPriceItem(
+                        resourcesProvider,
+                        dateFormatter,
+                        desiredState,
+                        detailsViewModel::onBuyButtonClick
+                    )
+                }
             }
 
-            val pricesItems = listOf(filterHeaderItem) + it.map { priceDetails ->
-                priceDetails.toPriceItem(
-                    resourcesProvider,
-                    dateFormatter,
-                    desiredState,
-                    detailsViewModel::onBuyButtonClick
-                )
-            }
-            withContext(dispatchers.Main) {
-                pricesAdapter.set(pricesItems)
-                progress.isVisible = false
-                addToWatchList.show()
-            }
+            pricesAdapter.set(pricesItems)
+            progress.isVisible = false
+            addToWatchList.show()
         }
     }
 
@@ -206,7 +208,8 @@ class DetailsFragment : BaseFragment() {
         detailsViewModel.onFilterChange(clickedFilterItemId)
     }
 
-    private fun askToRemove() = viewScope.launchWithCatching(dispatchers.Main, {
+    private fun askToRemove() =
+        viewLifecycleOwner.lifecycleScope.launchWithCatching(dispatchers.Main, {
         val yes = ask()
         if (yes) {
             val isRemoved = detailsViewModel.removeFromWatchlist(plainId)
