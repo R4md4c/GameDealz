@@ -52,7 +52,6 @@ import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import java.util.*
 
-
 internal class WatcheesPushNotifier(
     private val context: Context,
     private val resourcesProvider: ResourcesProvider

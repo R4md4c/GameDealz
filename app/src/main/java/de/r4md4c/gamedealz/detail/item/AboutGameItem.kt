@@ -80,9 +80,7 @@ class AboutGameItem(
 
             description.text = HtmlCompat.fromHtml(shortDescription, HtmlCompat.FROM_HTML_MODE_COMPACT)
         }
-
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
 }

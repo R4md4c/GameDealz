@@ -106,7 +106,6 @@ class AddToWatchListViewModel(
         }
 
         doAddToWatchList(plainId, title, priceModel, targetPrice, selectedStores)
-
     }
 
     fun formatCurrentBestCurrencyModel(priceModel: PriceModel): LiveData<String> {

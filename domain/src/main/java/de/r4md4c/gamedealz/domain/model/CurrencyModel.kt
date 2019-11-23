@@ -22,4 +22,3 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class CurrencyModel(val currencyCode: String, val sign: String) : Parcelable
-

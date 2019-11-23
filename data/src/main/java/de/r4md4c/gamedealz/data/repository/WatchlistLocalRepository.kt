@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+@Suppress("TooManyFunctions")
 internal class WatchlistLocalRepository(
     private val watchlistDao: WatchlistDao,
     private val watchlistStoresDao: WatcheeStoreJoinDao

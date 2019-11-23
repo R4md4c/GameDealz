@@ -26,5 +26,4 @@ internal class GetLatestWatchlistCheckDateImpl(private val watchlistRepository: 
     GetLatestWatchlistCheckDate {
 
     override suspend fun invoke(param: VoidParameter?): Flow<Long> = watchlistRepository.mostRecentCheckDate()
-
 }

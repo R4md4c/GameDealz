@@ -26,5 +26,4 @@ interface PricesCheckerWorker {
      * Enqueues the Worker to run periodically.
      */
     suspend fun schedulePeriodically()
-
 }

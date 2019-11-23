@@ -26,5 +26,4 @@ interface CountriesDao {
 
     @Query("SELECT * FROM Country WHERE regionCode = :regionCode")
     suspend fun allCountriesUnderRegion(regionCode: String): List<Country>
-
 }

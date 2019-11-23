@@ -17,7 +17,11 @@
 
 package de.r4md4c.gamedealz.common
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 inline fun CoroutineScope.launchWithCatching(
     context: CoroutineDispatcher,

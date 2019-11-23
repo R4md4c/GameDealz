@@ -87,5 +87,4 @@ private fun DealModel.storeAndTimeSpan(resourcesProvider: ResourcesProvider): Sp
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-
 }

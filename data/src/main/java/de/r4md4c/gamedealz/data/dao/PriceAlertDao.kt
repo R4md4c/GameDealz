@@ -47,5 +47,4 @@ interface PriceAlertDao {
 
     @Query("DELETE FROM PriceAlert WHERE watcheeId=:watcheeId")
     fun deleteByWatcheeId(watcheeId: Long): Int
-
 }

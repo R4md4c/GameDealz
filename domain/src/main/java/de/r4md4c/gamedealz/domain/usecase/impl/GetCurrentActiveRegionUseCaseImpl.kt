@@ -39,7 +39,6 @@ internal class GetCurrentActiveRegionUseCaseImpl(
     private val sharedPreferences: SharedPreferencesProvider
 ) : GetCurrentActiveRegionUseCase, OnCurrentActiveRegionReactiveUseCase {
 
-
     override suspend fun invoke(param: VoidParameter?): ActiveRegion {
         val savedRegionCountryPair = sharedPreferences.activeRegionAndCountry
         val regions = withContext(IO) { getRegionsUseCase() }

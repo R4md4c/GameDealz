@@ -34,7 +34,6 @@ class ExpandableScreenshotsHeader(
 ) :
     AbstractItem<ExpandableScreenshotsHeader, ExpandableScreenshotsHeader.ViewHolder>() {
 
-
     var isExpanded = false
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {

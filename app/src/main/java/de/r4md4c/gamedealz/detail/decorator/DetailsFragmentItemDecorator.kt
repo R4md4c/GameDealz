@@ -28,7 +28,6 @@ class DetailsFragmentItemDecorator(private val context: Context) : RecyclerView.
 
     private val spacing8 by lazy { context.resources.getDimensionPixelSize(R.dimen.baseline_1x) }
 
-
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         super.getItemOffsets(outRect, view, parent, state)
         val position = parent.getChildAdapterPosition(view)

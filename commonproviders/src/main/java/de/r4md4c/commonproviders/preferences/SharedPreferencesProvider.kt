@@ -46,7 +46,6 @@ interface SharedPreferencesProvider {
 
     var priceCheckerPeriodicIntervalInHours: Int
 
-
     var activeNightMode: NightMode
     val reactiveNightMode: Flow<NightMode>
 }

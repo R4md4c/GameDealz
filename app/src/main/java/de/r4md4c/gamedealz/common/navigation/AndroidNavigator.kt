@@ -64,5 +64,4 @@ class AndroidNavigator(
                 throw IllegalArgumentException("Unknown Deeplink: $parsedUri")
             }
         }
-
 }

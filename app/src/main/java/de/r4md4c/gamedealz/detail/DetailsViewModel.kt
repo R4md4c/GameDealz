@@ -115,7 +115,6 @@ class DetailsViewModel(
                     _isAddedToWatchList.postValue(it)
                 }
             }
-
         }) {
             Timber.e(it, "Failed while watching watchee with plainId=$plainId")
         }
@@ -148,7 +147,6 @@ class DetailsViewModel(
         postDetailsInfo(details)
 
         stateMachineDelegate.transition(Event.OnLoadingEnded)
-
     }) {
         stateMachineDelegate.transition(Event.OnError(it))
     }

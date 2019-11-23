@@ -35,5 +35,4 @@ class VerticalLinearDecorator(private val context: Context) : RecyclerView.ItemD
         outRect.top = if (position == 0) spacing8 else 0
         outRect.bottom = spacing8
     }
-
 }

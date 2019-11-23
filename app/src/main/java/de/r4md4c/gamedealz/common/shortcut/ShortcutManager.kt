@@ -28,5 +28,4 @@ interface ShortcutManager {
      * Checks if the your launcher supports shortcuts.
      */
     fun doesLauncherSupportsShortcuts(): Boolean
-
 }

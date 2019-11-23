@@ -19,5 +19,5 @@ package de.r4md4c.commonproviders.res
 
 import android.app.Activity
 
-internal class ActivityBasedAndroidResourcesProvider(activity: Activity) : AndroidResourcesProvider(activity) {
-}
+internal class ActivityBasedAndroidResourcesProvider(activity: Activity) :
+    AndroidResourcesProvider(activity)

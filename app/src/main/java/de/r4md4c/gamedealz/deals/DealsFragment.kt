@@ -47,7 +47,6 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-
 class DealsFragment : BaseFragment() {
 
     private var listener: OnFragmentInteractionListener? = null
@@ -73,7 +72,8 @@ class DealsFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_deals, container, false)
 
@@ -89,7 +89,6 @@ class DealsFragment : BaseFragment() {
             context.resolveThemeColor(R.attr.swipe_refresh_background)
         )
         swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -165,6 +164,5 @@ class DealsFragment : BaseFragment() {
         }
 
         override fun onQueryTextChange(newText: String): Boolean = false
-
     }
 }

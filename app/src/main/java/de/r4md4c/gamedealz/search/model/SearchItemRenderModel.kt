@@ -57,7 +57,6 @@ fun SearchResultModel.toRenderModel(
         prices.firstOrNull()
     )
 
-
 private fun SearchResultModel.currentBest(
     resourcesProvider: ResourcesProvider,
     @ColorRes newPriceColor: Int,

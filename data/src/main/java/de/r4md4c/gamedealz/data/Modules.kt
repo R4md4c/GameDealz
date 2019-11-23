@@ -27,7 +27,6 @@ import org.koin.dsl.module.module
 
 val DATA = module {
 
-
     single {
         Room.databaseBuilder(androidContext(), GameDealzDatabase::class.java, DATABASE_NAME)
             .addMigrations(MIGRATION_1_2, Migration2To3())
@@ -74,5 +73,4 @@ val DATA = module {
     factory<StoresRepository> { StoresLocalRepository(get()) }
 
     factory<CountriesRepository> { CountriesLocalRepository(get()) }
-
 }

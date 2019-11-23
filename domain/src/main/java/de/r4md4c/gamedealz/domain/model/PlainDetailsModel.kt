@@ -20,7 +20,6 @@ package de.r4md4c.gamedealz.domain.model
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-
 /**
  * A data class that aggregates the information retrieved from IsThereAnyDeal and Steam.
  *

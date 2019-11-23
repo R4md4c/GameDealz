@@ -57,7 +57,6 @@ data class ManageWatchlistItem(
 
     override fun getLayoutRes(): Int = R.layout.layout_manage_watchlist_item
 
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
 
@@ -84,7 +83,6 @@ fun ManageWatchlistModel.toManageWatchlistItem(
         } else {
             append(lastFetchedPriceString)
         }
-
     }
 
     return ManageWatchlistItem(

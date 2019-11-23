@@ -147,7 +147,6 @@ class DetailsFragment : BaseFragment() {
                 .mapIndexed { index, aScreenshot -> ScreenshotItem(aScreenshot, index, this::onScreenShotClick) })
         })
 
-
         detailsViewModel.prices.observe(this, Observer {
             renderPrices(it)
         })

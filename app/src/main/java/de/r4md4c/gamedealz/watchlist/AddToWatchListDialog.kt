@@ -179,7 +179,6 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                         (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked =
                             true
                     }
-
                 }
             }
         })
@@ -195,7 +194,6 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                 currentBest.text = TextUtils.concat(getString(R.string.current_best), " ", it)
             }
         })
-
     }
 
     inner class MoneyTextWatcher : TextWatcher {
@@ -258,6 +256,4 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         private const val ARG_PLAIN_ID = "plain_id"
         private const val ARG_PRICE_MODEL = "price_model"
     }
-
-
 }

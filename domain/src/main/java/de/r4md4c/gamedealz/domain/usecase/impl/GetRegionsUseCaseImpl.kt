@@ -65,7 +65,7 @@ internal class GetRegionsUseCaseImpl(
     }
 
     private suspend fun retrieveAndStorePlainsFromSteam() {
-        //TODO: Handle updating plains daily.
+        // TODO: Handle updating plains daily.
         val count = plainsLocalRepository.count()
         if (count > 0) return
 

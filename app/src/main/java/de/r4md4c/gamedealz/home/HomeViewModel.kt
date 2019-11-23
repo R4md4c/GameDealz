@@ -89,7 +89,6 @@ class HomeViewModel(
         listenForAlertsCountChanges()
     }
 
-
     fun onStoreSelected(store: StoreModel) = viewModelScope.launch {
         kotlin.runCatching {
             toggleStoresUseCase(CollectionParameter(setOf(store)))

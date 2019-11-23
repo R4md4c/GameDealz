@@ -60,7 +60,6 @@ class ErrorActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         setTitle(R.string.title_submit_error_report)
 
-
         reportButton.setOnClickListener {
             reportBugReport()
         }
@@ -79,7 +78,6 @@ class ErrorActivity : AppCompatActivity() {
             Toast.makeText(this, throwable.localizedMessage, Toast.LENGTH_LONG).show()
         }
     }
-
 
     private fun formString(): String =
         with(errorInfo) {
@@ -111,7 +109,6 @@ class ErrorActivity : AppCompatActivity() {
             put("stacktrace", stacktrace)
         }
 
-
     companion object {
         fun toIntent(context: Context, errorCrashReportData: CrashReportData): Intent =
             Intent(context, ErrorActivity::class.java).apply {
@@ -132,7 +129,6 @@ class ErrorActivity : AppCompatActivity() {
 
         const val ERROR_EMAIL_ADDRESS = "gamedealz@protonmail.com"
         const val ERROR_EMAIL_SUBJECT = "Exception in GameDealz " + BuildConfig.VERSION_NAME
-
 
         private const val EXTRA_ERROR_INFO = "error_info"
     }

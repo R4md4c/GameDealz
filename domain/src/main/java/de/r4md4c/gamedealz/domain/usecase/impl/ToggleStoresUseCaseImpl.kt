@@ -42,5 +42,4 @@ internal class ToggleStoresUseCaseImpl(private val storesRepository: StoresRepos
             storesRepository.updateSelected(false, storesToBeDeselected.toSet())
         }
     }
-
 }

@@ -47,7 +47,6 @@ class SearchAdapter(
     }
 
     override fun getItemId(position: Int): Long = getItem(position).hashCode().toLong()
-
 }
 
 private val COMPARATOR = object : DiffUtil.ItemCallback<SearchItemRenderModel>() {

@@ -82,5 +82,4 @@ val DOMAIN = listOf(DATA, NETWORK, COMMON_PROVIDERS, module {
     factory<MarkNotificationAsReadUseCase> { MarkNotificationAsReadUseCaseImpl(get()) }
 
     factory<RemoveFromWatchlistUseCase> { RemoveFromWatchlistUseCaseImpl(get()) }
-
 })

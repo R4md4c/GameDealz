@@ -22,7 +22,6 @@ import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.coroutines.flow.Flow
 
-
 interface GetStoresUseCase : UseCase<TypeParameter<ActiveRegion>, Flow<List<StoreModel>>> {
 
     /**
@@ -34,4 +33,3 @@ interface GetStoresUseCase : UseCase<TypeParameter<ActiveRegion>, Flow<List<Stor
      */
     override suspend fun invoke(param: TypeParameter<ActiveRegion>?): Flow<List<StoreModel>>
 }
-

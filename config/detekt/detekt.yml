@@ -212,6 +212,7 @@ formatting:
   MaximumLineLength:
     active: true
     maxLineLength: 120
+    excludes: "**/de/r4md4c/gamedealz/data/dao/**"
   ModifierOrdering:
     active: true
     autoCorrect: true
@@ -249,7 +250,7 @@ formatting:
     active: true
     autoCorrect: true
   NoWildcardImports:
-    active: true
+    active: false
     excludeImports: 'java.util.*,kotlinx.android.synthetic.*,de.r4md4c.gamedealz.network.repository.*'
   PackageName:
     active: true
@@ -567,4 +568,4 @@ style:
   WildcardImport:
     active: true
     excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
-    excludeImports: 'java.util.*,kotlinx.android.synthetic.*'
+    excludeImports: 'java.util.*,kotlinx.android.synthetic.*,de.r4md4c.gamedealz.data.*'

@@ -28,7 +28,8 @@ import kotlinx.android.parcel.Parcelize
  * @param currencyModel the currency that will be used to display the price.
  */
 @Parcelize
-data class WatcheeNotificationModel(val watcheeModel: WatcheeModel,
-                                    val priceModel: PriceModel,
-                                    val currencyModel: CurrencyModel
+data class WatcheeNotificationModel(
+    val watcheeModel: WatcheeModel,
+    val priceModel: PriceModel,
+    val currencyModel: CurrencyModel
 ) : Parcelable

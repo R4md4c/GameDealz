@@ -105,7 +105,6 @@ internal class GetPlainDetailsImpl(
             }.groupBy { it.shop }.mapValues { it.value.first() }
 
             shopPricesMap.mapValues { PriceModelHistoricalLowModelPair(it.value, historicalLowPrices[it.key]) }
-
         }
     }
 
@@ -138,5 +137,4 @@ internal class GetPlainDetailsImpl(
             }
         }
     }
-
 }

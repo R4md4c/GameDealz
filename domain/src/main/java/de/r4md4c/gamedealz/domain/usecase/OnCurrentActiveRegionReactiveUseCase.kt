@@ -29,4 +29,3 @@ interface OnCurrentActiveRegionReactiveUseCase {
      */
     suspend fun activeRegionChange(): Flow<ActiveRegion>
 }
-

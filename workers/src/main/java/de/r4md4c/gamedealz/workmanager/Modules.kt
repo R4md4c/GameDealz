@@ -38,5 +38,4 @@ val WORK_MANAGER = module {
     factory<PricesCheckerWorker> {
         WorkManagerJobsInitializer(get(), get())
     }
-
 }
