@@ -43,6 +43,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
+@Suppress("TooManyFunctions")
 class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionListener,
     SearchFragment.OnFragmentInteractionListener, RegionSelectionDialogFragment.OnRegionChangeSubmitted {
 

@@ -53,7 +53,10 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        regionChangeSubmitted = context as? OnRegionChangeSubmitted ?: throw ClassCastException("Host Context should implement OnRegionChangeSubmitted interface")
+        regionChangeSubmitted = context as? OnRegionChangeSubmitted
+            ?: throw ClassCastException(
+                "Host Context should implement OnRegionChangeSubmitted interface"
+            )
     }
 
     override fun onDetach() {
@@ -109,9 +112,11 @@ class RegionSelectionDialogFragment : DialogFragment() {
                 it.regions[region_spinner.selectedItemPosition]
             }
             val selectedCountryCode =
-                viewModel.countries.value?.takeIf { country_spinner.selectedItemPosition > -1 }?.let {
-                    it.countries[country_spinner.selectedItemPosition]
-                }
+                viewModel.countries.value
+                    ?.takeIf { country_spinner.selectedItemPosition > -1 }
+                    ?.let {
+                        it.countries[country_spinner.selectedItemPosition]
+                    }
             (selectedRegionCode to selectedCountryCode).takeIf {
                 it.first != null && it.second != null
             }?.let {
@@ -136,10 +141,14 @@ class RegionSelectionDialogFragment : DialogFragment() {
                 region_spinner.setSelection(regionSelectedModel.activeRegionIndex)
 
                 region_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
-                    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
                         if (skipFirstSelection-- <= 0) {
                             viewModel.onRegionSelected(parent.adapter.getItem(position) as String)
                         }
@@ -169,7 +178,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun create(region: ActiveRegion) = RegionSelectionDialogFragment().apply {
+        fun create(region: ActiveRegion) =
+            RegionSelectionDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(KEY_REGION, region)
             }

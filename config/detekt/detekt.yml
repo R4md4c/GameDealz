@@ -568,4 +568,4 @@ style:
   WildcardImport:
     active: true
     excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
-    excludeImports: 'java.util.*,kotlinx.android.synthetic.*,de.r4md4c.gamedealz.data.*'
+    excludeImports: 'java.util.*,kotlinx.android.synthetic.*'

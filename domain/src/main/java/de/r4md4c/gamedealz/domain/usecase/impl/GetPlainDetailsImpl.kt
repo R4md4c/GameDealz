@@ -21,7 +21,15 @@ import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.*
+import de.r4md4c.gamedealz.domain.model.ActiveRegion
+import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
+import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.PriceModelHistoricalLowModelPair
+import de.r4md4c.gamedealz.domain.model.ScreenshotModel
+import de.r4md4c.gamedealz.domain.model.ShopModel
+import de.r4md4c.gamedealz.domain.model.toModel
+import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.network.model.HistoricalLow

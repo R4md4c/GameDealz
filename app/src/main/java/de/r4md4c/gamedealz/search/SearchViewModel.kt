@@ -32,7 +32,11 @@ import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.actor
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -47,9 +51,8 @@ class SearchViewModel(
     private val queryChannel = viewModelScope.actor<String>(dispatchers.Default) {
         consumeAsFlow()
             .filter { it.isNotBlank() }
-            .debounce(500)
+            .debounce(DEBOUNCE_TIME)
             .distinctUntilChanged()
-            .onCompletion { }
             .collect {
                 currentJob?.cancelAndJoin()
                 loadSearchResults(it)
@@ -95,5 +98,9 @@ class SearchViewModel(
                     stateMachineDelegate.transition(Event.OnLoadingEnded)
                 }
         }
+    }
+
+    companion object {
+        private const val DEBOUNCE_TIME = 500L
     }
 }

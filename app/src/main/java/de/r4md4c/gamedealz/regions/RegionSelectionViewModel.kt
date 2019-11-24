@@ -44,7 +44,8 @@ class RegionSelectionViewModel(
     private val changeActiveRegionUseCase: ChangeActiveRegionUseCase
 ) : ViewModel() {
 
-    private val displayNameToCountryCodeMap: MutableMap<String, CountryModel> by lazy { ArrayMap<String, CountryModel>() }
+    private val displayNameToCountryCodeMap: MutableMap<String, CountryModel>
+            by lazy { ArrayMap<String, CountryModel>() }
 
     private val _regions by lazy { MutableLiveData<RegionSelectionModel>() }
     val regions: LiveData<RegionSelectionModel> by lazy { _regions }

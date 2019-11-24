@@ -18,7 +18,11 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.entity.*
+import de.r4md4c.gamedealz.data.entity.Country
+import de.r4md4c.gamedealz.data.entity.Currency
+import de.r4md4c.gamedealz.data.entity.Plain
+import de.r4md4c.gamedealz.data.entity.Region
+import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel

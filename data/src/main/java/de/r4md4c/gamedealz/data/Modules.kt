@@ -21,7 +21,19 @@ import androidx.room.Room
 import de.r4md4c.gamedealz.data.GameDealzDatabase.Companion.DATABASE_NAME
 import de.r4md4c.gamedealz.data.migrations.MIGRATION_1_2
 import de.r4md4c.gamedealz.data.migrations.Migration2To3
-import de.r4md4c.gamedealz.data.repository.*
+import de.r4md4c.gamedealz.data.repository.CountriesLocalRepository
+import de.r4md4c.gamedealz.data.repository.CountriesRepository
+import de.r4md4c.gamedealz.data.repository.PlainsLocalRepository
+import de.r4md4c.gamedealz.data.repository.PlainsRepository
+import de.r4md4c.gamedealz.data.repository.PriceAlertLocalRepository
+import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
+import de.r4md4c.gamedealz.data.repository.RegionLocalRepository
+import de.r4md4c.gamedealz.data.repository.RegionsRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalRepository
+import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 

@@ -49,7 +49,12 @@ import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.detail.DetailsFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.detail.decorator.DetailsFragmentItemDecorator
-import de.r4md4c.gamedealz.detail.item.*
+import de.r4md4c.gamedealz.detail.item.AboutGameItem
+import de.r4md4c.gamedealz.detail.item.ExpandableScreenshotsHeader
+import de.r4md4c.gamedealz.detail.item.FilterHeaderItem
+import de.r4md4c.gamedealz.detail.item.HeaderItem
+import de.r4md4c.gamedealz.detail.item.ScreenshotItem
+import de.r4md4c.gamedealz.detail.item.toPriceItem
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.watchlist.AddToWatchListDialog
 import kotlinx.android.synthetic.main.fragment_game_detail.*
@@ -61,6 +66,7 @@ import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+@Suppress("TooManyFunctions")
 class DetailsFragment : BaseFragment() {
 
     private val title by lazy { fromBundle(arguments!!).title }
@@ -123,7 +129,10 @@ class DetailsFragment : BaseFragment() {
         detailsViewModel.loadIsAddedToWatchlist(plainId)
 
         detailsViewModel.isAddedToWatchList.observe(this, Observer {
-            addToWatchList.setImageResource(if (it) R.drawable.ic_added_to_watch_list else R.drawable.ic_add_to_watch_list)
+            addToWatchList.setImageResource(
+                if (it) R.drawable.ic_added_to_watch_list
+                else R.drawable.ic_add_to_watch_list
+            )
         })
 
         detailsViewModel.sideEffect.observe(this, Observer {
@@ -209,16 +218,16 @@ class DetailsFragment : BaseFragment() {
 
     private fun askToRemove() =
         viewLifecycleOwner.lifecycleScope.launchWithCatching(dispatchers.Main, {
-        val yes = ask()
-        if (yes) {
-            val isRemoved = detailsViewModel.removeFromWatchlist(plainId)
-            if (isRemoved) {
-                viewNotifier.notify(getString(R.string.watchlist_remove_successfully, title))
+            val yes = ask()
+            if (yes) {
+                val isRemoved = detailsViewModel.removeFromWatchlist(plainId)
+                if (isRemoved) {
+                    viewNotifier.notify(getString(R.string.watchlist_remove_successfully, title))
+                }
             }
+        }) {
+            Timber.e(it, "Failed to remove $plainId from the Watchlist")
         }
-    }) {
-        Timber.e(it, "Failed to remove $plainId from the Watchlist")
-    }
 
     private suspend fun ask() = suspendCoroutine<Boolean> { continuation ->
         MaterialAlertDialogBuilder(requireContext())
@@ -275,17 +284,17 @@ class DetailsFragment : BaseFragment() {
         content.apply {
             addItemDecoration(itemsDecorator)
             layoutManager =
-                    GridLayoutManager(context, spanCount).apply {
-                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                                mainAdapter.getItem(position) ?: return spanCount
-                                return when (mainAdapter.getItemViewType(position)) {
-                                    R.layout.layout_screenshot_item -> 1
-                                    else -> spanCount
-                                }
+                GridLayoutManager(context, spanCount).apply {
+                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            mainAdapter.getItem(position) ?: return spanCount
+                            return when (mainAdapter.getItemViewType(position)) {
+                                R.layout.layout_screenshot_item -> 1
+                                else -> spanCount
                             }
-                        }.apply { isSpanIndexCacheEnabled = true }
-                    }
+                        }
+                    }.apply { isSpanIndexCacheEnabled = true }
+                }
             adapter = mainAdapter
         }
     }

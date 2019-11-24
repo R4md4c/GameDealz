@@ -61,7 +61,7 @@ fun DealModel.toRenderModel(
     )
 
 private fun DealModel.storeAndTimeSpan(resourcesProvider: ResourcesProvider): Spannable {
-    val timestampString = DateUtils.getRelativeTimeSpanString(added * 1000)
+    val timestampString = DateUtils.getRelativeTimeSpanString(added * ONE_SECOND_IN_MILLIS)
 
     return SpannableStringBuilder()
         .append(resourcesProvider.getString(R.string.on))
@@ -88,3 +88,5 @@ private fun DealModel.storeAndTimeSpan(resourcesProvider: ResourcesProvider): Sp
             )
         }
 }
+
+private const val ONE_SECOND_IN_MILLIS = 1000

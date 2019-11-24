@@ -17,7 +17,11 @@
 
 package de.r4md4c.gamedealz.data.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 import de.r4md4c.gamedealz.data.entity.Store
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
