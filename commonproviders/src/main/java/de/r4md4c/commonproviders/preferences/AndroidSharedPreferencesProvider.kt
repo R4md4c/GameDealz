@@ -44,7 +44,6 @@ internal class AndroidSharedPreferencesProvider(context: Context) : SharedPrefer
             }
         }
 
-
     override var activeRegionAndCountry: Pair<String, String>?
         get() = sharedPreferences.getString(KEY_ACTIVE_REGION_COUNTRY, null)
             ?.split('|')
@@ -60,8 +59,7 @@ internal class AndroidSharedPreferencesProvider(context: Context) : SharedPrefer
         }
 
     override val reactivePriceCheckerPeriodicIntervalInHours: Flow<Int>
-        get() = sharedPreferences.createFlowFromKey(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL)
-        { priceCheckerPeriodicIntervalInHours }
+        get() = sharedPreferences.createFlowFromKey(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL) { priceCheckerPeriodicIntervalInHours }
 
     override var priceCheckerPeriodicIntervalInHours: Int
         get() = sharedPreferences.getInt(KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL, 6)

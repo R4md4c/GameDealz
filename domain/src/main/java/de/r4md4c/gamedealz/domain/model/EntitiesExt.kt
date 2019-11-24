@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
+@file:Suppress("TooManyFunctions")
 
 package de.r4md4c.gamedealz.domain.model
 
@@ -22,7 +23,11 @@ import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.domain.cache.NumberFormatCurrencyCache
-import de.r4md4c.gamedealz.network.model.*
+import de.r4md4c.gamedealz.network.model.Deal
+import de.r4md4c.gamedealz.network.model.GameUrls
+import de.r4md4c.gamedealz.network.model.HistoricalLow
+import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.Shop
 import java.util.*
 
 internal fun RegionWithCountriesModel.findCountry(countryCode: String): CountryModel? =

@@ -31,5 +31,4 @@ class DealsDataSourceFactory(
 
     override fun create(): DataSource<Int, DealRenderModel> =
         DealsDataSource(getDealsUseCase, uiStateMachineDelegate, resourcesProvider)
-
 }

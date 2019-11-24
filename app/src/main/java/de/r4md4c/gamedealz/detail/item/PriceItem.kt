@@ -52,8 +52,7 @@ class PriceItem(
         require(
             desiredConstraintLayoutState == R.id.state_historical_low ||
                     desiredConstraintLayoutState == R.id.state_current_best
-        )
-        { "PriceItem only accepts R.id.state_historical_low or R.id.state_current_best" }
+        ) { "PriceItem only accepts R.id.state_historical_low or R.id.state_current_best" }
     }
 
     @SuppressLint("ResourceType")
@@ -93,7 +92,6 @@ class PriceItem(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
 }
 
 @WorkerThread

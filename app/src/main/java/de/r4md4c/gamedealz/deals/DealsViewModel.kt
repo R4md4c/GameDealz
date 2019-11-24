@@ -46,7 +46,7 @@ class DealsViewModel(
             Config(
                 pageSize = BuildConfig.DEFAULT_PAGE_SIZE,
                 enablePlaceholders = false,
-                initialLoadSizeHint = BuildConfig.DEFAULT_PAGE_SIZE * 2
+                initialLoadSizeHint = BuildConfig.DEFAULT_PAGE_SIZE * RATIO
             )
         )
     }
@@ -57,7 +57,7 @@ class DealsViewModel(
 
     fun init() {
         viewModelScope.launch(dispatchers.IO) {
-            selectedStoresUseCase().debounce(500).drop(1).collect {
+            selectedStoresUseCase().debounce(DEBOUNCE_TIMEOUT_MILLIS).drop(1).collect {
                 deals.value?.dataSource?.invalidate()
             }
         }
@@ -70,5 +70,10 @@ class DealsViewModel(
 
     fun onRefresh() {
         deals.value?.dataSource?.invalidate()
+    }
+
+    companion object {
+        private const val RATIO = 2
+        private const val DEBOUNCE_TIMEOUT_MILLIS = 500L
     }
 }

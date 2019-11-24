@@ -25,5 +25,4 @@ interface PlainsRemoteRepository {
      * Retrieves IsThereAnyDeal plains list from a list of shops.
      */
     suspend fun plainsList(shops: Set<String>): ShopPlains
-
 }

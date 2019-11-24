@@ -61,6 +61,7 @@ import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+@Suppress("TooManyFunctions")
 class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCallback {
 
     private val itemsAdapter by lazy { FastItemAdapter<ManageWatchlistItem>() }

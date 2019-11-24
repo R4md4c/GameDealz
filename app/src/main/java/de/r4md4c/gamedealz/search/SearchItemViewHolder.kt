@@ -38,6 +38,4 @@ class SearchItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 .into(image)
         }
     }
-
-
 }

@@ -22,7 +22,11 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.*
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -66,9 +70,6 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     private val viewNotifier: ViewNotifier by inject()
-
-    private val bottomSheetDialog =
-        (dialog as? BottomSheetDialog)?.findViewById(R.id.design_bottom_sheet) as? View
 
     private val bottomSheetCallback by lazy { AddToWatchListBottomSheetCallback() }
 
@@ -179,7 +180,6 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                         (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked =
                             true
                     }
-
                 }
             }
         })
@@ -195,13 +195,12 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                 currentBest.text = TextUtils.concat(getString(R.string.current_best), " ", it)
             }
         })
-
     }
 
     inner class MoneyTextWatcher : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = Unit
 
         override fun afterTextChanged(editable: Editable) {
             val s = editable.toString()
@@ -258,6 +257,4 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         private const val ARG_PLAIN_ID = "plain_id"
         private const val ARG_PRICE_MODEL = "price_model"
     }
-
-
 }

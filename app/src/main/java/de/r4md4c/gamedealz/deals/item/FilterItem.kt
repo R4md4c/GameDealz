@@ -47,5 +47,4 @@ data class FilterItem(val storeModel: StoreModel) : AbstractItem<FilterItem, Fil
     override fun getIdentifier(): Long = storeModel.hashCode().toLong()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
 }

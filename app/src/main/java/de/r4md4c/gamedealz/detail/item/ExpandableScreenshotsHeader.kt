@@ -34,7 +34,6 @@ class ExpandableScreenshotsHeader(
 ) :
     AbstractItem<ExpandableScreenshotsHeader, ExpandableScreenshotsHeader.ViewHolder>() {
 
-
     var isExpanded = false
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
@@ -52,7 +51,7 @@ class ExpandableScreenshotsHeader(
     }
 
     private val rotation
-        get() = if (isExpanded) 90f else 270f
+        get() = if (isExpanded) DEGREES_90 else DEGREES_270
 
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_expandable_screenshot_header_item
@@ -62,4 +61,9 @@ class ExpandableScreenshotsHeader(
     override fun getLayoutRes(): Int = R.layout.layout_expandable_screenshot_header_item
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    private companion object {
+        private const val DEGREES_90 = 90F
+        private const val DEGREES_270 = 270F
+    }
 }

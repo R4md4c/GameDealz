@@ -76,7 +76,6 @@ class DealsAdapter(private val dealClick: (deal: DealRenderModel) -> Unit) :
             notifyItemRemoved(itemCount)
         }
     }
-
 }
 
 private val COMPARATOR = object : DiffUtil.ItemCallback<DealRenderModel>() {

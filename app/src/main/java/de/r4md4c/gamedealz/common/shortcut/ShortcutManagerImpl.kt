@@ -27,7 +27,6 @@ import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
 
-
 internal class ShortcutManagerImpl(
     private val context: Context,
     private val resourcesProvider: ResourcesProvider

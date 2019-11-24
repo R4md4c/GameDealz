@@ -27,7 +27,12 @@ import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.*
+import de.r4md4c.gamedealz.domain.model.ActiveRegion
+import de.r4md4c.gamedealz.domain.model.AddToWatchListArgument
+import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.StoreModel
+import de.r4md4c.gamedealz.domain.model.formatCurrency
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
@@ -86,17 +91,19 @@ class AddToWatchListViewModel(
             val activeRegion = activeRegion ?: return@runCatching null
             val cleaned = cleanPriceText(this, activeRegion.currency, cleanSeparator = false)
             toBigDecimal(cleaned).toFloat()
-        }
-            .onFailure { _emptyPriceError.postValue(resourcesProvider.getString(R.string.watchlist_error_wrong_number_format)) }
-            .getOrNull() ?: return
+        }.onFailure {
+            val errorString = resourcesProvider.getString(
+                R.string.watchlist_error_wrong_number_format
+            )
+            _emptyPriceError.postValue(errorString)
+        }.getOrNull() ?: return
 
         if (priceModel != null && targetPrice >= priceModel.newPrice) {
-            _emptyPriceError.postValue(
-                resourcesProvider.getString(
-                    R.string.watchlist_already_better_deal,
-                    priceModel.newPrice.formatCurrency(activeRegion!!.currency)!!, priceModel.shop.name
-                )
+            val errorString = resourcesProvider.getString(
+                R.string.watchlist_already_better_deal,
+                priceModel.newPrice.formatCurrency(activeRegion!!.currency)!!, priceModel.shop.name
             )
+            _emptyPriceError.postValue(errorString)
             return
         }
 
@@ -106,7 +113,6 @@ class AddToWatchListViewModel(
         }
 
         doAddToWatchList(plainId, title, priceModel, targetPrice, selectedStores)
-
     }
 
     fun formatCurrentBestCurrencyModel(priceModel: PriceModel): LiveData<String> {
@@ -164,7 +170,11 @@ class AddToWatchListViewModel(
     private fun numberFormatForCurrencyCode(currencyModel: CurrencyModel): NumberFormat =
         getDecimalFormatForCurrencyModel(currencyModel)
 
-    private fun cleanPriceText(text: String, currencyModel: CurrencyModel, cleanSeparator: Boolean = true): String {
+    private fun cleanPriceText(
+        text: String,
+        currencyModel: CurrencyModel,
+        cleanSeparator: Boolean = true
+    ): String {
         val itadSign = currencyModel.sign
         val decimalFormat = getDecimalFormatForCurrencyModel(currencyModel)
         val separator = decimalFormat.decimalFormatSymbols.decimalSeparator
@@ -194,5 +204,9 @@ class AddToWatchListViewModel(
 
     private fun toBigDecimal(cleanedPrice: String): BigDecimal =
         BigDecimal(cleanedPrice).setScale(2, BigDecimal.ROUND_FLOOR)
-            .divide(BigDecimal(100), BigDecimal.ROUND_FLOOR)
+            .divide(BIG_DECIMAL_100, BigDecimal.ROUND_FLOOR)
+
+    private companion object {
+        private val BIG_DECIMAL_100 = BigDecimal(100)
+    }
 }

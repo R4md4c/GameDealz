@@ -23,7 +23,6 @@ sealed class NightMode(val name: String) {
     object Enabled : NightMode("night_mode_on")
     object Disabled : NightMode("night_mode_off")
 
-
     companion object {
         fun fromString(name: String): NightMode =
             when (name) {
@@ -44,5 +43,4 @@ sealed class NightMode(val name: String) {
 interface AppCompatProvider {
 
     var currentNightMode: NightMode
-
 }

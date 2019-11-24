@@ -46,5 +46,4 @@ internal interface SteamService {
 
     @GET("packagedetails")
     fun packageDetails(@Query("packageids") packageId: String): Deferred<SteamResponse<PackageDetails>>
-
 }

@@ -44,11 +44,11 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 """CREATE TABLE IF NOT EXISTS `watchlist_store_join`
                 |(`watcheeId` INTEGER NOT NULL,
                 |`storeId` TEXT NOT NULL, PRIMARY KEY(`watcheeId`, `storeId`),
-                |FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)""".trimMargin()
+                |FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)"""
+                    .trimMargin()
             )
 
             execSQL("CREATE  INDEX `index_watchlist_store_join_storeId` ON `watchlist_store_join` (`storeId`)")
-
 
             execSQL(
                 """CREATE TABLE IF NOT EXISTS `PriceAlert` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -56,7 +56,8 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 |`buyUrl` TEXT NOT NULL,
                 |`storeName` TEXT NOT NULL,
                 |`dateCreated` INTEGER NOT NULL,
-                |FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )""".trimMargin()
+                |FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )"""
+                    .trimMargin()
             )
             execSQL("CREATE UNIQUE INDEX `index_PriceAlert_watcheeId` ON `PriceAlert` (`watcheeId`)")
 

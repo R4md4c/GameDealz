@@ -73,7 +73,6 @@ class FilterHeaderItem(
                 }
             }
         }
-
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

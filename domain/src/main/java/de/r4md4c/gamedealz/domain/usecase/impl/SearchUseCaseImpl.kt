@@ -20,7 +20,11 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.StoresRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.*
+import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.SearchResultModel
+import de.r4md4c.gamedealz.domain.model.toModel
+import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase

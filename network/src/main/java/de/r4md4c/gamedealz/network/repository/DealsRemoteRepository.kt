@@ -32,5 +32,4 @@ interface DealsRemoteRepository {
      * @param shops the shops ids to search for.
      */
     suspend fun deals(offset: Int, limit: Int, region: String, country: String, shops: Set<String>): PageResult<Deal>
-
 }

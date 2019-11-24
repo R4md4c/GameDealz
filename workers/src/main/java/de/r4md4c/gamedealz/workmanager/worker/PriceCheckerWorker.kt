@@ -24,7 +24,6 @@ import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.net.SocketTimeoutException
@@ -58,5 +57,4 @@ internal class PriceCheckerWorker(
             } ?: Result.failure()
         }
     }
-
 }

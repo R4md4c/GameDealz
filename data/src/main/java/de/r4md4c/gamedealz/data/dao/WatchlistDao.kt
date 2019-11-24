@@ -23,6 +23,7 @@ import androidx.room.Query
 import de.r4md4c.gamedealz.data.entity.Watchee
 import kotlinx.coroutines.flow.Flow
 
+@Suppress("TooManyFunctions")
 @Dao
 interface WatchlistDao {
 
@@ -54,9 +55,13 @@ interface WatchlistDao {
     suspend fun insert(watchee: Watchee): Long
 
     @Query("UPDATE Watchlist SET lastFetchedPrice = :lastFetchedPrice, lastCheckDate = :lastChecked, lastFetchedStoreName = :lastFetchedStoreName WHERE id = :id")
-    fun updateWatchee(id: Long, lastFetchedPrice: Float, lastFetchedStoreName: String, lastChecked: Long): Int
+    fun updateWatchee(
+        id: Long,
+        lastFetchedPrice: Float,
+        lastFetchedStoreName: String,
+        lastChecked: Long
+    ): Int
 
     @Query("SELECT COALESCE(MAX(lastCheckDate), 0) FROM Watchlist")
     fun mostRecentLastCheckDate(): Flow<Long>
-
 }

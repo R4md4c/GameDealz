@@ -27,5 +27,4 @@ internal class AndroidDateFormatter(private val context: Context) : DateFormatte
 
     override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
         DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
-
 }

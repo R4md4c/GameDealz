@@ -18,9 +18,21 @@
 package de.r4md4c.gamedealz.network.service
 
 import de.r4md4c.gamedealz.network.BuildConfig
-import de.r4md4c.gamedealz.network.model.*
+import de.r4md4c.gamedealz.network.model.DataWrapper
+import de.r4md4c.gamedealz.network.model.IdToPlainMap
+import de.r4md4c.gamedealz.network.model.ListWrapper
+import de.r4md4c.gamedealz.network.model.Region
+import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.Stores
+import de.r4md4c.gamedealz.network.model.Plain
+import de.r4md4c.gamedealz.network.model.HistoricalLow
+import de.r4md4c.gamedealz.network.model.Deal
 import kotlinx.coroutines.Deferred
-import retrofit2.http.*
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
+import retrofit2.http.Field
 
 typealias RegionCodes = Map<String, Region>
 typealias ShopPlains = Map<String, IdToPlainMap>
@@ -30,6 +42,7 @@ typealias PlainPriceList = Map<String, ListWrapper<Price>>
  * A retrofit interface for accessing IsThereAnyDeal's API.
  * Check https://itad.docs.apiary.io/#reference/ for documentation.
  */
+@Suppress("LongParameterList")
 internal interface IsThereAnyDealService {
 
     @GET("oauth/authorize?response_type=code")
@@ -76,8 +89,8 @@ internal interface IsThereAnyDealService {
         @Query("country") country: String? = null,
         @Query("shops") shops: String? = null,
         @Query("added") added: Long? = null
-    )
-            : Deferred<DataWrapper<PlainPriceList>>
+    ):
+            Deferred<DataWrapper<PlainPriceList>>
 
     @GET("v01/game/lowest")
     fun historicalLow(
@@ -86,8 +99,8 @@ internal interface IsThereAnyDealService {
         @Query("region") region: String? = null,
         @Query("country") country: String? = null,
         @Query("shops") shops: String? = null
-    )
-            : Deferred<DataWrapper<Map<String, HistoricalLow>>>
+    ):
+            Deferred<DataWrapper<Map<String, HistoricalLow>>>
 
     @GET("v01/deals/list")
     fun deals(

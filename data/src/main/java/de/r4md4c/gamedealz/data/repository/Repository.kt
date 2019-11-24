@@ -44,5 +44,4 @@ interface Repository<Model, PrimaryKey> {
      * @param id the id that will be used to retrieve the model form.
      */
     suspend fun findById(id: PrimaryKey): Model?
-
 }

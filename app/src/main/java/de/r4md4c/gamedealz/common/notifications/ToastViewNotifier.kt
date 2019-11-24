@@ -25,5 +25,4 @@ internal class ToastViewNotifier(private val context: Context) : ViewNotifier {
     override fun notify(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
-
 }

@@ -21,7 +21,8 @@ package de.r4md4c.gamedealz.domain.model
  * Used to describe list items in the ManageWatchlist screen.
  *
  * @param watcheeModel contains the information about the watched game.
- * @param hasNotification Indicates if this model has something to notify the user about. (Like highlighting the ListItem)
+ * @param hasNotification Indicates if this model has something to notify the user about.
+ * (Like highlighting the ListItem)
  * @param currencyModel the currency that this model was watched for.
  */
 data class ManageWatchlistModel(

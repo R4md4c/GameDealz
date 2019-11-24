@@ -63,5 +63,4 @@ internal class ChangeActiveRegionUseCaseImpl(
 
     private fun ChangeActiveRegionParameter.isSameAs(activeRegion: ActiveRegion): Boolean =
         regionCode == activeRegion.regionCode && countryCode == activeRegion.country.code
-
 }

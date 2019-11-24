@@ -47,4 +47,3 @@ internal class GetWatchlistToManageUseCaseImpl(
         ManageWatchlistModel(it.toModel(), hasNotification, region.currency.toCurrencyModel())
     }
 }
-

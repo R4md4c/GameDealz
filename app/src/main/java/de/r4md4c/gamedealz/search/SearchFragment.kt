@@ -49,6 +49,7 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.lang.IllegalStateException
 
 class SearchFragment : BaseFragment() {
 
@@ -87,7 +88,8 @@ class SearchFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_search, container, false)
 
@@ -139,7 +141,7 @@ class SearchFragment : BaseFragment() {
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
+            throw IllegalStateException("$context must implement OnFragmentInteractionListener")
         }
     }
 

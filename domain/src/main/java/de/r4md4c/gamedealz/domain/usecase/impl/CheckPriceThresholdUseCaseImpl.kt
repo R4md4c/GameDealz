@@ -49,7 +49,6 @@ internal class CheckPriceThresholdUseCaseImpl(
             it.watchee.lastFetchedPrice > it.watchee.targetPrice
         }
 
-
         if (allWatcheesWithStores.isEmpty()) {
             Timber.d("Watch list is empty.")
             return emptySet()
@@ -64,10 +63,12 @@ internal class CheckPriceThresholdUseCaseImpl(
             return emptySet()
         }
 
-        val watcheesNotificationModelsList = watcheesPriceModelMap.toList().mapNotNull {
+        val watcheesNotificationModelsList = watcheesPriceModelMap.toList().mapNotNull { model ->
             // Get the most refreshed Snapshots.
-            val refreshedSnapShot = watchlistRepository.findById(it.watcheeModel.id!!) ?: return@mapNotNull null
-            it.copy(watcheeModel = refreshedSnapShot.toModel())
+            val refreshedSnapShot = watchlistRepository.findById(model.watcheeModel.id!!)
+            refreshedSnapShot?.let { snapshot ->
+                model.copy(watcheeModel = snapshot.toModel())
+            }
         }
 
         Timber.d("Found new prices in these watchees $watcheesNotificationModelsList")

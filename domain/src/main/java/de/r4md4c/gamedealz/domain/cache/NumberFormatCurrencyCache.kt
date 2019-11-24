@@ -38,5 +38,4 @@ internal object NumberFormatCurrencyCache {
                 this.currency = currency
             }
         }
-
 }

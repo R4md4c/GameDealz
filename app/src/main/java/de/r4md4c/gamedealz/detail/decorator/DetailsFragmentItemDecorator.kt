@@ -28,7 +28,6 @@ class DetailsFragmentItemDecorator(private val context: Context) : RecyclerView.
 
     private val spacing8 by lazy { context.resources.getDimensionPixelSize(R.dimen.baseline_1x) }
 
-
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         super.getItemOffsets(outRect, view, parent, state)
         val position = parent.getChildAdapterPosition(view)
@@ -45,7 +44,7 @@ class DetailsFragmentItemDecorator(private val context: Context) : RecyclerView.
 
     private fun getTop(position: Int, viewType: Int) =
         if (position == 0 && viewType == R.layout.layout_detail_header_filter_item) {
-            spacing8 * 4
+            spacing8 * HEADER_FILTER_ITEM_SPACING_RATIO
         } else spacing8
 
     private fun getBottom(position: Int, viewType: Int, itemCount: Int) =
@@ -58,10 +57,15 @@ class DetailsFragmentItemDecorator(private val context: Context) : RecyclerView.
     private fun getRight(spanIndex: Int, viewType: Int) =
         if (viewType == R.layout.layout_screenshot_item) {
             when (spanIndex) {
-                2 -> spacing8
+                SCREENSHOT_ITEM_SPAN_INDEX -> spacing8
                 else -> 0
             }
         } else {
             spacing8
         }
+
+    companion object {
+        private const val SCREENSHOT_ITEM_SPAN_INDEX = 2
+        private const val HEADER_FILTER_ITEM_SPACING_RATIO = 4
+    }
 }

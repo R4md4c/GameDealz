@@ -24,4 +24,3 @@ typealias IdToPlainMap = Map<String, String>
 
 @JsonSerializable
 data class Plain(@Json(name = "plain") val value: String)
-

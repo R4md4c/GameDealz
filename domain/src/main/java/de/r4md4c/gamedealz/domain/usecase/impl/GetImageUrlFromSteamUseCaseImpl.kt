@@ -41,5 +41,4 @@ internal class GetImageUrlFromSteamUseCaseImpl(
             "https://steamcdn-a.akamaihd.net/steam/$shopIdInSteam/header.jpg?t=${dateProvider.today().time}"
         }
     }
-
 }

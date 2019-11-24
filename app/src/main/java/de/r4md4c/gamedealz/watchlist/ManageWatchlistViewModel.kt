@@ -32,7 +32,11 @@ import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
-import de.r4md4c.gamedealz.domain.usecase.*
+import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
+import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
+import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
+import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first

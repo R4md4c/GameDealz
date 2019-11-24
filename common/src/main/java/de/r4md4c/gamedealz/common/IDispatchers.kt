@@ -36,6 +36,7 @@ package de.r4md4c.gamedealz.common
 
 import kotlinx.coroutines.CoroutineDispatcher
 
+@Suppress("VariableNaming")
 interface IDispatchers {
 
     /**

@@ -60,7 +60,6 @@ class ErrorActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         setTitle(R.string.title_submit_error_report)
 
-
         reportButton.setOnClickListener {
             reportBugReport()
         }
@@ -71,7 +70,7 @@ class ErrorActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:$ERROR_EMAIL_ADDRESS")
             putExtra(Intent.EXTRA_SUBJECT, ERROR_EMAIL_SUBJECT)
-            putExtra(Intent.EXTRA_TEXT, errorInfo.toJsonObject().toString(3))
+            putExtra(Intent.EXTRA_TEXT, errorInfo.toJsonObject().toString(INDENT_SPACES_NUMBER))
         }
         kotlin.runCatching {
             startActivity(intent)
@@ -79,7 +78,6 @@ class ErrorActivity : AppCompatActivity() {
             Toast.makeText(this, throwable.localizedMessage, Toast.LENGTH_LONG).show()
         }
     }
-
 
     private fun formString(): String =
         with(errorInfo) {
@@ -111,7 +109,6 @@ class ErrorActivity : AppCompatActivity() {
             put("stacktrace", stacktrace)
         }
 
-
     companion object {
         fun toIntent(context: Context, errorCrashReportData: CrashReportData): Intent =
             Intent(context, ErrorActivity::class.java).apply {
@@ -133,7 +130,7 @@ class ErrorActivity : AppCompatActivity() {
         const val ERROR_EMAIL_ADDRESS = "gamedealz@protonmail.com"
         const val ERROR_EMAIL_SUBJECT = "Exception in GameDealz " + BuildConfig.VERSION_NAME
 
-
+        private const val INDENT_SPACES_NUMBER = 3
         private const val EXTRA_ERROR_INFO = "error_info"
     }
 }

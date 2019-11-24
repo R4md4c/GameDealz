@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.common.livedata
 
-
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

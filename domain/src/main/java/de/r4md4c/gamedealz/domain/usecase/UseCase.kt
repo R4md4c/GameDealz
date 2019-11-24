@@ -25,5 +25,4 @@ import de.r4md4c.gamedealz.domain.Parameter
 interface UseCase<in P : Parameter, out T> {
 
     suspend operator fun invoke(param: P? = null): T
-
 }

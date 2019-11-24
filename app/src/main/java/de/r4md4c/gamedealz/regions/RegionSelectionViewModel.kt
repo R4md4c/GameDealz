@@ -44,7 +44,8 @@ class RegionSelectionViewModel(
     private val changeActiveRegionUseCase: ChangeActiveRegionUseCase
 ) : ViewModel() {
 
-    private val displayNameToCountryCodeMap: MutableMap<String, CountryModel> by lazy { ArrayMap<String, CountryModel>() }
+    private val displayNameToCountryCodeMap: MutableMap<String, CountryModel>
+            by lazy { ArrayMap<String, CountryModel>() }
 
     private val _regions by lazy { MutableLiveData<RegionSelectionModel>() }
     val regions: LiveData<RegionSelectionModel> by lazy { _regions }
@@ -55,7 +56,7 @@ class RegionSelectionViewModel(
     fun requestRegions(activeRegion: ActiveRegion, restoreRegionIndex: Int?) {
         viewModelScope.launch(dispatchers.IO) {
 
-            //Filter out regions that have no countries
+            // Filter out regions that have no countries
             val allRegions = getRegionsUseCase().filter { it.countries.isNotEmpty() }
 
             _regions.postValue(
@@ -63,7 +64,6 @@ class RegionSelectionViewModel(
                     allRegions.map { it.regionCode.toUpperCase() },
                     restoreRegionIndex ?: allRegions.indexOfFirst { r -> r.regionCode == activeRegion.regionCode })
             )
-
         }
     }
 
@@ -112,5 +112,4 @@ class RegionSelectionViewModel(
             countryModel.displayName()
         }
     }
-
 }

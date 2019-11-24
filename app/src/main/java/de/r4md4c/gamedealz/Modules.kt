@@ -108,5 +108,4 @@ val MAIN = module {
     }
 
     factory { (fragment: Fragment, onRetry: OnRetryClick) -> StateVisibilityHandler(fragment, onRetry) }
-
 }

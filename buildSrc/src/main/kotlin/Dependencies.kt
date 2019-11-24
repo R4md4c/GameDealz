@@ -6,11 +6,15 @@ object BuildPlugins {
     object Versions {
         const val buildToolsVersion = "3.5.2"
         const val navVersion = "2.1.0"
+        const val detektVersion = "1.1.1"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.buildToolsVersion}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     const val navigationSafeArgsPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navVersion}"
+
+    const val detektFormatting =
+        "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektVersion}"
 }
 
 object AndroidSdk {

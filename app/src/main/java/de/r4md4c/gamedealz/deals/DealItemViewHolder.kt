@@ -76,5 +76,4 @@ class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             return source as Spannable
         }
     }
-
 }

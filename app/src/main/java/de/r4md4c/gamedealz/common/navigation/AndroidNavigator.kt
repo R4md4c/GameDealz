@@ -45,24 +45,31 @@ class AndroidNavigator(
 
     private fun getNavDirections(parsedUri: Uri, extras: Parcelable?): NavDirections? =
         when (parsedUri.pathSegments[0]) {
-            DeepLinks.PATH_SEARCH -> {
-                val searchQuery =
-                    requireNotNull(parsedUri.getQueryParameter(DeepLinks.QUERY_SEARCH_TERM)) { "search term is required." }
-                DealsFragmentDirections.actionDealsFragmentToSearchFragment(searchQuery)
-            }
-            DeepLinks.PATH_DETAIL -> {
-                val title =
-                    requireNotNull(parsedUri.getQueryParameter(DeepLinks.QUERY_TITLE)) { "title is required to open details" }
-                val plainId =
-                    requireNotNull(parsedUri.getQueryParameter(DeepLinks.QUERY_PLAIN_ID)) { "plainId is required to open details" }
-                val buyUrl =
-                    requireNotNull(parsedUri.getQueryParameter(DeepLinks.QUERY_BUY_URL)) { "buyUrl is required to open details." }
-
-                DetailsFragmentDirections.actionGlobalGameDetailFragment(plainId, title, buyUrl)
-            }
-            else -> {
-                throw IllegalArgumentException("Unknown Deeplink: $parsedUri")
-            }
+            DeepLinks.PATH_SEARCH -> handleSearchPath(parsedUri)
+            DeepLinks.PATH_DETAIL -> handleDetailPath(parsedUri)
+            else -> throw IllegalArgumentException("Unknown Deeplink: $parsedUri")
         }
 
+    private fun handleSearchPath(parsedUri: Uri): NavDirections {
+        val pathQuery = parsedUri.getQueryParameter(DeepLinks.QUERY_SEARCH_TERM)
+        val searchQuery =
+            requireNotNull(pathQuery) { "search term is required." }
+        return DealsFragmentDirections.actionDealsFragmentToSearchFragment(searchQuery)
+    }
+
+    private fun handleDetailPath(parsedUri: Uri): NavDirections {
+        val queryTitle = parsedUri.getQueryParameter(DeepLinks.QUERY_TITLE)
+        val title =
+            requireNotNull(queryTitle) { "title is required to open details" }
+
+        val queryPlainId = parsedUri.getQueryParameter(DeepLinks.QUERY_PLAIN_ID)
+        val plainId =
+            requireNotNull(queryPlainId) { "plainId is required to open details" }
+
+        val queryBuyUrl = parsedUri.getQueryParameter(DeepLinks.QUERY_BUY_URL)
+        val buyUrl =
+            requireNotNull(queryBuyUrl) { "buyUrl is required to open details." }
+
+        return DetailsFragmentDirections.actionGlobalGameDetailFragment(plainId, title, buyUrl)
+    }
 }

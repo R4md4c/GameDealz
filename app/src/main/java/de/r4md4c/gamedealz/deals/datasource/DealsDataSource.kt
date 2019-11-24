@@ -51,7 +51,12 @@ class DealsDataSource(
         job = scope.launch {
             runCatching {
                 stateMachineDelegate.transition(Event.OnLoadingMoreStarted)
-                getDealsUseCase(PageParameter(params.startPosition + 1, params.loadSize)).apply {
+                getDealsUseCase(
+                    PageParameter(
+                        params.startPosition + 1,
+                        params.loadSize
+                    )
+                ).apply {
                     check(isActive)
                 }
             }.onSuccess {
@@ -69,7 +74,8 @@ class DealsDataSource(
                 stateMachineDelegate.transition(Event.OnError(it))
                 Timber.e(
                     it,
-                    "Failed to deals in loadRange method startPosition: ${params.startPosition + 1}, pageSize: ${params.loadSize}"
+                    "Failed to deals in loadRange method startPosition:" +
+                            " ${params.startPosition + 1}, pageSize: ${params.loadSize}"
                 )
             }
         }

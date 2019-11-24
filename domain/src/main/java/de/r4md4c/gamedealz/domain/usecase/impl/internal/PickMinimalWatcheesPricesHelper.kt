@@ -60,5 +60,4 @@ internal class PickMinimalWatcheesPricesHelper(
             } else null
         }.toMap()
     }
-
 }
