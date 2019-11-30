@@ -26,8 +26,11 @@ import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal class GetSelectedStoresUseCaseImpl(private val storesRepository: StoresRepository) : GetSelectedStoresUseCase {
+internal class GetSelectedStoresUseCaseImpl @Inject constructor(
+    private val storesRepository: StoresRepository
+) : GetSelectedStoresUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Flow<List<StoreModel>> =
         withContext(IO) {

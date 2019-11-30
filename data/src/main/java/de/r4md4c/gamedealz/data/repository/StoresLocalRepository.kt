@@ -20,8 +20,11 @@ package de.r4md4c.gamedealz.data.repository
 import de.r4md4c.gamedealz.data.dao.StoresDao
 import de.r4md4c.gamedealz.data.entity.Store
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-internal class StoresLocalRepository(private val storesDao: StoresDao) : StoresRepository {
+internal class StoresLocalRepository @Inject constructor(
+    private val storesDao: StoresDao
+) : StoresRepository {
 
     override suspend fun all(ids: Collection<String>?): Flow<List<Store>> =
         (ids?.let { storesDao.all(it.toSet()) } ?: storesDao.all())

@@ -15,22 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.appcompat
+package de.r4md4c.gamedealz.network.di
 
-import androidx.appcompat.app.AppCompatDelegate
-import javax.inject.Inject
+import dagger.Binds
+import dagger.Module
+import de.r4md4c.gamedealz.network.scrapper.JsoupScrapper
+import de.r4md4c.gamedealz.network.scrapper.Scrapper
 
-internal class ApplicationAppCompatProvider @Inject constructor() : AppCompatProvider {
+@Module
+abstract class NetworkBindsModule {
 
-    override var currentNightMode: NightMode
-        get() = AppCompatDelegate.getDefaultNightMode().fromAppCompatNightMode()
-        set(value) {
-            AppCompatDelegate.setDefaultNightMode(NightMode.toAppCompatNightMode(value))
-        }
-
-    private fun Int.fromAppCompatNightMode(): NightMode =
-        when (this) {
-            AppCompatDelegate.MODE_NIGHT_YES -> NightMode.Enabled
-            else -> NightMode.Disabled
-        }
+    @Binds
+    internal abstract fun bindsJsoupScrapper(scrapper: JsoupScrapper): Scrapper
 }

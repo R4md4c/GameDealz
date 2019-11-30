@@ -21,8 +21,11 @@ import de.r4md4c.gamedealz.data.dao.PriceAlertDao
 import de.r4md4c.gamedealz.data.entity.PriceAlert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
-internal class PriceAlertLocalRepository(private val priceAlertDao: PriceAlertDao) : PriceAlertRepository {
+internal class PriceAlertLocalRepository @Inject constructor(
+    private val priceAlertDao: PriceAlertDao
+) : PriceAlertRepository {
 
     override suspend fun all(ids: Collection<Long>?): Flow<List<PriceAlert>> =
         (ids?.let { priceAlertDao.findAll(ids) } ?: priceAlertDao.findAll()).distinctUntilChanged()

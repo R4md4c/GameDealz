@@ -24,12 +24,15 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import javax.inject.Inject
 
 /**
  * A Helper method used in [de.r4md4c.gamedealz.domain.usecase.impl.CheckPriceThresholdUseCaseImpl],
  * to retrieve the prices from a group of watchees with their stores.
  */
-internal class RetrievePricesGroupedByCountriesHelper(private val pricesRemoteRepository: PricesRemoteRepository) {
+internal class RetrievePricesGroupedByCountriesHelper @Inject constructor(
+    private val pricesRemoteRepository: PricesRemoteRepository
+) {
 
     /**
      * Gets the prices from the watchees that are grouped by countries.

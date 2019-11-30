@@ -15,19 +15,28 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.data.di
 
 import android.content.Context
-import android.text.format.DateUtils
-import javax.inject.Inject
+import androidx.room.Room
+import dagger.Module
+import dagger.Provides
+import de.r4md4c.gamedealz.data.GameDealzDatabase
+import de.r4md4c.gamedealz.data.migrations.MIGRATION_1_2
+import de.r4md4c.gamedealz.data.migrations.Migration2To3
+import javax.inject.Singleton
 
-internal class AndroidDateFormatter @Inject constructor(
-    private val context: Context
-) : DateFormatter {
+@Module
+object DatabaseModule {
 
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
-
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
+    @Singleton
+    @Provides
+    internal fun provideGameDealzDatabase(context: Context): GameDealzDatabase =
+        Room.databaseBuilder(
+            context,
+            GameDealzDatabase::class.java,
+            GameDealzDatabase.DATABASE_NAME
+        )
+            .addMigrations(MIGRATION_1_2, Migration2To3())
+            .build()
 }

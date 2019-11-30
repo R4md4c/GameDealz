@@ -21,8 +21,11 @@ import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeModel
 import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
+import javax.inject.Inject
 
-internal class RemoveWatcheesUseCaseImpl(private val watchlistRepository: WatchlistRepository) : RemoveWatcheesUseCase {
+internal class RemoveWatcheesUseCaseImpl @Inject constructor(
+    private val watchlistRepository: WatchlistRepository
+) : RemoveWatcheesUseCase {
 
     override suspend fun invoke(param: TypeParameter<List<WatcheeModel>>?): Int {
         val list = requireNotNull(param).value

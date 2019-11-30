@@ -15,22 +15,17 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.appcompat
+package de.r4md4c.gamedealz.workmanager.di
 
-import androidx.appcompat.app.AppCompatDelegate
-import javax.inject.Inject
+import dagger.Binds
+import dagger.Module
+import de.r4md4c.gamedealz.workmanager.PricesCheckerWorker
+import de.r4md4c.gamedealz.workmanager.WorkManagerJobsInitializer
 
-internal class ApplicationAppCompatProvider @Inject constructor() : AppCompatProvider {
+@Module
+abstract class WorkManagerBindsModule {
 
-    override var currentNightMode: NightMode
-        get() = AppCompatDelegate.getDefaultNightMode().fromAppCompatNightMode()
-        set(value) {
-            AppCompatDelegate.setDefaultNightMode(NightMode.toAppCompatNightMode(value))
-        }
-
-    private fun Int.fromAppCompatNightMode(): NightMode =
-        when (this) {
-            AppCompatDelegate.MODE_NIGHT_YES -> NightMode.Enabled
-            else -> NightMode.Disabled
-        }
+    @Binds
+    internal abstract fun bindsWorkManagerJobsInitializer(it: WorkManagerJobsInitializer)
+            : PricesCheckerWorker
 }

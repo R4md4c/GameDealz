@@ -34,8 +34,9 @@ import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
 import de.r4md4c.gamedealz.network.service.SearchService
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal class SearchUseCaseImpl(
+internal class SearchUseCaseImpl @Inject constructor(
     private val searchService: SearchService,
     private val pricesRemoteRepository: PricesRemoteRepository,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,

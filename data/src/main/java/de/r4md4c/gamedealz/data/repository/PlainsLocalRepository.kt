@@ -20,8 +20,11 @@ package de.r4md4c.gamedealz.data.repository
 import de.r4md4c.gamedealz.data.dao.PlainsDao
 import de.r4md4c.gamedealz.data.entity.Plain
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-internal class PlainsLocalRepository(private val plainsDao: PlainsDao) : PlainsRepository {
+internal class PlainsLocalRepository @Inject constructor(
+    private val plainsDao: PlainsDao
+) : PlainsRepository {
 
     override suspend fun all(ids: Collection<String>?): Flow<List<Plain>> {
         throw UnsupportedOperationException("PlainsDao doesn't support retrieving full list")

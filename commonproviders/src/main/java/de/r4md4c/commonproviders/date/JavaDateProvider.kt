@@ -18,8 +18,9 @@
 package de.r4md4c.commonproviders.date
 
 import java.util.*
+import javax.inject.Inject
 
-internal class JavaDateProvider : DateProvider {
+internal class JavaDateProvider @Inject constructor() : DateProvider {
 
     override fun now(): Date = Date()
 

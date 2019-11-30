@@ -29,8 +29,9 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
-internal class ChangeActiveRegionUseCaseImpl(
+internal class ChangeActiveRegionUseCaseImpl @Inject constructor(
     private val sharedPreferencesProvider: SharedPreferencesProvider,
     private val storesRemoteRepository: StoresRemoteRepository,
     private val storesLocalRepository: StoresRepository,

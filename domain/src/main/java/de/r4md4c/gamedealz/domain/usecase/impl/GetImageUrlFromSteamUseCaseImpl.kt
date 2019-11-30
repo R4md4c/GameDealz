@@ -21,11 +21,12 @@ import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.repository.PlainsRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
+import javax.inject.Inject
 
 /**
  * Retrieve an image url from steam.
  */
-internal class GetImageUrlFromSteamUseCaseImpl(
+internal class GetImageUrlFromSteamUseCaseImpl @Inject constructor(
     private val plainsRepository: PlainsRepository,
     private val dateProvider: DateProvider
 ) : GetImageUrlUseCase {

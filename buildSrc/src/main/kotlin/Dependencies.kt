@@ -49,7 +49,7 @@ object Libraries {
         const val annotations = "1.1.0"
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
-        const val rx2 = "2.2.13"
+        const val dagger = "2.25.2"
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
     }
@@ -64,6 +64,9 @@ object Libraries {
 
     const val workManagerKtx = "androidx.work:work-runtime-ktx:${Versions.workmanager}"
 
+    const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
+    const val daggerCompiler = "com.google.dagger:dagger-compiler:${Versions.dagger}"
+    
     const val jsoup = "org.jsoup:jsoup:1.12.1"
 
     const val retrofitCoroutinesAdapter =

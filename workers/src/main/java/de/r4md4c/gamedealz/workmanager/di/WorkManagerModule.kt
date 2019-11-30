@@ -15,19 +15,28 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.workmanager.di
 
 import android.content.Context
-import android.text.format.DateUtils
-import javax.inject.Inject
+import androidx.work.Configuration
+import androidx.work.WorkManager
+import dagger.Module
+import dagger.Provides
+import de.r4md4c.gamedealz.workmanager.factory.GameDealzWorkManagerFactory
+import javax.inject.Singleton
 
-internal class AndroidDateFormatter @Inject constructor(
-    private val context: Context
-) : DateFormatter {
+@Module(includes = [WorkManagerBindsModule::class])
+object WorkManagerModule {
 
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
-
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
+    @Singleton
+    @Provides
+    fun provideWorkManager(context: Context): WorkManager {
+        WorkManager.initialize(
+            context,
+            Configuration.Builder()
+                .setWorkerFactory(GameDealzWorkManagerFactory())
+                .build()
+        )
+        return WorkManager.getInstance(context)
+    }
 }

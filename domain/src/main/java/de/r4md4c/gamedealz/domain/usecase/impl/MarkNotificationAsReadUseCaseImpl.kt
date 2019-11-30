@@ -21,9 +21,11 @@ import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeModel
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
+import javax.inject.Inject
 
-internal class MarkNotificationAsReadUseCaseImpl(private val priceAlertRepository: PriceAlertRepository) :
-    MarkNotificationAsReadUseCase {
+internal class MarkNotificationAsReadUseCaseImpl @Inject constructor(
+    private val priceAlertRepository: PriceAlertRepository
+) : MarkNotificationAsReadUseCase {
 
     override suspend fun invoke(param: TypeParameter<WatcheeModel>?) {
         val watcheeModelId = requireNotNull(param).value.id ?: return

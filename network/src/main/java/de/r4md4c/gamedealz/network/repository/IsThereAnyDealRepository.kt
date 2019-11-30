@@ -25,9 +25,12 @@ import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.RegionCodes
 import de.r4md4c.gamedealz.network.service.ShopPlains
+import javax.inject.Inject
 
-internal class IsThereAnyDealRepository(private val service: IsThereAnyDealService) : RegionsRemoteRepository,
-    StoresRemoteRepository, DealsRemoteRepository, PlainsRemoteRepository, PricesRemoteRepository {
+internal class IsThereAnyDealRepository @Inject constructor(
+    private val service: IsThereAnyDealService
+) : RegionsRemoteRepository, StoresRemoteRepository,
+    DealsRemoteRepository, PlainsRemoteRepository, PricesRemoteRepository {
 
     override suspend fun regions(): RegionCodes = service.regions().await().data
 

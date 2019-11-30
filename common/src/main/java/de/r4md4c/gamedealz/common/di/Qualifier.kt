@@ -15,22 +15,14 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.appcompat
+package de.r4md4c.gamedealz.common.di
 
-import androidx.appcompat.app.AppCompatDelegate
-import javax.inject.Inject
+import javax.inject.Qualifier
 
-internal class ApplicationAppCompatProvider @Inject constructor() : AppCompatProvider {
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ForApplication
 
-    override var currentNightMode: NightMode
-        get() = AppCompatDelegate.getDefaultNightMode().fromAppCompatNightMode()
-        set(value) {
-            AppCompatDelegate.setDefaultNightMode(NightMode.toAppCompatNightMode(value))
-        }
-
-    private fun Int.fromAppCompatNightMode(): NightMode =
-        when (this) {
-            AppCompatDelegate.MODE_NIGHT_YES -> NightMode.Enabled
-            else -> NightMode.Disabled
-        }
-}
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ForActivity

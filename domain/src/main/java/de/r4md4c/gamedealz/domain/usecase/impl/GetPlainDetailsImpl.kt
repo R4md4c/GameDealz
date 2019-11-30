@@ -41,8 +41,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
-internal class GetPlainDetailsImpl(
+internal class GetPlainDetailsImpl @Inject constructor(
     private val steamRemoteRepository: SteamRemoteRepository,
     private val plainsRepository: PlainsRepository,
     private val pricesRemoteRepository: PricesRemoteRepository,

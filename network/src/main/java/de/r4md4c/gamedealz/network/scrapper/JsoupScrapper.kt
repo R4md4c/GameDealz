@@ -24,8 +24,9 @@ import okhttp3.Request
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-internal class JsoupScrapper(okHttpClient: OkHttpClient) : Scrapper {
+internal class JsoupScrapper @Inject constructor(okHttpClient: OkHttpClient) : Scrapper {
 
     companion object {
         private const val TIMEOUT = 30L
