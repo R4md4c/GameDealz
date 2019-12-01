@@ -20,7 +20,8 @@ package de.r4md4c.gamedealz.common.state
 import com.tinder.StateMachine
 import timber.log.Timber
 
-class UIStateMachineDelegate : StateMachineDelegate {
+class UIStateMachineDelegate :
+    StateMachineDelegate {
 
     private var transitionBlock: ((SideEffect) -> Unit)? = null
 

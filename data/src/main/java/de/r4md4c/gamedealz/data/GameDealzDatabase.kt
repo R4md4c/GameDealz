@@ -45,21 +45,21 @@ import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
         WatcheeStoreJoin::class,
         PriceAlert::class]
 )
-internal abstract class GameDealzDatabase : RoomDatabase() {
+abstract class GameDealzDatabase : RoomDatabase() {
 
-    abstract fun regionWithCountriesDao(): RegionWithCountriesDao
+    internal abstract fun regionWithCountriesDao(): RegionWithCountriesDao
 
-    abstract fun storesDao(): StoresDao
+    internal abstract fun storesDao(): StoresDao
 
-    abstract fun plainsDao(): PlainsDao
+    internal abstract fun plainsDao(): PlainsDao
 
-    abstract fun countriesDao(): CountriesDao
+    internal abstract fun countriesDao(): CountriesDao
 
-    abstract fun watchlistDao(): WatchlistDao
+    internal abstract fun watchlistDao(): WatchlistDao
 
-    abstract fun watcheeStoreJoinDao(): WatcheeStoreJoinDao
+    internal abstract fun watcheeStoreJoinDao(): WatcheeStoreJoinDao
 
-    abstract fun priceAlertDao(): PriceAlertDao
+    internal abstract fun priceAlertDao(): PriceAlertDao
 
     companion object {
         const val DATABASE_NAME = "game_dealz.db"

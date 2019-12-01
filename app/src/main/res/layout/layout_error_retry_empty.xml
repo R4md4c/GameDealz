@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"/>
 
     <Button
-            android:id="@+id/retry"
+            android:id="@id/retry"
             android:layout_width="wrap_content"
             style="@style/Widget.MaterialComponents.Button"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"/>
 
     <androidx.constraintlayout.widget.Group
-            android:id="@+id/emptyGroup"
+            android:id="@id/emptyGroup"
             android:visibility="gone"
             tools:visibility="visible"
             app:constraint_referenced_ids="emptyResultsTitleText"
@@ -51,7 +51,7 @@
             android:layout_height="0dp"/>
 
     <androidx.constraintlayout.widget.Group
-            android:id="@+id/errorGroup"
+            android:id="@id/errorGroup"
             android:visibility="gone"
             tools:visibility="visible"
             app:constraint_referenced_ids="errorText,retry"

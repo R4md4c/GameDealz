@@ -35,6 +35,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
@@ -72,6 +73,9 @@ abstract class UseCaseModule {
 
     @Binds
     internal abstract fun bindsGetRegionsUseCase(it: GetRegionsUseCaseImpl): GetRegionsUseCase
+
+    @Binds
+    internal abstract fun bindsOnCurrentActiveRegionReactiveUseCase(it: GetCurrentActiveRegionUseCaseImpl): OnCurrentActiveRegionReactiveUseCase
 
     @Binds
     internal abstract fun bindsGetCurrentActiveRegionUseCase(it: GetCurrentActiveRegionUseCaseImpl): GetCurrentActiveRegionUseCase

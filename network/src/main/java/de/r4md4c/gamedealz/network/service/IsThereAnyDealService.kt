@@ -43,7 +43,7 @@ typealias PlainPriceList = Map<String, ListWrapper<Price>>
  * Check https://itad.docs.apiary.io/#reference/ for documentation.
  */
 @Suppress("LongParameterList")
-internal interface IsThereAnyDealService {
+interface IsThereAnyDealService {
 
     @GET("oauth/authorize?response_type=code")
     fun authorize(

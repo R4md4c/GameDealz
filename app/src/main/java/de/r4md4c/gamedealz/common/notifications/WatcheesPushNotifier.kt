@@ -48,13 +48,15 @@ import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.di.ForApplication
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import java.util.*
+import javax.inject.Inject
 
-internal class WatcheesPushNotifier(
+internal class WatcheesPushNotifier @Inject constructor(
     private val context: Context,
-    private val resourcesProvider: ResourcesProvider
+    @ForApplication private val resourcesProvider: ResourcesProvider
 ) : Notifier<WatcheeNotificationModel> {
 
     private val notificationManager by lazy {

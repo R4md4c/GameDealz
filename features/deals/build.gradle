@@ -1,0 +1,24 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+    }
+
+}
+
+dependencies {
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.lifecycleViewModel
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.lifecycleRuntimeKtx
+    implementation Libraries.recyclerView
+
+    implementation project(':core')
+}

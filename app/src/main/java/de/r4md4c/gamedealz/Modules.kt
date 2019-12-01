@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
 import de.r4md4c.commonproviders.notification.Notifier
@@ -69,8 +70,8 @@ val MAIN = module {
 
     factory<Navigator> { (activity: Activity) ->
         AndroidNavigator(
-            activity,
-            activity.findNavController(R.id.nav_host_fragment)
+            activity as FragmentActivity,
+            dagger.Lazy { activity.findNavController(R.id.nav_host_fragment) }
         )
     }
 
@@ -107,5 +108,10 @@ val MAIN = module {
         )
     }
 
-    factory { (fragment: Fragment, onRetry: OnRetryClick) -> StateVisibilityHandler(fragment, onRetry) }
+    factory { (fragment: Fragment, onRetry: OnRetryClick) ->
+        StateVisibilityHandler(
+            fragment,
+            onRetry
+        )
+    }
 }

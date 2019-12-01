@@ -26,10 +26,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.di.ForApplication
+import javax.inject.Inject
 
-internal class ShortcutManagerImpl(
+internal class ShortcutManagerImpl @Inject constructor(
     private val context: Context,
-    private val resourcesProvider: ResourcesProvider
+    @ForApplication private val resourcesProvider: ResourcesProvider
 ) : ShortcutManager {
 
     override fun addManageWatchlistShortcut() {

@@ -17,30 +17,35 @@
 
 package de.r4md4c.gamedealz.common.navigation
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Parcelable
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.deals.DealsFragmentDirections
 import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
+import javax.inject.Inject
 
-class AndroidNavigator(
-    private val context: Context,
-    private val navController: NavController
+/**
+ * We're doing lazy, because we inject before super.onCreate, and at that the time the view
+ * isn't ready yet, to get the NavController from.
+ */
+class AndroidNavigator @Inject constructor(
+    private val fragmentActivity: FragmentActivity,
+    private val navController: dagger.Lazy<NavController>
 ) : Navigator {
 
     override fun navigate(uri: String, extras: Parcelable?) {
         val navDirection: NavDirections? = getNavDirections(Uri.parse(uri), extras)
-        navDirection?.let { navController.navigate(navDirection) }
+        navDirection?.let { navController.get().navigate(navDirection) }
     }
 
-    override fun navigateUp() = navController.navigateUp()
+    override fun navigateUp() = navController.get().navigateUp()
 
     override fun navigateToUrl(url: String) {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        fragmentActivity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
     private fun getNavDirections(parsedUri: Uri, extras: Parcelable?): NavDirections? =

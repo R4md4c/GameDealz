@@ -19,7 +19,8 @@ package de.r4md4c.gamedealz.common.state
 
 import kotlin.properties.Delegates
 
-class FakeStateMachineDelegate(private val initialState: State = State.Idle) : StateMachineDelegate {
+class FakeStateMachineDelegate(private val initialState: State = State.Idle) :
+    StateMachineDelegate {
 
     var lastEvent: Event by Delegates.notNull()
 

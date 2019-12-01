@@ -19,8 +19,9 @@ package de.r4md4c.gamedealz.common.notifications
 
 import android.content.Context
 import android.widget.Toast
+import javax.inject.Inject
 
-internal class ToastViewNotifier(private val context: Context) : ViewNotifier {
+internal class ToastViewNotifier @Inject constructor(private val context: Context) : ViewNotifier {
 
     override fun notify(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()

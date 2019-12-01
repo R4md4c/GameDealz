@@ -20,10 +20,12 @@ package de.r4md4c.gamedealz.home
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
 import androidx.navigation.ui.NavigationUI
@@ -34,14 +36,14 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigation.Navigator
+import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.displayName
+import de.r4md4c.gamedealz.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import de.r4md4c.gamedealz.search.SearchFragment
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
 class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionListener,
@@ -52,9 +54,13 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     val drawerLayout: DrawerLayout
         get() = drawer.drawerLayout
 
-    private val viewModel: HomeViewModel by viewModel { parametersOf(this) }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val navigator: Navigator by inject { parametersOf(this) }
+    @Inject
+    lateinit var navigator: Navigator
+
+    private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
 
     private val navController
         get() = findNavController(R.id.nav_host_fragment)
@@ -68,6 +74,7 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        onInject()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loadDrawer(savedInstanceState)
@@ -232,5 +239,11 @@ class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionLis
             }
         }
         navController.navigate(identifier, null, navOptionsBuilder)
+    }
+
+    private fun onInject() {
+        DaggerHomeComponent.factory()
+            .create(this, coreComponent())
+            .inject(this)
     }
 }

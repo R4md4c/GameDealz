@@ -89,6 +89,9 @@ dependencies {
     implementation(Libraries.okhttp) {
         because 'Glide okhttp integration needs this.'
     }
+    implementation (Libraries.workManagerKtx) {
+        exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
+    }
     implementation Libraries.okio
     kapt Libraries.glideCompiler
 
@@ -108,9 +111,14 @@ dependencies {
     implementation Libraries.koinAndroidXScope
     implementation Libraries.koinAndroidXViewModel
 
+    implementation project(':common-ui')
+    implementation project(':features:deals')
+    implementation project(':core')
     implementation project(':workers')
     implementation project(':common')
     implementation project(':commonproviders')
+    implementation project(':data')
+    implementation project(':network')
     implementation project(':domain')
 
     testImplementation project(':commontest')

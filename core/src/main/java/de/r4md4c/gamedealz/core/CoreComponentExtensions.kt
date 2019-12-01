@@ -15,4 +15,13 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.regions
+package de.r4md4c.gamedealz.core
+
+import android.app.Activity
+import de.r4md4c.gamedealz.common.di.HasComponent
+import java.lang.ClassCastException
+
+@Suppress("UNCHECKED_CAST")
+fun Activity.coreComponent(): CoreComponent =
+    (application as? HasComponent<CoreComponent>)?.daggerComponent
+        ?: throw ClassCastException("Application Class has to implement HasComponent interface")

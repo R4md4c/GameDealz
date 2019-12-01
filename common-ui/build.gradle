@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.lifecycleViewModel
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.lifecycleRuntimeKtx
+    implementation Libraries.swipeRefreshLayout
+    implementation Libraries.recyclerView
+    implementation Libraries.fragmentsKtx
+    implementation Libraries.stateMachine
+    implementation Libraries.coreKtx
+    implementation Libraries.timber
+
+    implementation project(':core')
+}

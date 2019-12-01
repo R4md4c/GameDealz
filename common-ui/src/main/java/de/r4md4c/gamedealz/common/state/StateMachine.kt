@@ -51,64 +51,112 @@ val UI_STATE_MACHINE = StateMachine.create<State, Event, SideEffect> {
 
     state<State.Loading> {
         on<Event.OnLoadingEnded> {
-            transitionTo(State.Idle, SideEffect.HideLoading)
+            transitionTo(
+                State.Idle,
+                SideEffect.HideLoading
+            )
         }
         on<Event.OnError> {
-            transitionTo(State.Error, SideEffect.ShowError(it.error))
+            transitionTo(
+                State.Error,
+                SideEffect.ShowError(it.error)
+            )
         }
         on<Event.OnShowEmpty> {
-            transitionTo(State.Empty, SideEffect.ShowEmpty)
+            transitionTo(
+                State.Empty,
+                SideEffect.ShowEmpty
+            )
         }
     }
 
     state<State.LoadingMore> {
         on<Event.OnLoadingMoreEnded> {
-            transitionTo(State.Idle, SideEffect.HideLoadingMore)
+            transitionTo(
+                State.Idle,
+                SideEffect.HideLoadingMore
+            )
         }
         on<Event.OnLoadingMoreStarted> {
-            transitionTo(State.Loading, SideEffect.ShowLoadingMore)
+            transitionTo(
+                State.Loading,
+                SideEffect.ShowLoadingMore
+            )
         }
         on<Event.OnError> {
-            transitionTo(State.Error, SideEffect.ShowError(it.error))
+            transitionTo(
+                State.Error,
+                SideEffect.ShowError(it.error)
+            )
         }
         on<Event.OnShowEmpty> {
-            transitionTo(State.Empty, SideEffect.ShowEmpty)
+            transitionTo(
+                State.Empty,
+                SideEffect.ShowEmpty
+            )
         }
     }
 
     state<State.Idle> {
         on<Event.OnLoadingStart> {
-            transitionTo(State.Loading, SideEffect.ShowLoading)
+            transitionTo(
+                State.Loading,
+                SideEffect.ShowLoading
+            )
         }
         on<Event.OnError> {
-            transitionTo(State.Error, SideEffect.ShowError(it.error))
+            transitionTo(
+                State.Error,
+                SideEffect.ShowError(it.error)
+            )
         }
         on<Event.OnLoadingEnded> {
-            transitionTo(State.Idle, SideEffect.HideLoading)
+            transitionTo(
+                State.Idle,
+                SideEffect.HideLoading
+            )
         }
         on<Event.OnLoadingMoreStarted> {
-            transitionTo(State.LoadingMore, SideEffect.ShowLoadingMore)
+            transitionTo(
+                State.LoadingMore,
+                SideEffect.ShowLoadingMore
+            )
         }
         on<Event.OnLoadingMoreEnded> {
-            transitionTo(State.Idle, SideEffect.HideLoadingMore)
+            transitionTo(
+                State.Idle,
+                SideEffect.HideLoadingMore
+            )
         }
         on<Event.OnShowEmpty> {
-            transitionTo(State.Empty, SideEffect.ShowEmpty)
+            transitionTo(
+                State.Empty,
+                SideEffect.ShowEmpty
+            )
         }
     }
 
     state<State.Empty> {
         on<Event.OnLoadingStart> {
-            transitionTo(State.Loading, SideEffect.ShowLoading)
+            transitionTo(
+                State.Loading,
+                SideEffect.ShowLoading
+            )
         }
         on<Event.OnLoadingEnded> {
-            transitionTo(State.Idle, SideEffect.ShowContent)
+            transitionTo(
+                State.Idle,
+                SideEffect.ShowContent
+            )
         }
     }
 
     state<State.Error> {
         on<Event.OnLoadingStart> {
-            transitionTo(State.Loading, SideEffect.ShowLoading)
+            transitionTo(
+                State.Loading,
+                SideEffect.ShowLoading
+            )
         }
     }
 }

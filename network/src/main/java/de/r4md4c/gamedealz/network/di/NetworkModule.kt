@@ -24,7 +24,6 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import de.r4md4c.gamedealz.network.BuildConfig
 import de.r4md4c.gamedealz.network.MB_50
 import de.r4md4c.gamedealz.network.READ_TIMEOUT_IN_SECONDS
 import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
@@ -33,9 +32,9 @@ import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.steam.SteamService
 import okhttp3.Cache
 import okhttp3.ConnectionSpec
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.TlsVersion
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -46,22 +45,19 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
 
-@Module(includes = [NetworkBindsModule::class])
+@Module(includes = [NetworkBindsModule::class, InterceptorsModule::class])
 object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun provideOkHttpClient(interceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
-            .addInterceptor(interceptor)
+            .apply {
+                interceptors.forEach { addInterceptor(it) }
+            }
             .enableTls12OnPreLollipop()
             .build()
-
-    @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor()
-            .setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
 
     @Provides
     fun provideCallAdapterFactory(): CallAdapter.Factory = CoroutineCallAdapterFactory()

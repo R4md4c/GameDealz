@@ -1,0 +1,25 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+    }
+
+}
+
+dependencies {
+    implementation Libraries.kotlinStdLib
+
+    implementation project(':data')
+    implementation project(':network')
+    implementation project(':domain')
+    implementation project(':common')
+    implementation project(':commonproviders')
+    implementation project(':workers')
+}

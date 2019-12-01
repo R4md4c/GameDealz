@@ -40,8 +40,9 @@ import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class HomeViewModel(
+class HomeViewModel @Inject constructor(
     private val dispatchers: IDispatchers,
     private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
     private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,

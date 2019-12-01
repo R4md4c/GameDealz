@@ -23,20 +23,23 @@ import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import de.r4md4c.gamedealz.workmanager.factory.GameDealzWorkManagerFactory
-import javax.inject.Singleton
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Module(includes = [WorkManagerBindsModule::class])
 object WorkManagerModule {
 
-    @Singleton
+    private val isInitialized = AtomicBoolean()
+
     @Provides
     fun provideWorkManager(context: Context): WorkManager {
-        WorkManager.initialize(
-            context,
-            Configuration.Builder()
-                .setWorkerFactory(GameDealzWorkManagerFactory())
-                .build()
-        )
+        if (isInitialized.compareAndSet(false, true)) {
+            WorkManager.initialize(
+                context,
+                Configuration.Builder()
+                    .setWorkerFactory(GameDealzWorkManagerFactory())
+                    .build()
+            )
+        }
         return WorkManager.getInstance(context)
     }
 }
