@@ -15,33 +15,22 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.core
+package de.r4md4c.gamedealz.feature.deals.datasource
 
-import android.content.Context
-import dagger.Subcomponent
+import androidx.paging.DataSource
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.di.ForApplication
-import de.r4md4c.gamedealz.data.di.RepositoryModule
-import de.r4md4c.gamedealz.domain.di.UseCaseModule
-import de.r4md4c.gamedealz.network.di.RemoteRepositoryModule
-import okhttp3.OkHttpClient
+import de.r4md4c.gamedealz.common.state.StateMachineDelegate
+import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
+import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
+import javax.inject.Inject
 
-@Subcomponent(
-    modules = [
-        RemoteRepositoryModule::class,
-        UseCaseModule::class,
-        RepositoryModule::class
-    ]
-)
-interface CoreComponent : UseCaseComponent {
+class DealsDataSourceFactory @Inject constructor(
+    private val getDealsUseCase: GetDealsUseCase,
+    private val uiStateMachineDelegate: StateMachineDelegate,
+    @ForApplication private val resourcesProvider: ResourcesProvider
+) : DataSource.Factory<Int, DealRenderModel>() {
 
-    val okHttpClient: OkHttpClient
-
-    val applicationContext: Context
-
-    val dispatchers: IDispatchers
-
-    @ForApplication
-    fun resourcesProvider(): ResourcesProvider
+    override fun create(): DataSource<Int, DealRenderModel> =
+        DealsDataSource(getDealsUseCase, uiStateMachineDelegate, resourcesProvider)
 }

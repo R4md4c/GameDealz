@@ -18,12 +18,11 @@
 package de.r4md4c.gamedealz
 
 import android.app.Activity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
 import androidx.paging.DataSource
-import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.FOR_APPLICATION
+import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.navigation.AndroidNavigator
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
@@ -31,16 +30,14 @@ import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.notifications.WatcheesPushNotifier
 import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.shortcut.ShortcutManagerImpl
-import de.r4md4c.gamedealz.common.state.OnRetryClick
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
-import de.r4md4c.gamedealz.deals.DealsViewModel
-import de.r4md4c.gamedealz.deals.datasource.DealsDataSourceFactory
-import de.r4md4c.gamedealz.deals.filter.DealsFilterViewModel
-import de.r4md4c.gamedealz.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.detail.DetailsViewModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import de.r4md4c.gamedealz.feature.deals.DealsViewModel
+import de.r4md4c.gamedealz.feature.deals.datasource.DealsDataSourceFactory
+import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterViewModel
+import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import de.r4md4c.gamedealz.search.SearchViewModel
@@ -79,7 +76,12 @@ val MAIN = module {
 
     viewModel {
         val stateMachineDelegate = get<StateMachineDelegate>()
-        DealsViewModel(get(), get(parameters = { parametersOf(stateMachineDelegate) }), get(), stateMachineDelegate)
+        DealsViewModel(
+            get(),
+            get(parameters = { parametersOf(stateMachineDelegate) }),
+            get(),
+            stateMachineDelegate
+        )
     }
 
     viewModel<DealsFilterViewModel>()
@@ -105,13 +107,6 @@ val MAIN = module {
             get(),
             get(),
             get(name = FOR_APPLICATION)
-        )
-    }
-
-    factory { (fragment: Fragment, onRetry: OnRetryClick) ->
-        StateVisibilityHandler(
-            fragment,
-            onRetry
         )
     }
 }

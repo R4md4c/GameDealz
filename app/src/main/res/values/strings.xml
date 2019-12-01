@@ -6,8 +6,6 @@
     <string name="search">Search</string>
     <string name="title_on_going_deals">Ongoing Deals</string>
     <string name="title_submit_error_report">Submit Error Report</string>
-    <string name="retry">Retry</string>
-    <string name="results_empty">Returned results were empty.</string>
     <string name="current_best">Current Best:</string>
     <string name="historical_low">Historical low was</string>
     <string name="check_on">Check On %s</string>
@@ -18,7 +16,6 @@
     <string name="about_game">About the Game</string>
     <string name="add_to_watch_list">Add to Watchlist</string>
     <string name="filter_sort_by">Sort by</string>
-    <string name="filter_by_stores">Filter by Stores</string>
     <string name="action_undo">Undo</string>
 
     <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>

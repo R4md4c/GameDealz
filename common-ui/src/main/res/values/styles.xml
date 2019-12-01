@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+    </style>
+</resources>

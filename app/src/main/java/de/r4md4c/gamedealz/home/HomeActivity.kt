@@ -37,7 +37,7 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.core.coreComponent
-import de.r4md4c.gamedealz.deals.DealsFragment
+import de.r4md4c.gamedealz.feature.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.home.item.ErrorDrawerItem

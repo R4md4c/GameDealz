@@ -24,7 +24,7 @@
                 tools:title="@string/title_on_going_deals">
 
             <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
+                    android:id="@id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"/>

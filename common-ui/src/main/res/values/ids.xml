@@ -7,4 +7,6 @@
     <item name="errorGroup" type="id" />
     <item name="retry" type="id" />
     <item name="errorText" type="id" />
+    <item name="toolbar" type="id" />
+    <item name="emptyResultsTitleText" type="id" />
 </resources>

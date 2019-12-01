@@ -23,15 +23,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import de.r4md4c.gamedealz.common.R
+import javax.inject.Inject
 
 typealias OnRetryClick = () -> Unit
 
 /**
  * Handles visibility of the widgets depending on the state machine's SideEffect.
  */
-class StateVisibilityHandler(
-    private val fragment: Fragment,
-    private val onRetryClick: OnRetryClick
+class StateVisibilityHandler @Inject constructor(
+    private val fragment: Fragment
 ) {
 
     private val content: View?
@@ -55,8 +55,10 @@ class StateVisibilityHandler(
     private val errorText: TextView?
         get() = fragment.view?.findViewById(R.id.errorText)
 
+    var onRetryClick: OnRetryClick? = null
+
     fun onViewCreated() {
-        retryView?.setOnClickListener { onRetryClick() }
+        retryView?.setOnClickListener { onRetryClick?.invoke() }
     }
 
     fun onSideEffect(sideEffect: SideEffect) {

@@ -24,8 +24,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
-import de.r4md4c.gamedealz.deals.DealsFragmentDirections
 import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
+import de.r4md4c.gamedealz.feature.deals.DealsFragmentDirections
 import javax.inject.Inject
 
 /**

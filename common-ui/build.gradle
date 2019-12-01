@@ -1,14 +1,16 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion AndroidSdk.compile
 
-
     defaultConfig {
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target
+
+        vectorDrawables.useSupportLibrary = true
     }
 
     compileOptions {
@@ -21,17 +23,35 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
+    implementation(Libraries.glide) {
+        exclude group: "com.android.support"
+    }
+    implementation(Libraries.glideHttpIntegration) {
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+    implementation(Libraries.okhttp) {
+        because 'Glide okhttp integration needs this.'
+    }
+    kapt Libraries.glideCompiler
+    implementation Libraries.constraintLayout
     implementation Libraries.kotlinStdLib
     implementation Libraries.lifecycleViewModel
     implementation Libraries.lifecycleViewModelKtx
     implementation Libraries.lifecycleRuntimeKtx
     implementation Libraries.swipeRefreshLayout
     implementation Libraries.recyclerView
+    implementation Libraries.material
     implementation Libraries.fragmentsKtx
     implementation Libraries.stateMachine
     implementation Libraries.coreKtx
     implementation Libraries.timber
 
+    implementation project(':common')
+    implementation project(':domain')
     implementation project(':core')
 }

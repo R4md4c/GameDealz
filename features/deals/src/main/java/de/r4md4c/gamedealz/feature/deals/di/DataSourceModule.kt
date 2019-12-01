@@ -15,19 +15,18 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.core
+package de.r4md4c.gamedealz.feature.deals.di
 
-import android.app.Activity
-import android.content.Context
-import de.r4md4c.gamedealz.common.di.HasComponent
-import java.lang.ClassCastException
+import androidx.paging.DataSource
+import dagger.Binds
+import dagger.Module
+import de.r4md4c.gamedealz.feature.deals.datasource.DealsDataSourceFactory
+import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
 
-@Suppress("UNCHECKED_CAST")
-fun Activity.coreComponent(): CoreComponent =
-    (application as? HasComponent<CoreComponent>)?.daggerComponent
-        ?: throw ClassCastException("Application Class has to implement HasComponent interface")
+@Module
+internal abstract class DataSourceModule {
 
-@Suppress("UNCHECKED_CAST")
-fun Context.coreComponent(): CoreComponent =
-    (applicationContext as? HasComponent<CoreComponent>)?.daggerComponent
-        ?: throw ClassCastException("Application Class has to implement HasComponent interface")
+    @Binds
+    abstract fun bindsDataSourceFactory(it: DealsDataSourceFactory)
+            : DataSource.Factory<Int, DealRenderModel>
+}

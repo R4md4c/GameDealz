@@ -15,19 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.core
+package de.r4md4c.gamedealz.feature.deals.item
 
-import android.app.Activity
-import android.content.Context
-import de.r4md4c.gamedealz.common.di.HasComponent
-import java.lang.ClassCastException
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
-@Suppress("UNCHECKED_CAST")
-fun Activity.coreComponent(): CoreComponent =
-    (application as? HasComponent<CoreComponent>)?.daggerComponent
-        ?: throw ClassCastException("Application Class has to implement HasComponent interface")
-
-@Suppress("UNCHECKED_CAST")
-fun Context.coreComponent(): CoreComponent =
-    (applicationContext as? HasComponent<CoreComponent>)?.daggerComponent
-        ?: throw ClassCastException("Application Class has to implement HasComponent interface")
+class ProgressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    init {
+        (itemView.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.apply {
+            isFullSpan = true
+        }
+    }
+}

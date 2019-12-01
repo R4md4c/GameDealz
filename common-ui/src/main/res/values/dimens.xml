@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="grid_cell_min_height">160dp</dimen>
+    <dimen name="baseline_1x">8dp</dimen>
+    <dimen name="baseline_2x">16dp</dimen>
+</resources>

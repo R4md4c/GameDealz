@@ -19,9 +19,9 @@ package de.r4md4c.gamedealz.common.state
 
 import com.tinder.StateMachine
 import timber.log.Timber
+import javax.inject.Inject
 
-class UIStateMachineDelegate :
-    StateMachineDelegate {
+class UIStateMachineDelegate @Inject constructor() : StateMachineDelegate {
 
     private var transitionBlock: ((SideEffect) -> Unit)? = null
 

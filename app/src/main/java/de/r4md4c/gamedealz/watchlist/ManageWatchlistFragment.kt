@@ -22,6 +22,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.Observer
@@ -29,6 +31,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -49,8 +53,6 @@ import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.watchlist.item.ManageWatchlistItem
 import de.r4md4c.gamedealz.watchlist.item.toManageWatchlistItem
-import kotlinx.android.synthetic.main.fragment_manage_watchlist.*
-import kotlinx.android.synthetic.main.layout_error_retry_empty.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
@@ -69,6 +71,22 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     private val watchlistViewModel: ManageWatchlistViewModel by viewModel()
 
     private val resourcesProvider by inject<ResourcesProvider>(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
+
+    private val swipeToRefresh: SwipeRefreshLayout by lazy {
+        view!!.findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
+    }
+
+    private val toolbar: Toolbar by lazy {
+        view!!.findViewById(R.id.toolbar) as Toolbar
+    }
+
+    private val content: RecyclerView by lazy {
+        view!!.findViewById(R.id.content) as RecyclerView
+    }
+
+    private val emptyResultsTitleText: TextView by lazy {
+        view!!.findViewById(R.id.emptyResultsTitleText) as TextView
+    }
 
     private val stateVisibilityHandler by inject<StateVisibilityHandler> {
         parametersOf(this, { watchlistViewModel.onSwipeToRefresh() })

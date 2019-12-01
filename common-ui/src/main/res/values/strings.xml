@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="on">on</string>
+    <string name="since">since</string>
+    <string name="retry">Retry</string>
+    <string name="results_empty">Returned results were empty.</string>
+</resources>

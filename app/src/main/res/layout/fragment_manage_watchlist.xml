@@ -6,7 +6,7 @@
                                                    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@id/toolbar"
             android:layout_width="match_parent"
             app:layout_constraintTop_toTopOf="parent"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
@@ -21,7 +21,7 @@
             android:layout_height="0dp">
 
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/content"
+                android:id="@id/content"
                 android:layout_width="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_height="match_parent"/>

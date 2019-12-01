@@ -21,7 +21,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
-        buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 

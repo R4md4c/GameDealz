@@ -15,19 +15,11 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.core
+package de.r4md4c.gamedealz.common.di
 
-import android.app.Activity
-import android.content.Context
-import de.r4md4c.gamedealz.common.di.HasComponent
-import java.lang.ClassCastException
+import javax.inject.Scope
 
-@Suppress("UNCHECKED_CAST")
-fun Activity.coreComponent(): CoreComponent =
-    (application as? HasComponent<CoreComponent>)?.daggerComponent
-        ?: throw ClassCastException("Application Class has to implement HasComponent interface")
-
-@Suppress("UNCHECKED_CAST")
-fun Context.coreComponent(): CoreComponent =
-    (applicationContext as? HasComponent<CoreComponent>)?.daggerComponent
-        ?: throw ClassCastException("Application Class has to implement HasComponent interface")
+@Scope
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+annotation class FeatureScope
