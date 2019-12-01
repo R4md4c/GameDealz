@@ -32,6 +32,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
 import androidx.core.os.bundleOf
@@ -51,7 +52,6 @@ import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
-import kotlinx.android.synthetic.main.layout_toolbar.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -67,6 +67,10 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         arguments!!.getParcelable<PriceModel>(
             ARG_PRICE_MODEL
         )
+    }
+
+    private val toolbar: Toolbar by lazy {
+        view!!.findViewById(R.id.toolbar) as Toolbar
     }
 
     private val viewNotifier: ViewNotifier by inject()

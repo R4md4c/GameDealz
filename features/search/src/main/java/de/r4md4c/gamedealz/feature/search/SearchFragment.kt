@@ -15,12 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.search
+package de.r4md4c.gamedealz.feature.search
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -28,63 +26,63 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import de.r4md4c.commonproviders.FOR_ACTIVITY
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
+import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
-import de.r4md4c.gamedealz.feature.detail.DetailsFragment
-import de.r4md4c.gamedealz.search.SearchFragmentArgs.Companion.fromBundle
-import de.r4md4c.gamedealz.search.model.toRenderModel
+import de.r4md4c.gamedealz.core.CoreComponent
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.feature.search.SearchFragmentArgs.Companion.fromBundle
+import de.r4md4c.gamedealz.feature.search.di.DaggerSearchComponent
+import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
+import de.r4md4c.gamedealz.feature.search.model.toRenderModel
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import java.lang.IllegalStateException
+import javax.inject.Inject
 
 class SearchFragment : BaseFragment() {
 
     private val searchTerm by lazy { fromBundle(arguments!!).searchTerm }
 
-    private var listener: OnFragmentInteractionListener? = null
-
     private var searchView: SearchView? = null
 
-    private val viewModel by viewModel<SearchViewModel>()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val navigator: Navigator by inject { parametersOf(requireActivity()) }
+    @Inject
+    lateinit var navigator: Navigator
 
-    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
+    @field:ForActivity
+    @Inject
+    lateinit var resourcesProvider: ResourcesProvider
 
-    private val dateFormatter by inject<DateFormatter>()
+    @Inject
+    lateinit var dateFormatter: DateFormatter
+
+    @Inject
+    lateinit var stateVisibilityHandler: StateVisibilityHandler
+
+    private val viewModel by viewModels<SearchViewModel> { viewModelFactory }
 
     private var searchResultsLoaded = false
 
     private val searchAdapter by lazy {
-        SearchAdapter(layoutInflater) {
-            it.currentBestPriceModel?.let { priceModel ->
-                listener?.onFragmentInteraction(
-                    DetailsFragment.toUri(it.title.toString(), it.gameId, priceModel.url), null
-                )
+        SearchAdapter(layoutInflater) { renderModel ->
+            renderModel.currentBestPriceModel?.let { priceModel ->
+                navigateToGameDetails(renderModel, priceModel)
             }
         }
-    }
-
-    private val stateVisibilityHandler by inject<StateVisibilityHandler> {
-        parametersOf(this, {
-            searchView?.let { searchView ->
-                viewModel.startSearch(searchView.query.toString())
-            }
-        })
     }
 
     override fun onCreateView(
@@ -136,19 +134,6 @@ class SearchFragment : BaseFragment() {
             outState.putBoolean(EXTRA_ALREADY_LOADED, searchResultsLoaded)
         }
     }
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw IllegalStateException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
 
     private fun setupRecyclerView() {
         with(content) {
@@ -189,14 +174,29 @@ class SearchFragment : BaseFragment() {
         }
     }
 
-    interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
+    override fun onInject(coreComponent: CoreComponent) {
+        super.onInject(coreComponent)
+        DaggerSearchComponent.factory()
+            .create(requireActivity(), this, coreComponent)
+            .inject(this)
+    }
+
+    private fun navigateToGameDetails(
+        renderModel: SearchItemRenderModel,
+        priceModel: PriceModel
+    ) {
+        val directions = SearchFragmentDirections.actionSearchFragmentToGameDetailFragment(
+            renderModel.gameId,
+            renderModel.title.toString(),
+            priceModel.url
+        )
+        findNavController().navigate(directions)
     }
 
     companion object {
         @JvmStatic
         fun toUri(searchTerm: String): Uri = DeepLinks.buildSearchUri(searchTerm)
 
-        private const val EXTRA_ALREADY_LOADED = "alread_loaded"
+        private const val EXTRA_ALREADY_LOADED = "already_loaded"
     }
 }

@@ -15,13 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.search
+package de.r4md4c.gamedealz.feature.search
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.image.GlideApp
-import de.r4md4c.gamedealz.search.model.SearchItemRenderModel
+import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
 import kotlinx.android.synthetic.main.layout_search_result_item.view.*
 
 class SearchItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -24,7 +24,7 @@
     </fragment>
     <fragment
             android:id="@+id/searchFragment"
-            android:name="de.r4md4c.gamedealz.search.SearchFragment"
+            android:name="de.r4md4c.gamedealz.feature.search.SearchFragment"
             tools:layout="@layout/fragment_search">
         <argument
                 android:name="search_term"

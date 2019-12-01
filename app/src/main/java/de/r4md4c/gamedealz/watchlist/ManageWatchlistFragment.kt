@@ -176,7 +176,11 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     private fun setRecyclerView() {
         itemTouchHelper.attachToRecyclerView(content)
         content.adapter = itemsAdapter
-        content.addItemDecoration(VerticalLinearDecorator(requireContext()))
+        content.addItemDecoration(
+            VerticalLinearDecorator(
+                requireContext()
+            )
+        )
         itemsAdapter.withOnClickListener { _, _, item, _ ->
             val model = item.tag as? ManageWatchlistModel ?: return@withOnClickListener false
             val direction = DetailsFragmentDirections

@@ -10,4 +10,5 @@
     <string name="sort_current_best">Current Best</string>
     <string name="sort_historical_low">Historical Low</string>
     <string name="prices">Prices</string>
+    <string name="search">Search</string>
 </resources>

@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.search.model
+package de.r4md4c.gamedealz.feature.search.model
 
 import android.graphics.Typeface
 import android.text.Spannable
@@ -28,11 +28,11 @@ import androidx.annotation.WorkerThread
 import androidx.core.text.inSpans
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
+import de.r4md4c.gamedealz.feature.search.R
 import java.util.concurrent.TimeUnit
 
 data class SearchItemRenderModel(

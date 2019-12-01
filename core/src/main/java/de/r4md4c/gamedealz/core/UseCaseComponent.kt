@@ -27,6 +27,7 @@ import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
+import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 
@@ -55,4 +56,6 @@ interface UseCaseComponent {
     val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
 
     val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
+
+    val searchUseCase: SearchUseCase
 }

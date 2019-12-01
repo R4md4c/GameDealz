@@ -15,14 +15,13 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.search
+package de.r4md4c.gamedealz.feature.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.search.model.SearchItemRenderModel
+import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
 
 class SearchAdapter(
     private val layoutInflater: LayoutInflater,

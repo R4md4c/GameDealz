@@ -36,9 +36,8 @@ abstract class BaseFragment : Fragment() {
     @Inject
     lateinit var dispatchers: IDispatchers
 
-    private val toolbar: Toolbar? by lazy {
-        view?.findViewById(R.id.toolbar) as Toolbar
-    }
+    private val toolbar: Toolbar?
+        get() = view?.findViewById(R.id.toolbar) as Toolbar
 
     override fun onAttach(context: Context) {
         onInject(context.coreComponent())

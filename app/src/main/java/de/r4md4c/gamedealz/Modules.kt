@@ -32,21 +32,16 @@ import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.shortcut.ShortcutManagerImpl
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
-import de.r4md4c.gamedealz.feature.detail.DetailsViewModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
-import de.r4md4c.gamedealz.feature.deals.DealsViewModel
 import de.r4md4c.gamedealz.feature.deals.datasource.DealsDataSourceFactory
-import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterViewModel
 import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.home.HomeViewModel
 import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
-import de.r4md4c.gamedealz.search.SearchViewModel
 import de.r4md4c.gamedealz.watchlist.AddToWatchListViewModel
 import de.r4md4c.gamedealz.watchlist.ManageWatchlistViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
-import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module.module
 
 val MAIN = module {
@@ -75,8 +70,6 @@ val MAIN = module {
     factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get(name = FOR_APPLICATION)) }
 
     viewModel<HomeViewModel>()
-
-    viewModel<SearchViewModel>()
 
     viewModel<RegionSelectionViewModel>()
 

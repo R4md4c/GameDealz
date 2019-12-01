@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:id="@+id/toolbar"
+        android:id="@id/toolbar"
         style="@style/Widget.MaterialComponents.Toolbar.Primary"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         android:layout_height="?actionBarSize"

@@ -8,4 +8,5 @@ include ':app', ':common-ui',
         ':workers',
         ':core',
         ':features:deals',
-        ':features:detail'
+        ':features:detail',
+        ':features:search'

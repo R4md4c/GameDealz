@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.search
+package de.r4md4c.gamedealz.feature.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -39,8 +39,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class SearchViewModel(
+class SearchViewModel @Inject constructor(
     private val dispatchers: IDispatchers,
     private val searchUseCase: SearchUseCase,
     private val stateMachineDelegate: StateMachineDelegate

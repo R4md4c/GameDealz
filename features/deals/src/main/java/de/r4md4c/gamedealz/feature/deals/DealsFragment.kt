@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.feature.deals
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
@@ -44,8 +43,8 @@ import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent
 import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
+import de.r4md4c.gamedealz.feature.search.SearchFragmentDirections
 import kotlinx.android.synthetic.main.fragment_deals.*
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 class DealsFragment : BaseFragment() {
@@ -119,25 +118,11 @@ class DealsFragment : BaseFragment() {
         })
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw IllegalStateException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
     override fun onCreateOptionsMenu(toolbar: Toolbar) {
         super.onCreateOptionsMenu(toolbar)
         toolbar.inflateMenu(R.menu.menu_deals)
         val searchMenuItem = toolbar.menu.findItem(R.id.menu_search)
         (searchMenuItem.actionView as? SearchView)?.setOnQueryTextListener(OnQueryTextListener(searchMenuItem))
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
     }
 
     interface OnFragmentInteractionListener {
@@ -170,7 +155,9 @@ class DealsFragment : BaseFragment() {
     private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {
 
         override fun onQueryTextSubmit(query: String): Boolean {
-            //listener?.onFragmentInteraction(SearchFragment.toUri(query), null)
+            findNavController().navigate(
+                DealsFragmentDirections.actionDealsFragmentToSearchFragment(query)
+            )
             searchMenuItem.collapseActionView()
             return true
         }

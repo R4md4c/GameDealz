@@ -38,18 +38,16 @@ import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.core.coreComponent
-import de.r4md4c.gamedealz.feature.deals.DealsFragment
 import de.r4md4c.gamedealz.domain.model.displayName
+import de.r4md4c.gamedealz.feature.deals.DealsFragment
 import de.r4md4c.gamedealz.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
-import de.r4md4c.gamedealz.search.SearchFragment
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
 class HomeActivity : AppCompatActivity(),
     DealsFragment.OnFragmentInteractionListener,
-    SearchFragment.OnFragmentInteractionListener,
     RegionSelectionDialogFragment.OnRegionChangeSubmitted,
     HasDrawerLayout {
 
@@ -194,7 +192,6 @@ class HomeActivity : AppCompatActivity(),
                         navigateToDestination(drawerItem.identifier.toInt())
                     }
                 }
-
                 false
             }
             .apply { savedInstanceState?.let { withSavedInstance(it) } }
