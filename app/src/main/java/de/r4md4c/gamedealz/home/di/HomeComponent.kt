@@ -23,7 +23,7 @@ import dagger.Component
 import de.r4md4c.commonproviders.di.CommonProvidersBindsModule
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
 import de.r4md4c.gamedealz.core.CoreComponent
-import de.r4md4c.gamedealz.di.activity.ActivityModule
+import de.r4md4c.gamedealz.common.di.activity.ActivityModule
 import de.r4md4c.gamedealz.home.HomeActivity
 
 @HomeScope

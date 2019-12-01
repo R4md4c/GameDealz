@@ -49,8 +49,8 @@ import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
-import de.r4md4c.gamedealz.detail.DetailsFragmentDirections
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
+import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
 import de.r4md4c.gamedealz.watchlist.item.ManageWatchlistItem
 import de.r4md4c.gamedealz.watchlist.item.toManageWatchlistItem
 import kotlinx.coroutines.launch

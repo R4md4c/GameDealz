@@ -21,7 +21,7 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import javax.inject.Inject
 
-internal open class AndroidResourcesProvider @Inject constructor(private val context: Context) :
+internal class AndroidResourcesProvider @Inject constructor(private val context: Context) :
     ResourcesProvider {
 
     override fun getColor(colorRes: Int): Int = ContextCompat.getColor(context, colorRes)

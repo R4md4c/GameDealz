@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.core
 
 import android.content.Context
 import dagger.Subcomponent
+import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.di.ForApplication
@@ -41,6 +42,8 @@ interface CoreComponent : UseCaseComponent {
     val applicationContext: Context
 
     val dispatchers: IDispatchers
+
+    val dateFormatter: DateFormatter
 
     @ForApplication
     fun resourcesProvider(): ResourcesProvider

@@ -112,6 +112,7 @@ dependencies {
 
     implementation project(':common-ui')
     implementation project(':features:deals')
+    implementation project(':features:detail')
     implementation project(':core')
     implementation project(':workers')
     implementation project(':common')

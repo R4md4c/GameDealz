@@ -22,6 +22,7 @@ import dagger.BindsInstance
 import dagger.Component
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
 import de.r4md4c.gamedealz.common.di.FeatureScope
+import de.r4md4c.gamedealz.common.di.state.StateMachineModule
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.deals.DealsFragment
 import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
@@ -31,6 +32,7 @@ import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
     modules = [
         ViewModelInjectionModule::class,
         DataSourceModule::class,
+        StateMachineModule::class,
         DealsFeatureModule::class
     ],
     dependencies = [CoreComponent::class]

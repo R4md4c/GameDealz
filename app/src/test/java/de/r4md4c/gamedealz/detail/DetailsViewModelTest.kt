@@ -33,6 +33,9 @@ import de.r4md4c.gamedealz.domain.model.*
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
+import de.r4md4c.gamedealz.feature.detail.DetailsViewModel
+import de.r4md4c.gamedealz.feature.detail.GameInformation
+import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -130,7 +133,12 @@ class DetailsViewModelTest {
 
         testSubject.loadPlainDetails("")
 
-        assertThat(testSubject.gameInformation.value).isEqualTo(GameInformation("headerImage", "shortDescription"))
+        assertThat(testSubject.gameInformation.value).isEqualTo(
+            GameInformation(
+                "headerImage",
+                "shortDescription"
+            )
+        )
     }
 
     @Test

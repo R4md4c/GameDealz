@@ -7,4 +7,5 @@ include ':app', ':common-ui',
         ':common',
         ':workers',
         ':core',
-        ':features:deals'
+        ':features:deals',
+        ':features:detail'

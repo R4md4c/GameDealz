@@ -20,10 +20,13 @@ package de.r4md4c.gamedealz.core
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
+import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 
@@ -46,4 +49,10 @@ interface UseCaseComponent {
     val getSelectedStoresUseCase: GetSelectedStoresUseCase
 
     val getDealsUseCase: GetDealsUseCase
+
+    val getPlainDealsUseCase: GetPlainDetails
+
+    val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
+
+    val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
 }

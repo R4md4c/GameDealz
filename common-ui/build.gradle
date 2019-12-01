@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion AndroidSdk.compile
@@ -50,7 +51,10 @@ dependencies {
     implementation Libraries.stateMachine
     implementation Libraries.coreKtx
     implementation Libraries.timber
+    implementation Libraries.navigationFragmentKtx
+    implementation Libraries.navigationUiKtx
 
+    implementation project(':commonproviders')
     implementation project(':common')
     implementation project(':domain')
     implementation project(':core')

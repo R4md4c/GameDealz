@@ -35,6 +35,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.feature.deals.DealsFragment
@@ -46,12 +47,15 @@ import de.r4md4c.gamedealz.search.SearchFragment
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
-class HomeActivity : AppCompatActivity(), DealsFragment.OnFragmentInteractionListener,
-    SearchFragment.OnFragmentInteractionListener, RegionSelectionDialogFragment.OnRegionChangeSubmitted {
+class HomeActivity : AppCompatActivity(),
+    DealsFragment.OnFragmentInteractionListener,
+    SearchFragment.OnFragmentInteractionListener,
+    RegionSelectionDialogFragment.OnRegionChangeSubmitted,
+    HasDrawerLayout {
 
     private lateinit var drawer: Drawer
 
-    val drawerLayout: DrawerLayout
+    override val drawerLayout: DrawerLayout
         get() = drawer.drawerLayout
 
     @Inject

@@ -27,11 +27,11 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
+import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

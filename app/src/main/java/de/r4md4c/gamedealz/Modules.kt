@@ -32,7 +32,7 @@ import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.shortcut.ShortcutManagerImpl
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
-import de.r4md4c.gamedealz.detail.DetailsViewModel
+import de.r4md4c.gamedealz.feature.detail.DetailsViewModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.feature.deals.DealsViewModel
 import de.r4md4c.gamedealz.feature.deals.datasource.DealsDataSourceFactory
@@ -74,18 +74,6 @@ val MAIN = module {
 
     factory<Notifier<WatcheeNotificationModel>> { WatcheesPushNotifier(androidContext(), get(name = FOR_APPLICATION)) }
 
-    viewModel {
-        val stateMachineDelegate = get<StateMachineDelegate>()
-        DealsViewModel(
-            get(),
-            get(parameters = { parametersOf(stateMachineDelegate) }),
-            get(),
-            stateMachineDelegate
-        )
-    }
-
-    viewModel<DealsFilterViewModel>()
-
     viewModel<HomeViewModel>()
 
     viewModel<SearchViewModel>()
@@ -98,15 +86,4 @@ val MAIN = module {
 
     viewModel<ManageWatchlistViewModel>()
 
-    viewModel { (activity: Activity) ->
-        DetailsViewModel(
-            get(),
-            get(parameters = { parametersOf(activity) }),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(name = FOR_APPLICATION)
-        )
-    }
 }

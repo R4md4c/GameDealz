@@ -40,8 +40,4 @@ abstract class DealsFeatureModule {
     @IntoMap
     @ViewModelKey(DealsViewModel::class)
     abstract fun bindsDealsViewModel(it: DealsViewModel): ViewModel
-
-    @FeatureScope
-    @Binds
-    abstract fun bindsStateMachineDelegate(it: UIStateMachineDelegate): StateMachineDelegate
 }

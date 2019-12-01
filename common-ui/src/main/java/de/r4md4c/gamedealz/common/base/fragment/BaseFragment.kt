@@ -25,6 +25,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.R
+import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.core.coreComponent
 import kotlinx.android.synthetic.*
@@ -51,7 +52,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     val drawerLayout: DrawerLayout?
-        get() = null //(activity as? HomeActivity)?.drawerLayout
+        get() = (activity as? HasDrawerLayout)?.drawerLayout
 
     open fun onCreateOptionsMenu(toolbar: Toolbar) = Unit
 
