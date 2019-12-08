@@ -17,9 +17,11 @@
     <string name="notify_when_price_reaches">Notify me when %s price reaches below…</string>
     <string name="notify_when_price_reaches_subtitle">A notification will be displayed when the price reaches the specified threshold.</string>
 
+    <string name="on_the_following_stores">On the following stores</string>
     <string name="add_to_watch_list">Add to Watchlist</string>
 
     <string name="manage_watch_list_target_price">Target price is</string>
     <string name="manage_watch_list_last_checked">Last update: %s</string>
     <string name="managed_watch_list_current_price">Last fetched price was</string>
+    <string name="add_home_shortcut">Add Home Shortcut</string>
 </resources>

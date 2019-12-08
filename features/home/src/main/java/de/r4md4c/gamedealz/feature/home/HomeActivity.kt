@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.home
+package de.r4md4c.gamedealz.feature.home
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -32,14 +32,13 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
-import de.r4md4c.gamedealz.home.di.DaggerHomeComponent
-import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
+import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
+import de.r4md4c.gamedealz.feature.home.item.ErrorDrawerItem
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")

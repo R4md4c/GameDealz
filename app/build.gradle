@@ -116,6 +116,7 @@ dependencies {
     implementation project(':features:search')
     implementation project(':features:watchlist')
     implementation project(':features:regions')
+    implementation project(':features:home')
     implementation project(':core')
     implementation project(':workers')
     implementation project(':common')

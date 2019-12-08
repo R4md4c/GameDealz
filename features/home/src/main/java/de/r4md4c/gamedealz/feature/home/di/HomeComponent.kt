@@ -15,18 +15,19 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.home.di
+package de.r4md4c.gamedealz.feature.home.di
 
 import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Component
 import de.r4md4c.commonproviders.di.CommonProvidersBindsModule
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
+import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.common.di.activity.ActivityModule
-import de.r4md4c.gamedealz.home.HomeActivity
+import de.r4md4c.gamedealz.feature.home.HomeActivity
 
-@HomeScope
+@FeatureScope
 @Component(
     modules = [
         ActivityModule::class,

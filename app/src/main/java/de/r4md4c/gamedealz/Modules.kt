@@ -26,9 +26,7 @@ import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
-import de.r4md4c.gamedealz.home.HomeViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.dsl.module.module
 
 val MAIN = module {
@@ -47,7 +45,5 @@ val MAIN = module {
             dagger.Lazy { activity.findNavController(R.id.nav_host_fragment) }
         )
     }
-
-    viewModel<HomeViewModel>()
 
 }

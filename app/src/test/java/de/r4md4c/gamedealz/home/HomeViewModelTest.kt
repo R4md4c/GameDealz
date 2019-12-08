@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -52,7 +51,7 @@ class HomeViewModelTest {
     @get:Rule
     val coroutinesTestRule = CoroutinesTestRule()
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var homeViewModel: de.r4md4c.gamedealz.feature.home.HomeViewModel
 
     @Mock
     private lateinit var getCurrentActiveRegion: GetCurrentActiveRegionUseCase
@@ -79,7 +78,7 @@ class HomeViewModelTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        homeViewModel = HomeViewModel(
+        homeViewModel = de.r4md4c.gamedealz.feature.home.HomeViewModel(
             TestDispatchers,
             getCurrentActiveRegion,
             onActiveRegionChange,

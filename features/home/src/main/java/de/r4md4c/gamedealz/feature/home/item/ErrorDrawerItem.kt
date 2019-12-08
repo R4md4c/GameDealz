@@ -15,12 +15,13 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.home.item
+package de.r4md4c.gamedealz.feature.home.item
 
 import android.annotation.SuppressLint
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.state.OnRetryClick
+import de.r4md4c.gamedealz.feature.home.R
 import kotlinx.android.synthetic.main.layout_drawer_retry.view.*
 
 class ErrorDrawerItem(

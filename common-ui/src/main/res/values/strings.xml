@@ -17,4 +17,5 @@
     <string name="title_manage_your_watchlist">Manage your Watchlist</string>
     <string name="select_region">Select Region</string>
     <string name="select_country">Select Country</string>
+    <string name="title_on_going_deals">Ongoing Deals</string>
 </resources>

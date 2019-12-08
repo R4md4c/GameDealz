@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.home
+package de.r4md4c.gamedealz.feature.home
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData

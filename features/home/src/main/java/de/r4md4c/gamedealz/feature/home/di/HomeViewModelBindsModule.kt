@@ -15,11 +15,20 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.home.di
+package de.r4md4c.gamedealz.feature.home.di
 
-import javax.inject.Scope
+import androidx.lifecycle.ViewModel
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
+import de.r4md4c.gamedealz.feature.home.HomeViewModel
 
-@Scope
-@MustBeDocumented
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-annotation class HomeScope
+@Module
+abstract class HomeViewModelBindsModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeViewModel::class)
+    abstract fun bindsHomeViewModelBinds(it: HomeViewModel): ViewModel
+}
