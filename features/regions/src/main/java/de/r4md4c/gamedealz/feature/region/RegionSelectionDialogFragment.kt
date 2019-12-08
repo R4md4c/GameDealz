@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.regions
+package de.r4md4c.gamedealz.feature.region
 
 import android.app.Dialog
 import android.content.Context
@@ -26,42 +26,39 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.aware.DrawerAware
+import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
-import de.r4md4c.gamedealz.home.HomeActivity
+import de.r4md4c.gamedealz.feature.region.di.DaggerRegionsComponent
+import de.r4md4c.gamedealz.feature.regions.R
 import kotlinx.android.synthetic.main.dialog_region_choice.view.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class RegionSelectionDialogFragment : DialogFragment() {
 
-    private val viewModel by viewModel<RegionSelectionViewModel>()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel by viewModels<RegionSelectionViewModel> { viewModelFactory }
 
     private var dialogView: View by Delegates.notNull()
-
-    private var regionChangeSubmitted: OnRegionChangeSubmitted? = null
 
     // A hack to fix a bug in spinners that makes them fire onItemSelected without any user interaction.
     private var skipFirstSelection: Int = 1
 
     private val activeRegion by lazy {
-        arguments?.getParcelable<ActiveRegion>(KEY_REGION)
-            ?: throw IllegalStateException("RegionSelectionDialogFragment expects an active region.")
+        RegionSelectionDialogFragmentArgs.fromBundle(arguments!!).region
     }
 
     override fun onAttach(context: Context) {
+        onInject(context)
         super.onAttach(context)
-        regionChangeSubmitted = context as? OnRegionChangeSubmitted
-            ?: throw ClassCastException(
-                "Host Context should implement OnRegionChangeSubmitted interface"
-            )
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        regionChangeSubmitted = null
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -98,14 +95,6 @@ class RegionSelectionDialogFragment : DialogFragment() {
         }
     }
 
-    /**
-     * A convenience method to communicate between [HomeActivity] and [RegionSelectionDialogFragment]
-     */
-    interface OnRegionChangeSubmitted {
-
-        fun onRegionSubmitted()
-    }
-
     private fun submitResult() {
         with(dialogView) {
             val selectedRegionCode = viewModel.regions.value?.let {
@@ -121,7 +110,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
                 it.first != null && it.second != null
             }?.let {
                 viewModel.onSubmitResult(it.first!!, it.second!!)
-                regionChangeSubmitted?.onRegionSubmitted()
+                (requireActivity() as? DrawerAware)?.closeDrawer()
                 dismiss()
             }
         }
@@ -129,7 +118,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     private fun setupRegions(regionIndex: Int?) {
         viewModel.requestRegions(activeRegion, regionIndex)
-        viewModel.regions.observe(viewLifecycleOwner, Observer { regionSelectedModel ->
+        viewModel.regions.observe(this, Observer { regionSelectedModel ->
             with(dialogView) {
                 region_spinner.adapter =
                         ArrayAdapter(
@@ -160,7 +149,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     private fun setupCountries(countryIndex: Int?) {
         viewModel.requestCountriesUnderRegion(activeRegion, countryIndex)
-        viewModel.countries.observe(viewLifecycleOwner, Observer { selectedCountryModel ->
+        viewModel.countries.observe(this, Observer { selectedCountryModel ->
             with(dialogView) {
                 country_spinner.adapter =
                         ArrayAdapter(
@@ -176,18 +165,15 @@ class RegionSelectionDialogFragment : DialogFragment() {
         })
     }
 
-    companion object {
-        @JvmStatic
-        fun create(region: ActiveRegion) =
-            RegionSelectionDialogFragment().apply {
-            arguments = Bundle().apply {
-                putParcelable(KEY_REGION, region)
-            }
-        }
+    private fun onInject(context: Context) {
+        DaggerRegionsComponent.factory()
+            .create(context.coreComponent())
+            .inject(this)
 
+    }
+
+    companion object {
         private const val STATE_REGION_INDEX = "region_index"
         private const val STATE_COUNTRY_INDEX = "country_index"
-
-        private const val KEY_REGION = "region"
     }
 }

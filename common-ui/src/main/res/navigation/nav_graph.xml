@@ -3,7 +3,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/nav_graph"
-        app:startDestination="@id/dealsFragment">
+        app:startDestination="@id/dealsFragment"
+        tools:ignore="UnusedNavigation">
 
     <fragment
             android:id="@+id/dealsFragment"
@@ -78,7 +79,14 @@
         <argument
                 android:name="priceModel"
                 app:argType="de.r4md4c.gamedealz.domain.model.PriceModel" />
+    </dialog>
 
+    <dialog
+            android:id="@+id/regionSelectionDialog"
+            android:name="de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragment">
+        <argument
+                android:name="region"
+                app:argType="de.r4md4c.gamedealz.domain.model.ActiveRegion" />
     </dialog>
 
 </navigation>

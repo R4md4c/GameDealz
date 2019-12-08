@@ -15,4 +15,6 @@
     <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>
     <string name="watchlist">Watchlist</string>
     <string name="title_manage_your_watchlist">Manage your Watchlist</string>
+    <string name="select_region">Select Region</string>
+    <string name="select_country">Select Country</string>
 </resources>

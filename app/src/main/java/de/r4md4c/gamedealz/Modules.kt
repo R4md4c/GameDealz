@@ -27,7 +27,6 @@ import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.home.HomeViewModel
-import de.r4md4c.gamedealz.regions.RegionSelectionViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.dsl.module.module
@@ -50,7 +49,5 @@ val MAIN = module {
     }
 
     viewModel<HomeViewModel>()
-
-    viewModel<RegionSelectionViewModel>()
 
 }

@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.regions
+package de.r4md4c.gamedealz.feature.region
 
 import androidx.collection.ArrayMap
 import androidx.lifecycle.LiveData
@@ -33,11 +33,12 @@ import de.r4md4c.gamedealz.domain.usecase.GetCountriesUnderRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class RegionSelectionModel(val regions: List<String>, val activeRegionIndex: Int)
 data class CountrySelectionModel(val countries: List<String>, val activeCountryIndex: Int?)
 
-class RegionSelectionViewModel(
+class RegionSelectionViewModel @Inject constructor(
     private val dispatchers: IDispatchers,
     private val countriesUnderRegionUseCase: GetCountriesUnderRegionUseCase,
     private val getRegionsUseCase: GetRegionsUseCase,
@@ -62,7 +63,8 @@ class RegionSelectionViewModel(
             _regions.postValue(
                 RegionSelectionModel(
                     allRegions.map { it.regionCode.toUpperCase() },
-                    restoreRegionIndex ?: allRegions.indexOfFirst { r -> r.regionCode == activeRegion.regionCode })
+                    restoreRegionIndex
+                        ?: allRegions.indexOfFirst { r -> r.regionCode == activeRegion.regionCode })
             )
         }
     }
@@ -71,14 +73,20 @@ class RegionSelectionViewModel(
         loadCountries(activeRegion.regionCode.toLowerCase()) {
             _countries.postValue(
                 CountrySelectionModel(it.map { model -> model.displayName() },
-                    restoreCountryIndex ?: it.indexOfFirst { c -> c.code == activeRegion.country.code })
+                    restoreCountryIndex
+                        ?: it.indexOfFirst { c -> c.code == activeRegion.country.code })
             )
         }
     }
 
     fun onRegionSelected(regionCode: String) {
         loadCountries(regionCode.toLowerCase()) {
-            _countries.postValue(CountrySelectionModel(it.map { model -> model.displayName() }, 0))
+            _countries.postValue(
+                CountrySelectionModel(
+                    it.map { model -> model.displayName() },
+                    0
+                )
+            )
         }
     }
 

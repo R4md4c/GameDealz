@@ -10,5 +10,5 @@ include ':app', ':common-ui',
         ':features:deals',
         ':features:detail',
         ':features:search',
-        ':features:watchlist'
-
+        ':features:watchlist',
+        ':features:regions'

@@ -17,9 +17,7 @@
 
 package de.r4md4c.gamedealz.home
 
-import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
@@ -35,19 +33,17 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.R
+import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
-import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
+import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
 import de.r4md4c.gamedealz.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
-import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
-class HomeActivity : AppCompatActivity(),
-    RegionSelectionDialogFragment.OnRegionChangeSubmitted,
-    HasDrawerLayout {
+class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
 
     private lateinit var drawer: Drawer
 
@@ -56,9 +52,6 @@ class HomeActivity : AppCompatActivity(),
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var navigator: Navigator
 
     private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
 
@@ -90,9 +83,9 @@ class HomeActivity : AppCompatActivity(),
     }
 
     override fun onSupportNavigateUp(): Boolean =
-        NavigationUI.navigateUp(findNavController(R.id.nav_host_fragment), drawer.drawerLayout)
+        NavigationUI.navigateUp(navController, drawer.drawerLayout)
 
-    override fun onRegionSubmitted() {
+    override fun closeDrawer() {
         viewModel.closeDrawer()
     }
 
@@ -161,7 +154,10 @@ class HomeActivity : AppCompatActivity(),
 
     private fun observeRegionSelectionDialog() {
         viewModel.openRegionSelectionDialog.observe(this, Observer {
-            RegionSelectionDialogFragment.create(it).show(supportFragmentManager, null)
+            navController.navigate(
+                R.id.regionSelectionDialog,
+                RegionSelectionDialogFragmentArgs(it).toBundle()
+            )
         })
     }
 

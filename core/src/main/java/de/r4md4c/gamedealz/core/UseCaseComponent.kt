@@ -18,12 +18,15 @@
 package de.r4md4c.gamedealz.core
 
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetCountriesUnderRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
+import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
@@ -76,4 +79,10 @@ interface UseCaseComponent {
     val checkPriceThresholdUseCase: CheckPriceThresholdUseCase
 
     val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase
+
+    val getCountriesUnderRegionUseCase: GetCountriesUnderRegionUseCase
+
+    val getRegionsUseCase: GetRegionsUseCase
+
+    val changeActiveRegionUseCase: ChangeActiveRegionUseCase
 }
