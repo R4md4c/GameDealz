@@ -27,19 +27,14 @@ import de.r4md4c.gamedealz.common.di.HasComponent
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.di.ApplicationComponent
 import de.r4md4c.gamedealz.di.DaggerApplicationComponent
-import de.r4md4c.gamedealz.domain.DOMAIN
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.workmanager.PricesCheckerWorker
-import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
-import org.koin.android.ext.android.startKoin
-import org.koin.android.logger.AndroidLogger
-import org.koin.log.EmptyLogger
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,7 +66,6 @@ open class GameDealzApplication : MultiDexApplication(), HasComponent<CoreCompon
             Timber.plant(Timber.DebugTree())
         }
 
-        startKoin(this, listOf(MAIN) + DOMAIN + WORK_MANAGER, logger = if (isDebug) AndroidLogger() else EmptyLogger())
         initializeWorkManager()
         setNightMode()
     }

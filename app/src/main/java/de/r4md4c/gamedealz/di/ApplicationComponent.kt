@@ -25,8 +25,10 @@ import de.r4md4c.gamedealz.GameDealzApplication
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.data.di.DaoModule
 import de.r4md4c.gamedealz.data.di.DatabaseModule
+import de.r4md4c.gamedealz.data.di.RepositoryModule
 import de.r4md4c.gamedealz.domain.di.UseCaseModule
 import de.r4md4c.gamedealz.network.di.NetworkModule
+import de.r4md4c.gamedealz.network.di.RemoteRepositoryModule
 import de.r4md4c.gamedealz.workmanager.di.WorkManagerModule
 import javax.inject.Singleton
 
@@ -36,6 +38,8 @@ import javax.inject.Singleton
         CommonProvidersModule::class,
         WorkManagerModule::class,
         ApplicationModule::class,
+        RepositoryModule::class,
+        RemoteRepositoryModule::class,
         UseCaseModule::class,
         NetworkModule::class,
         DatabaseModule::class,

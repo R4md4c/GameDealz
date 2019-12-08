@@ -24,8 +24,6 @@ import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import de.r4md4c.gamedealz.network.MB_50
-import de.r4md4c.gamedealz.network.READ_TIMEOUT_IN_SECONDS
 import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
 import de.r4md4c.gamedealz.network.json.ApplicationJsonAdapterFactory
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
@@ -44,6 +42,9 @@ import java.security.NoSuchAlgorithmException
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
+
+const val READ_TIMEOUT_IN_SECONDS = 30L
+const val MB_50: Long = 50 * 1024 * 1024
 
 @Module(includes = [NetworkBindsModule::class, InterceptorsModule::class])
 object NetworkModule {

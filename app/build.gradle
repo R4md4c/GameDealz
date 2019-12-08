@@ -77,7 +77,6 @@ dependencies {
     implementation Libraries.material
 
     implementation Libraries.swipeRefreshLayout
-    implementation Libraries.stfalImageViewer
 
     implementation(Libraries.glide) {
         exclude group: "com.android.support"
@@ -104,12 +103,6 @@ dependencies {
     implementation Libraries.stateMachine
     implementation Libraries.timber
 
-    implementation Libraries.koinCore
-    implementation Libraries.koinCoreExt
-    implementation Libraries.koinAndroid
-    implementation Libraries.koinAndroidXScope
-    implementation Libraries.koinAndroidXViewModel
-
     implementation project(':common-ui')
     implementation project(':features:deals')
     implementation project(':features:detail')
@@ -133,7 +126,6 @@ dependencies {
     testImplementation TestLibraries.kotlinReflect
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.robolectric
-    testImplementation TestLibraries.koinTest
     testImplementation TestLibraries.androidXTestCore
     testImplementation Libraries.pagingCommonKtx
 
@@ -143,6 +135,7 @@ dependencies {
     androidTestImplementation TestLibraries.testRules
     androidTestImplementation TestLibraries.testRunner
     androidTestImplementation TestLibraries.espressoCore
+    androidTestImplementation TestLibraries.androidXTestCore
 }
 
 configurations.all {

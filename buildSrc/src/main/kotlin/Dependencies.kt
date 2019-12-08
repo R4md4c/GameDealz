@@ -34,7 +34,6 @@ object Libraries {
         const val constraintLayout = "2.0.0-beta2"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.0"
-        const val koin = "1.0.2"
         const val coroutines = "1.3.2"
         const val room = "2.2.1"
         const val timber = "4.7.1"
@@ -113,13 +112,6 @@ object Libraries {
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"
     const val stateMachine = "com.github.tinder:statemachine:0.1.2"
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
-
-    const val koinCore = "org.koin:koin-core:${Versions.koin}"
-    const val koinCoreExt = "org.koin:koin-core-ext:${Versions.koin}"
-    const val koinAndroid = "org.koin:koin-android:${Versions.koin}"
-    const val koinAndroidXScope = "org.koin:koin-androidx-scope:${Versions.koin}"
-    const val koinAndroidXViewModel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
-
 }
 
 object TestLibraries {
@@ -127,7 +119,7 @@ object TestLibraries {
         const val mockk = "1.9.3"
         const val robolectric = "4.2.1"
         const val assertj = "2.9.1"
-        const val mockito_kotlin = "2.1.0"
+        const val mockito_kotlin = "2.2.0"
         const val core_testing = "2.1.0"
         const val liveDataTesting = "1.1.0"
         const val junit4 = "4.12"
@@ -151,7 +143,6 @@ object TestLibraries {
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     const val junit = "junit:junit:${Versions.junit4}"
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
-    const val koinTest = "org.koin:koin-test:${Libraries.Versions.koin}"
     const val androidXTestCore = "androidx.test:core:${Versions.androidXTest}"
 
     const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockitoAndroid}"

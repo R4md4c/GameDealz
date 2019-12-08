@@ -22,11 +22,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
-import de.r4md4c.commonproviders.notification.Notifier
-import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.feature.watchlist.AddToWatchListViewModel
 import de.r4md4c.gamedealz.feature.watchlist.ManageWatchlistViewModel
-import de.r4md4c.gamedealz.feature.watchlist.notifications.WatcheesPushNotifier
 import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManagerImpl
 
@@ -45,7 +42,4 @@ abstract class WatchlistFeatureModule {
 
     @Binds
     internal abstract fun bindsShortcutManager(it: ShortcutManagerImpl): ShortcutManager
-
-    @Binds
-    internal abstract fun bindsWatcheesPushNotifier(it: WatcheesPushNotifier): Notifier<@JvmSuppressWildcards WatcheeNotificationModel>
 }

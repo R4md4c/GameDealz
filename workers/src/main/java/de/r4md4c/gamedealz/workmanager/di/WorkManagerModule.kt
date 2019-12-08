@@ -31,12 +31,15 @@ object WorkManagerModule {
     private val isInitialized = AtomicBoolean()
 
     @Provides
-    fun provideWorkManager(context: Context): WorkManager {
+    internal fun provideWorkManager(
+        context: Context,
+        workerFactory: GameDealzWorkManagerFactory
+    ): WorkManager {
         if (isInitialized.compareAndSet(false, true)) {
             WorkManager.initialize(
                 context,
                 Configuration.Builder()
-                    .setWorkerFactory(GameDealzWorkManagerFactory())
+                    .setWorkerFactory(workerFactory)
                     .build()
             )
         }

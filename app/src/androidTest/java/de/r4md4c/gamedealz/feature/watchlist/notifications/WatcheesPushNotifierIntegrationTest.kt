@@ -15,38 +15,43 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.notifications
+package de.r4md4c.gamedealz.feature.watchlist.notifications
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import de.r4md4c.commonproviders.FOR_APPLICATION
-import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.domain.model.*
-import org.assertj.core.api.Assertions.assertThat
+import de.r4md4c.commonproviders.res.AndroidResourcesProvider
+import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.ShopModel
+import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import de.r4md4c.gamedealz.feature.watchlist.R
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
-import org.koin.standalone.inject
 
-class WatcheesPushNotifierIntegrationTest : KoinComponent {
+class WatcheesPushNotifierIntegrationTest {
 
     private lateinit var uiDevice: UiDevice
 
-    private lateinit var watcheesPushNotifier: de.r4md4c.gamedealz.feature.watchlist.notifications.WatcheesPushNotifier
+    private lateinit var watcheesPushNotifier: WatcheesPushNotifier
 
-    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_APPLICATION)
+    private val targetContext
+        get() = ApplicationProvider.getApplicationContext<Context>()
+
+    private val resourcesProvider = AndroidResourcesProvider(targetContext)
 
     @Before
     fun beforeEach() {
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         watcheesPushNotifier =
-            de.r4md4c.gamedealz.feature.watchlist.notifications.WatcheesPushNotifier(
+            WatcheesPushNotifier(
                 InstrumentationRegistry.getInstrumentation().targetContext,
-                get(name = FOR_APPLICATION)
+                resourcesProvider
             )
     }
 
@@ -69,10 +74,17 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
                     currencyCode = "EUR"
                 ),
                 priceModel = PriceModel(
-                    10f, 10f, 0, "http://google.com",
-                    ShopModel("", "Steam", ""), emptySet()
+                    10f,
+                    10f,
+                    0,
+                    "http://google.com",
+                    ShopModel("", "Steam", ""),
+                    emptySet()
                 ),
-                currencyModel = CurrencyModel("EUR", "")
+                currencyModel = CurrencyModel(
+                    "EUR",
+                    ""
+                )
             )
         }
 
@@ -87,7 +99,7 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
                 )
             )
         ).also {
-            assertThat(it).isNotNull()
+            Assertions.assertThat(it).isNotNull()
         }
     }
 
@@ -109,10 +121,17 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
                 currencyCode = "EUR"
             ),
             priceModel = PriceModel(
-                10f, 10f, 0, "http://google.com",
-                ShopModel("", "Steam", ""), emptySet()
+                10f,
+                10f,
+                0,
+                "http://google.com",
+                ShopModel("", "Steam", ""),
+                emptySet()
             ),
-            currencyModel = CurrencyModel("EUR", "")
+            currencyModel = CurrencyModel(
+                "EUR",
+                ""
+            )
         )
 
         watcheesPushNotifier.notify(setOf(data))
@@ -121,20 +140,26 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
         uiDevice.findObject(
             By.textStartsWith("Price Alert")
         ).also {
-            assertThat(it).isNotNull()
+            Assertions.assertThat(it).isNotNull()
             it.click()
         }
     }
 
     private fun clearAllNotifications() {
         uiDevice.openNotification()
-        uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
+        uiDevice.wait(
+            Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))),
+            TIMEOUT
+        )
         uiDevice.findObject(By.desc("Clear all notifications."))?.let { it.click() }
     }
 
     private fun waitForNotification() {
         uiDevice.openNotification()
-        uiDevice.wait(Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))), TIMEOUT)
+        uiDevice.wait(
+            Until.hasObject(By.textStartsWith(resourcesProvider.getString(R.string.app_name))),
+            TIMEOUT
+        )
     }
 
     private companion object {

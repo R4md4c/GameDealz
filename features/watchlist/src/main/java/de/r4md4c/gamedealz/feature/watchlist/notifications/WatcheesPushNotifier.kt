@@ -37,7 +37,7 @@ import de.r4md4c.gamedealz.feature.watchlist.R
 import java.util.*
 import javax.inject.Inject
 
-internal class WatcheesPushNotifier @Inject constructor(
+class WatcheesPushNotifier @Inject constructor(
     private val context: Context,
     @ForApplication private val resourcesProvider: ResourcesProvider
 ) : Notifier<WatcheeNotificationModel> {

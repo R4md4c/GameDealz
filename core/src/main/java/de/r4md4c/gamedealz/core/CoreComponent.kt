@@ -20,21 +20,14 @@ package de.r4md4c.gamedealz.core
 import android.content.Context
 import dagger.Subcomponent
 import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.di.ForApplication
-import de.r4md4c.gamedealz.data.di.RepositoryModule
-import de.r4md4c.gamedealz.domain.di.UseCaseModule
-import de.r4md4c.gamedealz.network.di.RemoteRepositoryModule
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import okhttp3.OkHttpClient
 
-@Subcomponent(
-    modules = [
-        RemoteRepositoryModule::class,
-        UseCaseModule::class,
-        RepositoryModule::class
-    ]
-)
+@Subcomponent
 interface CoreComponent : UseCaseComponent {
 
     val okHttpClient: OkHttpClient
@@ -47,4 +40,6 @@ interface CoreComponent : UseCaseComponent {
 
     @ForApplication
     fun resourcesProvider(): ResourcesProvider
+
+    val watchlistPushNotifier: Notifier<@JvmSuppressWildcards WatcheeNotificationModel>
 }

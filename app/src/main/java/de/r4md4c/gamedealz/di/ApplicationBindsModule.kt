@@ -19,12 +19,18 @@ package de.r4md4c.gamedealz.di
 
 import dagger.Binds
 import dagger.Module
+import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.common.notifications.ToastViewNotifier
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import de.r4md4c.gamedealz.feature.watchlist.notifications.WatcheesPushNotifier
 
 @Module
 internal abstract class ApplicationBindsModule {
 
     @Binds
     abstract fun bindsToastViewNotifier(it: ToastViewNotifier): ViewNotifier
+
+    @Binds
+    abstract fun bindsWatcheesPushNotifier(it: WatcheesPushNotifier): Notifier<@JvmSuppressWildcards WatcheeNotificationModel>
 }

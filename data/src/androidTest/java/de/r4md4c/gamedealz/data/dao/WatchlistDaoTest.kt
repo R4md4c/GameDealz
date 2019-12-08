@@ -17,11 +17,11 @@
 
 package de.r4md4c.gamedealz.data.dao
 
+import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.platform.app.InstrumentationRegistry
-import de.r4md4c.gamedealz.data.DATA
+import androidx.test.core.app.ApplicationProvider
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Watchee
 import kotlinx.coroutines.flow.first
@@ -32,36 +32,30 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.with
-import org.koin.dsl.module.module
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
-import org.koin.test.KoinTest
 
-class WatchlistDaoTest : KoinTest {
+class WatchlistDaoTest {
 
     @JvmField
     @Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val watchlistDao: WatchlistDao by inject()
+    private lateinit var watchlistDao: WatchlistDao
+
+    private lateinit var database: GameDealzDatabase
+
+    private val context
+        get() = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
     fun beforeEach() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        startKoin(listOf(DATA, module {
-            single(override = true) {
-                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java)
-                    .build()
-            }
-        })).with(context)
+        database = Room.inMemoryDatabaseBuilder(context, GameDealzDatabase::class.java)
+            .build()
+        watchlistDao = database.watchlistDao()
     }
 
     @After
     fun afterEach() {
-        stopKoin()
+        database.close()
     }
 
     @Test

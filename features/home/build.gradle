@@ -9,6 +9,7 @@ android {
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target
 
+        multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -41,7 +42,6 @@ dependencies {
     implementation Libraries.materialDrawer
     implementation Libraries.fastAdapter
     implementation Libraries.coreKtx
-    implementation Libraries.stfalImageViewer
 
     implementation project(':common')
     implementation project(':domain')

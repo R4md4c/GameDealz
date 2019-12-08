@@ -10,8 +10,13 @@ android {
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target
 
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
         buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
         vectorDrawables.useSupportLibrary = true
+
+        multiDexEnabled true
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     compileOptions {
@@ -64,4 +69,12 @@ dependencies {
     testImplementation TestLibraries.coroutinesTest
     testImplementation TestLibraries.archComponentsCoreTesting
     testImplementation TestLibraries.robolectric
+
+    androidTestUtil TestLibraries.testOrchestrator
+    androidTestImplementation TestLibraries.uiAutomator
+    androidTestImplementation project(':commontest')
+    androidTestImplementation TestLibraries.testRules
+    androidTestImplementation TestLibraries.testRunner
+    androidTestImplementation TestLibraries.mockitoAndroid
+    androidTestImplementation TestLibraries.androidXTestCore
 }
