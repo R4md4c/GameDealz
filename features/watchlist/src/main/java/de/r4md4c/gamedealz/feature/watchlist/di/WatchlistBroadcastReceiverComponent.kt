@@ -15,22 +15,23 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.state
+package de.r4md4c.gamedealz.feature.watchlist.di
 
-import kotlin.properties.Delegates
+import dagger.Component
+import de.r4md4c.gamedealz.common.di.FeatureScope
+import de.r4md4c.gamedealz.core.CoreComponent
+import de.r4md4c.gamedealz.feature.watchlist.notifications.NotificationsBroadcastReceiver
 
-class FakeStateMachineDelegate(private val initialState: State = State.Idle) :
-    StateMachineDelegate {
+@FeatureScope
+@Component(
+    dependencies = [CoreComponent::class]
+)
+interface WatchlistBroadcastReceiverComponent {
 
-    var lastEvent: Event by Delegates.notNull()
+    fun inject(notificationsBroadcastReceiver: NotificationsBroadcastReceiver)
 
-    override fun transition(event: Event) {
-        this.lastEvent = event
-    }
-
-    override val state: State
-        get() = initialState
-
-    override fun onTransition(block: (SideEffect) -> Unit) {
+    @Component.Factory
+    interface Factory {
+        fun create(coreComponent: CoreComponent): WatchlistBroadcastReceiverComponent
     }
 }

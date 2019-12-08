@@ -26,12 +26,14 @@ import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.feature.watchlist.R
+import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistBroadcastReceiverComponent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -53,6 +55,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
     lateinit var dispatchers: IDispatchers
 
     override fun onReceive(context: Context, intent: Intent) {
+        onInject(context)
         GlobalScope.launch(dispatchers.Default) {
             val notificationManager = NotificationManagerCompat.from(context)
 
@@ -78,6 +81,9 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun onInject(context: Context) {
+        DaggerWatchlistBroadcastReceiverComponent.factory()
+            .create(context.coreComponent())
+            .inject(this)
     }
 
     private fun WatcheeNotificationModel.toDetailsPendingIntent(context: Context): PendingIntent? =

@@ -15,18 +15,22 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist
+package de.r4md4c.gamedealz.feature.watchlist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.jraska.livedata.test
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.notification.Notifier
-import de.r4md4c.gamedealz.Fixtures
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.state.Event
-import de.r4md4c.gamedealz.common.state.FakeStateMachineDelegate
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
-import de.r4md4c.gamedealz.domain.usecase.*
+import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
+import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
+import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
+import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
+import de.r4md4c.gamedealz.feature.watchlist.state.FakeStateMachineDelegate
 import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import io.mockk.MockKAnnotations
@@ -76,7 +80,7 @@ class ManageWatchlistViewModelTest {
     private lateinit var notifier: Notifier<WatcheeNotificationModel>
 
     @InjectMockKs
-    private lateinit var viewModel: de.r4md4c.gamedealz.feature.ManageWatchlistViewModel
+    private lateinit var viewModel: ManageWatchlistViewModel
 
     @Before
     fun beforeEach() = MockKAnnotations.init(this)

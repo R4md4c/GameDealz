@@ -23,6 +23,11 @@ android {
         jvmTarget = "1.8"
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -48,4 +53,15 @@ dependencies {
     implementation project(':commonproviders')
     implementation project(':common-ui')
     implementation project(':core')
+
+    testImplementation TestLibraries.liveDataTesting
+    testImplementation TestLibraries.liveDataTestingKtx
+    testImplementation project(':commontest')
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.kotlinReflect
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.androidXTestCore
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.archComponentsCoreTesting
+    testImplementation TestLibraries.robolectric
 }

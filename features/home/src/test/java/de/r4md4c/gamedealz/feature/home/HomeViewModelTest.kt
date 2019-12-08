@@ -15,9 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.home
+package de.r4md4c.gamedealz.feature.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -30,7 +31,13 @@ import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.domain.usecase.*
+import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
+import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
+import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.flow.emptyFlow
@@ -51,7 +58,7 @@ class HomeViewModelTest {
     @get:Rule
     val coroutinesTestRule = CoroutinesTestRule()
 
-    private lateinit var homeViewModel: de.r4md4c.gamedealz.feature.home.HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel
 
     @Mock
     private lateinit var getCurrentActiveRegion: GetCurrentActiveRegionUseCase
@@ -78,7 +85,7 @@ class HomeViewModelTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        homeViewModel = de.r4md4c.gamedealz.feature.home.HomeViewModel(
+        homeViewModel = HomeViewModel(
             TestDispatchers,
             getCurrentActiveRegion,
             onActiveRegionChange,

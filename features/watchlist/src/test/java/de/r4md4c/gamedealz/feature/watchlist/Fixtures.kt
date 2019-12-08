@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz
+package de.r4md4c.gamedealz.feature.watchlist
 
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel

@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist
+package de.r4md4c.gamedealz.feature.watchlist
 
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.res.ResourcesProvider
@@ -53,13 +53,13 @@ class AddToWatchListViewModelTest {
     @Mock
     private lateinit var addToWatchListUseCase: AddToWatchListUseCase
 
-    private lateinit var viewModel: de.r4md4c.gamedealz.feature.AddToWatchListViewModel
+    private lateinit var viewModel: AddToWatchListViewModel
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        viewModel = de.r4md4c.gamedealz.feature.AddToWatchListViewModel(
+        viewModel = AddToWatchListViewModel(
             TestDispatchers,
             resourcesProvider,
             getCurrentActiveRegionUseCase,
@@ -71,7 +71,12 @@ class AddToWatchListViewModelTest {
     @Test
     fun formatPrice() {
         // Try Deutsch since this reproduced the problem
-        Locale.setDefault(Locale("de", "DE"))
+        Locale.setDefault(
+            Locale(
+                "de",
+                "DE"
+            )
+        )
         ArrangeBuilder()
             .withCurrencyCode("USD")
             .arrange()
@@ -84,8 +89,19 @@ class AddToWatchListViewModelTest {
     inner class ArrangeBuilder {
         fun withCurrencyCode(currencyCode: String) = apply {
             runBlocking {
-                whenever(getCurrentActiveRegionUseCase.invoke())
-                    .thenReturn(ActiveRegion("", CountryModel(""), CurrencyModel(currencyCode, "")))
+                whenever(
+                    getCurrentActiveRegionUseCase.invoke()
+                )
+                    .thenReturn(
+                        ActiveRegion(
+                            "",
+                            CountryModel(""),
+                            CurrencyModel(
+                                currencyCode,
+                                ""
+                            )
+                        )
+                    )
             }
         }
 

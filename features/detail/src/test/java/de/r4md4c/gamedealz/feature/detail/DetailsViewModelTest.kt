@@ -15,27 +15,27 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.detail
+package de.r4md4c.gamedealz.feature.detail
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.Event
 import de.r4md4c.gamedealz.common.state.StateMachineDelegate
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.*
+import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
+import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.PriceModelHistoricalLowModelPair
+import de.r4md4c.gamedealz.domain.model.ScreenshotModel
+import de.r4md4c.gamedealz.domain.model.ShopModel
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
-import de.r4md4c.gamedealz.feature.detail.DetailsViewModel
-import de.r4md4c.gamedealz.feature.detail.GameInformation
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -55,9 +55,6 @@ class DetailsViewModelTest {
 
     @get:Rule
     val instantTaskRule = InstantTaskExecutorRule()
-
-    @Mock
-    private lateinit var navigator: Navigator
 
     @Mock
     private lateinit var getPlainDetails: GetPlainDetails
@@ -82,20 +79,12 @@ class DetailsViewModelTest {
 
         testSubject = DetailsViewModel(
             TestDispatchers,
-            navigator,
             getPlainDetails,
             stateMachineDelegate,
             isGameAddedToWatchListUseCase,
             removeFromWatchlistUseCase,
             resourceProvider
         )
-    }
-
-    @Test
-    fun `onBuyClick invokes navigator`() {
-        testSubject.onBuyButtonClick("aUrl")
-
-        verify(navigator).navigateToUrl("aUrl")
     }
 
     @Test
@@ -154,7 +143,7 @@ class DetailsViewModelTest {
     @Test
     fun `loadPlainDetails posts to screenshots when not empty`() {
         ArrangeBuilder()
-            .withScreenshots(listOf(mock()))
+            .withScreenshots(listOf(ScreenshotModel("http://path", "http://full_path")))
 
         testSubject.loadPlainDetails("")
 

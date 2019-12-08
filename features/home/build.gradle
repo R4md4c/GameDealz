@@ -48,4 +48,13 @@ dependencies {
     implementation project(':commonproviders')
     implementation project(':common-ui')
     implementation project(':core')
+
+    testImplementation project(':commontest')
+    testImplementation TestLibraries.liveDataTesting
+    testImplementation TestLibraries.liveDataTestingKtx
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.archComponentsCoreTesting
+    testImplementation TestLibraries.kotlinReflect
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.robolectric
 }
