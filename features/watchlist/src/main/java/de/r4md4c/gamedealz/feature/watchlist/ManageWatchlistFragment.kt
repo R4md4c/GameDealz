@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist
+package de.r4md4c.gamedealz.feature.watchlist
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -26,7 +26,9 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -40,26 +42,26 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter_extensions.UndoHelper
 import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback
-import de.r4md4c.commonproviders.FOR_ACTIVITY
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
+import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.launchWithCatching
-import de.r4md4c.gamedealz.common.shortcut.ShortcutManager
+import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
+import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
-import de.r4md4c.gamedealz.watchlist.item.ManageWatchlistItem
-import de.r4md4c.gamedealz.watchlist.item.toManageWatchlistItem
+import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistComponent
+import de.r4md4c.gamedealz.feature.watchlist.di.WatchlistComponent
+import de.r4md4c.gamedealz.feature.watchlist.item.ManageWatchlistItem
+import de.r4md4c.gamedealz.feature.watchlist.item.toManageWatchlistItem
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -68,29 +70,32 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
     private val itemsAdapter by lazy { FastItemAdapter<ManageWatchlistItem>() }
 
-    private val watchlistViewModel: ManageWatchlistViewModel by viewModel()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val resourcesProvider by inject<ResourcesProvider>(name = FOR_ACTIVITY) { parametersOf(requireActivity()) }
+    @field:ForActivity
+    @Inject
+    lateinit var resourcesProvider: ResourcesProvider
 
-    private val swipeToRefresh: SwipeRefreshLayout by lazy {
-        view!!.findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
-    }
+    @Inject
+    lateinit var stateVisibilityHandler: StateVisibilityHandler
 
-    private val toolbar: Toolbar by lazy {
-        view!!.findViewById(R.id.toolbar) as Toolbar
-    }
+    @Inject
+    lateinit var shortcutManager: ShortcutManager
 
-    private val content: RecyclerView by lazy {
-        view!!.findViewById(R.id.content) as RecyclerView
-    }
+    private val watchlistViewModel: ManageWatchlistViewModel by viewModels { viewModelFactory }
 
-    private val emptyResultsTitleText: TextView by lazy {
-        view!!.findViewById(R.id.emptyResultsTitleText) as TextView
-    }
+    private val swipeToRefresh: SwipeRefreshLayout
+        get() = view!!.findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
 
-    private val stateVisibilityHandler by inject<StateVisibilityHandler> {
-        parametersOf(this, { watchlistViewModel.onSwipeToRefresh() })
-    }
+    private val toolbar: Toolbar
+        get() = view!!.findViewById(R.id.toolbar) as Toolbar
+
+    private val content: RecyclerView
+        get() = view!!.findViewById(R.id.content) as RecyclerView
+
+    private val emptyResultsTitleText: TextView
+        get() = view!!.findViewById(R.id.emptyResultsTitleText) as TextView
 
     private val undoHelper by lazy {
         UndoHelper<ManageWatchlistItem>(itemsAdapter, UndoListener())
@@ -108,8 +113,6 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
             .withLeaveBehindSwipeLeft(drawable)
     }
 
-    private val shortcutManager: ShortcutManager by inject()
-
     private val itemTouchHelper by lazy { ItemTouchHelper(swipeCallback) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -117,6 +120,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        stateVisibilityHandler.onRetryClick = { watchlistViewModel.onSwipeToRefresh() }
         stateVisibilityHandler.onViewCreated()
         emptyResultsTitleText.setText(R.string.watchlist_empty)
         swipeToRefresh.setColorSchemeColors(requireContext().resolveThemeColor(R.attr.colorSecondary))
@@ -129,11 +133,13 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
         super.onActivityCreated(savedInstanceState)
         watchlistViewModel.init()
 
-        watchlistViewModel.sideEffects.observe(this, Observer {
+        watchlistViewModel.sideEffects.observe(viewLifecycleOwner, Observer {
             stateVisibilityHandler.onSideEffect(it)
         })
-        watchlistViewModel.watchlistLiveData.observe(this, Observer { renderModels(it) })
-        watchlistViewModel.lastCheckDate.observe(this, Observer {
+        watchlistViewModel.watchlistLiveData.observe(
+            viewLifecycleOwner,
+            Observer { renderModels(it) })
+        watchlistViewModel.lastCheckDate.observe(viewLifecycleOwner, Observer {
             toolbar.subtitle = resourcesProvider.getString(R.string.manage_watch_list_last_checked, it)
         })
     }
@@ -229,6 +235,12 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
             .setPositiveButton(android.R.string.yes) { dialog, _ -> dialog.dismiss(); continuation.resume(true) }
             .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss(); continuation.resume(false) }
             .show()
+    }
+
+    override fun onInject(coreComponent: CoreComponent) {
+        DaggerWatchlistComponent.factory()
+            .create(requireActivity(), this, coreComponent)
+            .inject(this)
     }
 
     private inner class UndoListener : UndoHelper.UndoListener<ManageWatchlistItem> {

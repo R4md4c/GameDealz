@@ -11,4 +11,8 @@
     <string name="sort_historical_low">Historical Low</string>
     <string name="prices">Prices</string>
     <string name="search">Search</string>
+    <string name="action_undo">Undo</string>
+    <string name="watchlist_added_successfully">%s was added successfully to your Watchlist</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="title_manage_your_watchlist">Manage your Watchlist</string>
 </resources>

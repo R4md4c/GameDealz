@@ -15,10 +15,11 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist
+package de.r4md4c.gamedealz.feature.watchlist
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -38,7 +39,9 @@ import androidx.core.math.MathUtils
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -47,35 +50,44 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
+import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
+import de.r4md4c.gamedealz.feature.watchlist.AddToWatchListDialogArgs.Companion.fromBundle
+import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistComponent
+import de.r4md4c.gamedealz.feature.watchlist.di.WatchlistComponent
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
-    private val addToWatchListViewModel by viewModel<AddToWatchListViewModel>()
+    private val title: String by lazy { fromBundle(arguments!!).title }
 
-    private val title: String by lazy { arguments!!.getString(ARG_TITLE) }
+    private val plainId: String by lazy { fromBundle(arguments!!).plainId }
 
-    private val plainId: String by lazy { arguments!!.getString(ARG_PLAIN_ID) }
-
-    private val priceModel: PriceModel by lazy {
-        arguments!!.getParcelable<PriceModel>(
-            ARG_PRICE_MODEL
-        )
-    }
+    private val priceModel: PriceModel by lazy { fromBundle(arguments!!).priceModel }
 
     private val toolbar: Toolbar by lazy {
         view!!.findViewById(R.id.toolbar) as Toolbar
     }
 
-    private val viewNotifier: ViewNotifier by inject()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var viewNotifier: ViewNotifier
+
+    private val addToWatchListViewModel by viewModels<AddToWatchListViewModel> { viewModelFactory }
 
     private val bottomSheetCallback by lazy { AddToWatchListBottomSheetCallback() }
+
+    override fun onAttach(context: Context) {
+        DaggerWatchlistComponent.factory()
+            .create(requireActivity(), this, context.coreComponent())
+            .inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,13 +114,15 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        addToWatchListViewModel.dismiss.observe(this, Observer {
+        addToWatchListViewModel.dismiss.observe(viewLifecycleOwner, Observer {
             viewNotifier.notify(getString(R.string.watchlist_added_successfully, title))
             dismiss()
         })
-        addToWatchListViewModel.emptyPriceError.observe(this, Observer { priceEditText.error = it })
+        addToWatchListViewModel.emptyPriceError.observe(
+            viewLifecycleOwner,
+            Observer { priceEditText.error = it })
         addToWatchListViewModel.generalError.observe(
-            this,
+            viewLifecycleOwner,
             Observer { Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show() })
 
         observeStores()
@@ -158,7 +172,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     private fun observeStores() {
-        addToWatchListViewModel.loadStores().observe(this, Observer { stores ->
+        addToWatchListViewModel.loadStores().observe(viewLifecycleOwner, Observer { stores ->
 
             storesChipGroup.removeAllViews()
 
@@ -191,7 +205,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private fun setCurrentBest() {
         val currentBestData = addToWatchListViewModel.formatCurrentBestCurrencyModel(priceModel)
-        currentBestData.observe(this, Observer {
+        currentBestData.observe(viewLifecycleOwner, Observer {
             if (it == null) {
                 currentBest.isVisible = false
             } else {

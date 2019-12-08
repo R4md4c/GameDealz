@@ -139,25 +139,25 @@ class DetailsFragment : BaseFragment() {
 
         detailsViewModel.loadIsAddedToWatchlist(plainId)
 
-        detailsViewModel.isAddedToWatchList.observe(this, Observer {
+        detailsViewModel.isAddedToWatchList.observe(viewLifecycleOwner, Observer {
             addToWatchList.setImageResource(
                 if (it) R.drawable.ic_added_to_watch_list
                 else R.drawable.ic_add_to_watch_list
             )
         })
 
-        detailsViewModel.sideEffect.observe(this, Observer {
+        detailsViewModel.sideEffect.observe(viewLifecycleOwner, Observer {
             stateVisibilityHandler.onSideEffect(it)
         })
 
-        detailsViewModel.gameInformation.observe(this, Observer {
+        detailsViewModel.gameInformation.observe(viewLifecycleOwner, Observer {
             gameDetailsAdapter.add(
                 HeaderItem(getString(R.string.about_game)),
                 AboutGameItem(it.headerImage, it.shortDescription)
             )
         })
 
-        detailsViewModel.screenshots.observe(this, Observer { screenshots ->
+        detailsViewModel.screenshots.observe(viewLifecycleOwner, Observer { screenshots ->
             gameDetailsAdapter.add(
                 ExpandableScreenshotsHeader(
                     screenshots.size > spanCount
@@ -169,7 +169,7 @@ class DetailsFragment : BaseFragment() {
                 .mapIndexed { index, aScreenshot -> ScreenshotItem(aScreenshot, index, this::onScreenShotClick) })
         })
 
-        detailsViewModel.prices.observe(this, Observer {
+        detailsViewModel.prices.observe(viewLifecycleOwner, Observer {
             renderPrices(it)
         })
     }
@@ -214,11 +214,19 @@ class DetailsFragment : BaseFragment() {
                 askToRemove()
             } else {
                 detailsViewModel.prices.value?.firstOrNull()?.let { priceDetails ->
-                    //AddToWatchListDialog.newInstance(plainId, title, priceDetails.priceModel)
-                    //  .show(childFragmentManager, null)
+                    navigateToAddToWatchlistDialog(priceDetails)
                 }
             }
         }
+    }
+
+    private fun navigateToAddToWatchlistDialog(priceDetails: PriceDetails) {
+        val directions = DetailsFragmentDirections.actionGamedetailsToAddToWatchlistDialog(
+            title,
+            plainId,
+            priceDetails.priceModel
+        )
+        findNavController().navigate(directions)
     }
 
     private fun setupTitle() {

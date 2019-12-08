@@ -15,15 +15,15 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist
+package de.r4md4c.gamedealz.feature.watchlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.common.di.ForApplication
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.domain.TypeParameter
@@ -43,10 +43,11 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
+import javax.inject.Inject
 
-class AddToWatchListViewModel(
+class AddToWatchListViewModel @Inject constructor(
     private val dispatchers: IDispatchers,
-    private val resourcesProvider: ResourcesProvider,
+    @ForApplication private val resourcesProvider: ResourcesProvider,
     private val getCurrentActiveRegionUseCase: GetCurrentActiveRegionUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val addToWatchListUseCase: AddToWatchListUseCase

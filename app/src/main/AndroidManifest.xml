@@ -22,7 +22,7 @@
         </activity>
 
         <receiver
-                android:name=".common.notifications.NotificationsBroadcastReceiver"
+                android:name=".feature.watchlist.notifications.NotificationsBroadcastReceiver"
                 android:exported="false"/>
 
         <activity

@@ -17,9 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.deals
 
-import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -43,13 +41,10 @@ import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent
 import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
-import de.r4md4c.gamedealz.feature.search.SearchFragmentDirections
 import kotlinx.android.synthetic.main.fragment_deals.*
 import javax.inject.Inject
 
 class DealsFragment : BaseFragment() {
-
-    private var listener: OnFragmentInteractionListener? = null
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -98,10 +93,10 @@ class DealsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        dealsViewModel.deals.observe(this, Observer {
+        dealsViewModel.deals.observe(viewLifecycleOwner, Observer {
             dealsAdapter.submitList(it)
         })
-        dealsViewModel.sideEffect.observe(this, Observer {
+        dealsViewModel.sideEffect.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
                 is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
@@ -123,10 +118,6 @@ class DealsFragment : BaseFragment() {
         toolbar.inflateMenu(R.menu.menu_deals)
         val searchMenuItem = toolbar.menu.findItem(R.id.menu_search)
         (searchMenuItem.actionView as? SearchView)?.setOnQueryTextListener(OnQueryTextListener(searchMenuItem))
-    }
-
-    interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri, extras: Parcelable?)
     }
 
     private fun setupRecyclerView() = with(content) {

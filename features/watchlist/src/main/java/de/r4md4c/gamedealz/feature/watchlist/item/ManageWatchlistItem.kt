@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist.item
+package de.r4md4c.gamedealz.feature.watchlist.item
 
 import android.annotation.SuppressLint
 import android.view.View
@@ -27,9 +27,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
+import de.r4md4c.gamedealz.feature.watchlist.R
 import kotlinx.android.synthetic.main.layout_manage_watchlist_item.view.*
 
 data class ManageWatchlistItem(
@@ -53,7 +53,10 @@ data class ManageWatchlistItem(
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_manage_watchlist_item
 
-    override fun getViewHolder(v: View): ViewHolder = ViewHolder(v)
+    override fun getViewHolder(v: View): ViewHolder =
+        ViewHolder(
+            v
+        )
 
     override fun getLayoutRes(): Int = R.layout.layout_manage_watchlist_item
 

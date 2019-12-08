@@ -17,16 +17,22 @@
 
 package de.r4md4c.gamedealz.core
 
+import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
+import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
@@ -58,4 +64,16 @@ interface UseCaseComponent {
     val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase
 
     val searchUseCase: SearchUseCase
+
+    val addToWatchlistUseCase: AddToWatchListUseCase
+
+    val getWatchlistToManageUseCase: GetWatchlistToManageUseCase
+
+    val getLatestWatchlistCheckDate: GetLatestWatchlistCheckDate
+
+    val removeWatcheesUseCase: RemoveWatcheesUseCase
+
+    val checkPriceThresholdUseCase: CheckPriceThresholdUseCase
+
+    val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase
 }

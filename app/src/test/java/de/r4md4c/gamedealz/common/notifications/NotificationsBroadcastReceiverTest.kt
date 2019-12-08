@@ -71,7 +71,7 @@ class NotificationsBroadcastReceiverTest : KoinTest {
 
     private lateinit var shadowApplication: ShadowApplication
 
-    private lateinit var notificationsBroadcastReceiver: NotificationsBroadcastReceiver
+    private lateinit var notificationsBroadcastReceiver: de.r4md4c.gamedealz.feature.watchlist.notifications.NotificationsBroadcastReceiver
 
     @Before
     fun beforeEach() {
@@ -80,7 +80,8 @@ class NotificationsBroadcastReceiverTest : KoinTest {
                 Shadows.shadowOf(RuntimeEnvironment.systemContext.getSystemService<NotificationManager>())
         shadowApplication = Shadows.shadowOf(ApplicationProvider.getApplicationContext<Application>())
 
-        notificationsBroadcastReceiver = NotificationsBroadcastReceiver()
+        notificationsBroadcastReceiver =
+            de.r4md4c.gamedealz.feature.watchlist.notifications.NotificationsBroadcastReceiver()
         loadKoinModules(listOf(module {
             single<IDispatchers> { TestDispatchers }
             single { markNotificationAsReadUseCase }

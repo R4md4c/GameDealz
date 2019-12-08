@@ -36,17 +36,18 @@ class WatcheesPushNotifierIntegrationTest : KoinComponent {
 
     private lateinit var uiDevice: UiDevice
 
-    private lateinit var watcheesPushNotifier: WatcheesPushNotifier
+    private lateinit var watcheesPushNotifier: de.r4md4c.gamedealz.feature.watchlist.notifications.WatcheesPushNotifier
 
     private val resourcesProvider by inject<ResourcesProvider>(name = FOR_APPLICATION)
 
     @Before
     fun beforeEach() {
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        watcheesPushNotifier = WatcheesPushNotifier(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            get(name = FOR_APPLICATION)
-        )
+        watcheesPushNotifier =
+            de.r4md4c.gamedealz.feature.watchlist.notifications.WatcheesPushNotifier(
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                get(name = FOR_APPLICATION)
+            )
     }
 
     @Test

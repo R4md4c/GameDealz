@@ -15,24 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*
- * This file is part of GameDealz.
- *
- * GameDealz is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * GameDealz is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-package de.r4md4c.gamedealz.common.notifications
+package de.r4md4c.gamedealz.feature.watchlist.notifications
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -47,10 +30,10 @@ import androidx.core.util.forEach
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.di.ForApplication
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
+import de.r4md4c.gamedealz.feature.watchlist.R
 import java.util.*
 import javax.inject.Inject
 
@@ -80,7 +63,10 @@ internal class WatcheesPushNotifier @Inject constructor(
         forEachIndexed { index, notificationModel ->
             val watcheeModel = notificationModel.watcheeModel
             val priceModel = notificationModel.priceModel
-            NotificationCompat.Builder(context, CHANNEL_ID)
+            NotificationCompat.Builder(
+                context,
+                CHANNEL_ID
+            )
                 .setContentTitle(resourcesProvider.getString(R.string.watchlist_notification_title))
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setContentText(
@@ -116,7 +102,10 @@ internal class WatcheesPushNotifier @Inject constructor(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || notificationsTotalSize <= 1) {
             return null
         }
-        return NotificationCompat.Builder(context, CHANNEL_ID)
+        return NotificationCompat.Builder(
+            context,
+            CHANNEL_ID
+        )
             .setContentTitle(
                 resourcesProvider.getString(
                     R.string.watchlist_notification_summary,

@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/nav_graph"
-            app:startDestination="@id/dealsFragment">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/nav_graph"
+        app:startDestination="@id/dealsFragment">
 
     <fragment
             android:id="@+id/dealsFragment"
             android:name="de.r4md4c.gamedealz.feature.deals.DealsFragment"
             android:label="@string/title_on_going_deals"
-            tools:layout="@layout/fragment_deals"
-            >
+            tools:layout="@layout/fragment_deals">
         <action
                 android:id="@+id/action_dealsFragment_to_searchFragment"
                 app:destination="@id/searchFragment"
                 app:enterAnim="@anim/nav_default_enter_anim"
                 app:exitAnim="@anim/nav_default_exit_anim"
                 app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
                 android:id="@+id/action_dealsFragment_to_gameDetailFragment"
-                app:destination="@id/gameDetailFragment"/>
+                app:destination="@id/gameDetailFragment" />
     </fragment>
     <fragment
             android:id="@+id/searchFragment"
@@ -28,10 +27,10 @@
             tools:layout="@layout/fragment_search">
         <argument
                 android:name="search_term"
-                app:argType="string"/>
+                app:argType="string" />
         <action
                 android:id="@+id/action_searchFragment_to_gameDetailFragment"
-                app:destination="@id/gameDetailFragment"/>
+                app:destination="@id/gameDetailFragment" />
     </fragment>
     <fragment
             android:id="@+id/gameDetailFragment"
@@ -39,14 +38,18 @@
             tools:layout="@layout/fragment_game_detail">
         <argument
                 android:name="plain_id"
-                app:argType="string"/>
+                app:argType="string" />
         <argument
                 android:name="title"
-                app:argType="string"/>
+                app:argType="string" />
 
         <argument
                 android:name="buy_url"
-                app:argType="string"/>
+                app:argType="string" />
+
+        <action
+                android:id="@+id/action_gamedetails_to_add_to_watchlist_dialog"
+                app:destination="@+id/addToWatchlistDialog" />
     </fragment>
 
     <action
@@ -55,12 +58,27 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     <fragment
             android:id="@+id/manageWatchlistFragment"
-            tools:layout="@layout/fragment_manage_watchlist"
-            android:name="de.r4md4c.gamedealz.watchlist.ManageWatchlistFragment"
-            android:label="@string/title_manage_your_watchlist"/>
+            android:name="de.r4md4c.gamedealz.feature.watchlist.ManageWatchlistFragment"
+            android:label="@string/title_manage_your_watchlist"
+            tools:layout="@layout/fragment_manage_watchlist" />
+
+    <dialog
+            android:id="@+id/addToWatchlistDialog"
+            android:name="de.r4md4c.gamedealz.feature.watchlist.AddToWatchListDialog">
+        <argument
+                android:name="title"
+                app:argType="string" />
+        <argument
+                android:name="plainId"
+                app:argType="string" />
+        <argument
+                android:name="priceModel"
+                app:argType="de.r4md4c.gamedealz.domain.model.PriceModel" />
+
+    </dialog>
 
 </navigation>

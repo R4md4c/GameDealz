@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.watchlist
+package de.r4md4c.gamedealz.feature.watchlist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -45,8 +45,9 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class ManageWatchlistViewModel(
+class ManageWatchlistViewModel @Inject constructor(
     private val dispatchers: IDispatchers,
     private val getWatchlistUseCase: GetWatchlistToManageUseCase,
     private val getLatestWatchlistCheckDate: GetLatestWatchlistCheckDate,

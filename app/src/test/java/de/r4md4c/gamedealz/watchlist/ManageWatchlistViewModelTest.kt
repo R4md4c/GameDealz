@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.watchlist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.jraska.livedata.test
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.gamedealz.Fixtures
@@ -77,7 +76,7 @@ class ManageWatchlistViewModelTest {
     private lateinit var notifier: Notifier<WatcheeNotificationModel>
 
     @InjectMockKs
-    private lateinit var viewModel: ManageWatchlistViewModel
+    private lateinit var viewModel: de.r4md4c.gamedealz.feature.ManageWatchlistViewModel
 
     @Before
     fun beforeEach() = MockKAnnotations.init(this)

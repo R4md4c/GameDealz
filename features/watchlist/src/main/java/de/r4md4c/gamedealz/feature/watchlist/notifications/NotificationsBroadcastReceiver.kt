@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.notifications
+package de.r4md4c.gamedealz.feature.watchlist.notifications
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -25,36 +25,40 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
-import de.r4md4c.gamedealz.R
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
+import de.r4md4c.gamedealz.feature.watchlist.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
+import javax.inject.Inject
 
 /**
  * Provides an interceptor when clicking on notification, so that we can mark notifications as read before opening
  * the required activity.
  */
-class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
+class NotificationsBroadcastReceiver : BroadcastReceiver() {
 
-    private val markNotificationAsReadUseCase: MarkNotificationAsReadUseCase by inject()
+    @Inject
+    lateinit var markNotificationAsReadUseCase: MarkNotificationAsReadUseCase
 
-    private val activeAlertsCountUseCase: GetAlertsCountUseCase by inject()
+    @Inject
+    lateinit var activeAlertsCountUseCase: GetAlertsCountUseCase
 
-    private val dispatchers: IDispatchers by inject()
+    @Inject
+    lateinit var dispatchers: IDispatchers
 
     override fun onReceive(context: Context, intent: Intent) {
         GlobalScope.launch(dispatchers.Default) {
             val notificationManager = NotificationManagerCompat.from(context)
 
-            val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(EXTRA_MODEL) ?: return@launch
+            val notificationModel = intent.getParcelableExtra<WatcheeNotificationModel>(
+                EXTRA_MODEL
+            ) ?: return@launch
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
             val alertsCount = activeAlertsCountUseCase().first()
 
@@ -71,6 +75,9 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                 notificationManager.cancelAll()
             }
         }
+    }
+
+    private fun onInject(context: Context) {
     }
 
     private fun WatcheeNotificationModel.toDetailsPendingIntent(context: Context): PendingIntent? =
@@ -100,13 +107,15 @@ class NotificationsBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
         private fun WatcheeNotificationModel.intent(context: Context): Intent =
             Intent(context, NotificationsBroadcastReceiver::class.java).also {
-                it.action = ACTION_VIEW_GAME_DETAILS
+                it.action =
+                    ACTION_VIEW_GAME_DETAILS
                 it.putExtra(EXTRA_MODEL, this)
             }
 
         private fun WatcheeNotificationModel.buyIntent(context: Context): Intent =
             Intent(context, NotificationsBroadcastReceiver::class.java).also {
-                it.action = ACTION_VIEW_BUY_URL
+                it.action =
+                    ACTION_VIEW_BUY_URL
                 it.putExtra(EXTRA_MODEL, this)
             }
 

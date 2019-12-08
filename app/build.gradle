@@ -114,6 +114,7 @@ dependencies {
     implementation project(':features:deals')
     implementation project(':features:detail')
     implementation project(':features:search')
+    implementation project(':features:watchlist')
     implementation project(':core')
     implementation project(':workers')
     implementation project(':common')

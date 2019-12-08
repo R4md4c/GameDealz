@@ -42,6 +42,7 @@ import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.feature.search.SearchFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.feature.search.di.DaggerSearchComponent
 import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
@@ -110,20 +111,10 @@ class SearchFragment : BaseFragment() {
             viewModel.startSearch(searchTerm)
         }
 
-        viewModel.searchResults.observe(this, Observer {
-            viewLifecycleOwner.lifecycleScope.launch {
-                progress.isVisible = true
-                withContext(dispatchers.Default) {
-                    it.map { searchResult -> searchResult.toRenderModel(resourcesProvider, dateFormatter) }
-                }.also { renderModels ->
-                    searchAdapter.submitList(renderModels)
-                    searchResultsLoaded = true
-                    searchView?.clearFocus()
-                    progress.isVisible = false
-                }
-            }
+        viewModel.searchResults.observe(viewLifecycleOwner, Observer {
+            renderSearchResults(it)
         })
-        viewModel.sideEffects.observe(this, Observer {
+        viewModel.sideEffects.observe(viewLifecycleOwner, Observer {
             stateVisibilityHandler.onSideEffect(it)
         })
     }
@@ -140,6 +131,25 @@ class SearchFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(VerticalLinearDecorator(context))
             adapter = searchAdapter
+        }
+    }
+
+    private fun renderSearchResults(it: List<SearchResultModel>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            progress.isVisible = true
+            withContext(dispatchers.Default) {
+                it.map { searchResult ->
+                    searchResult.toRenderModel(
+                        resourcesProvider,
+                        dateFormatter
+                    )
+                }
+            }.also { renderModels ->
+                searchAdapter.submitList(renderModels)
+                searchResultsLoaded = true
+                searchView?.clearFocus()
+                progress.isVisible = false
+            }
         }
     }
 

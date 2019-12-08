@@ -39,7 +39,6 @@ import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
-import de.r4md4c.gamedealz.feature.deals.DealsFragment
 import de.r4md4c.gamedealz.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.home.item.ErrorDrawerItem
 import de.r4md4c.gamedealz.regions.RegionSelectionDialogFragment
@@ -47,7 +46,6 @@ import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
 class HomeActivity : AppCompatActivity(),
-    DealsFragment.OnFragmentInteractionListener,
     RegionSelectionDialogFragment.OnRegionChangeSubmitted,
     HasDrawerLayout {
 
@@ -89,10 +87,6 @@ class HomeActivity : AppCompatActivity(),
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         drawer.saveInstanceState(outState)
-    }
-
-    override fun onFragmentInteraction(uri: Uri, extras: Parcelable?) {
-        viewModel.onNavigateTo(navigator, uri.toString(), extras)
     }
 
     override fun onSupportNavigateUp(): Boolean =

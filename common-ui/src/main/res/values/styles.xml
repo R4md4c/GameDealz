@@ -5,4 +5,8 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
     </style>
+
+    <style name="AppTheme.BottomSheetTransparent" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@null</item>
+    </style>
 </resources>

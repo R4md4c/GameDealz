@@ -101,8 +101,8 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         if (savedInstanceState == null) {
             filtersViewModel.loadStores()
         }
-        filtersViewModel.stores.observe(this, Observer { itemAdapter.set(it) })
-        filtersViewModel.dismiss.observe(this, Observer { dismiss() })
+        filtersViewModel.stores.observe(viewLifecycleOwner, Observer { itemAdapter.set(it) })
+        filtersViewModel.dismiss.observe(viewLifecycleOwner, Observer { dismiss() })
         savedInstanceState?.let { itemAdapter.withSavedInstanceState(it) }
     }
 

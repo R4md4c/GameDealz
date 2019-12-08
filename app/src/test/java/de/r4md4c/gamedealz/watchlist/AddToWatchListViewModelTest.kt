@@ -53,13 +53,13 @@ class AddToWatchListViewModelTest {
     @Mock
     private lateinit var addToWatchListUseCase: AddToWatchListUseCase
 
-    private lateinit var viewModel: AddToWatchListViewModel
+    private lateinit var viewModel: de.r4md4c.gamedealz.feature.AddToWatchListViewModel
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        viewModel = AddToWatchListViewModel(
+        viewModel = de.r4md4c.gamedealz.feature.AddToWatchListViewModel(
             TestDispatchers,
             resourcesProvider,
             getCurrentActiveRegionUseCase,

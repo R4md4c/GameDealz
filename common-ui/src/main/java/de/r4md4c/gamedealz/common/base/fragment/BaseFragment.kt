@@ -46,8 +46,12 @@ abstract class BaseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        clearFindViewByIdCache()
         toolbar?.let { onCreateOptionsMenu(it) }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        clearFindViewByIdCache()
     }
 
     val drawerLayout: DrawerLayout?
