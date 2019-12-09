@@ -15,7 +15,6 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 package de.r4md4c.gamedealz.feature.deals
 
 import android.content.Context

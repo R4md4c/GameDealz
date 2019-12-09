@@ -26,6 +26,6 @@ import de.r4md4c.gamedealz.workmanager.WorkManagerJobsInitializer
 abstract class WorkManagerBindsModule {
 
     @Binds
-    internal abstract fun bindsWorkManagerJobsInitializer(it: WorkManagerJobsInitializer)
-            : PricesCheckerWorker
+    internal abstract fun bindsWorkManagerJobsInitializer(it: WorkManagerJobsInitializer):
+            PricesCheckerWorker
 }

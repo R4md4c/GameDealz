@@ -48,15 +48,14 @@ import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.launchWithCatching
-import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
 import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistComponent
-import de.r4md4c.gamedealz.feature.watchlist.di.WatchlistComponent
 import de.r4md4c.gamedealz.feature.watchlist.item.ManageWatchlistItem
 import de.r4md4c.gamedealz.feature.watchlist.item.toManageWatchlistItem
+import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManager
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber

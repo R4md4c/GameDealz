@@ -107,7 +107,6 @@ object NetworkModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(SteamService::class.java)
-
 }
 
 private fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builder {

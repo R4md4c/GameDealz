@@ -22,7 +22,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
-import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.feature.detail.DetailsViewModel
 
 @Module

@@ -55,7 +55,7 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         super.onAttach(context)
     }
 
-    //override fun getTheme(): Int = R.style.AppTheme_BottomSheetDialog
+    // override fun getTheme(): Int = R.style.AppTheme_BottomSheetDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         layoutInflater.inflate(R.layout.fragment_dialog_deals_filter, container, false)

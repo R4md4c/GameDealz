@@ -27,6 +27,6 @@ import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
 internal abstract class DataSourceModule {
 
     @Binds
-    abstract fun bindsDataSourceFactory(it: DealsDataSourceFactory)
-            : DataSource.Factory<Int, DealRenderModel>
+    abstract fun bindsDataSourceFactory(it: DealsDataSourceFactory):
+            DataSource.Factory<Int, DealRenderModel>
 }

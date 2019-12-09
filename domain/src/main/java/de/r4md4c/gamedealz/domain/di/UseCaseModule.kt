@@ -64,10 +64,8 @@ import de.r4md4c.gamedealz.domain.usecase.impl.RemoveWatcheesUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.SearchUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ToggleNightModeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ToggleStoresUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
-import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
-import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 
+@Suppress("TooManyFunctions")
 @Module
 abstract class UseCaseModule {
 
@@ -75,68 +73,112 @@ abstract class UseCaseModule {
     internal abstract fun bindsGetRegionsUseCase(it: GetRegionsUseCaseImpl): GetRegionsUseCase
 
     @Binds
-    internal abstract fun bindsOnCurrentActiveRegionReactiveUseCase(it: GetCurrentActiveRegionUseCaseImpl): OnCurrentActiveRegionReactiveUseCase
+    internal abstract fun bindsOnCurrentActiveRegionReactiveUseCase(
+        it: GetCurrentActiveRegionUseCaseImpl
+    ): OnCurrentActiveRegionReactiveUseCase
 
     @Binds
-    internal abstract fun bindsGetCurrentActiveRegionUseCase(it: GetCurrentActiveRegionUseCaseImpl): GetCurrentActiveRegionUseCase
+    internal abstract fun bindsGetCurrentActiveRegionUseCase(
+        it: GetCurrentActiveRegionUseCaseImpl
+    ): GetCurrentActiveRegionUseCase
 
     @Binds
-    internal abstract fun bindsChangeActiveRegionUseCase(it: ChangeActiveRegionUseCaseImpl): ChangeActiveRegionUseCase
+    internal abstract fun bindsChangeActiveRegionUseCase(
+        it: ChangeActiveRegionUseCaseImpl
+    ): ChangeActiveRegionUseCase
 
     @Binds
-    internal abstract fun bindsGetStoresUseCase(it: GetStoresUseCaseImpl): GetStoresUseCase
+    internal abstract fun bindsGetStoresUseCase(
+        it: GetStoresUseCaseImpl
+    ): GetStoresUseCase
 
     @Binds
-    internal abstract fun bindsToggleStoresUseCase(it: ToggleStoresUseCaseImpl): ToggleStoresUseCase
+    internal abstract fun bindsToggleStoresUseCase(
+        it: ToggleStoresUseCaseImpl
+    ): ToggleStoresUseCase
 
     @Binds
-    internal abstract fun bindsGetDealsUseCase(it: GetDealsUseCaseImpl): GetDealsUseCase
+    internal abstract fun bindsGetDealsUseCase(
+        it: GetDealsUseCaseImpl
+    ): GetDealsUseCase
 
     @Binds
-    internal abstract fun bindsGetSelectedStoresUseCase(it: GetSelectedStoresUseCaseImpl): GetSelectedStoresUseCase
+    internal abstract fun bindsGetSelectedStoresUseCase(
+        it: GetSelectedStoresUseCaseImpl
+    ): GetSelectedStoresUseCase
 
     @Binds
-    internal abstract fun bindsGetImageUrlUseCase(it: GetImageUrlFromSteamUseCaseImpl): GetImageUrlUseCase
+    internal abstract fun bindsGetImageUrlUseCase(
+        it: GetImageUrlFromSteamUseCaseImpl
+    ): GetImageUrlUseCase
 
     @Binds
-    internal abstract fun bindsGetCountriesUnderRegionUseCase(it: GetCountriesUnderRegionUseCaseImpl): GetCountriesUnderRegionUseCase
+    internal abstract fun bindsGetCountriesUnderRegionUseCase(
+        it: GetCountriesUnderRegionUseCaseImpl
+    ): GetCountriesUnderRegionUseCase
 
     @Binds
-    internal abstract fun bindsGetPlainDetails(it: GetPlainDetailsImpl): GetPlainDetails
+    internal abstract fun bindsGetPlainDetails(
+        it: GetPlainDetailsImpl
+    ): GetPlainDetails
 
     @Binds
-    internal abstract fun bindsSearchUseCase(it: SearchUseCaseImpl): SearchUseCase
+    internal abstract fun bindsSearchUseCase(
+        it: SearchUseCaseImpl
+    ): SearchUseCase
 
     @Binds
-    internal abstract fun bindsAddToWatchListUseCase(it: AddToWatchListUseCaseImpl): AddToWatchListUseCase
+    internal abstract fun bindsAddToWatchListUseCase(
+        it: AddToWatchListUseCaseImpl
+    ): AddToWatchListUseCase
 
     @Binds
-    internal abstract fun bindsIsGameAddedToWatchListUseCase(it: IsGameAddedToWatchListUseCaseImpl): IsGameAddedToWatchListUseCase
+    internal abstract fun bindsIsGameAddedToWatchListUseCase(
+        it: IsGameAddedToWatchListUseCaseImpl
+    ): IsGameAddedToWatchListUseCase
 
     @Binds
-    internal abstract fun bindsCheckPriceThresholdUseCaseImpl(it: CheckPriceThresholdUseCaseImpl): CheckPriceThresholdUseCase
+    internal abstract fun bindsCheckPriceThresholdUseCaseImpl(
+        it: CheckPriceThresholdUseCaseImpl
+    ): CheckPriceThresholdUseCase
 
     @Binds
-    internal abstract fun bindsOnNightModeChangeUseCase(it: OnNightModeChangeUseCaseImpl): OnNightModeChangeUseCase
+    internal abstract fun bindsOnNightModeChangeUseCase(
+        it: OnNightModeChangeUseCaseImpl
+    ): OnNightModeChangeUseCase
 
     @Binds
-    internal abstract fun bindsToggleNightModeUseCase(it: ToggleNightModeUseCaseImpl): ToggleNightModeUseCase
+    internal abstract fun bindsToggleNightModeUseCase(
+        it: ToggleNightModeUseCaseImpl
+    ): ToggleNightModeUseCase
 
     @Binds
-    internal abstract fun bindsGetLatestWatchlistCheckDate(it: GetLatestWatchlistCheckDateImpl): GetLatestWatchlistCheckDate
+    internal abstract fun bindsGetLatestWatchlistCheckDate(
+        it: GetLatestWatchlistCheckDateImpl
+    ): GetLatestWatchlistCheckDate
 
     @Binds
-    internal abstract fun bindsRemoveWatcheesUseCase(it: RemoveWatcheesUseCaseImpl): RemoveWatcheesUseCase
+    internal abstract fun bindsRemoveWatcheesUseCase(
+        it: RemoveWatcheesUseCaseImpl
+    ): RemoveWatcheesUseCase
 
     @Binds
-    internal abstract fun bindsGetAlertsCountUseCase(it: GetPriceAlertsCountUseCase): GetAlertsCountUseCase
+    internal abstract fun bindsGetAlertsCountUseCase(
+        it: GetPriceAlertsCountUseCase
+    ): GetAlertsCountUseCase
 
     @Binds
-    internal abstract fun bindsGetWatchlistToManageUseCase(it: GetWatchlistToManageUseCaseImpl): GetWatchlistToManageUseCase
+    internal abstract fun bindsGetWatchlistToManageUseCase(
+        it: GetWatchlistToManageUseCaseImpl
+    ): GetWatchlistToManageUseCase
 
     @Binds
-    internal abstract fun bindsMarkNotificationAsReadUseCase(it: MarkNotificationAsReadUseCaseImpl): MarkNotificationAsReadUseCase
+    internal abstract fun bindsMarkNotificationAsReadUseCase(
+        it: MarkNotificationAsReadUseCaseImpl
+    ): MarkNotificationAsReadUseCase
 
     @Binds
-    internal abstract fun bindsRemoveFromWatchlistUseCase(it: RemoveFromWatchlistUseCaseImpl): RemoveFromWatchlistUseCase
+    internal abstract fun bindsRemoveFromWatchlistUseCase(
+        it: RemoveFromWatchlistUseCaseImpl
+    ): RemoveFromWatchlistUseCase
 }

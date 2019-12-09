@@ -168,7 +168,6 @@ class RegionSelectionDialogFragment : DialogFragment() {
         DaggerRegionsComponent.factory()
             .create(context.coreComponent())
             .inject(this)
-
     }
 
     companion object {
