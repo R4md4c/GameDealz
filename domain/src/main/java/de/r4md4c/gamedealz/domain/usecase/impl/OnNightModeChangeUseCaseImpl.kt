@@ -22,9 +22,11 @@ import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
-internal class OnNightModeChangeUseCaseImpl(private val sharedPreferencesProvider: SharedPreferencesProvider) :
-    OnNightModeChangeUseCase {
+internal class OnNightModeChangeUseCaseImpl @Inject constructor(
+    private val sharedPreferencesProvider: SharedPreferencesProvider
+) : OnNightModeChangeUseCase {
 
     override suspend fun activeNightModeChange(): Flow<NightMode> =
         sharedPreferencesProvider.reactiveNightMode.distinctUntilChanged()

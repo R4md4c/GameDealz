@@ -1,7 +1,16 @@
 package de.r4md4c.gamedealz.network.repository
 
-import com.nhaarman.mockitokotlin2.*
-import de.r4md4c.gamedealz.network.model.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import de.r4md4c.gamedealz.network.model.DataWrapper
+import de.r4md4c.gamedealz.network.model.Deal
+import de.r4md4c.gamedealz.network.model.ListWrapper
+import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.Stores
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.PlainPriceList
 import de.r4md4c.gamedealz.network.service.RegionCodes

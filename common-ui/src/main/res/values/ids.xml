@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="content" type="id" />
+    <item name="progress" type="id" />
+    <item name="swipeToRefresh" type="id" />
+    <item name="emptyGroup" type="id" />
+    <item name="errorGroup" type="id" />
+    <item name="retry" type="id" />
+    <item name="errorText" type="id" />
+    <item name="toolbar" type="id" />
+    <item name="emptyResultsTitleText" type="id" />
+    <item name="nav_host_fragment" type="id" />
+</resources>

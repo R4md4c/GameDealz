@@ -28,8 +28,9 @@ import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-internal class GetStoresUseCaseImpl(
+internal class GetStoresUseCaseImpl @Inject constructor(
     private val storesRemoteRepository: StoresRemoteRepository,
     private val storesRepository: StoresRepository,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase

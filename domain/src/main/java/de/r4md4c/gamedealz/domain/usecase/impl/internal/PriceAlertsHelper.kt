@@ -22,8 +22,9 @@ import de.r4md4c.gamedealz.data.entity.PriceAlert
 import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-internal class PriceAlertsHelper(
+internal class PriceAlertsHelper @Inject constructor(
     private val priceAlertRepository: PriceAlertRepository,
     private val dateProvider: DateProvider
 ) {

@@ -23,9 +23,10 @@ import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.workmanager.worker.PriceCheckerWorker
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
-internal class WorkManagerJobsInitializer(
+internal class WorkManagerJobsInitializer @Inject constructor(
     private val workManager: WorkManager,
     private val preferences: SharedPreferencesProvider
 ) : PricesCheckerWorker {

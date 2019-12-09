@@ -21,7 +21,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
-        buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
@@ -78,7 +77,6 @@ dependencies {
     implementation Libraries.material
 
     implementation Libraries.swipeRefreshLayout
-    implementation Libraries.stfalImageViewer
 
     implementation(Libraries.glide) {
         exclude group: "com.android.support"
@@ -88,6 +86,9 @@ dependencies {
     }
     implementation(Libraries.okhttp) {
         because 'Glide okhttp integration needs this.'
+    }
+    implementation (Libraries.workManagerKtx) {
+        exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
     implementation Libraries.okio
     kapt Libraries.glideCompiler
@@ -102,15 +103,19 @@ dependencies {
     implementation Libraries.stateMachine
     implementation Libraries.timber
 
-    implementation Libraries.koinCore
-    implementation Libraries.koinCoreExt
-    implementation Libraries.koinAndroid
-    implementation Libraries.koinAndroidXScope
-    implementation Libraries.koinAndroidXViewModel
-
+    implementation project(':common-ui')
+    implementation project(':features:deals')
+    implementation project(':features:detail')
+    implementation project(':features:search')
+    implementation project(':features:watchlist')
+    implementation project(':features:regions')
+    implementation project(':features:home')
+    implementation project(':core')
     implementation project(':workers')
     implementation project(':common')
     implementation project(':commonproviders')
+    implementation project(':data')
+    implementation project(':network')
     implementation project(':domain')
 
     testImplementation project(':commontest')
@@ -121,7 +126,6 @@ dependencies {
     testImplementation TestLibraries.kotlinReflect
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.robolectric
-    testImplementation TestLibraries.koinTest
     testImplementation TestLibraries.androidXTestCore
     testImplementation Libraries.pagingCommonKtx
 
@@ -131,6 +135,7 @@ dependencies {
     androidTestImplementation TestLibraries.testRules
     androidTestImplementation TestLibraries.testRunner
     androidTestImplementation TestLibraries.espressoCore
+    androidTestImplementation TestLibraries.androidXTestCore
 }
 
 configurations.all {

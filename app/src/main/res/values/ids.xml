@@ -4,5 +4,4 @@
     <item name="cell_item" type="id"/>
     <item name="row_item" type="id"/>
     <item name="column_item" type="id"/>
-    <item name="home_drawer_night_mode_switch" type="id"/>
 </resources>

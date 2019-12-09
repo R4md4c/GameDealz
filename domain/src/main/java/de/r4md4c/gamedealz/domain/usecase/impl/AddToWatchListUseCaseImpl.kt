@@ -31,8 +31,9 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-internal class AddToWatchListUseCaseImpl(
+internal class AddToWatchListUseCaseImpl @Inject constructor(
     private val dispatchers: IDispatchers,
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val watchlistRepository: WatchlistRepository,

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="match_parent"
+                                                   app:cardElevation="2dp"
+                                                   android:foreground="?selectableItemBackground"
+                                                   android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                       xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                       android:orientation="vertical"
+                                                       android:padding="@dimen/baseline_1x"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content">
+
+        <ImageView
+                android:id="@+id/image"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="120dp"
+                android:layout_height="72dp"/>
+
+        <TextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                app:layout_constraintVertical_chainStyle="spread_inside"
+                android:layout_marginLeft="@dimen/baseline_1x"
+                android:layout_marginRight="@dimen/baseline_1x"
+                app:layout_constraintLeft_toRightOf="@+id/image"
+                android:maxLines="2"
+                android:ellipsize="end"
+                app:layout_constraintTop_toTopOf="@+id/image"
+                tools:text="Grand theft auto"
+                app:layout_constraintRight_toRightOf="parent"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/currentBest"/>
+
+        <TextView
+                android:id="@+id/currentBest"
+                android:layout_width="0dp"
+                app:layout_constraintLeft_toLeftOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                tools:text="Current Best: "
+                app:layout_constraintRight_toRightOf="@id/name"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/historicalLow"/>
+
+        <TextView
+                android:id="@+id/historicalLow"
+                android:layout_width="0dp"
+                app:layout_constraintLeft_toLeftOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/currentBest"
+                tools:text="Historical Low: "
+                app:layout_constraintRight_toRightOf="@id/name"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/image"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

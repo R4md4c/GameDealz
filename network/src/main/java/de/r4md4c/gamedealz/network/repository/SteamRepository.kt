@@ -20,8 +20,11 @@ package de.r4md4c.gamedealz.network.repository
 import de.r4md4c.gamedealz.network.model.steam.AppDetails
 import de.r4md4c.gamedealz.network.model.steam.PackageDetails
 import de.r4md4c.gamedealz.network.service.steam.SteamService
+import javax.inject.Inject
 
-internal class SteamRepository(private val steamService: SteamService) : SteamRemoteRepository {
+internal class SteamRepository @Inject constructor(
+    private val steamService: SteamService
+) : SteamRemoteRepository {
 
     override suspend fun appDetails(appId: String): AppDetails? =
         steamService.appDetails(appId).await().run {

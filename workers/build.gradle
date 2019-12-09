@@ -45,14 +45,10 @@ dependencies {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
 
-    implementation Libraries.koinCore
-    implementation Libraries.koinAndroid
-
     androidTestImplementation TestLibraries.mockitoAndroid
     androidTestImplementation project(":commontest")
     androidTestImplementation TestLibraries.androidXTestExtJunit
     androidTestImplementation TestLibraries.assertjCore
-    androidTestImplementation (TestLibraries.koinTest) { exclude group: 'org.mockito' }
     androidTestImplementation TestLibraries.archComponentsCoreTesting
     androidTestImplementation TestLibraries.testRunner
     androidTestImplementation TestLibraries.workManager

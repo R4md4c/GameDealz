@@ -20,8 +20,11 @@ package de.r4md4c.commonproviders.configuration
 import android.content.Context
 import androidx.core.os.ConfigurationCompat
 import java.util.*
+import javax.inject.Inject
 
-internal class AndroidConfigurationImpl(private val context: Context) : ConfigurationProvider {
+internal class AndroidConfigurationImpl @Inject constructor(
+    private val context: Context
+) : ConfigurationProvider {
 
     override val locale: Locale
         get() = ConfigurationCompat.getLocales(context.resources.configuration)[0]

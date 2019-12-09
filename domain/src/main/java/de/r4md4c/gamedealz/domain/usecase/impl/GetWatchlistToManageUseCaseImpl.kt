@@ -29,9 +29,10 @@ import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 import kotlin.collections.mapNotNull
 
-internal class GetWatchlistToManageUseCaseImpl(
+internal class GetWatchlistToManageUseCaseImpl @Inject constructor(
     private val watchlistRepository: WatchlistRepository,
     private val regionsRepository: RegionsRepository,
     private val priceAlertRepository: PriceAlertRepository

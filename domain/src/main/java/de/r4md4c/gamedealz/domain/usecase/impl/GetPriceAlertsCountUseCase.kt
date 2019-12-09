@@ -21,8 +21,11 @@ import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-internal class GetPriceAlertsCountUseCase(private val alertsRepository: PriceAlertRepository) : GetAlertsCountUseCase {
+internal class GetPriceAlertsCountUseCase @Inject constructor(
+    private val alertsRepository: PriceAlertRepository
+) : GetAlertsCountUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Flow<Int> = alertsRepository.unreadCount()
 }

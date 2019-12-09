@@ -32,8 +32,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
 import java.util.*
+import javax.inject.Inject
 
-internal class GetCurrentActiveRegionUseCaseImpl(
+internal class GetCurrentActiveRegionUseCaseImpl @Inject constructor(
     private val getRegionsUseCase: GetRegionsUseCase,
     private val configurationProvider: ConfigurationProvider,
     private val sharedPreferences: SharedPreferencesProvider

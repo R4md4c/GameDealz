@@ -1,0 +1,81 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
+        vectorDrawables.useSupportLibrary = true
+
+        multiDexEnabled true
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    implementation(Libraries.glide) {
+        exclude group: "com.android.support"
+    }
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.lifecycleViewModel
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.lifecycleRuntimeKtx
+    implementation Libraries.recyclerView
+    implementation Libraries.pagingRuntimeKtx
+    implementation Libraries.fragmentsKtx
+    implementation Libraries.material
+    implementation Libraries.navigationUiKtx
+    implementation Libraries.swipeRefreshLayout
+    implementation Libraries.navigationFragmentKtx
+    implementation Libraries.timber
+    implementation Libraries.fastAdapter
+    implementation Libraries.coreKtx
+
+    implementation project(':common')
+    implementation project(':domain')
+    implementation project(':commonproviders')
+    implementation project(':common-ui')
+    implementation project(':core')
+
+    testImplementation TestLibraries.liveDataTesting
+    testImplementation TestLibraries.liveDataTestingKtx
+    testImplementation project(':commontest')
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.kotlinReflect
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.androidXTestCore
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.archComponentsCoreTesting
+    testImplementation TestLibraries.robolectric
+
+    androidTestUtil TestLibraries.testOrchestrator
+    androidTestImplementation TestLibraries.uiAutomator
+    androidTestImplementation project(':commontest')
+    androidTestImplementation TestLibraries.testRules
+    androidTestImplementation TestLibraries.testRunner
+    androidTestImplementation TestLibraries.mockitoAndroid
+    androidTestImplementation TestLibraries.androidXTestCore
+}

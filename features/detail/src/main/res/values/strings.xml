@@ -1,0 +1,7 @@
+<resources>
+    <string name="filter_sort_by">Sort by</string>
+    <string name="watchlist_remove_successfully">%s was removed successfully from your Watchlist</string>
+    <string name="dialog_ask_remove_from_watch_list"><![CDATA[Are you sure that you want to remove <b>%s</b> from your Watchlist?]]></string>
+    <string name="about_game">About the Game</string>
+    <string name="screenshots">Screenshots</string>
+</resources>

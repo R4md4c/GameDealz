@@ -31,8 +31,9 @@ import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.network.repository.DealsRemoteRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal class GetDealsUseCaseImpl(
+internal class GetDealsUseCaseImpl @Inject constructor(
     private val dealsRemoteRepository: DealsRemoteRepository,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,

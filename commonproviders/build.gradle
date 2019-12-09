@@ -41,12 +41,8 @@ dependencies {
 
     implementation Libraries.timber
 
-    implementation Libraries.koinAndroid
-    implementation Libraries.koinCore
-
     implementation project(':common')
     testImplementation TestLibraries.robolectric
-    testImplementation TestLibraries.koinTest
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.mockitoKotlin

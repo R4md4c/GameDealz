@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+
+        multiDexEnabled true
+        buildConfigField("Integer", "DEFAULT_PAGE_SIZE", "20")
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+}
+
+dependencies {
+    implementation(Libraries.glide) {
+        exclude group: "com.android.support"
+    }
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.lifecycleViewModel
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.lifecycleRuntimeKtx
+    implementation Libraries.recyclerView
+    implementation Libraries.pagingRuntimeKtx
+    implementation Libraries.fragmentsKtx
+    implementation Libraries.constraintLayout
+    implementation Libraries.navigationUiKtx
+    implementation Libraries.swipeRefreshLayout
+    implementation Libraries.navigationFragmentKtx
+    implementation Libraries.timber
+    implementation Libraries.fastAdapter
+    implementation Libraries.coreKtx
+
+    implementation project(':common')
+    implementation project(':domain')
+    implementation project(':commonproviders')
+    implementation project(':common-ui')
+    implementation project(':core')
+}

@@ -1,9 +1,9 @@
 package de.r4md4c.gamedealz.data.dao
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.platform.app.InstrumentationRegistry
-import de.r4md4c.gamedealz.data.DATA
+import androidx.test.core.app.ApplicationProvider
 import de.r4md4c.gamedealz.data.Fixtures
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import kotlinx.coroutines.runBlocking
@@ -12,35 +12,29 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.with
-import org.koin.dsl.module.module
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
-import org.koin.test.KoinTest
 
-class PlainsDaoTest : KoinTest {
+class PlainsDaoTest {
 
     @JvmField
     @Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val plainsDao: PlainsDao by inject()
+    private lateinit var plainsDao: PlainsDao
+
+    private lateinit var database: GameDealzDatabase
+
+    private val context
+        get() = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
     fun beforeEach() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        startKoin(listOf(DATA, module {
-            single(override = true) {
-                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java).build()
-            }
-        })).with(context)
+        database = Room.inMemoryDatabaseBuilder(context, GameDealzDatabase::class.java).build()
+        plainsDao = database.plainsDao()
     }
 
     @After
     fun afterEach() {
-        stopKoin()
+        database.close()
     }
 
     @Test

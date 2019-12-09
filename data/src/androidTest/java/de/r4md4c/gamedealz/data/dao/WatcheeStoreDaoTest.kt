@@ -34,10 +34,10 @@
 
 package de.r4md4c.gamedealz.data.dao
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.platform.app.InstrumentationRegistry
-import de.r4md4c.gamedealz.data.DATA
+import androidx.test.core.app.ApplicationProvider
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
@@ -48,41 +48,37 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.with
-import org.koin.dsl.module.module
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.StandAloneContext.stopKoin
-import org.koin.standalone.inject
-import org.koin.test.KoinTest
 
-class WatcheeStoreDaoTest : KoinTest {
+class WatcheeStoreDaoTest {
 
     @JvmField
     @Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val watcheeStoreJoinDao: WatcheeStoreJoinDao by inject()
+    private val context
+        get() = ApplicationProvider.getApplicationContext<Context>()
 
-    private val storesDao: StoresDao by inject()
+    private lateinit var watcheeStoreJoinDao: WatcheeStoreJoinDao
 
-    private val watchlistDao: WatchlistDao by inject()
+    private lateinit var storesDao: StoresDao
 
-    private val gameDealzDatabase: GameDealzDatabase by inject()
+    private lateinit var watchlistDao: WatchlistDao
+
+    private lateinit var gameDealzDatabase: GameDealzDatabase
 
     @Before
     fun beforeEach() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        startKoin(listOf(DATA, module {
-            single(override = true) {
-                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java).build()
-            }
-        })).with(context)
+        gameDealzDatabase =
+            Room.inMemoryDatabaseBuilder(context, GameDealzDatabase::class.java).build()
+
+        watcheeStoreJoinDao = gameDealzDatabase.watcheeStoreJoinDao()
+        storesDao = gameDealzDatabase.storesDao()
+        watchlistDao = gameDealzDatabase.watchlistDao()
     }
 
     @After
     fun afterEach() {
-        stopKoin()
+        gameDealzDatabase.close()
     }
 
     @Test

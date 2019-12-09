@@ -32,8 +32,9 @@ import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
 import de.r4md4c.gamedealz.network.model.Price
 import timber.log.Timber
+import javax.inject.Inject
 
-internal class CheckPriceThresholdUseCaseImpl(
+internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
     private val watchlistRepository: WatchlistRepository,
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val regionsRepository: RegionsRepository,

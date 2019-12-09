@@ -18,8 +18,9 @@
 package de.r4md4c.commonproviders.appcompat
 
 import androidx.appcompat.app.AppCompatDelegate
+import javax.inject.Inject
 
-internal class ApplicationAppCompatProvider : AppCompatProvider {
+internal class ApplicationAppCompatProvider @Inject constructor() : AppCompatProvider {
 
     override var currentNightMode: NightMode
         get() = AppCompatDelegate.getDefaultNightMode().fromAppCompatNightMode()

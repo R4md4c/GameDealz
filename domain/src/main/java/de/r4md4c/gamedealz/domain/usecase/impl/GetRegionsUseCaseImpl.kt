@@ -31,10 +31,11 @@ import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionRepository
 
-internal class GetRegionsUseCaseImpl(
+internal class GetRegionsUseCaseImpl @Inject constructor(
     private val localRepository: LocalRegionRepository,
     private val remoteRepository: RemoteRegionRepository,
     private val plainsLocalRepository: PlainsRepository,

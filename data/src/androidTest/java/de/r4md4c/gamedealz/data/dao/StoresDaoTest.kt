@@ -1,10 +1,10 @@
 package de.r4md4c.gamedealz.data.dao
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import de.r4md4c.gamedealz.data.DATA
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.entity.Store
 import kotlinx.coroutines.flow.first
@@ -16,39 +16,32 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.with
-import org.koin.dsl.module.module
-import org.koin.standalone.StandAloneContext
-import org.koin.standalone.get
-import org.koin.standalone.inject
-import org.koin.test.KoinTest
 import kotlin.properties.Delegates
 
 @RunWith(AndroidJUnit4::class)
-class StoresDaoTest : KoinTest {
-
-    private val storesDao: StoresDao by inject()
+class StoresDaoTest {
 
     @JvmField
     @Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private lateinit var storesDao: StoresDao
+
+    private lateinit var database: GameDealzDatabase
+
+    private val context
+        get() = ApplicationProvider.getApplicationContext<Context>()
+
     @Before
     fun beforeEach() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        StandAloneContext.startKoin(listOf(DATA, module {
-            single(override = true) {
-                Room.inMemoryDatabaseBuilder(androidContext(), GameDealzDatabase::class.java)
-                    .build()
-            }
-        })).with(context)
+        database = Room.inMemoryDatabaseBuilder(context, GameDealzDatabase::class.java)
+            .build()
+        storesDao = database.storesDao()
     }
 
     @After
     fun afterEach() {
-        get<GameDealzDatabase>().close()
-        StandAloneContext.stopKoin()
+        database.close()
     }
 
     @Test

@@ -20,9 +20,11 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
+import javax.inject.Inject
 
-internal class RemoveFromWatchlistUseCaseImpl(private val watchlistRepository: WatchlistRepository) :
-    RemoveFromWatchlistUseCase {
+internal class RemoveFromWatchlistUseCaseImpl @Inject constructor(
+    private val watchlistRepository: WatchlistRepository
+) : RemoveFromWatchlistUseCase {
 
     override suspend fun invoke(param: TypeParameter<String>?): Boolean {
         val plainId = requireNotNull(param).value

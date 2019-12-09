@@ -22,8 +22,11 @@ import de.r4md4c.gamedealz.network.model.SearchResult
 import de.r4md4c.gamedealz.network.scrapper.Scrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal class IsThereAnyDealScrappingService(private val scrapper: Scrapper) : SearchService {
+internal class IsThereAnyDealScrappingService @Inject constructor(
+    private val scrapper: Scrapper
+) : SearchService {
 
     override suspend fun search(searchTerm: String): List<SearchResult> = withContext(IO) {
         require(searchTerm.isNotEmpty()) { "searchTerm should not be empty" }

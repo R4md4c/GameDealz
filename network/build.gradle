@@ -42,24 +42,21 @@ dependencies {
 
     implementation Libraries.kotshiApi
     kapt Libraries.kotshiCompiler
-    implementation Libraries.moshi
+    api Libraries.moshi
     implementation Libraries.okio
 
     implementation Libraries.kotlinStdLib
     implementation Libraries.kotlinCoroutines
 
-    implementation Libraries.koinAndroid
-    implementation Libraries.koinCore
     implementation Libraries.jsoup
     implementation Libraries.retrofitCoroutinesAdapter
     implementation Libraries.timber
 
     implementation Libraries.okHttpLoggingInterceptor
     implementation Libraries.okhttp
-    implementation Libraries.retrofit
+    api Libraries.retrofit
     implementation Libraries.retrofitMoshiAdapter
 
-    testImplementation TestLibraries.koinTest
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.mockitoKotlin

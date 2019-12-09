@@ -22,8 +22,9 @@ import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
+import javax.inject.Inject
 
-internal class ToggleNightModeUseCaseImpl(
+internal class ToggleNightModeUseCaseImpl @Inject constructor(
     private val sharedPreferencesProvider: SharedPreferencesProvider,
     private val appCompatProvider: AppCompatProvider
 ) : ToggleNightModeUseCase {

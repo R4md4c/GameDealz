@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <include layout="@layout/layout_toolbar" />
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="?actionBarSize"
+            android:background="?android:attr/colorBackground">
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/baseline_2x">
+
+            <TextView
+                    android:id="@+id/notifyMeHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notify_when_price_reaches"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                    android:id="@+id/subtitle1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/baseline_1x"
+                    android:text="@string/notify_when_price_reaches_subtitle"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    app:layout_constraintLeft_toLeftOf="@+id/notifyMeHeader"
+                    app:layout_constraintRight_toRightOf="@+id/notifyMeHeader"
+                    app:layout_constraintTop_toBottomOf="@+id/notifyMeHeader" />
+
+            <FrameLayout
+                    android:id="@+id/priceContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subtitle1">
+
+                <EditText
+                        android:id="@+id/priceEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/baseline_2x"
+                        android:layout_marginRight="@dimen/baseline_2x"
+                        android:inputType="numberDecimal"
+                        android:minWidth="66dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+                        tools:text="45.45" />
+            </FrameLayout>
+
+            <TextView
+                    android:id="@+id/currentBest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/current_best"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/priceContainer" />
+
+            <TextView
+                    android:id="@+id/followingStoresTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/on_the_following_stores"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    app:layout_constraintBottom_toBottomOf="@+id/storeAllSwitch"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/storeAllSwitch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/storeAllSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/currentBest" />
+
+            <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/storesChipGroup"
+                    style="@style/Widget.MaterialComponents.ChipGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/baseline_1x"
+                    app:layout_constraintLeft_toLeftOf="@+id/notifyMeHeader"
+                    app:layout_constraintRight_toRightOf="@+id/notifyMeHeader"
+                    app:layout_constraintTop_toBottomOf="@+id/storeAllSwitch" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

@@ -21,11 +21,20 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import de.r4md4c.commonproviders.notification.Notifier
+import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.workmanager.worker.PriceCheckerWorker
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
+import javax.inject.Inject
+import javax.inject.Provider
 
-internal class GameDealzWorkManagerFactory : WorkerFactory(), KoinComponent {
+// Use AssistedInject if this scales.
+internal class GameDealzWorkManagerFactory @Inject constructor(
+    private val dispatchers: Provider<IDispatchers>,
+    private val notifier: Provider<Notifier<WatcheeNotificationModel>>,
+    private val getPriceThresholdUseCase: Provider<CheckPriceThresholdUseCase>
+) : WorkerFactory() {
 
     override fun createWorker(
         appContext: Context,
@@ -33,7 +42,13 @@ internal class GameDealzWorkManagerFactory : WorkerFactory(), KoinComponent {
         workerParameters: WorkerParameters
     ): ListenableWorker? =
         when (workerClassName) {
-            PriceCheckerWorker::class.java.name -> PriceCheckerWorker(appContext, workerParameters, get(), get(), get())
+            PriceCheckerWorker::class.java.name -> PriceCheckerWorker(
+                appContext,
+                workerParameters,
+                dispatchers = dispatchers.get(),
+                notifier = notifier.get(),
+                getPriceThresholdUseCase = getPriceThresholdUseCase.get()
+            )
             else -> throw IllegalArgumentException("$workerClassName is not supported.")
         }
 }

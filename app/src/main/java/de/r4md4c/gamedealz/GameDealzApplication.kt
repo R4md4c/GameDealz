@@ -18,38 +18,47 @@
 package de.r4md4c.gamedealz
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
-import de.r4md4c.gamedealz.domain.DOMAIN
+import de.r4md4c.gamedealz.common.di.HasComponent
+import de.r4md4c.gamedealz.core.CoreComponent
+import de.r4md4c.gamedealz.di.ApplicationComponent
+import de.r4md4c.gamedealz.di.DaggerApplicationComponent
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.workmanager.PricesCheckerWorker
-import de.r4md4c.gamedealz.workmanager.WORK_MANAGER
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
-import org.koin.android.ext.android.inject
-import org.koin.android.ext.android.startKoin
-import org.koin.android.logger.AndroidLogger
-import org.koin.log.EmptyLogger
 import timber.log.Timber
+import javax.inject.Inject
 
 @AcraCore(
     reportSenderFactoryClasses = [AcraReportSenderFactory::class],
     buildConfigClass = BuildConfig::class
 )
-class GameDealzApplication : MultiDexApplication() {
+open class GameDealzApplication : MultiDexApplication(), HasComponent<CoreComponent> {
 
-    private val pricesCheckerWorker by inject<PricesCheckerWorker>()
+    @Inject
+    lateinit var pricesCheckerWorker: PricesCheckerWorker
 
-    private val nightModeModeChangeUseCase by inject<OnNightModeChangeUseCase>()
+    @Inject
+    lateinit var nightModeModeChangeUseCase: OnNightModeChangeUseCase
+
+    private val applicationComponent: ApplicationComponent by lazy {
+        buildApplicationComponent()
+    }
 
     override fun onCreate() {
         super.onCreate()
+
+        applicationComponent.inject(this)
+
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         val isDebug = BuildConfig.DEBUG
 
@@ -57,7 +66,6 @@ class GameDealzApplication : MultiDexApplication() {
             Timber.plant(Timber.DebugTree())
         }
 
-        startKoin(this, listOf(MAIN) + DOMAIN + WORK_MANAGER, logger = if (isDebug) AndroidLogger() else EmptyLogger())
         initializeWorkManager()
         setNightMode()
     }
@@ -83,4 +91,13 @@ class GameDealzApplication : MultiDexApplication() {
             AppCompatDelegate.setDefaultNightMode(NightMode.toAppCompatNightMode(currentActiveNightMode))
         }
     }
+
+    override val daggerComponent: CoreComponent by lazy {
+        applicationComponent.coreComponent()
+    }
+
+    @VisibleForTesting
+    protected fun buildApplicationComponent(): ApplicationComponent =
+        DaggerApplicationComponent.factory()
+            .create(this)
 }

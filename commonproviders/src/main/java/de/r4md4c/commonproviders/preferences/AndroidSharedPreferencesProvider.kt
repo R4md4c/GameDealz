@@ -23,8 +23,11 @@ import de.r4md4c.commonproviders.appcompat.NightMode
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
-internal class AndroidSharedPreferencesProvider(context: Context) : SharedPreferencesProvider {
+internal class AndroidSharedPreferencesProvider @Inject constructor(
+    context: Context
+) : SharedPreferencesProvider {
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("game_dealz_prefs", Context.MODE_PRIVATE)

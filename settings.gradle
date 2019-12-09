@@ -1,1 +1,15 @@
-include ':app', ':network', ':data', ':domain', ':commonproviders', ':commontest', ':common', ':workers'
+include ':app', ':common-ui',
+        ':network',
+        ':data',
+        ':domain',
+        ':commonproviders',
+        ':commontest',
+        ':common',
+        ':workers',
+        ':core',
+        ':features:deals',
+        ':features:detail',
+        ':features:search',
+        ':features:watchlist',
+        ':features:regions',
+        ':features:home'

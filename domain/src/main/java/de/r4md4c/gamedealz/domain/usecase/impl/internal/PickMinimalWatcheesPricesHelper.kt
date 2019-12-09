@@ -24,12 +24,13 @@ import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
 import de.r4md4c.gamedealz.network.model.Price
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * A Helper class to pick the lowest prices of the watchees that have reacheed the threshold.
  * This respects also the stores that are available for these watchees.
  */
-internal class PickMinimalWatcheesPricesHelper(
+internal class PickMinimalWatcheesPricesHelper @Inject constructor(
     private val watchlistRepository: WatchlistRepository,
     private val watchlistStoresRepository: WatchlistStoresRepository,
     private val dateProvider: DateProvider
