@@ -22,9 +22,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
-import de.r4md4c.gamedealz.common.di.FeatureScope
-import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.common.state.UIStateMachineDelegate
 import de.r4md4c.gamedealz.feature.deals.DealsViewModel
 import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterViewModel
 

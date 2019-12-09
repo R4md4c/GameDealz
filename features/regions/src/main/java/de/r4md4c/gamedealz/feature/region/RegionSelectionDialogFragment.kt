@@ -29,11 +29,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.core.coreComponent
-import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.feature.region.di.DaggerRegionsComponent
 import de.r4md4c.gamedealz.feature.regions.R
 import kotlinx.android.synthetic.main.dialog_region_choice.view.*
@@ -62,9 +60,10 @@ class RegionSelectionDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_region_choice, null)
+        dialogView =
+            LayoutInflater.from(requireActivity()).inflate(R.layout.dialog_region_choice, null)
 
-        return MaterialAlertDialogBuilder(requireContext())
+        return MaterialAlertDialogBuilder(requireActivity())
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok) { _, _ -> }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }

@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.feature.home.item
 
 import android.annotation.SuppressLint
-import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import de.r4md4c.gamedealz.common.state.OnRetryClick
 import de.r4md4c.gamedealz.feature.home.R
