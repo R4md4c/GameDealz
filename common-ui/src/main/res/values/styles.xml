@@ -1,12 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="BaseAppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="colorOnSecondary">@color/secondaryTextColor</item>
+
+        <item name="materialAlertDialogTheme">@style/AppTheme.AlertDialog</item>
+
+        <item name="bottomSheetDialogTheme">@style/AppTheme.BottomSheetDialogTheme</item>
+        <item name="new_price_text_color">@color/newPriceColor</item>
+        <item name="swipe_refresh_background">@color/swipeToRefreshBackground</item>
+
+        <item name="material_drawer_header_selection_text">?colorOnSurface</item>
+        <item name="material_drawer_header_selection_subtext">@color/drawerHeaderSelectionSubText
+        </item>
+        <item name="material_drawer_primary_icon">@color/drawerTextColor</item>
+        <item name="material_drawer_primary_text">@color/drawerTextColor</item>
+        <item name="material_drawer_selected">?colorSurface</item>
+        <item name="material_drawer_selected_text">@color/drawerSelectedTextColor</item>
+        <item name="material_drawer_background">?colorSurface</item>
+    </style>
+
+    <style name="AppTheme.BottomSheetDialogTheme" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetTransparent</item>
     </style>
 
     <style name="AppTheme.BottomSheetTransparent" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@null</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
     </style>
 </resources>

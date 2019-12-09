@@ -43,7 +43,7 @@ object Libraries {
         const val appCompat = "1.1.0"
         const val recyclerView = "1.1.0-beta05"
         const val androidX = "1.2.0-beta01"
-        const val material = "1.1.0-beta01"
+        const val material = "1.1.0-beta02"
         const val workmanager = "2.2.0"
         const val multidex = "2.0.1"
         const val annotations = "1.1.0"

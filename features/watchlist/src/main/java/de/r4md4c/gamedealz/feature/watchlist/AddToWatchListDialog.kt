@@ -56,7 +56,6 @@ import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.feature.watchlist.AddToWatchListDialogArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistComponent
-import de.r4md4c.gamedealz.feature.watchlist.di.WatchlistComponent
 import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
 import javax.inject.Inject
 
@@ -97,7 +96,7 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        BottomSheetDialog(requireContext(), R.style.AppTheme_AddToWatchListDialog).apply {
+        BottomSheetDialog(requireContext()).apply {
             setOnShowListener {
                 behavior.addBottomSheetCallback(bottomSheetCallback)
             }

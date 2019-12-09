@@ -16,6 +16,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/content"
+            android:background="?android:attr/colorBackground"
             android:layout_width="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:minHeight="500dp"

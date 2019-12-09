@@ -46,6 +46,7 @@ dependencies {
     implementation Libraries.recyclerView
     implementation Libraries.pagingRuntimeKtx
     implementation Libraries.fragmentsKtx
+    implementation Libraries.material
     implementation Libraries.navigationUiKtx
     implementation Libraries.swipeRefreshLayout
     implementation Libraries.navigationFragmentKtx
