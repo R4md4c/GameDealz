@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
 
+const val URL_IS_THERE_ANY_DEAL = "https://api.isthereanydeal.com/"
 const val READ_TIMEOUT_IN_SECONDS = 30L
 const val MB_50: Long = 50 * 1024 * 1024
 
@@ -86,7 +87,7 @@ object NetworkModule {
     ): IsThereAnyDealService {
         return Retrofit.Builder()
             .callFactory { httpClient.get().newCall(it) }
-            .baseUrl("https://api.isthereanydeal.com/")
+            .baseUrl(URL_IS_THERE_ANY_DEAL)
             .addCallAdapterFactory(callAdapterFactory)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()

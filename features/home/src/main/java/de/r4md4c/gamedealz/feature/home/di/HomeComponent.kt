@@ -22,9 +22,10 @@ import dagger.BindsInstance
 import dagger.Component
 import de.r4md4c.commonproviders.di.CommonProvidersBindsModule
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
+import de.r4md4c.gamedealz.auth.di.AuthComponent
 import de.r4md4c.gamedealz.common.di.FeatureScope
-import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.common.di.activity.ActivityModule
+import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.home.HomeActivity
 
 @FeatureScope
@@ -36,7 +37,7 @@ import de.r4md4c.gamedealz.feature.home.HomeActivity
         CommonProvidersBindsModule::class
     ],
     dependencies = [
-        CoreComponent::class
+        CoreComponent::class, AuthComponent::class
     ]
 )
 interface HomeComponent {
@@ -47,7 +48,8 @@ interface HomeComponent {
     interface Factory {
         fun create(
             @BindsInstance fragmentActivity: FragmentActivity,
-            coreComponent: CoreComponent
+            coreComponent: CoreComponent,
+            authComponent: AuthComponent
         ): HomeComponent
     }
 }

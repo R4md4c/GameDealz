@@ -52,6 +52,7 @@ object Libraries {
         const val dagger = "2.25.2"
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
+        const val appAuth = "0.7.1"
     }
 
     const val kotshiApi = "se.ansman.kotshi:api:${Versions.kotshi}"
@@ -100,6 +101,8 @@ object Libraries {
     const val glideCompiler = "com.github.bumptech.glide:compiler:${Versions.glide}"
 
     const val okHttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
+    const val okhttpHttpUrlConnection =
+        "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val okio = "com.squareup.okio:okio:${Versions.okio}"
 
@@ -112,6 +115,7 @@ object Libraries {
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"
     const val stateMachine = "com.github.tinder:statemachine:0.1.2"
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+    const val appAuth = "net.openid:appauth:${Versions.appAuth}"
 }
 
 object TestLibraries {

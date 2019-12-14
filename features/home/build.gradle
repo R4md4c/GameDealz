@@ -43,6 +43,7 @@ dependencies {
     implementation Libraries.fastAdapter
     implementation Libraries.coreKtx
 
+    implementation project(':auth')
     implementation project(':common')
     implementation project(':domain')
     implementation project(':commonproviders')

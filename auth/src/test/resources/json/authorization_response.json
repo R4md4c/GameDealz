@@ -1,0 +1,22 @@
+{
+  "request": {
+    "configuration": {
+      "authorizationEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/authorize",
+      "tokenEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/token"
+    },
+    "clientId": "123456465",
+    "responseType": "code",
+    "redirectUri": "gamedealz:\/\/oauth2redirect",
+    "scope": "user_info coll_read",
+    "state": "-xvtk6d-i6sLfRaO5si-bQ",
+    "codeVerifier": "GxYBlAgUMrOCnkeWEkQi8eOU4LU2Hk5XoszRzkQQoOJPBkQjeVnqzBt9oSU_eZMtil7_j5sBULBqQNROM9WwDw",
+    "codeVerifierChallenge": "cLD0A9L6nP6UVsZrZHyjBqqPTE02Km3zgaDLTQI0LGQ",
+    "codeVerifierChallengeMethod": "S256",
+    "additionalParameters": {
+    }
+  },
+  "state": "-xvtk6d-i6sLfRaO5si-bQ",
+  "code": "1d57f25fa91ee87c498489a4ab2db1ccd4d148fb",
+  "additional_parameters": {
+  }
+}

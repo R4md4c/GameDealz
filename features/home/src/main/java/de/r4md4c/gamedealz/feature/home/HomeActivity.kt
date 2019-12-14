@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
@@ -32,13 +33,15 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
+import de.r4md4c.gamedealz.auth.AuthDelegate
+import de.r4md4c.gamedealz.auth.di.DaggerAuthComponent
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
-import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.feature.home.item.ErrorDrawerItem
+import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
@@ -51,6 +54,9 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var authDelegate: AuthDelegate
 
     private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
 
@@ -83,6 +89,11 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
 
     override fun onSupportNavigateUp(): Boolean =
         NavigationUI.navigateUp(navController, drawer.drawerLayout)
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        authDelegate.onActivityResult(this, requestCode, data)
+    }
 
     override fun closeDrawer() {
         viewModel.closeDrawer()
@@ -188,7 +199,8 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     }
 
     private fun handleAccountHeaderClick() {
-        viewModel.onRegionChangeClicked()
+        //viewModel.onRegionChangeClicked()
+        authDelegate.startAuthFlow(this)
     }
 
     private fun observeCurrentRegion() {
@@ -232,8 +244,9 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     }
 
     private fun onInject() {
+        val authComponent = DaggerAuthComponent.factory().create(coreComponent())
         DaggerHomeComponent.factory()
-            .create(this, coreComponent())
+            .create(this, coreComponent(), authComponent)
             .inject(this)
     }
 }
