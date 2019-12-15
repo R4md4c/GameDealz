@@ -15,18 +15,14 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.di
+package de.r4md4c.gamedealz.auth
 
-import dagger.Subcomponent
-import de.r4md4c.gamedealz.auth.AuthDelegate
-import de.r4md4c.gamedealz.auth.AuthStateFlow
+import de.r4md4c.gamedealz.auth.state.AuthorizationState
+import kotlinx.coroutines.flow.Flow
 
-@Subcomponent(
-    modules = [AuthModule::class]
-)
-interface AuthComponent {
-
-    val authDelegate: AuthDelegate
-
-    val authStateFlow: AuthStateFlow
+/**
+ * Exposes a coroutine [Flow] to be able to listen into AuthorizationState changes.
+ */
+interface AuthStateFlow {
+    val authorizationState: Flow<AuthorizationState>
 }

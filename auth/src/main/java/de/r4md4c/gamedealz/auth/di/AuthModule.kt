@@ -23,7 +23,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import de.r4md4c.gamedealz.network.BuildConfig
-import de.r4md4c.gamedealz.network.di.URL_IS_THERE_ANY_DEAL
 import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
@@ -35,22 +34,8 @@ import okhttp3.OkHttpClient
 import okhttp3.OkUrlFactory
 import java.net.URL
 
-@Module
+@Module(includes = [AuthBindsModule::class])
 object AuthModule {
-
-    @Reusable
-    @Provides
-    fun authServiceConfiguration(): AuthorizationServiceConfiguration {
-        val authUri = Uri.parse(URL_IS_THERE_ANY_DEAL).buildUpon()
-            .appendPath("oauth")
-            .appendPath("authorize")
-            .build()
-        val tokenUri = Uri.parse(URL_IS_THERE_ANY_DEAL).buildUpon()
-            .appendPath("oauth")
-            .appendPath("token")
-            .build()
-        return AuthorizationServiceConfiguration(authUri, tokenUri)
-    }
 
     @Provides
     fun provideAuthRequestBuilder(config: AuthorizationServiceConfiguration): AuthorizationRequest.Builder =

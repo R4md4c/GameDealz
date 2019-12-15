@@ -28,4 +28,6 @@ interface AuthDelegate {
     fun onActivityResult(activity: FragmentActivity, requestCode: Int, data: Intent?)
 
     fun startAuthFlow(activity: FragmentActivity)
+
+    fun onDestroy()
 }

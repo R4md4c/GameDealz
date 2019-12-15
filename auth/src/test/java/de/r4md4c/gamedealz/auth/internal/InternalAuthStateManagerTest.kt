@@ -21,28 +21,25 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import net.openid.appauth.AuthState
-import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationServiceConfiguration
-import net.openid.appauth.TokenResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.nio.charset.Charset
 
 @RunWith(RobolectricTestRunner::class)
-class AuthStateManagerTest {
+class InternalAuthStateManagerTest {
 
-    private lateinit var authStateManager: AuthStateManager
+    private lateinit var authStateManager: InternalAuthStateManager
 
     private val context
         get() = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
     fun beforeEach() {
-        authStateManager = AuthStateManager(context, config)
+        authStateManager = InternalAuthStateManager(context, config)
     }
 
     @After
@@ -95,7 +92,7 @@ class AuthStateManagerTest {
 
     @Test
     fun `should update currentAuthState with authorization response when updateAuthStateAfterAuthorization is called`() {
-        authStateManager.updateAuthStateAfterAuthorization(readAuthorizationJson(), null)
+        authStateManager.updateAuthStateAfterAuthorization(TestFixtures.authorizationResponse, null)
 
         val state = authStateManager.currentAuthState
 
@@ -105,7 +102,7 @@ class AuthStateManagerTest {
 
     @Test
     fun `should update currentAuthState with token response when updateAuthStateAfterToken is called`() {
-        authStateManager.updateAuthStateAfterToken(readTokenJson(), null)
+        authStateManager.updateAuthStateAfterToken(TestFixtures.tokenResponse, null)
 
         val state = authStateManager.currentAuthState
 
@@ -117,7 +114,7 @@ class AuthStateManagerTest {
         getSharedPrefs().edit()
             .putString(KEY_AUTH_STATE,
                 AuthState().also {
-                    it.update(readAuthorizationJson(), null)
+                    it.update(TestFixtures.authorizationResponse, null)
                 }.jsonSerializeString()
             )
             .commit()
@@ -127,7 +124,7 @@ class AuthStateManagerTest {
         getSharedPrefs().edit()
             .putString(KEY_AUTH_STATE,
                 AuthState().also {
-                    it.update(readTokenJson(), null)
+                    it.update(TestFixtures.tokenResponse, null)
                 }.jsonSerializeString()
             )
             .commit()
@@ -135,31 +132,14 @@ class AuthStateManagerTest {
 
     private fun putFullSerializedAuthStateInSharedPrefs() {
         getSharedPrefs().edit()
-            .putString(KEY_AUTH_STATE, readSerializedAuthState().jsonSerializeString())
+            .putString(KEY_AUTH_STATE, TestFixtures.authState.jsonSerializeString())
             .commit()
     }
 
-    private fun readAuthorizationJson(): AuthorizationResponse {
-        val authJson = readStringFromResources("json/authorization_response.json")
-        return AuthorizationResponse.jsonDeserialize(authJson)
-    }
 
-    private fun readTokenJson(): TokenResponse {
-        val tokenJson = readStringFromResources("json/token_response.json")
-        return TokenResponse.jsonDeserialize(tokenJson)
-    }
-
-    private fun readSerializedAuthState(): AuthState {
-        val authJson = readStringFromResources("json/serialized_auth_state.json")
-        return AuthState.jsonDeserialize(authJson)
-    }
 
     private fun getSharedPrefs() =
         context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-
-    private fun readStringFromResources(resourcesPath: String) =
-        javaClass.classLoader!!.getResourceAsStream(resourcesPath)
-            .readBytes().toString(Charset.defaultCharset())
 
     private companion object {
         private const val KEY_AUTH_STATE = "auth_state_key"

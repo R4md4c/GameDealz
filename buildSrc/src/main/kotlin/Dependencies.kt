@@ -34,7 +34,7 @@ object Libraries {
         const val constraintLayout = "2.0.0-beta2"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.0"
-        const val coroutines = "1.3.2"
+        const val coroutines = "1.3.3"
         const val room = "2.2.1"
         const val timber = "4.7.1"
         const val lifecycle = "2.2.0-rc02"

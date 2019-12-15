@@ -34,7 +34,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.auth.AuthDelegate
-import de.r4md4c.gamedealz.auth.di.DaggerAuthComponent
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.core.coreComponent
@@ -80,6 +79,11 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
         listenForDestinationChanges()
 
         listenToViewModel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        authDelegate.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -244,9 +248,10 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     }
 
     private fun onInject() {
-        val authComponent = DaggerAuthComponent.factory().create(coreComponent())
-        DaggerHomeComponent.factory()
-            .create(this, coreComponent(), authComponent)
-            .inject(this)
+        coreComponent().also {
+            DaggerHomeComponent.factory()
+                .create(this, it, it.authComponent)
+                .inject(this)
+        }
     }
 }

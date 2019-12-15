@@ -15,13 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth
+package de.r4md4c.gamedealz.auth.internal
 
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import de.r4md4c.gamedealz.auth.internal.AccessTokenRetriever
-import de.r4md4c.gamedealz.auth.internal.AuthStateManager
+import de.r4md4c.gamedealz.auth.AuthDelegate
 import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthorizationException
@@ -48,17 +47,17 @@ internal class AppAuthDelegate @Inject constructor(
 
         val resp = AuthorizationResponse.fromIntent(data)
         val ex = AuthorizationException.fromIntent(data)
-        if (ex != null) {
-            Timber.e(ex, "Exception happened while authorizing")
-            return
-        }
+
         activity.lifecycleScope.launchWhenResumed {
             withContext(dispatchers.Default) {
                 updateAfterAuthorization(resp, ex)
             }
 
+            // Only retrieve the token if there was no exception while getting authorized.
             withContext(dispatchers.IO) {
-                updateAfterToken(resp)
+                if (ex == null) {
+                    updateAfterToken(resp)
+                }
             }
         }
     }
@@ -66,6 +65,10 @@ internal class AppAuthDelegate @Inject constructor(
     override fun startAuthFlow(activity: FragmentActivity) {
         val intent = authorizationService.getAuthorizationRequestIntent(authRequestBuilder.build())
         activity.startActivityForResult(intent, AUTH_REQUEST_CODE)
+    }
+
+    override fun onDestroy() {
+        authorizationService.dispose()
     }
 
     private fun updateAfterAuthorization(
@@ -78,6 +81,7 @@ internal class AppAuthDelegate @Inject constructor(
             .onSuccess {
                 authStateManager.updateAuthStateAfterToken(it, null)
             }.onFailure {
+                Timber.e(it, "Failed to retrieveAccessToken")
                 authStateManager.updateAuthStateAfterToken(null, it as AuthorizationException)
             }
     }
