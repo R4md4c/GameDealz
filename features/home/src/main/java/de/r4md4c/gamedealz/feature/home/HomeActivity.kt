@@ -32,6 +32,7 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.auth.AuthDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
@@ -65,8 +66,15 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     private val accountHeader by lazy {
         AccountHeaderBuilder()
             .withActivity(this)
+            .withSelectionFirstLine(getString(R.string.sign_in))
+            .withSelectionSecondLine(getString(R.string.click_to_signin))
+            .withOnAccountHeaderSelectionViewClickListener { _, _ ->
+                authDelegate.startAuthFlow(this)
+                true
+            }
             .withCompactStyle(true)
-            .withOnAccountHeaderSelectionViewClickListener { _, _ -> handleAccountHeaderClick(); true }
+            .withProfileImagesVisible(false)
+            .withSelectionListEnabledForSingleProfile(false)
             .build()
     }
 
@@ -112,8 +120,6 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     }
 
     private fun listenToViewModel() {
-        observeCurrentRegion()
-
         observeRegionSelectionDialog()
 
         observeCloseDrawer()
@@ -161,9 +167,34 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
             .withOnCheckedChangeListener { _, _, _ ->
                 viewModel.toggleNightMode()
             }
-        drawer.setItems(listOf(nightModeDrawerItem, dealsDrawerItem, managedWatchlistDrawerItem))
+
+        val section = SectionDrawerItem()
+            .withDivider(true)
+            .withName(R.string.miscellaneous)
+
+        val secondary = PrimaryDrawerItem()
+            .withIdentifier(R.id.home_drawer_region_selection.toLong())
+            .withName(R.string.change_region)
+            .withIcon(R.drawable.ic_region)
+            .withIconTintingEnabled(true)
+            .withSelectable(false)
+            .withOnDrawerItemClickListener { _, _, _ ->
+                viewModel.onRegionChangeClicked()
+                true
+            }
+
+        drawer.setItems(
+            listOf(
+                dealsDrawerItem,
+                managedWatchlistDrawerItem,
+                section,
+                secondary,
+                nightModeDrawerItem
+            )
+        )
 
         observePriceAlertsUnreadCount()
+        observeCurrentRegion()
     }
 
     private fun observeRegionSelectionDialog() {
@@ -208,9 +239,12 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     }
 
     private fun observeCurrentRegion() {
-        viewModel.currentRegion.observe(this, Observer {
-            accountHeader.setSelectionFirstLine(it.regionCode)
-            accountHeader.setSelectionSecondLine(it.country.displayName())
+        viewModel.currentRegion.observe(this, Observer { activeRegion ->
+            (drawer.getDrawerItem(R.id.home_drawer_region_selection.toLong()) as? PrimaryDrawerItem)?.let {
+                val adapter = drawer.adapter
+                it.withDescription(activeRegion.country.displayName())
+                adapter.notifyAdapterItemChanged(adapter.getPosition(R.id.home_drawer_region_selection.toLong()))
+            }
         })
     }
 

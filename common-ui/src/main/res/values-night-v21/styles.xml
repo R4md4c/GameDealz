@@ -3,5 +3,7 @@
 
     <style name="AppTheme" parent="BaseAppTheme">
         <item name="android:navigationBarColor">?colorSurface</item>
+        <item name="material_drawer_divider">@color/drawerSelectedBackgroundColor</item>
+        <item name="material_drawer_secondary_text">@color/drawerTextColor</item>
     </style>
 </resources>

@@ -2,4 +2,8 @@
 <resources>
     <string name="title_on_going_deals">Ongoing Deals</string>
     <string name="enable_night_mode">Night mode</string>
+    <string name="change_region">Change Region</string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="sign_in">Sign in</string>
+    <string name="click_to_signin">Gain access to your IsThereAnyDeal account</string>
 </resources>
