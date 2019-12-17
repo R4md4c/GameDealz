@@ -25,7 +25,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.navigation.Navigator
-import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
@@ -139,16 +138,6 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `init starts listening to stores and posts to live data when current is success`() {
-        ArrangeBuilder()
-            .withStore(emptyList())
-
-        homeViewModel.init()
-
-        assertThat(homeViewModel.stores.value).isNotNull()
-    }
-
-    @Test
     fun `init starts listening to current night mode and posts true to enableNightMode live data when night mode is enabled`() {
         ArrangeBuilder()
             .withActiveNightMode(NightMode.Enabled)
@@ -213,29 +202,6 @@ class HomeViewModelTest {
         homeViewModel.init()
 
         errorTS.assertHasValue()
-    }
-
-    @Test
-    fun `onStoreSelected invokes toggle stores usecase`() {
-        val storeModel = StoreModel("", "", true)
-        ArrangeBuilder()
-
-        homeViewModel.onStoreSelected(storeModel)
-
-        runBlocking {
-            verify(toggleStoresUseCase).invoke(CollectionParameter(setOf(storeModel)))
-        }
-    }
-
-    @Test
-    fun `onStoreSelected posts to onError Live data when toggle stores fails`() {
-        val storeModel = StoreModel("", "", true)
-        ArrangeBuilder()
-            .withFailedToggleStores()
-
-        homeViewModel.onStoreSelected(storeModel)
-
-        assertThat(homeViewModel.onError.value).isNotNull()
     }
 
     @Test

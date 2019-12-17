@@ -20,21 +20,21 @@ package de.r4md4c.gamedealz.feature.home.di
 import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Component
-import de.r4md4c.commonproviders.di.CommonProvidersBindsModule
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
 import de.r4md4c.gamedealz.auth.di.AuthComponent
 import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.common.di.activity.ActivityModule
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.home.HomeActivity
+import de.r4md4c.gamedealz.feature.home.di.mvi.HomeMviModule
 
 @FeatureScope
 @Component(
     modules = [
         ActivityModule::class,
         HomeViewModelBindsModule::class,
-        ViewModelInjectionModule::class,
-        CommonProvidersBindsModule::class
+        HomeMviModule::class,
+        ViewModelInjectionModule::class
     ],
     dependencies = [
         CoreComponent::class, AuthComponent::class

@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
 import androidx.navigation.ui.NavigationUI
@@ -37,11 +38,23 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import de.r4md4c.gamedealz.auth.AuthDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
+import de.r4md4c.gamedealz.common.mvi.IntentProcessor
+import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.feature.home.item.ErrorDrawerItem
+import de.r4md4c.gamedealz.feature.home.mvi.viewevent.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.viewevent.InitViewEvent
+import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
@@ -57,6 +70,17 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
 
     @Inject
     lateinit var authDelegate: AuthDelegate
+
+    @Inject
+    internal lateinit var intentsProcessor: IntentProcessor<HomeMviViewEvent>
+
+    @Inject
+    internal lateinit var homeModelStore: ModelStore<HomeMviViewState>
+
+    fun <S> Flow<S>.lifecycleLog(name: String): Flow<S> = this
+        .onStart { Timber.i("$name.onStart {}") }
+        .onEach { Timber.i("$name.onEach {$it}") }
+        .onCompletion { Timber.i("$name.onCompletion {}") }
 
     private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
 
@@ -81,12 +105,16 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     override fun onCreate(savedInstanceState: Bundle?) {
         onInject()
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         loadDrawer(savedInstanceState)
         insertMenuItems()
-        listenForDestinationChanges()
 
-        listenToViewModel()
+        homeModelStore.modelState().lifecycleLog(name = "HomeActivity").launchIn(lifecycleScope)
+        lifecycleScope.launch {
+            Timber.d("Sending INit")
+            intentsProcessor.process(InitViewEvent)
+        }
     }
 
     override fun onDestroy() {
