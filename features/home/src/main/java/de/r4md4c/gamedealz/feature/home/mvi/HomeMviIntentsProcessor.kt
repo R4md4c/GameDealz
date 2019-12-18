@@ -17,15 +17,26 @@
 
 package de.r4md4c.gamedealz.feature.home.mvi
 
-import de.r4md4c.gamedealz.common.mvi.DaggerIntentsProcessor
-import de.r4md4c.gamedealz.common.mvi.Intent
+import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.feature.home.mvi.viewevent.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.intent.InitIntent
+import de.r4md4c.gamedealz.feature.home.mvi.intent.NightModeToggleIntent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import javax.inject.Inject
-import javax.inject.Provider
 
 internal class HomeMviIntentsProcessor @Inject constructor(
-    processorsMap: Map<Class<out HomeMviViewEvent>, @JvmSuppressWildcards Provider<Intent.IntentAssistedFactory<HomeMviViewState, HomeMviViewEvent>>>,
-    homeModelStore: ModelStore<HomeMviViewState>
-) : DaggerIntentsProcessor<HomeMviViewState, HomeMviViewEvent>(processorsMap, homeModelStore)
+    private val store: ModelStore<HomeMviViewState>,
+    private val initIntentFactory: InitIntent.Factory,
+    private val nightModeToggleIntent: NightModeToggleIntent.Factory
+) : IntentProcessor<HomeMviViewEvent> {
+
+    override suspend fun process(viewEvent: HomeMviViewEvent) =
+        store.process(createIntent(viewEvent))
+
+    private fun createIntent(viewEvent: HomeMviViewEvent) = when (viewEvent) {
+        is InitViewEvent -> initIntentFactory.create()
+        is NightModeToggleViewEvent -> nightModeToggleIntent.create()
+    }
+}

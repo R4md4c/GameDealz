@@ -15,8 +15,15 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.state.action
+package de.r4md4c.gamedealz.common.coroutines
 
-sealed class ViewAction {
-    object Init : ViewAction()
-}
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import timber.log.Timber
+
+fun <S> Flow<S>.lifecycleLog(name: String): Flow<S> = this
+    .onStart { Timber.i("$name.onStart {}") }
+    .onEach { Timber.i("$name.onEach {$it}") }
+    .onCompletion { Timber.i("$name.onCompletion {}") }

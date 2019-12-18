@@ -40,7 +40,7 @@ import de.r4md4c.gamedealz.feature.home.di.mvi.HomeMviModule
         CoreComponent::class, AuthComponent::class
     ]
 )
-interface HomeComponent {
+internal interface HomeComponent {
 
     fun inject(homeActivity: HomeActivity)
 

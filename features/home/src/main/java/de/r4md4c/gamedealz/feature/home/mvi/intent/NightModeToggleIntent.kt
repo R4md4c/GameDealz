@@ -15,29 +15,28 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.di.mvi
+package de.r4md4c.gamedealz.feature.home.mvi.intent
 
-import dagger.Binds
-import dagger.Module
-import de.r4md4c.gamedealz.common.di.FeatureScope
-import de.r4md4c.gamedealz.common.mvi.IntentProcessor
+import com.squareup.inject.assisted.AssistedInject
+import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviIntentsProcessor
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviModelStore
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import kotlinx.coroutines.launch
 
-@Module(
-    includes = [
-        HomeMviIntentsModule::class
-    ]
-)
-internal abstract class HomeMviModule {
+internal class NightModeToggleIntent @AssistedInject constructor(
+    private val toggleNightModeUseCase: ToggleNightModeUseCase,
+    private val homeMviStore: ModelStore<HomeMviViewState>
+) : Intent<HomeMviViewState> {
 
-    @Binds
-    abstract fun bindsIntentsProcessor(it: HomeMviIntentsProcessor): IntentProcessor<HomeMviViewEvent>
+    override fun reduce(oldState: HomeMviViewState): HomeMviViewState = oldState.apply {
+        homeMviStore.launch {
+            toggleNightModeUseCase()
+        }
+    }
 
-    @FeatureScope
-    @Binds
-    abstract fun bindsHomeMviStore(it: HomeMviModelStore): ModelStore<HomeMviViewState>
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(): Intent<HomeMviViewState>
+    }
 }

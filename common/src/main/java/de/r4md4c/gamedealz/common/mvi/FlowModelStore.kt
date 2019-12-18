@@ -33,10 +33,8 @@ open class FlowModelStore<S : MviState>(startingState: S) : ModelStore<S>,
     private val store = ConflatedBroadcastChannel(startingState)
 
     init {
-        val t = this
         launch {
             while (isActive) {
-                println("Store Instance: $t")
                 store.offer(intents.receive().reduce(store.value))
             }
         }

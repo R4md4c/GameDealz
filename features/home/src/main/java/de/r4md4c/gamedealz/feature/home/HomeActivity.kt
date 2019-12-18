@@ -17,13 +17,11 @@
 
 package de.r4md4c.gamedealz.feature.home
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -35,52 +33,40 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
-import de.r4md4c.gamedealz.auth.AuthDelegate
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
-import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.coroutines.lifecycleLog
+import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
-import de.r4md4c.gamedealz.feature.home.item.ErrorDrawerItem
-import de.r4md4c.gamedealz.feature.home.mvi.viewevent.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.mvi.viewevent.InitViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
-class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
+internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
+    ViewEventFlow<HomeMviViewEvent> {
 
     private lateinit var drawer: Drawer
 
-    override val drawerLayout: DrawerLayout
-        get() = drawer.drawerLayout
+    private val viewEventsChannel = Channel<HomeMviViewEvent>()
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var authDelegate: AuthDelegate
-
-    @Inject
-    internal lateinit var intentsProcessor: IntentProcessor<HomeMviViewEvent>
-
-    @Inject
-    internal lateinit var homeModelStore: ModelStore<HomeMviViewState>
-
-    fun <S> Flow<S>.lifecycleLog(name: String): Flow<S> = this
-        .onStart { Timber.i("$name.onStart {}") }
-        .onEach { Timber.i("$name.onEach {$it}") }
-        .onCompletion { Timber.i("$name.onCompletion {}") }
 
     private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
 
@@ -93,7 +79,6 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
             .withSelectionFirstLine(getString(R.string.sign_in))
             .withSelectionSecondLine(getString(R.string.click_to_signin))
             .withOnAccountHeaderSelectionViewClickListener { _, _ ->
-                authDelegate.startAuthFlow(this)
                 true
             }
             .withCompactStyle(true)
@@ -102,24 +87,28 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
             .build()
     }
 
+    override val drawerLayout: DrawerLayout
+        get() = drawer.drawerLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         onInject()
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
+
         loadDrawer(savedInstanceState)
         insertMenuItems()
+        listenForDestinationChanges()
 
-        homeModelStore.modelState().lifecycleLog(name = "HomeActivity").launchIn(lifecycleScope)
-        lifecycleScope.launch {
-            Timber.d("Sending INit")
-            intentsProcessor.process(InitViewEvent)
-        }
-    }
+        viewModel.modelState
+            .lifecycleLog(name = "HomeActivity")
+            .onEach { render(it) }
+            .launchIn(lifecycleScope)
 
-    override fun onDestroy() {
-        super.onDestroy()
-        authDelegate.onDestroy()
+        viewModel.onViewEvents(lifecycleScope, viewEvents().onStart {
+            if (savedInstanceState == null) {
+                emit(InitViewEvent)
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -130,13 +119,8 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
     override fun onSupportNavigateUp(): Boolean =
         NavigationUI.navigateUp(navController, drawer.drawerLayout)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        authDelegate.onActivityResult(this, requestCode, data)
-    }
-
     override fun closeDrawer() {
-        viewModel.closeDrawer()
+        drawer.closeDrawer()
     }
 
     override fun onBackPressed() {
@@ -147,34 +131,24 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
         super.onBackPressed()
     }
 
-    private fun listenToViewModel() {
-        observeRegionSelectionDialog()
+    private fun render(state: HomeMviViewState) {
+        val countString = when (state.priceAlertsCount) {
+            is PriceAlertCount.NotSet -> ""
+            is PriceAlertCount.Set -> state.priceAlertsCount.count.toString()
+        }
 
-        observeCloseDrawer()
+        state.activeRegion?.let {
+            findDrawerItem<PrimaryDrawerItem>(R.id.home_drawer_region_selection)
+                .withDescription(it.country.displayName())
+        }
 
-        observeErrors()
-
-        observeNightModeSwitch()
-
-        viewModel.recreate.observe(this, Observer { recreate() })
-
-        viewModel.init()
+        findDrawerItem<PrimaryDrawerItem>(R.id.manageWatchlistFragment).withBadge(countString)
+        findDrawerItem<SwitchDrawerItem>(R.id.home_drawer_night_mode_switch)
+            .withChecked(state.nightModeEnabled)
+        drawer.adapter.notifyAdapterDataSetChanged()
     }
 
-    private fun observeCloseDrawer() {
-        viewModel.closeDrawer.observe(this, Observer {
-            drawer.closeDrawer()
-        })
-    }
-
-    private fun observeNightModeSwitch() {
-        viewModel.enableNightMode.observe(this, Observer {
-            val position = drawer.getPosition(R.id.home_drawer_night_mode_switch.toLong())
-            val switchItem = drawer.getDrawerItem(R.id.home_drawer_night_mode_switch.toLong()) as SwitchDrawerItem
-            switchItem.withChecked(it)
-            drawer.adapter.notifyAdapterItemChanged(position)
-        })
-    }
+    override fun viewEvents(): Flow<HomeMviViewEvent> = viewEventsChannel.consumeAsFlow()
 
     private fun insertMenuItems() {
         val dealsDrawerItem = PrimaryDrawerItem().withName(R.string.title_on_going_deals)
@@ -193,7 +167,7 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
             .withIconTintingEnabled(true)
             .withIdentifier(R.id.home_drawer_night_mode_switch.toLong())
             .withOnCheckedChangeListener { _, _, _ ->
-                viewModel.toggleNightMode()
+                viewEventsChannel.offer(NightModeToggleViewEvent)
             }
 
         val section = SectionDrawerItem()
@@ -207,7 +181,7 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
             .withIconTintingEnabled(true)
             .withSelectable(false)
             .withOnDrawerItemClickListener { _, _, _ ->
-                viewModel.onRegionChangeClicked()
+                onRegionSelectionClick()
                 true
             }
 
@@ -220,28 +194,6 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
                 nightModeDrawerItem
             )
         )
-
-        observePriceAlertsUnreadCount()
-        observeCurrentRegion()
-    }
-
-    private fun observeRegionSelectionDialog() {
-        viewModel.openRegionSelectionDialog.observe(this, Observer {
-            navController.navigate(
-                R.id.regionSelectionDialog,
-                RegionSelectionDialogFragmentArgs(it).toBundle()
-            )
-        })
-    }
-
-    private fun observePriceAlertsUnreadCount() {
-        viewModel.priceAlertsCount.observe(this, Observer { count ->
-            (drawer.getDrawerItem(R.id.manageWatchlistFragment.toLong()) as? PrimaryDrawerItem)?.let {
-                val adapter = drawer.adapter
-                it.withBadge(count)
-                adapter.notifyAdapterItemChanged(adapter.getPosition(it.identifier))
-            }
-        })
     }
 
     private fun loadDrawer(savedInstanceState: Bundle?) {
@@ -261,28 +213,13 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
             .build()
     }
 
-    private fun handleAccountHeaderClick() {
-        //viewModel.onRegionChangeClicked()
-        authDelegate.startAuthFlow(this)
-    }
-
-    private fun observeCurrentRegion() {
-        viewModel.currentRegion.observe(this, Observer { activeRegion ->
-            (drawer.getDrawerItem(R.id.home_drawer_region_selection.toLong()) as? PrimaryDrawerItem)?.let {
-                val adapter = drawer.adapter
-                it.withDescription(activeRegion.country.displayName())
-                adapter.notifyAdapterItemChanged(adapter.getPosition(R.id.home_drawer_region_selection.toLong()))
-            }
-        })
-    }
-
-    private fun observeErrors() {
-        viewModel.onError.observe(this, Observer {
-            drawer.removeAllItems()
-            drawer.addItem(ErrorDrawerItem(it) {
-                viewModel.init()
-            })
-        })
+    private fun onRegionSelectionClick() = lifecycleScope.launch {
+        viewModel.modelState.first().activeRegion?.let {
+            navController.navigate(
+                R.id.regionSelectionDialog,
+                RegionSelectionDialogFragmentArgs(it).toBundle()
+            )
+        }
     }
 
     private fun listenForDestinationChanges() {
@@ -308,6 +245,9 @@ class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
         }
         navController.navigate(identifier, null, navOptionsBuilder)
     }
+
+    private inline fun <reified T : IDrawerItem<*, *>> findDrawerItem(@IdRes identifier: Int) =
+        drawer.getDrawerItem(identifier.toLong()) as T
 
     private fun onInject() {
         coreComponent().also {

@@ -17,9 +17,10 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
-interface ModelStore<S : MviState> {
+interface ModelStore<S : MviState> : CoroutineScope {
 
     suspend fun process(intent: Intent<S>)
 

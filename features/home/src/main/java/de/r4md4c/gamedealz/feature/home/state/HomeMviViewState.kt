@@ -18,9 +18,20 @@
 package de.r4md4c.gamedealz.feature.home.state
 
 import de.r4md4c.gamedealz.common.mvi.MviState
+import de.r4md4c.gamedealz.domain.model.ActiveRegion
 
 internal data class HomeMviViewState(
-    val drawerItems: List<DrawerItem> = emptyList(),
+    val activeRegion: ActiveRegion? = null,
     val userLoggedInStatus: UserLoggedInStatus = UserLoggedInStatus.UserNotLoggedIn,
-    val isLoading: Boolean = false
+    val isLoadingRegions: Boolean = false,
+    val nightModeEnabled: Boolean = false,
+    val priceAlertsCount: PriceAlertCount = PriceAlertCount.NotSet
 ) : MviState
+
+sealed class PriceAlertCount {
+    object NotSet : PriceAlertCount() {
+        override fun toString(): String = "NotSet"
+    }
+
+    data class Set(val count: Int) : PriceAlertCount()
+}

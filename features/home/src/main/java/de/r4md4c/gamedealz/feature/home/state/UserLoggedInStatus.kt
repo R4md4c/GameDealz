@@ -18,6 +18,8 @@
 package de.r4md4c.gamedealz.feature.home.state
 
 internal sealed class UserLoggedInStatus {
-    object UserNotLoggedIn : UserLoggedInStatus()
+    object UserNotLoggedIn : UserLoggedInStatus() {
+        override fun toString(): String = "UserNotLoggedIn"
+    }
     data class UserLoggedIn(val username: String) : UserLoggedInStatus()
 }

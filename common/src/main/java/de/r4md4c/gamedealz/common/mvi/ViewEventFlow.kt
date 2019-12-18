@@ -15,9 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi.viewevent
+package de.r4md4c.gamedealz.common.mvi
 
-import de.r4md4c.gamedealz.common.mvi.MviViewEvent
+import kotlinx.coroutines.flow.Flow
 
-internal sealed class HomeMviViewEvent : MviViewEvent
-internal object InitViewEvent : HomeMviViewEvent()
+interface ViewEventFlow<E : MviViewEvent> {
+    fun viewEvents(): Flow<E>
+}

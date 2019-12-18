@@ -15,19 +15,11 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.mvi
+package de.r4md4c.gamedealz.feature.home.mvi
 
-import javax.inject.Provider
+import de.r4md4c.gamedealz.common.mvi.MviViewEvent
 
-abstract class DaggerIntentsProcessor<S : MviState, E : MviViewEvent>(
-    private val processorsMap: Map<Class<out E>, @JvmSuppressWildcards Provider<Intent.IntentAssistedFactory<S, E>>>,
-    private val modelStore: ModelStore<S>
-) : IntentProcessor<E> {
-
-    override suspend fun process(viewEvent: E) {
-        processorsMap[viewEvent::class.java]?.get()?.create(viewEvent)?.let {
-            modelStore.process(it)
-        }
-            ?: throw IllegalArgumentException("Failed to find factory for key: ${viewEvent::class.java.name}")
-    }
+internal sealed class HomeMviViewEvent : MviViewEvent {
+    object InitViewEvent : HomeMviViewEvent()
+    object NightModeToggleViewEvent : HomeMviViewEvent()
 }

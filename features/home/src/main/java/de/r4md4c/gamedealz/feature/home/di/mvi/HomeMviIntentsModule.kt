@@ -18,22 +18,8 @@
 package de.r4md4c.gamedealz.feature.home.di.mvi
 
 import com.squareup.inject.assisted.dagger2.AssistedModule
-import dagger.Binds
 import dagger.Module
-import dagger.multibindings.IntoMap
-import de.r4md4c.gamedealz.common.mvi.Intent
-import de.r4md4c.gamedealz.feature.home.mvi.intent.InitIntent
-import de.r4md4c.gamedealz.feature.home.mvi.viewevent.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.mvi.viewevent.InitViewEvent
-import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 
 @AssistedModule
 @Module(includes = [AssistedInject_HomeMviIntentsModule::class])
-internal abstract class HomeMviIntentsModule {
-
-    @IntoMap
-    @Binds
-    @HomeMviViewEventKey(InitViewEvent::class)
-    abstract fun bindsInitIntentFactory(it: InitIntent.Factory)
-            : Intent.IntentAssistedFactory<HomeMviViewState, HomeMviViewEvent>
-}
+internal abstract class HomeMviIntentsModule

@@ -21,5 +21,5 @@ import de.r4md4c.gamedealz.common.mvi.FlowModelStore
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import javax.inject.Inject
 
-internal class HomeMviStore @Inject constructor() :
+internal class HomeMviModelStore @Inject constructor() :
     FlowModelStore<HomeMviViewState>(HomeMviViewState())
