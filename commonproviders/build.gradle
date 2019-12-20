@@ -40,8 +40,8 @@ dependencies {
     implementation Libraries.kotlinCoroutines
 
     implementation Libraries.timber
-
     implementation project(':common')
+
     testImplementation TestLibraries.robolectric
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit

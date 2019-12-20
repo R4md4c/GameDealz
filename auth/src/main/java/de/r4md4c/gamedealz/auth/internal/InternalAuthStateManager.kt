@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.auth.internal
 
+import android.annotation.SuppressLint
 import android.content.Context
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -73,6 +74,12 @@ internal class InternalAuthStateManager @Inject constructor(
         state.update(tokenResponse, exception)
         writeAuthState(state)
         authStateReference.set(state)
+    }
+
+    @SuppressLint("ApplySharedPref")
+    override fun clear() = sharedPrefsLock.withLock {
+        authSharedPreference.edit().remove(KEY_AUTH_STATE).commit()
+        this.authStateReference.set(null)
     }
 
     private fun readState(): AuthState = sharedPrefsLock.withLock {

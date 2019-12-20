@@ -26,7 +26,7 @@ object AndroidSdk {
 object Libraries {
     internal object Versions {
         const val okhttp = "3.12.1"
-        const val retrofit = "2.5.0"
+        const val retrofit = "2.6.3"
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
         const val acra = "5.2.1"

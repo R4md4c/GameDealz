@@ -18,8 +18,10 @@
 package de.r4md4c.gamedealz.feature.home.mvi
 
 import de.r4md4c.gamedealz.common.mvi.MviViewEvent
+import kotlinx.coroutines.CoroutineScope
 
 internal sealed class HomeMviViewEvent : MviViewEvent {
-    object InitViewEvent : HomeMviViewEvent()
-    object NightModeToggleViewEvent : HomeMviViewEvent()
+    data class InitViewEvent(val scope: CoroutineScope) : HomeMviViewEvent()
+    data class NightModeToggleViewEvent(val scope: CoroutineScope) : HomeMviViewEvent()
+    object LogoutViewEvent : HomeMviViewEvent()
 }

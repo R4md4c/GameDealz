@@ -15,23 +15,21 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.internal
+package de.r4md4c.gamedealz.domain.usecase.impl
 
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
+import de.r4md4c.gamedealz.auth.AuthStateFlow
+import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal interface AuthStateManager {
+internal class LogOutUseCaseImpl @Inject constructor(
+    private val authStateFlow: AuthStateFlow,
+    private val dispatchers: IDispatchers
+) : LogoutUseCase {
 
-    fun updateAuthStateAfterAuthorization(
-        authorizationResponse: AuthorizationResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun updateAuthStateAfterToken(
-        tokenResponse: TokenResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun clear()
+    override suspend fun invoke(param: VoidParameter?) {
+        withContext(dispatchers.IO) { authStateFlow.clear() }
+    }
 }

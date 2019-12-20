@@ -20,24 +20,30 @@ package de.r4md4c.gamedealz.feature.home.mvi.intent
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import de.r4md4c.gamedealz.common.mvi.Intent
-import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
+import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.intent
+import de.r4md4c.gamedealz.common.mvi.uiSideEffect
+import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import kotlinx.coroutines.CoroutineScope
+import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-internal class NightModeToggleIntent @AssistedInject constructor(
-    private val toggleNightModeUseCase: ToggleNightModeUseCase,
-    @Assisted private val scope: CoroutineScope
+internal class LogoutIntent @AssistedInject constructor(
+    private val logoutUseCase: LogoutUseCase,
+    @Assisted private val store: ModelStore<HomeMviViewState>
 ) : Intent<HomeMviViewState> {
 
     override fun reduce(oldState: HomeMviViewState): HomeMviViewState = oldState.apply {
-        scope.launch {
-            toggleNightModeUseCase()
+        GlobalScope.launch {
+            // When calling this, the Flow will emit NotAuthorized AuthState in the InitIntent
+            logoutUseCase()
+            store.process(intent { copy(uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedOut }) })
         }
     }
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(scope: CoroutineScope): Intent<HomeMviViewState>
+        fun create(store: ModelStore<HomeMviViewState>): Intent<HomeMviViewState>
     }
 }

@@ -15,11 +15,8 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.state
+package de.r4md4c.gamedealz.domain.usecase
 
-internal sealed class UserLoggedInStatus {
-    object UserNotLoggedIn : UserLoggedInStatus() {
-        override fun toString(): String = "UserNotLoggedIn"
-    }
-    data class UserLoggedIn(val username: String) : UserLoggedInStatus()
-}
+import de.r4md4c.gamedealz.domain.VoidParameter
+
+interface LogoutUseCase : UseCase<VoidParameter, Unit>

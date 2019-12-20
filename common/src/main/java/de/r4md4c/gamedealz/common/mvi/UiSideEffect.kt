@@ -15,23 +15,30 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.internal
+package de.r4md4c.gamedealz.common.mvi
 
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
+/**
+ * This class is similar to what SingleLiveData does, it only provides one time consuming of the
+ * content.
+ */
+data class UiSideEffect<out T>(private val content: T) {
 
-internal interface AuthStateManager {
+    var hasBeenHandled: Boolean = false
+        private set
 
-    fun updateAuthStateAfterAuthorization(
-        authorizationResponse: AuthorizationResponse?,
-        exception: AuthorizationException?
-    )
+    fun take(): T? = if (!hasBeenHandled) {
+        hasBeenHandled = true
+        content
+    } else {
+        null
+    }
 
-    fun updateAuthStateAfterToken(
-        tokenResponse: TokenResponse?,
-        exception: AuthorizationException?
-    )
+    fun take(block: (T) -> Unit) {
+        take()?.let(block)
+    }
 
-    fun clear()
+    fun peek(): T = content
 }
+
+
+inline fun <T> uiSideEffect(block: () -> T) = UiSideEffect(block())

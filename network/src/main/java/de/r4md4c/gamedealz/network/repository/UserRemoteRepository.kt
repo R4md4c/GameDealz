@@ -15,23 +15,17 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.internal
+package de.r4md4c.gamedealz.network.repository
 
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
+import de.r4md4c.gamedealz.network.model.AccessToken
+import de.r4md4c.gamedealz.network.model.User
 
-internal interface AuthStateManager {
-
-    fun updateAuthStateAfterAuthorization(
-        authorizationResponse: AuthorizationResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun updateAuthStateAfterToken(
-        tokenResponse: TokenResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun clear()
+interface UserRemoteRepository {
+    /**
+     * Retrieves the user info from ITAD.
+     *
+     * @param token the OAuth access token that will be used to get the user.
+     * @return the user info.
+     */
+    suspend fun user(token: AccessToken): User
 }

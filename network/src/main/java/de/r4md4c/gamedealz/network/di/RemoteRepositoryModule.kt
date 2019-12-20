@@ -27,6 +27,7 @@ import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository
 import de.r4md4c.gamedealz.network.repository.SteamRemoteRepository
 import de.r4md4c.gamedealz.network.repository.SteamRepository
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
+import de.r4md4c.gamedealz.network.repository.UserRemoteRepository
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealScrappingService
 import de.r4md4c.gamedealz.network.service.SearchService
 
@@ -47,6 +48,9 @@ abstract class RemoteRepositoryModule {
 
     @Binds
     internal abstract fun bindsDealsRemoteRepository(it: IsThereAnyDealRepository): DealsRemoteRepository
+
+    @Binds
+    internal abstract fun bindsUserRemoteRepository(it: IsThereAnyDealRepository): UserRemoteRepository
 
     @Binds
     internal abstract fun bindsSearchService(it: IsThereAnyDealScrappingService): SearchService

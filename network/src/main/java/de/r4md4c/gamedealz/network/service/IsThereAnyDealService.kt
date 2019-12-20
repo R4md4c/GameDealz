@@ -19,20 +19,17 @@ package de.r4md4c.gamedealz.network.service
 
 import de.r4md4c.gamedealz.network.BuildConfig
 import de.r4md4c.gamedealz.network.model.DataWrapper
+import de.r4md4c.gamedealz.network.model.Deal
+import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.model.IdToPlainMap
 import de.r4md4c.gamedealz.network.model.ListWrapper
-import de.r4md4c.gamedealz.network.model.Region
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.model.Stores
 import de.r4md4c.gamedealz.network.model.Plain
-import de.r4md4c.gamedealz.network.model.HistoricalLow
-import de.r4md4c.gamedealz.network.model.Deal
+import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.Region
+import de.r4md4c.gamedealz.network.model.Stores
 import kotlinx.coroutines.Deferred
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Query
-import retrofit2.http.Field
 
 typealias RegionCodes = Map<String, Region>
 typealias ShopPlains = Map<String, IdToPlainMap>
@@ -44,23 +41,6 @@ typealias PlainPriceList = Map<String, ListWrapper<Price>>
  */
 @Suppress("LongParameterList")
 interface IsThereAnyDealService {
-
-    @GET("oauth/authorize?response_type=code")
-    fun authorize(
-        @Query("client_id") clientId: String = BuildConfig.CLIENT_ID,
-        @Query("value") state: String,
-        @Query("scope") scope: String,
-        @Query("redirect_uri") redirectUri: String
-    ): Deferred<String>
-
-    @FormUrlEncoded
-    @POST("oauth/token/")
-    fun requestToken(
-        @Field("code") code: String,
-        @Field("grant_type") grantType: String = GRANT_TYPE,
-        @Field("client_id") clientId: String = BuildConfig.CLIENT_ID,
-        @Field("client_secret") clientSecret: String = BuildConfig.CLIENT_SECRET
-    )
 
     @GET("v01/web/regions/")
     fun regions(): Deferred<DataWrapper<RegionCodes>>
@@ -111,6 +91,9 @@ interface IsThereAnyDealService {
         @Query("country") country: String?,
         @Query("shops") shops: String
     ): Deferred<DataWrapper<ListWrapper<Deal>>>
-}
 
-private const val GRANT_TYPE = "authorization_code"
+    @GET("v01/user/info")
+    suspend fun userInfo(
+        @Query("access_token") accessToken: String
+    ): DataWrapper<Map<String, String>>
+}

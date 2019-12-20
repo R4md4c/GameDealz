@@ -5,5 +5,8 @@
     <string name="change_region">Change Region</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="sign_in">Sign in</string>
-    <string name="click_to_signin">Gain access to your IsThereAnyDeal account</string>
+    <string name="welcome_user">Welcome %s!</string>
+    <string name="log_out">Logout</string>
+    <string name="signed_out">You\'ve been signed out from your account</string>
+    <string name="failed_to_authorize_user">Failed to authorize user. Reason: %s</string>
 </resources>

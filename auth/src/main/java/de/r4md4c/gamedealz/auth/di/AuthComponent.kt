@@ -19,7 +19,6 @@ package de.r4md4c.gamedealz.auth.di
 
 import dagger.Subcomponent
 import de.r4md4c.gamedealz.auth.AuthDelegate
-import de.r4md4c.gamedealz.auth.AuthStateFlow
 
 @Subcomponent(
     modules = [AuthModule::class]
@@ -27,6 +26,4 @@ import de.r4md4c.gamedealz.auth.AuthStateFlow
 interface AuthComponent {
 
     val authDelegate: AuthDelegate
-
-    val authStateFlow: AuthStateFlow
 }

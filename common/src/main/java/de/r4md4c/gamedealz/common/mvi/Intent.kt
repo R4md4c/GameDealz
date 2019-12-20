@@ -19,11 +19,6 @@ package de.r4md4c.gamedealz.common.mvi
 
 interface Intent<S : MviState> {
     fun reduce(oldState: S): S
-
-
-    interface IntentAssistedFactory<S : MviState, E : MviViewEvent> {
-        fun create(viewEvent: E): Intent<S>
-    }
 }
 
 

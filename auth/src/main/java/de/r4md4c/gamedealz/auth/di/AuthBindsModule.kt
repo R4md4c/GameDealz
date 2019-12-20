@@ -20,20 +20,11 @@ package de.r4md4c.gamedealz.auth.di
 import dagger.Binds
 import dagger.Module
 import de.r4md4c.gamedealz.auth.AuthDelegate
-import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.internal.AppAuthDelegate
-import de.r4md4c.gamedealz.auth.internal.AuthStateManager
-import de.r4md4c.gamedealz.auth.internal.FlowAuthStateManagerAdapter
 
 @Module
 internal abstract class AuthBindsModule {
 
     @Binds
     abstract fun bindsAuthDelegate(it: AppAuthDelegate): AuthDelegate
-
-    @Binds
-    abstract fun bindsFlowAuthStateManager(it: FlowAuthStateManagerAdapter): AuthStateManager
-
-    @Binds
-    abstract fun bindsAuthStateFlow(it: FlowAuthStateManagerAdapter): AuthStateFlow
 }

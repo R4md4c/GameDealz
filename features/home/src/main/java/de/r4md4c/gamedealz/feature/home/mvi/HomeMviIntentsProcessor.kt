@@ -22,6 +22,7 @@ import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.intent.InitIntent
+import de.r4md4c.gamedealz.feature.home.mvi.intent.LogoutIntent
 import de.r4md4c.gamedealz.feature.home.mvi.intent.NightModeToggleIntent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import javax.inject.Inject
@@ -29,14 +30,16 @@ import javax.inject.Inject
 internal class HomeMviIntentsProcessor @Inject constructor(
     private val store: ModelStore<HomeMviViewState>,
     private val initIntentFactory: InitIntent.Factory,
-    private val nightModeToggleIntent: NightModeToggleIntent.Factory
+    private val nightModeToggleIntent: NightModeToggleIntent.Factory,
+    private val logoutIntentFactory: LogoutIntent.Factory
 ) : IntentProcessor<HomeMviViewEvent> {
 
     override suspend fun process(viewEvent: HomeMviViewEvent) =
         store.process(createIntent(viewEvent))
 
     private fun createIntent(viewEvent: HomeMviViewEvent) = when (viewEvent) {
-        is InitViewEvent -> initIntentFactory.create()
-        is NightModeToggleViewEvent -> nightModeToggleIntent.create()
+        is InitViewEvent -> initIntentFactory.create(viewEvent.scope, store)
+        is NightModeToggleViewEvent -> nightModeToggleIntent.create(viewEvent.scope)
+        is HomeMviViewEvent.LogoutViewEvent -> logoutIntentFactory.create(store)
     }
 }

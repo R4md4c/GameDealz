@@ -61,13 +61,19 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
         channel.sendBlocking(authStateManager.currentAuthState)
     }
 
+    override fun clear() {
+        authStateManager.clear()
+        channel.sendBlocking(authStateManager.currentAuthState)
+    }
+
     private fun AuthState.toAuthorizationState(): AuthorizationState =
         when {
             isAuthorized -> AuthorizationState.TokenGranted(this.accessToken!!)
             lastAuthorizationResponse != null -> AuthorizationState.AuthorizationGranted
             authorizationException != null ->
                 AuthorizationState.AuthorizationFailed(
-                    authorizationException!!.errorDescription,
+                    authorizationException!!.errorDescription
+                        ?: authorizationException!!.cause!!.localizedMessage,
                     authorizationException!!.cause
                 )
             else -> AuthorizationState.NotAuthorized

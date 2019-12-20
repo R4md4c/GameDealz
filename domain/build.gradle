@@ -45,6 +45,7 @@ dependencies {
     implementation project(':data')
     implementation project(':commonproviders')
     implementation project(':network')
+    implementation project(':auth')
 
     testImplementation project(':commontest')
     testImplementation project(':commonproviders')

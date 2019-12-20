@@ -15,23 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.internal
+package de.r4md4c.gamedealz.feature.home.state
 
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
+internal sealed class HomeUserStatus {
+    object UserNotLoggedIn : HomeUserStatus() {
+        override fun toString(): String = "UserNotLoggedIn"
+    }
 
-internal interface AuthStateManager {
-
-    fun updateAuthStateAfterAuthorization(
-        authorizationResponse: AuthorizationResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun updateAuthStateAfterToken(
-        tokenResponse: TokenResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun clear()
+    data class UserLoggedIn(val username: String) : HomeUserStatus()
 }

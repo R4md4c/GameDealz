@@ -15,23 +15,6 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.internal
+package de.r4md4c.gamedealz.network.model
 
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
-
-internal interface AuthStateManager {
-
-    fun updateAuthStateAfterAuthorization(
-        authorizationResponse: AuthorizationResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun updateAuthStateAfterToken(
-        tokenResponse: TokenResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun clear()
-}
+data class User(val username: String)

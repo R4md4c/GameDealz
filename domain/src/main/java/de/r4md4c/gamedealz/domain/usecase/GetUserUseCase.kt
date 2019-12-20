@@ -15,23 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.internal
+package de.r4md4c.gamedealz.domain.usecase
 
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.TokenResponse
+import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.gamedealz.domain.model.UserInfo
+import kotlinx.coroutines.flow.Flow
 
-internal interface AuthStateManager {
-
-    fun updateAuthStateAfterAuthorization(
-        authorizationResponse: AuthorizationResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun updateAuthStateAfterToken(
-        tokenResponse: TokenResponse?,
-        exception: AuthorizationException?
-    )
-
-    fun clear()
-}
+interface GetUserUseCase : UseCase<VoidParameter, Flow<UserInfo>>

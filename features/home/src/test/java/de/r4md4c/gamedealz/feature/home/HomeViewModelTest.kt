@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.feature.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -122,7 +121,7 @@ class HomeViewModelTest {
 
         homeViewModel.init()
 
-        homeViewModel.onError.test().assertHasValue()
+        homeViewModel.% onError . test ().assertHasValue()
         assertThat(homeViewModel.currentRegion.value).isNull()
     }
 

@@ -60,7 +60,6 @@ androidExtensions {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-
     implementation Libraries.multidex
     implementation Libraries.appCompat
     implementation Libraries.constraintLayout
@@ -117,6 +116,7 @@ dependencies {
     implementation project(':data')
     implementation project(':network')
     implementation project(':domain')
+    implementation project(':auth')
 
     testImplementation project(':commontest')
     testImplementation TestLibraries.liveDataTesting

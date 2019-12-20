@@ -15,7 +15,20 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase.auth
+package de.r4md4c.gamedealz.auth.di
 
-interface ReceiveAccessTokenUseCase {
+import dagger.Binds
+import dagger.Module
+import de.r4md4c.gamedealz.auth.AuthStateFlow
+import de.r4md4c.gamedealz.auth.internal.AuthStateManager
+import de.r4md4c.gamedealz.auth.internal.FlowAuthStateManagerAdapter
+
+@Module
+abstract class AuthStateManagerBindsModule {
+
+    @Binds
+    internal abstract fun bindsFlowAuthStateManager(it: FlowAuthStateManagerAdapter): AuthStateManager
+
+    @Binds
+    internal abstract fun bindsAuthStateFlow(it: FlowAuthStateManagerAdapter): AuthStateFlow
 }

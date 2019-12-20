@@ -40,6 +40,6 @@ sealed class AuthorizationState {
     /**
      * The Authorization flow has failed
      */
-    data class AuthorizationFailed(val message: String?, val cause: Throwable?) :
+    data class AuthorizationFailed(val message: String, val cause: Throwable?) :
         AuthorizationState()
 }

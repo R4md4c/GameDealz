@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
@@ -31,13 +32,17 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import de.r4md4c.gamedealz.auth.AuthDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.common.coroutines.lifecycleLog
+import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
+import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
@@ -45,6 +50,9 @@ import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
+import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
+import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus.UserNotLoggedIn
 import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
 import kotlinx.coroutines.channels.Channel
@@ -68,6 +76,12 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var authDelegate: AuthDelegate
+
+    @Inject
+    lateinit var viewNotifier: ViewNotifier
+
     private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
 
     private val navController
@@ -76,14 +90,35 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     private val accountHeader by lazy {
         AccountHeaderBuilder()
             .withActivity(this)
-            .withSelectionFirstLine(getString(R.string.sign_in))
-            .withSelectionSecondLine(getString(R.string.click_to_signin))
-            .withOnAccountHeaderSelectionViewClickListener { _, _ ->
-                true
-            }
             .withCompactStyle(true)
             .withProfileImagesVisible(false)
-            .withSelectionListEnabledForSingleProfile(false)
+            .withSelectionListEnabled(true)
+            .withCurrentProfileHiddenInList(true)
+            .withOnAccountHeaderSelectionViewClickListener { _, profile ->
+                when {
+                    profile == null -> {
+                        onSignInClick()
+                        true
+                    }
+                    profile.identifier == R.id.home_drawer_account_logout.toLong() -> {
+                        onLogOut()
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+            // This will be called when user clisk the logout item in the expandable
+            // list below the profile.
+            .withOnAccountHeaderListener { _, profile, _ ->
+                if (profile.identifier == R.id.home_drawer_account_logout.toLong()) {
+                    onLogOut()
+                    true
+                } else {
+                    false
+                }
+            }
             .build()
     }
 
@@ -104,16 +139,24 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .onEach { render(it) }
             .launchIn(lifecycleScope)
 
-        viewModel.onViewEvents(lifecycleScope, viewEvents().onStart {
-            if (savedInstanceState == null) {
-                emit(InitViewEvent)
-            }
-        })
+        viewModel.onViewEvents(
+            lifecycleScope,
+            viewEvents().onStart { emit(InitViewEvent(lifecycleScope)) })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         drawer.saveInstanceState(outState)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        authDelegate.onActivityResult(this, requestCode, data)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        authDelegate.onDestroy()
     }
 
     override fun onSupportNavigateUp(): Boolean =
@@ -132,20 +175,16 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     }
 
     private fun render(state: HomeMviViewState) {
-        val countString = when (state.priceAlertsCount) {
-            is PriceAlertCount.NotSet -> ""
-            is PriceAlertCount.Set -> state.priceAlertsCount.count.toString()
-        }
+        renderPriceAlertCount(state)
+        renderRegion(state)
 
-        state.activeRegion?.let {
-            findDrawerItem<PrimaryDrawerItem>(R.id.home_drawer_region_selection)
-                .withDescription(it.country.displayName())
-        }
-
-        findDrawerItem<PrimaryDrawerItem>(R.id.manageWatchlistFragment).withBadge(countString)
         findDrawerItem<SwitchDrawerItem>(R.id.home_drawer_night_mode_switch)
-            .withChecked(state.nightModeEnabled)
+            ?.withChecked(state.nightModeEnabled)
+
         drawer.adapter.notifyAdapterDataSetChanged()
+
+        state.renderUserStatus()
+        state.uiSideEffect?.let { renderSideEffects(it) }
     }
 
     override fun viewEvents(): Flow<HomeMviViewEvent> = viewEventsChannel.consumeAsFlow()
@@ -167,7 +206,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withIconTintingEnabled(true)
             .withIdentifier(R.id.home_drawer_night_mode_switch.toLong())
             .withOnCheckedChangeListener { _, _, _ ->
-                viewEventsChannel.offer(NightModeToggleViewEvent)
+                viewEventsChannel.offer(NightModeToggleViewEvent(lifecycleScope))
             }
 
         val section = SectionDrawerItem()
@@ -246,8 +285,68 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         navController.navigate(identifier, null, navOptionsBuilder)
     }
 
+    private fun HomeMviViewState.renderUserStatus() = with(accountHeader) {
+        clear()
+        return@with when (homeUserStatus) {
+            is UserNotLoggedIn -> {
+                setSelectionFirstLine(getString(R.string.sign_in))
+            }
+            is HomeUserStatus.UserLoggedIn -> {
+                setSelectionFirstLine(homeUserStatus.username)
+                ProfileDrawerItem().withName(homeUserStatus.username)
+                    .withIdentifier(R.id.home_drawer_account_main_profile.toLong())
+                    .also {
+                        addProfile(it, 0)
+                    }
+                addProfile(
+                    ProfileDrawerItem().withName(R.string.log_out)
+                        .withIdentifier(R.id.home_drawer_account_logout.toLong()), 1
+                )
+            }
+        }
+    }
+
+    private fun renderRegion(state: HomeMviViewState) {
+        state.activeRegion?.let {
+            findDrawerItem<PrimaryDrawerItem>(R.id.home_drawer_region_selection)
+                ?.withDescription(it.country.displayName())
+        }
+    }
+
+    private fun renderPriceAlertCount(
+        state: HomeMviViewState
+    ) {
+        val countString = when (state.priceAlertsCount) {
+            is PriceAlertCount.NotSet -> ""
+            is PriceAlertCount.Set -> state.priceAlertsCount.count.toString()
+        }
+        findDrawerItem<PrimaryDrawerItem>(R.id.manageWatchlistFragment)?.withBadge(countString)
+    }
+
+    private fun renderSideEffects(effects: UiSideEffect<HomeUiSideEffect>) = effects.take {
+        when (it) {
+            is HomeUiSideEffect.ShowAuthenticationError ->
+                it.message?.let { message -> viewNotifier.notify(message) }
+            is HomeUiSideEffect.NotifyUserHasLoggedOut -> viewNotifier.notify(getString(R.string.signed_out))
+            is HomeUiSideEffect.NotifyUserHasLoggedIn -> viewNotifier.notify(
+                getString(
+                    R.string.welcome_user,
+                    it.username
+                )
+            )
+        } as Any
+    }
+
+    private fun onSignInClick() {
+        authDelegate.startAuthFlow(this)
+    }
+
+    private fun onLogOut() {
+        viewEventsChannel.offer(HomeMviViewEvent.LogoutViewEvent)
+    }
+
     private inline fun <reified T : IDrawerItem<*, *>> findDrawerItem(@IdRes identifier: Int) =
-        drawer.getDrawerItem(identifier.toLong()) as T
+        drawer.getDrawerItem(identifier.toLong()) as? T
 
     private fun onInject() {
         coreComponent().also {
