@@ -20,23 +20,26 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.UserInfo
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.network.model.AccessToken
+import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.repository.UserRemoteRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 internal class GetUserUseCaseImpl @Inject constructor(
     private val authState: AuthStateFlow,
     private val sharedPreferencesProvider: SharedPreferencesProvider,
-    private val userRemoteRepository: UserRemoteRepository
+    private val userRemoteRepository: UserRemoteRepository,
+    private val dispatchers: IDispatchers
 ) : GetUserUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Flow<UserInfo> =
@@ -53,15 +56,32 @@ internal class GetUserUseCaseImpl @Inject constructor(
             }
         }
 
-    private fun retrieveUserWhenGranted(authState: AuthorizationState.TokenGranted): Flow<UserInfo.LoggedInUser> {
+    private fun retrieveUserWhenGranted(authState: AuthorizationState.TokenGranted): Flow<UserInfo> {
         return flow {
             val localUser = sharedPreferencesProvider.userName
             if (localUser.isEmpty()) {
-                val remoteUser = withContext(Dispatchers.IO) {
-                    userRemoteRepository.user(AccessToken(authState.accessToken))
+                val remoteUserResult = kotlin.runCatching {
+                    withContext(dispatchers.IO) {
+                        userRemoteRepository.user(AccessToken(authState.accessToken))
+                    }
                 }
-                sharedPreferencesProvider.userName = remoteUser.username
-                emit(UserInfo.LoggedInUser(remoteUser.username))
+
+                val remoteUser = remoteUserResult.getOrElse {
+                    Timber.w(it, "Failed to get username from server, emitting LoggedInUnknownUser")
+                    emit(UserInfo.LoggedInUnknownUser)
+                    return@flow
+                }
+
+                val user = when (remoteUser) {
+                    is User.KnownUser -> UserInfo.LoggedInUser(remoteUser.username)
+                    is User.UnknownUser -> UserInfo.LoggedInUnknownUser
+                }
+
+                if (user is UserInfo.LoggedInUser) {
+                    sharedPreferencesProvider.userName = user.username
+                }
+
+                emit(user)
             } else {
                 emit(UserInfo.LoggedInUser(localUser))
             }

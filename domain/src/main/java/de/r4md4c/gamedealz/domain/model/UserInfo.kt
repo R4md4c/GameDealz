@@ -19,6 +19,9 @@ package de.r4md4c.gamedealz.domain.model
 
 sealed class UserInfo {
     data class LoggedInUser(val username: String) : UserInfo()
+    object LoggedInUnknownUser : UserInfo() {
+        override fun toString(): String = "LoggedInUnknownUser"
+    }
     data class LoggingUserFailed(val reason: String) : UserInfo()
     object UserLoggedOut : UserInfo() {
         override fun toString(): String = "UserLoggedOut"

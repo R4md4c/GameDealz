@@ -106,13 +106,24 @@ class IsThereAnyDealRepositoryTest {
     }
 
     @Test
-    fun user() = runBlockingTest {
+    fun `user when user name is not null`() = runBlockingTest {
         whenever(service.userInfo(any())).thenReturn(
             DataWrapper(mapOf("username" to "John Smith"))
         )
 
         val result = subject.user(AccessToken("A token"))
 
-        assertThat(result).isEqualTo(User("John Smith"))
+        assertThat(result).isEqualTo(User.KnownUser("John Smith"))
+    }
+
+    @Test
+    fun `user when user name is null`() = runBlockingTest {
+        whenever(service.userInfo(any())).thenReturn(
+            DataWrapper(emptyMap())
+        )
+
+        val result = subject.user(AccessToken("A token"))
+
+        assertThat(result).isEqualTo(User.UnknownUser)
     }
 }

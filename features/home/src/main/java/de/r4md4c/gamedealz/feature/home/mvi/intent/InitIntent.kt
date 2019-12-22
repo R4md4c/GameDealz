@@ -23,98 +23,32 @@ import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.common.mvi.intent
-import de.r4md4c.gamedealz.common.mvi.uiSideEffect
-import de.r4md4c.gamedealz.domain.model.UserInfo
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
-import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.intent.helper.RegionsInitIntentHelper
+import de.r4md4c.gamedealz.feature.home.mvi.intent.helper.UsersInitIntentHelper
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
-import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
 import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 internal class InitIntent @AssistedInject constructor(
-    private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val onRegionChangeUseCase: OnCurrentActiveRegionReactiveUseCase,
+    private val regionsInitIntentHelper: RegionsInitIntentHelper,
+    private val usersInitIntentHelper: UsersInitIntentHelper,
     private val nightModeChangeUseCase: OnNightModeChangeUseCase,
     private val priceAlertsCountUseCase: GetAlertsCountUseCase,
-    private val getUserUseCase: GetUserUseCase,
     private val dispatchers: IDispatchers,
     @Assisted private val store: ModelStore<HomeMviViewState>,
     @Assisted private val scope: CoroutineScope
 ) : Intent<HomeMviViewState> {
 
     override fun reduce(oldState: HomeMviViewState): HomeMviViewState = oldState.apply {
-        loadRegions()
-
-        observeRegionChange()
+        with(regionsInitIntentHelper) { scope.observeRegions(store) }
+        with(usersInitIntentHelper) { scope.observeUser(store) }
         observeNightModeChanges()
         observePriceAlertCount()
-        observeUser()
-    }
-
-    private fun observeUser() = scope.launch {
-        getUserUseCase().mapNotNull {
-            when (it) {
-                is UserInfo.LoggingUserFailed -> {
-                    store.process(intent {
-                        copy(
-                            uiSideEffect = UiSideEffect(
-                                HomeUiSideEffect.ShowAuthenticationError(it.reason)
-                            )
-                        )
-                    })
-                    null
-                }
-                is UserInfo.UserLoggedOut -> HomeUserStatus.UserNotLoggedIn
-                is UserInfo.LoggedInUser -> HomeUserStatus.UserLoggedIn(it.username)
-            }
-        }.distinctUntilChanged().collect {
-            store.process(intent {
-                copy(
-                    homeUserStatus = it,
-                    uiSideEffect = if (it is HomeUserStatus.UserLoggedIn) uiSideEffect {
-                        HomeUiSideEffect.NotifyUserHasLoggedIn(
-                            it.username
-                        )
-                    } else null
-                )
-            })
-        }
-    }
-
-    private fun loadRegions() = scope.launch {
-        store.process(intent { copy(isLoadingRegions = true) })
-
-        kotlin.runCatching {
-            val activeRegion = withContext(dispatchers.IO) { activeRegionUseCase() }
-
-            store.process(intent {
-                copy(activeRegion = activeRegion)
-            })
-        }
-
-        store.process(intent { copy(isLoadingRegions = false) })
-    }
-
-    private fun observeRegionChange() = scope.launch(dispatchers.IO) {
-        // Drop the first one since it is being loaded from loadRegions
-        onRegionChangeUseCase.activeRegionChange().drop(1).collect { region ->
-            withContext(dispatchers.Main) {
-                store.process(intent { copy(activeRegion = region) })
-            }
-        }
     }
 
     private fun observeNightModeChanges() = scope.launch {

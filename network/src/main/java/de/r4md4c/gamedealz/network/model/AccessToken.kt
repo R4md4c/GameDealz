@@ -17,4 +17,4 @@
 
 package de.r4md4c.gamedealz.network.model
 
-inline class AccessToken(val accessToken: String)
+data class AccessToken(val accessToken: String)

@@ -17,4 +17,12 @@
 
 package de.r4md4c.gamedealz.network.model
 
-data class User(val username: String)
+/**
+ * Sometimes ITAD API returns username as null, if the account has no username set.
+ */
+sealed class User {
+    data class KnownUser(val username: String) : User()
+    object UnknownUser : User() {
+        override fun toString(): String = "UnknownUser"
+    }
+}

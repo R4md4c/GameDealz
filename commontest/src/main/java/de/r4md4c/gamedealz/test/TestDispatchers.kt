@@ -23,7 +23,6 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 
 /**
  * A Singleton that will be used primarily during JUnit tests.
- * It resorts back to using the original Coroutines Main dispatcher instead of the default Android
  */
 object TestDispatchers : IDispatchers {
 

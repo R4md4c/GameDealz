@@ -89,8 +89,7 @@ internal class IsThereAnyDealRepository @Inject constructor(
         ).await().data
 
     override suspend fun user(token: AccessToken): User = service.userInfo(token.accessToken).run {
-        val username = checkNotNull(data["username"]) { "Username sent from backend as null" }
-        User(username)
+        data["username"]?.let { User.KnownUser(it) } ?: User.UnknownUser
     }
 
     private fun Set<String>.toCommaSeparated() =

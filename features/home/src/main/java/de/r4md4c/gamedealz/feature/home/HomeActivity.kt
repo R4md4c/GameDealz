@@ -52,7 +52,7 @@ import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleView
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
 import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
-import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus.UserNotLoggedIn
+import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus.LoggedOut
 import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
 import kotlinx.coroutines.channels.Channel
@@ -288,12 +288,16 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     private fun HomeMviViewState.renderUserStatus() = with(accountHeader) {
         clear()
         return@with when (homeUserStatus) {
-            is UserNotLoggedIn -> {
+            is LoggedOut -> {
                 setSelectionFirstLine(getString(R.string.sign_in))
             }
-            is HomeUserStatus.UserLoggedIn -> {
-                setSelectionFirstLine(homeUserStatus.username)
-                ProfileDrawerItem().withName(homeUserStatus.username)
+            is HomeUserStatus.LoggedIn -> {
+                val userLabel = when (homeUserStatus) {
+                    is HomeUserStatus.LoggedIn.KnownUser -> homeUserStatus.username
+                    is HomeUserStatus.LoggedIn.UnknownUser -> getString(R.string.signed_in)
+                }
+                setSelectionFirstLine(userLabel)
+                ProfileDrawerItem().withName(userLabel)
                     .withIdentifier(R.id.home_drawer_account_main_profile.toLong())
                     .also {
                         addProfile(it, 0)
@@ -329,10 +333,8 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
                 it.message?.let { message -> viewNotifier.notify(message) }
             is HomeUiSideEffect.NotifyUserHasLoggedOut -> viewNotifier.notify(getString(R.string.signed_out))
             is HomeUiSideEffect.NotifyUserHasLoggedIn -> viewNotifier.notify(
-                getString(
-                    R.string.welcome_user,
-                    it.username
-                )
+                it.username?.let { name -> getString(R.string.welcome_user, name) }
+                    ?: getString(R.string.welcome_user_unknown)
             )
         } as Any
     }

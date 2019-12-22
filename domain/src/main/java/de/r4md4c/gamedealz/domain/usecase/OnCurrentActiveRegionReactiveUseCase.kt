@@ -27,5 +27,5 @@ interface OnCurrentActiveRegionReactiveUseCase {
      *
      * @return a Channel that emits each time an active region changes.
      */
-    suspend fun activeRegionChange(): Flow<ActiveRegion>
+    fun activeRegionChange(): Flow<ActiveRegion>
 }

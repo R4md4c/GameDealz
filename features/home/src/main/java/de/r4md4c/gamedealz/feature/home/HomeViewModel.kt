@@ -17,11 +17,9 @@
 
 package de.r4md4c.gamedealz.feature.home
 
-import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import kotlinx.coroutines.CoroutineScope
@@ -41,12 +39,5 @@ class HomeViewModel @Inject internal constructor(
 
     internal fun onViewEvents(lifecycle: CoroutineScope, viewEventFlow: Flow<HomeMviViewEvent>) {
         viewEventFlow.onEach { intentsProcessor.process(it) }.launchIn(lifecycle)
-    }
-
-    fun closeDrawer() {
-    }
-
-    fun onNavigateTo(navigator: Navigator, uri: String, extras: Parcelable? = null) {
-        navigator.navigate(uri, extras)
     }
 }

@@ -49,6 +49,7 @@ interface SharedPreferencesProvider {
     var activeNightMode: NightMode
     val reactiveNightMode: Flow<NightMode>
 
+    fun clearUser()
     var userName: String
     val userAsFlow: Flow<String>
 }

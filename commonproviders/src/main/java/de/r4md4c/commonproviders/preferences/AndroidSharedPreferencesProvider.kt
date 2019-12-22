@@ -91,6 +91,10 @@ internal class AndroidSharedPreferencesProvider @Inject constructor(
             sharedPreferences.edit().putString(KEY_USER, value).apply()
         }
 
+    override fun clearUser() {
+        sharedPreferences.edit().remove(KEY_USER).apply()
+    }
+
     override val userAsFlow: Flow<String>
         get() = sharedPreferences.createFlowFromKey(KEY_USER) { userName }
 

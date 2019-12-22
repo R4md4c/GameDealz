@@ -23,7 +23,7 @@ import de.r4md4c.gamedealz.domain.model.ActiveRegion
 
 internal data class HomeMviViewState(
     val activeRegion: ActiveRegion? = null,
-    val homeUserStatus: HomeUserStatus = HomeUserStatus.UserNotLoggedIn,
+    val homeUserStatus: HomeUserStatus = HomeUserStatus.LoggedOut,
     val isLoadingRegions: Boolean = false,
     val nightModeEnabled: Boolean = false,
     val priceAlertsCount: PriceAlertCount = PriceAlertCount.NotSet,
@@ -41,5 +41,5 @@ sealed class PriceAlertCount {
 sealed class HomeUiSideEffect {
     data class ShowAuthenticationError(val message: String?) : HomeUiSideEffect()
     object NotifyUserHasLoggedOut : HomeUiSideEffect()
-    data class NotifyUserHasLoggedIn(val username: String) : HomeUiSideEffect()
+    data class NotifyUserHasLoggedIn(val username: String?) : HomeUiSideEffect()
 }

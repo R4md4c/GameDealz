@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.VoidParameter
@@ -26,10 +27,14 @@ import javax.inject.Inject
 
 internal class LogOutUseCaseImpl @Inject constructor(
     private val authStateFlow: AuthStateFlow,
+    private val sharedPreferencesProvider: SharedPreferencesProvider,
     private val dispatchers: IDispatchers
 ) : LogoutUseCase {
 
     override suspend fun invoke(param: VoidParameter?) {
-        withContext(dispatchers.IO) { authStateFlow.clear() }
+        withContext(dispatchers.IO) {
+            authStateFlow.clear()
+            sharedPreferencesProvider.clearUser()
+        }
     }
 }
