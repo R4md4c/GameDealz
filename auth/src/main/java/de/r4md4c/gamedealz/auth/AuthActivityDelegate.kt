@@ -15,16 +15,19 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.auth.di
+package de.r4md4c.gamedealz.auth
 
-import dagger.Binds
-import dagger.Module
-import de.r4md4c.gamedealz.auth.AuthDelegate
-import de.r4md4c.gamedealz.auth.internal.AppAuthDelegate
+import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 
-@Module
-internal abstract class AuthBindsModule {
+/**
+ * Intended to be used in a [FragmentActivity] as start point to init the auth flow.
+ */
+interface AuthActivityDelegate {
 
-    @Binds
-    abstract fun bindsAuthDelegate(it: AppAuthDelegate): AuthDelegate
+    fun onActivityResult(activity: FragmentActivity, requestCode: Int, data: Intent?)
+
+    fun startAuthFlow(activity: FragmentActivity)
+
+    fun onDestroy()
 }

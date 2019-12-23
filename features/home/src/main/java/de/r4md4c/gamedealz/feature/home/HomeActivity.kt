@@ -36,7 +36,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import de.r4md4c.gamedealz.auth.AuthDelegate
+import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.common.coroutines.lifecycleLog
@@ -77,7 +77,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject
-    lateinit var authDelegate: AuthDelegate
+    lateinit var authDelegate: AuthActivityDelegate
 
     @Inject
     lateinit var viewNotifier: ViewNotifier

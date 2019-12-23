@@ -18,12 +18,12 @@
 package de.r4md4c.gamedealz.auth.di
 
 import dagger.Subcomponent
-import de.r4md4c.gamedealz.auth.AuthDelegate
+import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 
 @Subcomponent(
-    modules = [AuthModule::class]
+    modules = [AuthActivityDelegateBindsModule::class]
 )
 interface AuthComponent {
 
-    val authDelegate: AuthDelegate
+    val authDelegate: AuthActivityDelegate
 }

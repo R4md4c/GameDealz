@@ -21,9 +21,11 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
+import de.r4md4c.gamedealz.auth.AccessTokenGetter
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
 import de.r4md4c.gamedealz.domain.model.UserInfo
+import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.repository.UserRemoteRepository
 import de.r4md4c.gamedealz.test.TestDispatchers
@@ -50,6 +52,9 @@ class GetUserUseCaseImplTest {
     @Mock
     private lateinit var userRemoteRepository: UserRemoteRepository
 
+    @Mock
+    private lateinit var accessTokenGetter: AccessTokenGetter
+
     private lateinit var getUserUseCase: GetUserUseCaseImpl
 
     @Before
@@ -58,6 +63,7 @@ class GetUserUseCaseImplTest {
             authState,
             sharedPreferencesProvider,
             userRemoteRepository,
+            accessTokenGetter,
             TestDispatchers
         )
     }
@@ -181,6 +187,14 @@ class GetUserUseCaseImplTest {
         }
 
     inner class ArrangeBuilder {
+        init {
+            runBlockingTest {
+                whenever(accessTokenGetter.ensureFreshAccessToken()).thenReturn(
+                    AccessToken("Token")
+                )
+            }
+        }
+
         fun withAuthState(state: AuthorizationState) = apply {
             whenever(authState.authorizationState).thenReturn(flowOf(state))
         }

@@ -55,8 +55,8 @@ internal class UsersInitIntentHelper @Inject constructor(
         }.map {
             UserInfoResult(
                 info = it.current,
-                shouldNotify = (it.current is UserInfo.LoggedInUser || it.current is UserInfo.LoggedInUnknownUser)
-                        && it.prev != null && it.current != it.prev
+                shouldNotify = (it.current is UserInfo.LoggedInUser || it.current is UserInfo.LoggedInUnknownUser) &&
+                        it.prev != null && it.current != it.prev
             )
         }.distinctUntilChanged().map { result ->
             when (result.info) {

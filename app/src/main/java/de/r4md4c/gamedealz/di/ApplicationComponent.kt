@@ -22,6 +22,7 @@ import dagger.BindsInstance
 import dagger.Component
 import de.r4md4c.commonproviders.di.CommonProvidersModule
 import de.r4md4c.gamedealz.GameDealzApplication
+import de.r4md4c.gamedealz.auth.di.AuthModule
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.data.di.DaoModule
 import de.r4md4c.gamedealz.data.di.DatabaseModule
@@ -41,6 +42,7 @@ import javax.inject.Singleton
         RepositoryModule::class,
         RemoteRepositoryModule::class,
         UseCaseModule::class,
+        AuthModule::class,
         NetworkModule::class,
         DatabaseModule::class,
         DaoModule::class

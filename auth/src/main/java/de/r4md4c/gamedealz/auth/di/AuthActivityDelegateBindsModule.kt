@@ -15,16 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.mvi
+package de.r4md4c.gamedealz.auth.di
 
-interface Intent<S : MviState> {
-    fun reduce(oldState: S): S
-}
+import dagger.Binds
+import dagger.Module
+import de.r4md4c.gamedealz.auth.AuthActivityDelegate
+import de.r4md4c.gamedealz.auth.internal.AppAuthActivityDelegate
 
-fun <T : MviState> intent(block: T.() -> T): Intent<T> = object : Intent<T> {
-    override fun reduce(oldState: T): T = oldState.block()
-}
+@Module
+internal abstract class AuthActivityDelegateBindsModule {
 
-fun <T : MviState> sideEffect(block: T.() -> Unit): Intent<T> = object : Intent<T> {
-    override fun reduce(oldState: T): T = oldState.apply(block)
+    @Binds
+    abstract fun bindsAuthDelegate(it: AppAuthActivityDelegate): AuthActivityDelegate
 }

@@ -26,5 +26,8 @@ import kotlinx.coroutines.flow.Flow
 interface AuthStateFlow {
     val authorizationState: Flow<AuthorizationState>
 
+    /**
+     * Cleans up the underlying auth state.
+     */
     fun clear()
 }

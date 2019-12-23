@@ -48,7 +48,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @RunWith(RobolectricTestRunner::class)
-class AppAuthDelegateTest {
+class AppAuthActivityDelegateTest {
 
     private val authRequestBuilder = AuthorizationRequest.Builder(
         config, "clientId", ResponseTypeValues.CODE, Uri.parse("http://google.com")
@@ -63,13 +63,13 @@ class AppAuthDelegateTest {
     @Mock
     internal lateinit var authStateManager: AuthStateManager
 
-    private lateinit var delegate: AppAuthDelegate
+    private lateinit var delegate: AppAuthActivityDelegate
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        delegate = AppAuthDelegate(
+        delegate = AppAuthActivityDelegate(
             authRequestBuilder,
             authorizationService,
             accessTokenRetriever,

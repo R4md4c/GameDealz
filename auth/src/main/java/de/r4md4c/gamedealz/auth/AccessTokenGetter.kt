@@ -17,17 +17,12 @@
 
 package de.r4md4c.gamedealz.auth
 
-import android.content.Intent
-import androidx.fragment.app.FragmentActivity
+import de.r4md4c.gamedealz.network.model.AccessToken
 
 /**
- * Intended to be used in a [FragmentActivity] as start point to init the auth flow.
+ * Returns a token after ensuring that it is not expired.
  */
-interface AuthDelegate {
+interface AccessTokenGetter {
 
-    fun onActivityResult(activity: FragmentActivity, requestCode: Int, data: Intent?)
-
-    fun startAuthFlow(activity: FragmentActivity)
-
-    fun onDestroy()
+    suspend fun ensureFreshAccessToken(): AccessToken
 }

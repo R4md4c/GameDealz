@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.auth.internal
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import de.r4md4c.gamedealz.auth.AuthDelegate
+import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthorizationException
@@ -32,13 +32,13 @@ import javax.inject.Inject
 
 private const val AUTH_REQUEST_CODE = 0x10
 
-internal class AppAuthDelegate @Inject constructor(
+internal class AppAuthActivityDelegate @Inject constructor(
     private val authRequestBuilder: AuthorizationRequest.Builder,
     private val authorizationService: AuthorizationService,
     private val accessTokenRetriever: AccessTokenRetriever,
     private val dispatchers: IDispatchers,
     private val authStateManager: AuthStateManager
-) : AuthDelegate {
+) : AuthActivityDelegate {
 
     override fun onActivityResult(activity: FragmentActivity, requestCode: Int, data: Intent?) {
         if (requestCode != AUTH_REQUEST_CODE || data == null) {

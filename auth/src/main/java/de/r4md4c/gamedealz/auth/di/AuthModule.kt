@@ -22,6 +22,8 @@ import android.net.Uri
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
+import de.r4md4c.gamedealz.auth.AccessTokenGetter
+import de.r4md4c.gamedealz.auth.internal.InternalAccessTokenGetter
 import de.r4md4c.gamedealz.network.BuildConfig
 import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationRequest
@@ -34,11 +36,11 @@ import okhttp3.OkHttpClient
 import okhttp3.OkUrlFactory
 import java.net.URL
 
-@Module(includes = [AuthBindsModule::class])
+@Module
 object AuthModule {
 
     @Provides
-    fun provideAuthRequestBuilder(config: AuthorizationServiceConfiguration): AuthorizationRequest.Builder =
+    internal fun provideAuthRequestBuilder(config: AuthorizationServiceConfiguration): AuthorizationRequest.Builder =
         AuthorizationRequest.Builder(
             config,
             BuildConfig.CLIENT_ID,
@@ -48,7 +50,7 @@ object AuthModule {
 
     @Reusable
     @Provides
-    fun provideAuthorizationService(
+    internal fun provideAuthorizationService(
         context: Context,
         okHttpClient: OkHttpClient
     ): AuthorizationService {
@@ -63,8 +65,12 @@ object AuthModule {
 
     @Reusable
     @Provides
-    fun provideClientAuthentication(): ClientAuthentication =
+    internal fun provideClientAuthentication(): ClientAuthentication =
         ClientSecretBasic(BuildConfig.CLIENT_SECRET)
+
+    @Reusable
+    @Provides
+    internal fun provideAuthPerformer(it: InternalAccessTokenGetter): AccessTokenGetter = it
 }
 
 private const val REDIRECT_URI = "gamedealz://oauth2redirect"

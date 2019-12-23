@@ -18,13 +18,13 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
+import de.r4md4c.gamedealz.auth.AccessTokenGetter
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.UserInfo
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
-import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.repository.UserRemoteRepository
 import kotlinx.coroutines.flow.Flow
@@ -39,13 +39,14 @@ internal class GetUserUseCaseImpl @Inject constructor(
     private val authState: AuthStateFlow,
     private val sharedPreferencesProvider: SharedPreferencesProvider,
     private val userRemoteRepository: UserRemoteRepository,
+    private val accessTokenGetter: AccessTokenGetter,
     private val dispatchers: IDispatchers
 ) : GetUserUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Flow<UserInfo> =
         authState.authorizationState.flatMapLatest { authState ->
             when (authState) {
-                is AuthorizationState.TokenGranted -> retrieveUserWhenGranted(authState)
+                is AuthorizationState.TokenGranted -> retrieveUserWhenGranted()
                 is AuthorizationState.NotAuthorized, AuthorizationState.AuthorizationGranted ->
                     flowOf(UserInfo.UserLoggedOut)
                 is AuthorizationState.AuthorizationFailed -> flowOf(
@@ -56,13 +57,14 @@ internal class GetUserUseCaseImpl @Inject constructor(
             }
         }
 
-    private fun retrieveUserWhenGranted(authState: AuthorizationState.TokenGranted): Flow<UserInfo> {
+    private fun retrieveUserWhenGranted(): Flow<UserInfo> {
         return flow {
             val localUser = sharedPreferencesProvider.userName
             if (localUser.isEmpty()) {
                 val remoteUserResult = kotlin.runCatching {
                     withContext(dispatchers.IO) {
-                        userRemoteRepository.user(AccessToken(authState.accessToken))
+                        val accessToken = accessTokenGetter.ensureFreshAccessToken()
+                        userRemoteRepository.user(accessToken)
                     }
                 }
 

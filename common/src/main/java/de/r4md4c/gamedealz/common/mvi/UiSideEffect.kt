@@ -40,5 +40,4 @@ data class UiSideEffect<out T>(private val content: T) {
     fun peek(): T = content
 }
 
-
 inline fun <T> uiSideEffect(block: () -> T) = UiSideEffect(block())
