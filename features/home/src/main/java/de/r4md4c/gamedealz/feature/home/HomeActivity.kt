@@ -178,7 +178,8 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     override fun viewEvents(): Flow<HomeMviViewEvent> = viewEventsChannel.consumeAsFlow()
 
     private fun insertMenuItems() {
-        val dealsDrawerItem = PrimaryDrawerItem().withName(R.string.title_on_going_deals)
+        val dealsDrawerItem = PrimaryDrawerItem()
+            .withName(R.string.title_on_going_deals)
             .withIdentifier(R.id.dealsFragment.toLong())
             .withIcon(R.drawable.ic_deal)
             .withIconTintingEnabled(true)
@@ -187,7 +188,8 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
                 false
             }
 
-        val managedWatchlistDrawerItem = PrimaryDrawerItem().withName(R.string.title_manage_your_watchlist)
+        val managedWatchlistDrawerItem = PrimaryDrawerItem()
+            .withName(R.string.title_manage_your_watchlist)
             .withIdentifier(R.id.manageWatchlistFragment.toLong())
             .withIcon(R.drawable.ic_add_to_watch_list)
             .withIconTintingEnabled(true)
@@ -196,7 +198,8 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
                 false
             }
 
-        val nightModeDrawerItem = SwitchDrawerItem().withName(R.string.enable_night_mode)
+        val nightModeDrawerItem = SwitchDrawerItem()
+            .withName(R.string.enable_night_mode)
             .withIcon(R.drawable.ic_weather_night)
             .withSelectable(false)
             .withIconTintingEnabled(true)
@@ -281,8 +284,10 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         return@with when (homeUserStatus) {
             is LoggedOut -> {
                 setSelectionFirstLine(getString(R.string.sign_in))
+                setSelectionSecondLine(getString(R.string.sign_in_isthereanydeal))
             }
             is HomeUserStatus.LoggedIn -> {
+                setSelectionSecondLine(EMPTY_STRING)
                 val userLabel = when (homeUserStatus) {
                     is HomeUserStatus.LoggedIn.KnownUser -> homeUserStatus.username
                     is HomeUserStatus.LoggedIn.UnknownUser -> getString(R.string.signed_in)
@@ -315,7 +320,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         state: HomeMviViewState
     ) {
         val countString = when (state.priceAlertsCount) {
-            is PriceAlertCount.NotSet -> ""
+            is PriceAlertCount.NotSet -> EMPTY_STRING
             is PriceAlertCount.Set -> state.priceAlertsCount.count.toString()
         }
         findDrawerItem<PrimaryDrawerItem>(R.id.manageWatchlistFragment)?.withBadge(countString)
@@ -357,3 +362,5 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         }
     }
 }
+
+private const val EMPTY_STRING = ""

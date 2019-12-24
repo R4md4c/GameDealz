@@ -20,8 +20,8 @@ package de.r4md4c.gamedealz.feature.home.mvi
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.common.mvi.intent
+import de.r4md4c.gamedealz.common.mvi.uiSideEffect
 import de.r4md4c.gamedealz.feature.home.R
 import de.r4md4c.gamedealz.feature.home.mvi.intent.InitIntent
 import de.r4md4c.gamedealz.feature.home.mvi.intent.LogoutIntent
@@ -93,7 +93,7 @@ class HomeMviIntentsProcessorTest {
             assertThat(it).isEqualTo(
                 listOf(
                     HomeMviViewState().copy(
-                        uiSideEffect = UiSideEffect(HomeUiSideEffect.StartAuthenticationFlow)
+                        uiSideEffect = uiSideEffect { HomeUiSideEffect.StartAuthenticationFlow }
                     )
                 )
             )

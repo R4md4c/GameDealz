@@ -181,13 +181,6 @@ class AppAuthActivityDelegateTest {
             verify(authStateManager).updateAuthStateAfterToken(isNull(), any())
         }
 
-    @Test
-    fun `onDestroy disposes authorizationService`() {
-        delegate.onDestroy()
-
-        verify(authorizationService).dispose()
-    }
-
     companion object {
         private val authEndpoint = Uri.parse("http://itad/oauth/authorize")
         private val tokenEndpoint = Uri.parse("http://itad/oauth/token")

@@ -5,6 +5,7 @@
     <string name="change_region">Change Region</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="sign_in">Sign in</string>
+    <string name="sign_in_isthereanydeal">Sign in to your IsThereAnyDeal.com account</string>
     <string name="welcome_user">Welcome %s!</string>
     <string name="welcome_user_unknown">Welcome!</string>
     <string name="signed_in">Signed In</string>
