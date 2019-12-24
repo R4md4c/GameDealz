@@ -19,12 +19,16 @@ package de.r4md4c.gamedealz.feature.home.mvi
 
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.intent
+import de.r4md4c.gamedealz.common.mvi.uiSideEffect
+import de.r4md4c.gamedealz.feature.home.R
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.intent.InitIntent
 import de.r4md4c.gamedealz.feature.home.mvi.intent.LogoutIntent
 import de.r4md4c.gamedealz.feature.home.mvi.intent.NightModeToggleIntent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
 import javax.inject.Inject
 
 internal class HomeMviIntentsProcessor @Inject constructor(
@@ -41,5 +45,25 @@ internal class HomeMviIntentsProcessor @Inject constructor(
         is InitViewEvent -> initIntentFactory.create(viewEvent.scope, store)
         is NightModeToggleViewEvent -> nightModeToggleIntent.create(viewEvent.scope)
         is HomeMviViewEvent.LogoutViewEvent -> logoutIntentFactory.create(store)
+        is HomeMviViewEvent.LoginViewEvent -> intent {
+            copy(
+                uiSideEffect = uiSideEffect {
+                    HomeUiSideEffect.StartAuthenticationFlow
+                })
+        }
+        is HomeMviViewEvent.NavigateToManageWatchlistScreen -> intent {
+            copy(
+                uiSideEffect = uiSideEffect {
+                    HomeUiSideEffect.NavigateSideEffect(R.id.manageWatchlistFragment)
+                }
+            )
+        }
+        is HomeMviViewEvent.NavigateToOngoingDealsScreen -> intent {
+            copy(
+                uiSideEffect = uiSideEffect {
+                    HomeUiSideEffect.NavigateSideEffect(R.id.dealsFragment, popToRoot = true)
+                }
+            )
+        }
     }
 }

@@ -24,7 +24,3 @@ interface Intent<S : MviState> {
 fun <T : MviState> intent(block: T.() -> T): Intent<T> = object : Intent<T> {
     override fun reduce(oldState: T): T = oldState.block()
 }
-
-fun <T : MviState> sideEffect(block: T.() -> Unit): Intent<T> = object : Intent<T> {
-    override fun reduce(oldState: T): T = oldState.apply(block)
-}

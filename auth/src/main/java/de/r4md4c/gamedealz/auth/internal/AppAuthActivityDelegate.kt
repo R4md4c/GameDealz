@@ -67,10 +67,6 @@ internal class AppAuthActivityDelegate @Inject constructor(
         activity.startActivityForResult(intent, AUTH_REQUEST_CODE)
     }
 
-    override fun onDestroy() {
-        authorizationService.dispose()
-    }
-
     private fun updateAfterAuthorization(
         resp: AuthorizationResponse?,
         ex: AuthorizationException?

@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.home.state
 
+import androidx.annotation.IdRes
 import de.r4md4c.gamedealz.common.mvi.MviState
 import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
@@ -38,8 +39,21 @@ sealed class PriceAlertCount {
     data class Set(val count: Int) : PriceAlertCount()
 }
 
-sealed class HomeUiSideEffect {
+internal sealed class HomeUiSideEffect {
     data class ShowAuthenticationError(val message: String?) : HomeUiSideEffect()
-    object NotifyUserHasLoggedOut : HomeUiSideEffect()
+
     data class NotifyUserHasLoggedIn(val username: String?) : HomeUiSideEffect()
+
+    class NavigateSideEffect(
+        @IdRes val navigationIdentifier: Int,
+        val popToRoot: Boolean = false
+    ) : HomeUiSideEffect()
+
+    object NotifyUserHasLoggedOut : HomeUiSideEffect() {
+        override fun toString(): String = "NotifyUserHasLoggedOut"
+    }
+
+    object StartAuthenticationFlow : HomeUiSideEffect() {
+        override fun toString(): String = "StartAuthenticationFlow"
+    }
 }

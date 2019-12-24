@@ -21,10 +21,10 @@ package de.r4md4c.gamedealz.common.mvi
  * This class is similar to what SingleLiveData does, it only provides one time consuming of the
  * content.
  */
-data class UiSideEffect<out T>(private val content: T) {
-
-    var hasBeenHandled: Boolean = false
-        private set
+data class UiSideEffect<out T> internal constructor(
+    private val content: T,
+    private var hasBeenHandled: Boolean = false
+) {
 
     fun take(): T? = if (!hasBeenHandled) {
         hasBeenHandled = true
@@ -40,4 +40,4 @@ data class UiSideEffect<out T>(private val content: T) {
     fun peek(): T = content
 }
 
-inline fun <T> uiSideEffect(block: () -> T) = UiSideEffect(block())
+fun <T> uiSideEffect(block: () -> T) = UiSideEffect(block())

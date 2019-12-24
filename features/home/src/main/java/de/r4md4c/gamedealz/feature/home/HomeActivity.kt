@@ -95,25 +95,18 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withSelectionListEnabled(true)
             .withCurrentProfileHiddenInList(true)
             .withOnAccountHeaderSelectionViewClickListener { _, profile ->
-                when {
-                    profile == null -> {
-                        onSignInClick()
-                        true
-                    }
-                    profile.identifier == R.id.home_drawer_account_logout.toLong() -> {
-                        onLogOut()
-                        true
-                    }
-                    else -> {
-                        false
-                    }
+                if (profile == null) {
+                    onLoginClick()
+                    true
+                } else {
+                    false
                 }
             }
-            // This will be called when user clisk the logout item in the expandable
+            // This will be called when user click the logout item in the expandable
             // list below the profile.
             .withOnAccountHeaderListener { _, profile, _ ->
                 if (profile.identifier == R.id.home_drawer_account_logout.toLong()) {
-                    onLogOut()
+                    onLogoutClick()
                     true
                 } else {
                     false
@@ -154,11 +147,6 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         authDelegate.onActivityResult(this, requestCode, data)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        authDelegate.onDestroy()
-    }
-
     override fun onSupportNavigateUp(): Boolean =
         NavigationUI.navigateUp(navController, drawer.drawerLayout)
 
@@ -194,11 +182,19 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withIdentifier(R.id.dealsFragment.toLong())
             .withIcon(R.drawable.ic_deal)
             .withIconTintingEnabled(true)
+            .withOnDrawerItemClickListener { _, _, _ ->
+                viewEventsChannel.offer(HomeMviViewEvent.NavigateToOngoingDealsScreen)
+                false
+            }
 
         val managedWatchlistDrawerItem = PrimaryDrawerItem().withName(R.string.title_manage_your_watchlist)
             .withIdentifier(R.id.manageWatchlistFragment.toLong())
             .withIcon(R.drawable.ic_add_to_watch_list)
             .withIconTintingEnabled(true)
+            .withOnDrawerItemClickListener { _, _, _ ->
+                viewEventsChannel.offer(HomeMviViewEvent.NavigateToManageWatchlistScreen)
+                false
+            }
 
         val nightModeDrawerItem = SwitchDrawerItem().withName(R.string.enable_night_mode)
             .withIcon(R.drawable.ic_weather_night)
@@ -240,14 +236,6 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withAccountHeader(accountHeader)
             .withCloseOnClick(true)
             .withHasStableIds(true)
-            .withOnDrawerItemClickListener { _, _, drawerItem ->
-                when (drawerItem.identifier.toInt()) {
-                    R.id.manageWatchlistFragment, R.id.dealsFragment -> {
-                        navigateToDestination(drawerItem.identifier.toInt())
-                    }
-                }
-                false
-            }
             .apply { savedInstanceState?.let { withSavedInstance(it) } }
             .build()
     }
@@ -269,17 +257,20 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         }
     }
 
-    private fun navigateToDestination(@IdRes identifier: Int) {
+    private fun navigateToDestination(@IdRes identifier: Int, popUpToRoot: Boolean) {
         if (identifier == navController.currentDestination?.id) return
         val navOptionsBuilder = navOptions {
+            if (identifier == R.id.dealsFragment) {
+                launchSingleTop = true
+            }
             anim {
                 popEnter = R.anim.nav_default_pop_enter_anim
                 popExit = R.anim.nav_default_pop_exit_anim
                 enter = R.anim.nav_default_enter_anim
                 exit = R.anim.nav_default_exit_anim
             }
-            if (identifier == R.id.dealsFragment) {
-                popUpTo(R.id.dealsFragment) { inclusive = false }
+            if (popUpToRoot) {
+                popUpTo(identifier) { inclusive = false }
             }
         }
         navController.navigate(identifier, null, navOptionsBuilder)
@@ -296,12 +287,15 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
                     is HomeUserStatus.LoggedIn.KnownUser -> homeUserStatus.username
                     is HomeUserStatus.LoggedIn.UnknownUser -> getString(R.string.signed_in)
                 }
+
                 setSelectionFirstLine(userLabel)
+
                 ProfileDrawerItem().withName(userLabel)
                     .withIdentifier(R.id.home_drawer_account_main_profile.toLong())
                     .also {
                         addProfile(it, 0)
                     }
+
                 addProfile(
                     ProfileDrawerItem().withName(R.string.log_out)
                         .withIdentifier(R.id.home_drawer_account_logout.toLong()), 1
@@ -336,15 +330,20 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
                 it.username?.let { name -> getString(R.string.welcome_user, name) }
                     ?: getString(R.string.welcome_user_unknown)
             )
+            is HomeUiSideEffect.StartAuthenticationFlow -> authDelegate.startAuthFlow(this)
+            is HomeUiSideEffect.NavigateSideEffect -> navigateToDestination(
+                it.navigationIdentifier,
+                it.popToRoot
+            )
         } as Any
     }
 
-    private fun onSignInClick() {
-        authDelegate.startAuthFlow(this)
+    private fun onLogoutClick() {
+        viewEventsChannel.offer(HomeMviViewEvent.LogoutViewEvent)
     }
 
-    private fun onLogOut() {
-        viewEventsChannel.offer(HomeMviViewEvent.LogoutViewEvent)
+    private fun onLoginClick() {
+        viewEventsChannel.offer(HomeMviViewEvent.LoginViewEvent)
     }
 
     private inline fun <reified T : IDrawerItem<*, *>> findDrawerItem(@IdRes identifier: Int) =

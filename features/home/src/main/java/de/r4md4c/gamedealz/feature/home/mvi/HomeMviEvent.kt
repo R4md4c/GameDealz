@@ -23,5 +23,19 @@ import kotlinx.coroutines.CoroutineScope
 internal sealed class HomeMviViewEvent : MviViewEvent {
     data class InitViewEvent(val scope: CoroutineScope) : HomeMviViewEvent()
     data class NightModeToggleViewEvent(val scope: CoroutineScope) : HomeMviViewEvent()
-    object LogoutViewEvent : HomeMviViewEvent()
+    object NavigateToManageWatchlistScreen : HomeMviViewEvent() {
+        override fun toString(): String = "NavigateToManageWatchlist"
+    }
+
+    object NavigateToOngoingDealsScreen : HomeMviViewEvent() {
+        override fun toString(): String = "NavigateToOngoingDealsScreen"
+    }
+
+    object LogoutViewEvent : HomeMviViewEvent() {
+        override fun toString(): String = "LogoutViewEvent"
+    }
+
+    object LoginViewEvent : HomeMviViewEvent() {
+        override fun toString(): String = "LoginViewEvent"
+    }
 }
