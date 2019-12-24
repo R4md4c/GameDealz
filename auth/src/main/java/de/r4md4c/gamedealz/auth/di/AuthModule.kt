@@ -74,4 +74,4 @@ object AuthModule {
 }
 
 private const val REDIRECT_URI = "gamedealz://oauth2redirect"
-private val SCOPES = listOf("user_info", "coll_read")
+private val SCOPES = setOf("user_info", "coll_read", "wait_read")
