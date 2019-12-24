@@ -16,6 +16,7 @@ android {
 dependencies {
     implementation Libraries.kotlinStdLib
 
+    api project(':auth')
     implementation project(':data')
     implementation project(':network')
     implementation project(':domain')

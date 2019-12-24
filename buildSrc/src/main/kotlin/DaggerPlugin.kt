@@ -45,8 +45,11 @@ class DaggerPlugin : Plugin<Project> {
             }
             this.dependencies.add("implementation", Libraries.dagger)
             this.dependencies.add("kapt", Libraries.daggerCompiler)
+            this.dependencies.add("compileOnly", Libraries.assistedInjectAnnotations)
+            this.dependencies.add("kapt", Libraries.assistedInjectCompiler)
 
             if (pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)) {
+                this.dependencies.add("kaptAndroidTest", Libraries.assistedInjectCompiler)
                 this.dependencies.add("kaptAndroidTest", Libraries.daggerCompiler)
             }
         }

@@ -1,0 +1,19 @@
+{
+  "request": {
+    "configuration": {
+      "authorizationEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/authorize",
+      "tokenEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/token"
+    },
+    "clientId": "6bf49a5917670519",
+    "grantType": "authorization_code",
+    "redirectUri": "gamedealz:\/\/oauth2redirect",
+    "authorizationCode": "5b3a0adeb563b5fe74757737c72a9d299581b904",
+    "additionalParameters": {}
+  },
+  "token_type": "Bearer",
+  "access_token": "6fcd7a7b15ad5cdb06d2e019f01e2a507a6fb44e",
+  "expires_at": 1607113152929,
+  "refresh_token": "7ca91359fb1b4893ca6c54bc04d7bb9582f622b8",
+  "scope": "user_info coll_read",
+  "additionalParameters": {}
+}

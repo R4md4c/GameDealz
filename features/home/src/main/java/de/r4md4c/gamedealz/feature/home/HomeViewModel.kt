@@ -17,151 +17,27 @@
 
 package de.r4md4c.gamedealz.feature.home
 
-import android.os.Parcelable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import de.r4md4c.commonproviders.appcompat.NightMode
-import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
-import de.r4md4c.gamedealz.common.navigation.Navigator
-import de.r4md4c.gamedealz.domain.CollectionParameter
-import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.ActiveRegion
-import de.r4md4c.gamedealz.domain.model.StoreModel
-import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
-import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
-import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
-import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import de.r4md4c.gamedealz.common.mvi.IntentProcessor
+import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(
-    private val dispatchers: IDispatchers,
-    private val getCurrentActiveRegion: GetCurrentActiveRegionUseCase,
-    private val onActiveRegionChange: OnCurrentActiveRegionReactiveUseCase,
-    private val getStoresUseCase: GetStoresUseCase,
-    private val toggleStoresUseCase: ToggleStoresUseCase,
-    private val priceAlertsCountUseCase: GetAlertsCountUseCase,
-    private val toggleNightModeUseCase: ToggleNightModeUseCase,
-    private val onNightModeChangeUseCase: OnNightModeChangeUseCase
+class HomeViewModel @Inject internal constructor(
+    private val intentsProcessor: IntentProcessor<HomeMviViewEvent>,
+    homeModelStore: ModelStore<HomeMviViewState>
 ) : ViewModel() {
 
-    private val _currentRegion by lazy { MutableLiveData<ActiveRegion>() }
-    val currentRegion: LiveData<ActiveRegion> by lazy { _currentRegion }
+    internal val modelState =
+        homeModelStore.modelState().distinctUntilChanged()
 
-    private val _regionsLoading by lazy { MutableLiveData<Boolean>() }
-    val regionsLoading: LiveData<Boolean> by lazy { _regionsLoading }
-
-    private val _stores by lazy { MutableLiveData<List<StoreModel>>() }
-    val stores: LiveData<List<StoreModel>> by lazy { _stores }
-
-    private val _openRegionSelectionDialog by lazy { SingleLiveEvent<ActiveRegion>() }
-    val openRegionSelectionDialog: LiveData<ActiveRegion> by lazy { _openRegionSelectionDialog }
-
-    private val _closeDrawer by lazy { MutableLiveData<Unit>() }
-    val closeDrawer: LiveData<Unit> by lazy { _closeDrawer }
-
-    private val _onError by lazy { SingleLiveEvent<String>() }
-    val onError: LiveData<String> by lazy { _onError }
-
-    private val _priceAlertsCount by lazy { MutableLiveData<String>() }
-    val priceAlertsCount: LiveData<String> by lazy { _priceAlertsCount }
-
-    private val _enableNightMode by lazy { MutableLiveData<Boolean>() }
-    val enableNightMode: LiveData<Boolean> by lazy { _enableNightMode }
-
-    private val _recreate by lazy { SingleLiveEvent<Unit>() }
-    val recreate by lazy { _recreate }
-
-    fun init() {
-        viewModelScope.launch(dispatchers.Default) {
-            kotlin.runCatching {
-                _regionsLoading.postValue(true)
-
-                getCurrentActiveRegion().also { activeRegion ->
-                    _currentRegion.postValue(activeRegion.copy(regionCode = activeRegion.regionCode.toUpperCase()))
-                }
-            }.onSuccess { listenForStoreChanges(it) }.onFailure(onFailureHandler)
-        }
-
-        listenForNightModeChanges()
-        listenForRegionChanges()
-        listenForAlertsCountChanges()
-    }
-
-    fun onStoreSelected(store: StoreModel) = viewModelScope.launch {
-        kotlin.runCatching {
-            toggleStoresUseCase(CollectionParameter(setOf(store)))
-        }.onFailure(onFailureHandler)
-    }
-
-    fun toggleNightMode() = viewModelScope.launch {
-        toggleNightModeUseCase()
-    }
-
-    fun closeDrawer() {
-        _closeDrawer.postValue(Unit)
-    }
-
-    fun onNavigateTo(navigator: Navigator, uri: String, extras: Parcelable? = null) {
-        navigator.navigate(uri, extras)
-    }
-
-    fun onRegionChangeClicked() =
-        viewModelScope.launch(dispatchers.IO) {
-            kotlin.runCatching {
-                val activeRegion = getCurrentActiveRegion()
-                _openRegionSelectionDialog.postValue(activeRegion)
-            }.onFailure(onFailureHandler)
-        }
-
-    private fun listenForRegionChanges() =
-        viewModelScope.launch(dispatchers.IO) {
-            kotlin.runCatching {
-                onActiveRegionChange.activeRegionChange().collect {
-                    _currentRegion.postValue(it.copy(regionCode = it.regionCode.toUpperCase()))
-                }
-            }.onFailure(onFailureHandler)
-        }
-
-    private fun listenForStoreChanges(activeRegion: ActiveRegion) = viewModelScope.launch(dispatchers.IO) {
-        kotlin.runCatching {
-            getStoresUseCase(TypeParameter(activeRegion)).collect {
-                _stores.postValue(it)
-            }
-        }.onFailure(onFailureHandler)
-    }
-
-    private fun listenForAlertsCountChanges() = viewModelScope.launch(dispatchers.Default) {
-        kotlin.runCatching {
-            priceAlertsCountUseCase().collect {
-                _priceAlertsCount.postValue(if (it == 0) "" else it.toString())
-            }
-        }.onFailure(onFailureHandler)
-    }
-
-    private fun listenForNightModeChanges() = viewModelScope.launch(dispatchers.Default) {
-        kotlin.runCatching {
-            onNightModeChangeUseCase.activeNightModeChange()
-                .collect {
-                    val newValue = it == NightMode.Enabled
-                    if (newValue != _enableNightMode.value) {
-                        _enableNightMode.postValue(it == NightMode.Enabled)
-                        _recreate.postValue(Unit)
-                    }
-                }
-        }.onFailure(onFailureHandler)
-    }
-
-    private val onFailureHandler = { throwable: Throwable ->
-        _onError.postValue(throwable.localizedMessage ?: throwable.message)
-        Timber.e(throwable)
+    internal fun onViewEvents(lifecycle: CoroutineScope, viewEventFlow: Flow<HomeMviViewEvent>) {
+        viewEventFlow.onEach { intentsProcessor.process(it) }.launchIn(lifecycle)
     }
 }

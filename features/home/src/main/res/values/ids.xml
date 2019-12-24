@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="home_drawer_night_mode_switch" type="id" />
+    <item name="home_drawer_region_selection" type="id" />
+    <item name="home_drawer_account_main_profile" type="id" />
+    <item name="home_drawer_account_signin" type="id" />
+    <item name="home_drawer_account_logout" type="id" />
 </resources>

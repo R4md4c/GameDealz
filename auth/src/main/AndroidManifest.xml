@@ -1,0 +1,22 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="de.r4md4c.gamedealz.auth">
+
+    <application>
+        <activity
+                android:name="net.openid.appauth.RedirectUriReceiverActivity"
+                tools:node="replace">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                        android:scheme="gamedealz"
+                        android:path="/oauth2redirect"
+                        tools:ignore="AppLinkUrlError" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

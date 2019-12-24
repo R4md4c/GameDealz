@@ -6,16 +6,18 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.DataWrapper
 import de.r4md4c.gamedealz.network.model.Deal
 import de.r4md4c.gamedealz.network.model.ListWrapper
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Stores
+import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.PlainPriceList
 import de.r4md4c.gamedealz.network.service.RegionCodes
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -37,53 +39,91 @@ class IsThereAnyDealRepositoryTest {
     }
 
     @Test
-    fun regions() {
-        runBlocking {
-            whenever(service.regions()).thenReturn(async { DataWrapper<RegionCodes>(mapOf()) })
+    fun regions() = runBlockingTest {
+        whenever(service.regions()).thenReturn(async { DataWrapper<RegionCodes>(mapOf()) })
 
-            val result = subject.regions()
+        val result = subject.regions()
 
-            verify(service).regions()
-            assertThat(result).isNotNull()
-        }
+        verify(service).regions()
+        assertThat(result).isNotNull()
     }
 
     @Test
-    fun stores() {
-        runBlocking {
-            whenever(service.stores("", "")).thenReturn(async { Stores(emptyList()) })
+    fun stores() = runBlockingTest {
 
-            val result = subject.stores("", "")
+        whenever(service.stores("", "")).thenReturn(async { Stores(emptyList()) })
 
-            verify(service).stores("", "")
-            assertThat(result).isEmpty()
-        }
+        val result = subject.stores("", "")
+
+        verify(service).stores("", "")
+        assertThat(result).isEmpty()
     }
 
     @Test
-    fun deals() {
-        runBlocking {
-            whenever(service.deals(any(), any(), any(), any(), any(), any()))
-                .thenReturn(async { DataWrapper<ListWrapper<Deal>>(ListWrapper(emptyList(), 0)) })
+    fun deals() = runBlockingTest {
+        whenever(service.deals(any(), any(), any(), any(), any(), any()))
+            .thenReturn(async { DataWrapper<ListWrapper<Deal>>(ListWrapper(emptyList(), 0)) })
 
-            subject.deals(0, 0, "region", "country", setOf("steam", "gog"))
+        subject.deals(0, 0, "region", "country", setOf("steam", "gog"))
 
-            verify(service).deals(any(), any(), any(), eq("region"), eq("country"), eq("steam,gog"))
-        }
+        verify(service).deals(any(), any(), any(), eq("region"), eq("country"), eq("steam,gog"))
     }
 
     @Test
-    fun retrievesPrices() {
-        runBlocking {
-            val response: DataWrapper<PlainPriceList> =
-                DataWrapper(mapOf("battlefield" to ListWrapper(listOf(mock<Price>(), mock<Price>()), 0)))
-            whenever(service.prices(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
-                .thenReturn(async { response })
+    fun retrievesPrices() = runBlockingTest {
+        val response: DataWrapper<PlainPriceList> =
+            DataWrapper(
+                mapOf(
+                    "battlefield" to ListWrapper(
+                        listOf(mock<Price>(), mock<Price>()),
+                        0
+                    )
+                )
+            )
+        whenever(
+            service.prices(
+                any(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull()
+            )
+        )
+            .thenReturn(async { response })
 
-            val result = subject.retrievesPrices(setOf("plain1", "plain2"))
+        val result = subject.retrievesPrices(setOf("plain1", "plain2"))
 
-            verify(service).prices(any(), eq("plain1,plain2"), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
-            assertThat(result).containsEntry("battlefield", response.data["battlefield"]!!.list)
-        }
+        verify(service).prices(
+            any(),
+            eq("plain1,plain2"),
+            anyOrNull(),
+            anyOrNull(),
+            anyOrNull(),
+            anyOrNull()
+        )
+        assertThat(result).containsEntry("battlefield", response.data["battlefield"]!!.list)
+    }
+
+    @Test
+    fun `user when user name is not null`() = runBlockingTest {
+        whenever(service.userInfo(any())).thenReturn(
+            DataWrapper(mapOf("username" to "John Smith"))
+        )
+
+        val result = subject.user(AccessToken("A token"))
+
+        assertThat(result).isEqualTo(User.KnownUser("John Smith"))
+    }
+
+    @Test
+    fun `user when user name is null`() = runBlockingTest {
+        whenever(service.userInfo(any())).thenReturn(
+            DataWrapper(emptyMap())
+        )
+
+        val result = subject.user(AccessToken("A token"))
+
+        assertThat(result).isEqualTo(User.UnknownUser)
     }
 }

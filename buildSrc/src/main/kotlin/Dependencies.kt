@@ -26,7 +26,7 @@ object AndroidSdk {
 object Libraries {
     internal object Versions {
         const val okhttp = "3.12.1"
-        const val retrofit = "2.5.0"
+        const val retrofit = "2.6.3"
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
         const val acra = "5.2.1"
@@ -34,7 +34,7 @@ object Libraries {
         const val constraintLayout = "2.0.0-beta2"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.0"
-        const val coroutines = "1.3.2"
+        const val coroutines = "1.3.3"
         const val room = "2.2.1"
         const val timber = "4.7.1"
         const val lifecycle = "2.2.0-rc02"
@@ -50,8 +50,10 @@ object Libraries {
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
         const val dagger = "2.25.2"
+        const val assistedInject = "0.5.2"
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
+        const val appAuth = "0.7.1"
     }
 
     const val kotshiApi = "se.ansman.kotshi:api:${Versions.kotshi}"
@@ -66,7 +68,11 @@ object Libraries {
 
     const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
     const val daggerCompiler = "com.google.dagger:dagger-compiler:${Versions.dagger}"
-    
+    const val assistedInjectAnnotations =
+        "com.squareup.inject:assisted-inject-annotations-dagger2:${Versions.assistedInject}"
+    const val assistedInjectCompiler =
+        "com.squareup.inject:assisted-inject-processor-dagger2:${Versions.assistedInject}"
+
     const val jsoup = "org.jsoup:jsoup:1.12.1"
 
     const val retrofitCoroutinesAdapter =
@@ -100,6 +106,8 @@ object Libraries {
     const val glideCompiler = "com.github.bumptech.glide:compiler:${Versions.glide}"
 
     const val okHttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
+    const val okhttpHttpUrlConnection =
+        "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val okio = "com.squareup.okio:okio:${Versions.okio}"
 
@@ -112,6 +120,7 @@ object Libraries {
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"
     const val stateMachine = "com.github.tinder:statemachine:0.1.2"
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+    const val appAuth = "net.openid:appauth:${Versions.appAuth}"
 }
 
 object TestLibraries {

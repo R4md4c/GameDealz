@@ -17,11 +17,13 @@
 
 package de.r4md4c.gamedealz.network.repository
 
+import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.Deal
+import de.r4md4c.gamedealz.network.model.HistoricalLow
 import de.r4md4c.gamedealz.network.model.PageResult
 import de.r4md4c.gamedealz.network.model.Price
 import de.r4md4c.gamedealz.network.model.Store
-import de.r4md4c.gamedealz.network.model.HistoricalLow
+import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.RegionCodes
 import de.r4md4c.gamedealz.network.service.ShopPlains
@@ -30,7 +32,8 @@ import javax.inject.Inject
 internal class IsThereAnyDealRepository @Inject constructor(
     private val service: IsThereAnyDealService
 ) : RegionsRemoteRepository, StoresRemoteRepository,
-    DealsRemoteRepository, PlainsRemoteRepository, PricesRemoteRepository {
+    DealsRemoteRepository, PlainsRemoteRepository,
+    PricesRemoteRepository, UserRemoteRepository {
 
     override suspend fun regions(): RegionCodes = service.regions().await().data
 
@@ -84,6 +87,10 @@ internal class IsThereAnyDealRepository @Inject constructor(
             region = regionCode,
             country = countryCode
         ).await().data
+
+    override suspend fun user(token: AccessToken): User = service.userInfo(token.accessToken).run {
+        data["username"]?.let { User.KnownUser(it) } ?: User.UnknownUser
+    }
 
     private fun Set<String>.toCommaSeparated() =
         foldIndexed("") { index, acc, value -> "$acc$value${if (index == size - 1) "" else ","}" }

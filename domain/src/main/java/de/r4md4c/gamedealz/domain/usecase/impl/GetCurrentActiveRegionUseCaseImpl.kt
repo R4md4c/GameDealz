@@ -63,7 +63,7 @@ internal class GetCurrentActiveRegionUseCaseImpl @Inject constructor(
         }
     }
 
-    override suspend fun activeRegionChange(): Flow<ActiveRegion> =
+    override fun activeRegionChange(): Flow<ActiveRegion> =
         sharedPreferences.activeRegionAndCountryChannel
             .mapNotNull {
                 val regions = withContext(IO) { getRegionsUseCase() }

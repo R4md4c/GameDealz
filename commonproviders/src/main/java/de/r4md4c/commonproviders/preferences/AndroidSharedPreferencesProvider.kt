@@ -85,6 +85,19 @@ internal class AndroidSharedPreferencesProvider @Inject constructor(
     override val reactiveNightMode: Flow<NightMode>
         get() = sharedPreferences.createFlowFromKey(KEY_ACTIVE_NIGHT_MODE) { activeNightMode }
 
+    override var userName: String
+        get() = sharedPreferences.getString(KEY_USER, "")!!
+        set(value) {
+            sharedPreferences.edit().putString(KEY_USER, value).apply()
+        }
+
+    override fun clearUser() {
+        sharedPreferences.edit().remove(KEY_USER).apply()
+    }
+
+    override val userAsFlow: Flow<String>
+        get() = sharedPreferences.createFlowFromKey(KEY_USER) { userName }
+
     private fun <T> SharedPreferences.createFlowFromKey(key: String, value: () -> T): Flow<T> =
         callbackFlow {
             offer(value())
@@ -105,5 +118,6 @@ internal class AndroidSharedPreferencesProvider @Inject constructor(
         private const val KEY_PERIODIC_PRICE_CHECKER_HOURLY_INTERVAL =
             "price_checker_hourly_interval"
         private const val KEY_ACTIVE_REGION_COUNTRY = "active_region_country"
+        private const val KEY_USER = "user_data"
     }
 }

@@ -1,0 +1,33 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+    }
+    testOptions.unitTests.includeAndroidResources = true
+}
+
+dependencies {
+    implementation Libraries.kotlinStdLib
+    api Libraries.appAuth
+    implementation Libraries.okhttpHttpUrlConnection
+    implementation Libraries.fragmentsKtx
+    implementation Libraries.timber
+    implementation Libraries.lifecycleRuntimeKtx
+
+    implementation project(':common')
+    implementation project(':commonproviders')
+    implementation project(':network')
+
+    testImplementation TestLibraries.robolectric
+    testImplementation TestLibraries.mockitoKotlin
+    testImplementation TestLibraries.assertjCore
+    testImplementation TestLibraries.junit
+    testImplementation project(':commontest')
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation TestLibraries.androidXTestCore
+}

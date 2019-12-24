@@ -29,8 +29,10 @@ import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
@@ -85,4 +87,8 @@ interface UseCaseComponent {
     val getRegionsUseCase: GetRegionsUseCase
 
     val changeActiveRegionUseCase: ChangeActiveRegionUseCase
+
+    val getUserUseCase: GetUserUseCase
+
+    val logOutUserUseCase: LogoutUseCase
 }

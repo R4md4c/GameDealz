@@ -1,0 +1,43 @@
+{
+  "refreshToken": "454564065465405640",
+  "scope": "user_info coll_read",
+  "lastAuthorizationResponse": {
+    "request": {
+      "configuration": {
+        "authorizationEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/authorize",
+        "tokenEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/token"
+      },
+      "clientId": "45456406546",
+      "responseType": "code",
+      "redirectUri": "gamedealz:\/\/oauth2redirect",
+      "scope": "user_info coll_read",
+      "state": "zRSnLnJq5vOt-k7SP5Enxw",
+      "codeVerifier": "YSELEHEi2yzMUnC7pzeoQvfsfAH5JMIDmCCfZujaBB2Vy0EGmGo-FUWKDntIyDaFaCfDaTYDsaUlIIflokNvrA",
+      "codeVerifierChallenge": "57aQLJQphWkySBGeMq157e6motogploQxLMZE2bJHEE",
+      "codeVerifierChallengeMethod": "S256",
+      "additionalParameters": {}
+    },
+    "state": "zRSnLnJq5vOt-k7SP5Enxw",
+    "code": "45645645645665",
+    "additional_parameters": {}
+  },
+  "mLastTokenResponse": {
+    "request": {
+      "configuration": {
+        "authorizationEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/authorize",
+        "tokenEndpoint": "https:\/\/api.isthereanydeal.com\/oauth\/token"
+      },
+      "clientId": "45642312430645asd",
+      "grantType": "authorization_code",
+      "redirectUri": "gamedealz:\/\/oauth2redirect",
+      "authorizationCode": "45642312430645asd45642312430645asd",
+      "additionalParameters": {}
+    },
+    "token_type": "Bearer",
+    "access_token": "45642312430645asd45642312430645asd",
+    "expires_at": 1607113152929,
+    "refresh_token": "45642312430645asd45642312430645asd45642312430645asd",
+    "scope": "user_info coll_read",
+    "additionalParameters": {}
+  }
+}

@@ -32,8 +32,10 @@ import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
+import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
@@ -55,8 +57,10 @@ import de.r4md4c.gamedealz.domain.usecase.impl.GetPriceAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.GetRegionsUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetSelectedStoresUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetStoresUseCaseImpl
+import de.r4md4c.gamedealz.domain.usecase.impl.GetUserUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetWatchlistToManageUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.IsGameAddedToWatchListUseCaseImpl
+import de.r4md4c.gamedealz.domain.usecase.impl.LogOutUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.MarkNotificationAsReadUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.OnNightModeChangeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.RemoveFromWatchlistUseCaseImpl
@@ -181,4 +185,14 @@ abstract class UseCaseModule {
     internal abstract fun bindsRemoveFromWatchlistUseCase(
         it: RemoveFromWatchlistUseCaseImpl
     ): RemoveFromWatchlistUseCase
+
+    @Binds
+    internal abstract fun bindsGetUserUseCase(
+        it: GetUserUseCaseImpl
+    ): GetUserUseCase
+
+    @Binds
+    internal abstract fun bindsLogOutUseCase(
+        it: LogOutUseCaseImpl
+    ): LogoutUseCase
 }

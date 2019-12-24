@@ -2,4 +2,14 @@
 <resources>
     <string name="title_on_going_deals">Ongoing Deals</string>
     <string name="enable_night_mode">Night mode</string>
+    <string name="change_region">Change Region</string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_in_isthereanydeal">Sign in to your IsThereAnyDeal.com account</string>
+    <string name="welcome_user">Welcome %s!</string>
+    <string name="welcome_user_unknown">Welcome!</string>
+    <string name="signed_in">Signed In</string>
+    <string name="log_out">Logout</string>
+    <string name="signed_out">You\'ve been signed out from your account</string>
+    <string name="failed_to_authorize_user">Failed to authorize user. Reason: %s</string>
 </resources>

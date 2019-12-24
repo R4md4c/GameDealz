@@ -17,7 +17,27 @@
 
 package de.r4md4c.gamedealz.di
 
+import android.net.Uri
 import dagger.Module
+import dagger.Provides
+import dagger.Reusable
+import de.r4md4c.gamedealz.network.di.URL_IS_THERE_ANY_DEAL
+import net.openid.appauth.AuthorizationServiceConfiguration
 
 @Module(includes = [ApplicationBindsModule::class])
-object ApplicationModule
+object ApplicationModule {
+
+    @Reusable
+    @Provides
+    fun authServiceConfiguration(): AuthorizationServiceConfiguration {
+        val authUri = Uri.parse(URL_IS_THERE_ANY_DEAL).buildUpon()
+            .appendPath("oauth")
+            .appendPath("authorize")
+            .build()
+        val tokenUri = Uri.parse(URL_IS_THERE_ANY_DEAL).buildUpon()
+            .appendPath("oauth")
+            .appendPath("token")
+            .build()
+        return AuthorizationServiceConfiguration(authUri, tokenUri)
+    }
+}

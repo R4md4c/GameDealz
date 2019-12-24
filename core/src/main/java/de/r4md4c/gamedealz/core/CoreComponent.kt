@@ -22,6 +22,7 @@ import dagger.Subcomponent
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.notification.Notifier
 import de.r4md4c.commonproviders.res.ResourcesProvider
+import de.r4md4c.gamedealz.auth.di.AuthComponent
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.di.ForApplication
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
@@ -29,6 +30,8 @@ import okhttp3.OkHttpClient
 
 @Subcomponent
 interface CoreComponent : UseCaseComponent {
+
+    val authComponent: AuthComponent
 
     val okHttpClient: OkHttpClient
 

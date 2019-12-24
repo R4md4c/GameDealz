@@ -43,6 +43,7 @@ dependencies {
     implementation Libraries.fastAdapter
     implementation Libraries.coreKtx
 
+    implementation project(':auth')
     implementation project(':common')
     implementation project(':domain')
     implementation project(':commonproviders')
@@ -50,8 +51,6 @@ dependencies {
     implementation project(':core')
 
     testImplementation project(':commontest')
-    testImplementation TestLibraries.liveDataTesting
-    testImplementation TestLibraries.liveDataTestingKtx
     testImplementation TestLibraries.coroutinesTest
     testImplementation TestLibraries.archComponentsCoreTesting
     testImplementation TestLibraries.kotlinReflect
