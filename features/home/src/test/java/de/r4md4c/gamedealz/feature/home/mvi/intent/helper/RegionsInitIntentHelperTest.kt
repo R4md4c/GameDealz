@@ -18,12 +18,15 @@
 package de.r4md4c.gamedealz.feature.home.mvi.intent.helper
 
 import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.test.TestDispatchers
@@ -44,6 +47,9 @@ class RegionsInitIntentHelperTest {
     @Mock
     private lateinit var onRegionChangeUseCase: OnCurrentActiveRegionReactiveUseCase
 
+    @Mock
+    private lateinit var getStoresUseCase: GetStoresUseCase
+
     private val dispatchers: IDispatchers = TestDispatchers
 
     private lateinit var fakeStore: FakeModelStore<HomeMviViewState>
@@ -55,8 +61,12 @@ class RegionsInitIntentHelperTest {
         MockitoAnnotations.initMocks(this)
 
         fakeStore = FakeModelStore(HomeMviViewState())
-        testSubject =
-            RegionsInitIntentHelper(activeRegionUseCase, onRegionChangeUseCase, dispatchers)
+        testSubject = RegionsInitIntentHelper(
+            activeRegionUseCase,
+            onRegionChangeUseCase,
+            getStoresUseCase,
+            dispatchers
+        )
     }
 
     @Test
@@ -82,6 +92,16 @@ class RegionsInitIntentHelperTest {
             assertThat(fakeStore.lastValue().activeRegion).isEqualTo(activeRegion())
         }
 
+    @Test
+    fun `should call getStoresUseCase when reactive active region emits`() = runBlockingTest {
+        ArrangeBuilder()
+            .withActiveRegionFromReactive(activeRegion())
+
+        with(testSubject) { observeRegions(fakeStore) }
+
+        verify(getStoresUseCase).invoke(TypeParameter(activeRegion()))
+    }
+
     private fun activeRegion(regionCode: String = "US") = ActiveRegion(
         regionCode = regionCode,
         currency = CurrencyModel(currencyCode = "Code", sign = "Sign"),
@@ -89,6 +109,12 @@ class RegionsInitIntentHelperTest {
     )
 
     inner class ArrangeBuilder {
+        init {
+            runBlockingTest {
+                whenever(getStoresUseCase.invoke(anyOrNull())).thenReturn(flowOf(emptyList()))
+            }
+        }
+
         fun withActiveRegionFromReactive(activeRegion: ActiveRegion) = apply {
             runBlockingTest {
                 whenever(onRegionChangeUseCase.activeRegionChange()).thenReturn(

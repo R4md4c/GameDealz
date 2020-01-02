@@ -20,11 +20,16 @@ package de.r4md4c.gamedealz.feature.home.mvi.intent.helper
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.common.mvi.intent
+import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -33,6 +38,7 @@ import javax.inject.Inject
 internal class RegionsInitIntentHelper @Inject constructor(
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val onRegionChangeUseCase: OnCurrentActiveRegionReactiveUseCase,
+    private val getStoresUseCase: GetStoresUseCase,
     private val dispatchers: IDispatchers
 ) {
 
@@ -61,5 +67,10 @@ internal class RegionsInitIntentHelper @Inject constructor(
         store.process(intent { copy(isLoadingRegions = false) })
     }
 
-    private fun regionChangeFlow() = onRegionChangeUseCase.activeRegionChange()
+    private fun regionChangeFlow() =
+        onRegionChangeUseCase.activeRegionChange().onEach {
+            getStoresUseCase(TypeParameter(it))
+                .catch { e -> Timber.e(e, "Failed while retrieving the stores.") }
+                .first()
+        }
 }
