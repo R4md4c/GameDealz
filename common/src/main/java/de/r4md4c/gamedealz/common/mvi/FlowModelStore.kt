@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.common.mvi
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -45,4 +46,10 @@ open class FlowModelStore<S : MviState>(startingState: S) : ModelStore<S>,
     }
 
     override fun modelState(): Flow<S> = store.asFlow()
+
+    override fun dispose() {
+        cancel()
+        intents.cancel()
+        store.cancel()
+    }
 }

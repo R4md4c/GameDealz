@@ -35,4 +35,8 @@ class FakeModelStore<S : MviState>(initialState: S) : ModelStore<S> {
     override fun modelState(): Flow<S> = conflatedBroadcastChannel.asFlow()
 
     suspend fun lastValue() = modelState().first()
+
+    override fun dispose() {
+        conflatedBroadcastChannel.cancel()
+    }
 }

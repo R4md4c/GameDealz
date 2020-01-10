@@ -15,21 +15,24 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi.intent.helper
+package de.r4md4c.gamedealz.feature.home.mvi.processor
 
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.whenever
+import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.uiSideEffect
 import de.r4md4c.gamedealz.domain.model.UserInfo
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
 import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
-import de.r4md4c.gamedealz.test.mvi.FakeModelStore
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.test.runBlockingTest
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -37,24 +40,22 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-internal class UsersInitIntentHelperTest {
+class UserInitIntentProcessorTest {
 
     @Mock
     lateinit var getUserUseCase: GetUserUseCase
 
-    private val store = FakeModelStore(HomeMviViewState())
-
     @InjectMocks
-    lateinit var subject: UsersInitIntentHelper
+    private lateinit var processor: UserInitIntentProcessor
 
     @Test
     fun `should emit LoggedOut when user is logged out`() = runBlockingTest {
         ArrangeBuilder().withSingleUserInfo(UserInfo.UserLoggedOut)
 
-        with(subject) { observeUser(store) }
+        val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).first()
 
-        val result = store.lastValue()
-        assertThat(result).isEqualTo(HomeMviViewState().copy(homeUserStatus = HomeUserStatus.LoggedOut))
+        Assertions.assertThat(result.reduce())
+            .isEqualTo(HomeMviViewState().copy(homeUserStatus = HomeUserStatus.LoggedOut))
     }
 
     @Test
@@ -62,13 +63,13 @@ internal class UsersInitIntentHelperTest {
         runBlockingTest {
             ArrangeBuilder().withSingleUserInfo(UserInfo.LoggingUserFailed(reason = "aMessage"))
 
-            with(subject) { observeUser(store) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).first()
 
-            val result = store.lastValue()
-            assertThat(result).isEqualTo(HomeMviViewState().copy(
-                homeUserStatus = HomeUserStatus.LoggedOut,
-                uiSideEffect = uiSideEffect { HomeUiSideEffect.ShowAuthenticationError(message = "aMessage") }
-            ))
+            Assertions.assertThat(result.reduce()).isEqualTo(
+                HomeMviViewState().copy(
+                    homeUserStatus = HomeUserStatus.LoggedOut,
+                    uiSideEffect = uiSideEffect { HomeUiSideEffect.ShowAuthenticationError(message = "aMessage") }
+                ))
         }
 
     @Test
@@ -76,10 +77,9 @@ internal class UsersInitIntentHelperTest {
         runBlockingTest {
             ArrangeBuilder().withSingleUserInfo(UserInfo.LoggedInUser(username = "aUser"))
 
-            with(subject) { observeUser(store) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).first()
 
-            val result = store.lastValue()
-            assertThat(result).isEqualTo(
+            Assertions.assertThat(result.reduce()).isEqualTo(
                 HomeMviViewState().copy(
                     homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser")
                 )
@@ -96,13 +96,15 @@ internal class UsersInitIntentHelperTest {
                 )
             )
 
-            with(subject) { observeUser(store) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
+                mutableListOf()
+            )
 
-            val result = store.lastValue()
-            assertThat(result).isEqualTo(HomeMviViewState().copy(
-                homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser"),
-                uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedIn("aUser") }
-            ))
+            Assertions.assertThat(result.last().reduce()).isEqualTo(
+                HomeMviViewState().copy(
+                    homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser"),
+                    uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedIn("aUser") }
+                ))
         }
 
     @Test
@@ -115,13 +117,15 @@ internal class UsersInitIntentHelperTest {
                 )
             )
 
-            with(subject) { observeUser(store) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
+                mutableListOf()
+            )
 
-            val result = store.lastValue()
-            assertThat(result).isEqualTo(HomeMviViewState().copy(
-                homeUserStatus = HomeUserStatus.LoggedIn.UnknownUser,
-                uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedIn(null) }
-            ))
+            Assertions.assertThat(result.last().reduce()).isEqualTo(
+                HomeMviViewState().copy(
+                    homeUserStatus = HomeUserStatus.LoggedIn.UnknownUser,
+                    uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedIn(null) }
+                ))
         }
 
     @Test
@@ -130,15 +134,18 @@ internal class UsersInitIntentHelperTest {
             ArrangeBuilder()
                 .withMultipleUsers(listOf(UserInfo.LoggedInUser(username = "aUser")))
 
-            with(subject) { observeUser(store) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
+                mutableListOf()
+            )
 
-            val result = store.lastValue()
-            assertThat(result).isEqualTo(
+            Assertions.assertThat(result.last().reduce()).isEqualTo(
                 HomeMviViewState().copy(
                     homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser")
                 )
             )
         }
+
+    private fun Intent<HomeMviViewState>.reduce() = this.reduce(HomeMviViewState())
 
     private inner class ArrangeBuilder {
         fun withSingleUserInfo(userInfo: UserInfo) = apply {

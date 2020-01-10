@@ -42,6 +42,7 @@ dependencies {
     implementation Libraries.materialDrawer
     implementation Libraries.fastAdapter
     implementation Libraries.coreKtx
+    implementation Libraries.kotlinFlowExtensions
 
     implementation project(':auth')
     implementation project(':common')

@@ -19,12 +19,19 @@ package de.r4md4c.gamedealz.feature.home.di.mvi
 
 import dagger.Binds
 import dagger.Module
+import dagger.multibindings.IntoSet
 import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviIntentsProcessor
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviModelStore
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.processor.LogoutIntentProcessor
+import de.r4md4c.gamedealz.feature.home.mvi.processor.NavigationEventsProcessor
+import de.r4md4c.gamedealz.feature.home.mvi.processor.NightModeInitIntentProcessor
+import de.r4md4c.gamedealz.feature.home.mvi.processor.NightModeToggleIntentProcessor
+import de.r4md4c.gamedealz.feature.home.mvi.processor.PriceAlertCountProcessor
+import de.r4md4c.gamedealz.feature.home.mvi.processor.RegionsInitIntentProcessor
+import de.r4md4c.gamedealz.feature.home.mvi.processor.UserInitIntentProcessor
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 
 @Module(
@@ -35,7 +42,38 @@ import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 internal abstract class HomeMviModule {
 
     @Binds
-    abstract fun bindsIntentsProcessor(it: HomeMviIntentsProcessor): IntentProcessor<HomeMviViewEvent>
+    @IntoSet
+    abstract fun bindsLogoutIntentProcessor(it: LogoutIntentProcessor): IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsNightModeInitIntentProcessor(it: NightModeInitIntentProcessor)
+            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsPriceAlertCountProcessor(it: PriceAlertCountProcessor)
+            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsNightModeToggleIntentProcessor(it: NightModeToggleIntentProcessor)
+            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsRegionsInitIntentProcessor(it: RegionsInitIntentProcessor)
+            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsUserInitIntentProcessor(it: UserInitIntentProcessor)
+            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsNavigationEventsProcessor(it: NavigationEventsProcessor)
+            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @FeatureScope
     @Binds

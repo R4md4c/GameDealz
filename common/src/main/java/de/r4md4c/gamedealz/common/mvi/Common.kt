@@ -20,3 +20,5 @@ package de.r4md4c.gamedealz.common.mvi
 interface MviViewEvent
 
 interface MviState
+
+interface MviInitEvent : MviViewEvent
