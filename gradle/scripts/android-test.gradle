@@ -1,0 +1,19 @@
+apply plugin: 'kotlin-allopen'
+
+android {
+    defaultConfig {
+        testApplicationId "de.r4md4c.gamedealz.test"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+allOpen {
+    annotation("de.r4md4c.gamedealz.common.annotation.Mockable")
+}
+
+dependencies {
+    androidTestImplementation project(':commonAndroidTest')
+    androidTestImplementation TestLibraries.assertjCore
+    androidTestImplementation TestLibraries.mockitoAndroid
+    androidTestImplementation TestLibraries.mockitoKotlin
+}

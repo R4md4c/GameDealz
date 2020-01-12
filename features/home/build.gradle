@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-allopen'
+apply from: '../../gradle/scripts/android-test.gradle'
 
 android {
     compileSdkVersion AndroidSdk.compile
@@ -21,7 +23,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
 }
 
 dependencies {

@@ -1,0 +1,41 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+repositories {
+    maven { url 'https://dl.bintray.com/blipinsk/maven/' }
+}
+
+android {
+    compileSdkVersion AndroidSdk.compile
+
+    defaultConfig {
+        minSdkVersion AndroidSdk.min
+        targetSdkVersion AndroidSdk.target
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation Libraries.kotlinStdLib
+    implementation Libraries.kotlinCoroutines
+    implementation Libraries.fragmentsKtx
+    implementation Libraries.coreKtx
+    implementation TestLibraries.coroutinesTest
+    implementation TestLibraries.junit
+    implementation Libraries.material
+    implementation project(':common')
+    implementation project(':common-ui')
+
+    api TestLibraries.androidXTestCore
+    api TestLibraries.testRunner
+    api TestLibraries.testRules
+    api TestLibraries.espressoCore
+    api TestLibraries.espressoContrib
+    api TestLibraries.disableAnimationsRule
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
