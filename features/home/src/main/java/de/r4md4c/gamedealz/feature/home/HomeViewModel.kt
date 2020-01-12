@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.home
 
+import de.r4md4c.gamedealz.common.annotation.Mockable
 import de.r4md4c.gamedealz.common.mvi.BaseMviViewModel
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
@@ -25,6 +26,7 @@ import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import javax.inject.Inject
 
+@Mockable
 internal class HomeViewModel @Inject internal constructor(
     intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<HomeMviViewEvent, HomeMviViewState>>,
     homeModelStore: ModelStore<HomeMviViewState>

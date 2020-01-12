@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.common.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.r4md4c.gamedealz.common.annotation.Mockable
 import hu.akarnokd.kotlin.flow.publish
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
+@Mockable
 abstract class BaseMviViewModel<Event : MviViewEvent, State : MviState>(
     private val intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<Event, State>>,
     private val store: ModelStore<State>,

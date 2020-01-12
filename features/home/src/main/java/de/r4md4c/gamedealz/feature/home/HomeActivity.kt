@@ -351,10 +351,12 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         drawer.getDrawerItem(identifier.toLong()) as? T
 
     private fun onInject() {
-        coreComponent().also {
-            DaggerHomeComponent.factory()
-                .create(this, it, it.authComponent)
-                .inject(this)
+        if (::viewModelFactory.isInitialized.not()) {
+            coreComponent().also {
+                DaggerHomeComponent.factory()
+                    .create(this, it, it.authComponent)
+                    .inject(this)
+            }
         }
     }
 }

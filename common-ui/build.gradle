@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'kotlin-allopen'
 
 android {
     compileSdkVersion AndroidSdk.compile
@@ -29,6 +30,10 @@ android {
 
 androidExtensions {
     experimental = true
+}
+
+allOpen {
+    annotation("de.r4md4c.gamedealz.common.annotation.Mockable")
 }
 
 dependencies {

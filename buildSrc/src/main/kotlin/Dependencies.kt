@@ -9,6 +9,7 @@ object BuildPlugins {
         const val detektVersion = "1.1.1"
     }
 
+    const val kotlinAllOpenPlugin = "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.buildToolsVersion}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     const val navigationSafeArgsPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navVersion}"
@@ -136,7 +137,7 @@ object TestLibraries {
         const val androidXTest = "1.2.0"
         const val espresso = "3.2.0"
         const val uiAutomator = "2.2.0"
-        const val mockitoAndroid = "2.25.0"
+        const val mockitoAndroid = "2.28.2"
     }
 
     const val workManager = "androidx.work:work-testing:${Libraries.Versions.workmanager}"
@@ -160,5 +161,7 @@ object TestLibraries {
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"
     const val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espresso}"
+    const val espressoContrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso}"
     const val uiAutomator = "androidx.test.uiautomator:uiautomator:${Versions.uiAutomator}"
+    const val disableAnimationsRule = "com.bartoszlipinski:disable-animations-rule:2.0.0"
 }
