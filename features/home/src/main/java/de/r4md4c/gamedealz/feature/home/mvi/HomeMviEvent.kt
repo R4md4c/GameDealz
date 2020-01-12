@@ -18,11 +18,17 @@
 package de.r4md4c.gamedealz.feature.home.mvi
 
 import de.r4md4c.gamedealz.common.mvi.MviViewEvent
-import kotlinx.coroutines.CoroutineScope
 
 internal sealed class HomeMviViewEvent : MviViewEvent {
-    data class InitViewEvent(val scope: CoroutineScope) : HomeMviViewEvent()
-    data class NightModeToggleViewEvent(val scope: CoroutineScope) : HomeMviViewEvent()
+
+    object InitViewEvent : HomeMviViewEvent() {
+        override fun toString(): String = "InitViewEvent"
+    }
+
+    object NightModeToggleViewEvent : HomeMviViewEvent() {
+        override fun toString(): String = "NightModeToggleViewEvent"
+    }
+
     object NavigateToManageWatchlistScreen : HomeMviViewEvent() {
         override fun toString(): String = "NavigateToManageWatchlist"
     }

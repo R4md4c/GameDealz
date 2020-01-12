@@ -15,12 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi.intent.helper
+package de.r4md4c.gamedealz.feature.home.mvi.processor
 
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
@@ -28,18 +28,19 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.test.TestDispatchers
-import de.r4md4c.gamedealz.test.mvi.FakeModelStore
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.test.runBlockingTest
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
-class RegionsInitIntentHelperTest {
+class RegionsInitIntentProcessorTest {
 
     @Mock
     private lateinit var activeRegionUseCase: GetCurrentActiveRegionUseCase
@@ -50,22 +51,17 @@ class RegionsInitIntentHelperTest {
     @Mock
     private lateinit var getStoresUseCase: GetStoresUseCase
 
-    private val dispatchers: IDispatchers = TestDispatchers
-
-    private lateinit var fakeStore: FakeModelStore<HomeMviViewState>
-
-    private lateinit var testSubject: RegionsInitIntentHelper
+    private lateinit var processor: RegionsInitIntentProcessor
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        fakeStore = FakeModelStore(HomeMviViewState())
-        testSubject = RegionsInitIntentHelper(
+        processor = RegionsInitIntentProcessor(
             activeRegionUseCase,
             onRegionChangeUseCase,
             getStoresUseCase,
-            dispatchers
+            TestDispatchers
         )
     }
 
@@ -75,9 +71,11 @@ class RegionsInitIntentHelperTest {
             ArrangeBuilder()
                 .withActiveRegionFromReactive(activeRegion())
 
-            with(testSubject) { observeRegions(fakeStore) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
+                mutableListOf()
+            )
 
-            assertThat(fakeStore.lastValue().activeRegion).isEqualTo(activeRegion())
+            assertThat(result.last().reduce().activeRegion).isEqualTo(activeRegion())
         }
 
     @Test
@@ -87,9 +85,11 @@ class RegionsInitIntentHelperTest {
                 .withActiveRegionFromReactive(activeRegion())
                 .withGetCurrentActiveRegion(activeRegion())
 
-            with(testSubject) { observeRegions(fakeStore) }
+            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
+                mutableListOf()
+            )
 
-            assertThat(fakeStore.lastValue().activeRegion).isEqualTo(activeRegion())
+            assertThat(result.last().reduce().activeRegion).isEqualTo(activeRegion())
         }
 
     @Test
@@ -97,10 +97,14 @@ class RegionsInitIntentHelperTest {
         ArrangeBuilder()
             .withActiveRegionFromReactive(activeRegion())
 
-        with(testSubject) { observeRegions(fakeStore) }
+        val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
+            mutableListOf()
+        )
 
         verify(getStoresUseCase).invoke(TypeParameter(activeRegion()))
     }
+
+    private fun Intent<HomeMviViewState>.reduce() = this.reduce(HomeMviViewState())
 
     private fun activeRegion(regionCode: String = "US") = ActiveRegion(
         regionCode = regionCode,

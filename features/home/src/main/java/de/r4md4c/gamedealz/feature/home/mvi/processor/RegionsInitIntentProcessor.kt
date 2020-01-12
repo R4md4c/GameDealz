@@ -15,56 +15,56 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi.intent.helper
+package de.r4md4c.gamedealz.feature.home.mvi.processor
 
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.coroutines.lifecycleLog
+import de.r4md4c.gamedealz.common.mvi.Intent
+import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.intent
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-internal class RegionsInitIntentHelper @Inject constructor(
+internal class RegionsInitIntentProcessor @Inject constructor(
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val onRegionChangeUseCase: OnCurrentActiveRegionReactiveUseCase,
     private val getStoresUseCase: GetStoresUseCase,
     private val dispatchers: IDispatchers
-) {
+) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    fun CoroutineScope.observeRegions(store: ModelStore<HomeMviViewState>) {
-        launch {
-            retrieveActiveRegions(store)
-        }
-        launch {
-            regionChangeFlow().collect {
-                store.process(intent { copy(activeRegion = it) })
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+        viewEvent.filterIsInstance<HomeMviViewEvent.InitViewEvent>()
+            .flatMapMerge(concurrency = 2) {
+                merge(retrieveActiveRegions(), regionChangeFlow())
             }
-        }
-    }
+            .lifecycleLog("RegionsInitIntentProcessor")
 
-    private suspend fun retrieveActiveRegions(store: ModelStore<HomeMviViewState>) {
-        store.process(intent { copy(isLoadingRegions = true) })
+    private fun retrieveActiveRegions(): Flow<Intent<HomeMviViewState>> = flow {
+        emit(intent { copy(isLoadingRegions = true) })
 
         kotlin.runCatching {
             withContext(dispatchers.IO) { activeRegionUseCase() }
         }.onSuccess {
-            store.process(intent {
-                copy(activeRegion = it)
-            })
+            emit(intent { copy(activeRegion = it) })
         }.onFailure { Timber.e(it, "Failure while retrieving action region") }
 
-        store.process(intent { copy(isLoadingRegions = false) })
+        emit(intent { copy(isLoadingRegions = false) })
     }
 
     private fun regionChangeFlow() =
@@ -72,5 +72,5 @@ internal class RegionsInitIntentHelper @Inject constructor(
             getStoresUseCase(TypeParameter(it))
                 .catch { e -> Timber.e(e, "Failed while retrieving the stores.") }
                 .first()
-        }
+        }.map { intent<HomeMviViewState> { copy(activeRegion = it) } }
 }

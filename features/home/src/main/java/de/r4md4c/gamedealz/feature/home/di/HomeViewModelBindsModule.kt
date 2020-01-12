@@ -30,5 +30,5 @@ abstract class HomeViewModelBindsModule {
     @Binds
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
-    abstract fun bindsHomeViewModelBinds(it: HomeViewModel): ViewModel
+    internal abstract fun bindsHomeViewModelBinds(it: HomeViewModel): ViewModel
 }

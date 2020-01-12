@@ -15,35 +15,32 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi.intent
+package de.r4md4c.gamedealz.feature.home.mvi.processor
 
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import de.r4md4c.gamedealz.common.mvi.Intent
-import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.intent
 import de.r4md4c.gamedealz.common.mvi.uiSideEffect
 import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.LogoutViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.mapLatest
+import javax.inject.Inject
 
-internal class LogoutIntent @AssistedInject constructor(
-    private val logoutUseCase: LogoutUseCase,
-    @Assisted private val store: ModelStore<HomeMviViewState>
-) : Intent<HomeMviViewState> {
+internal class LogoutIntentProcessor @Inject constructor(
+    private val logoutUseCase: LogoutUseCase
+) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun reduce(oldState: HomeMviViewState): HomeMviViewState = oldState.apply {
-        GlobalScope.launch {
-            // When calling this, the Flow will emit NotAuthorized AuthState in the InitIntent
-            logoutUseCase()
-            store.process(intent { copy(uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedOut }) })
-        }
-    }
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(store: ModelStore<HomeMviViewState>): Intent<HomeMviViewState>
-    }
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+        viewEvent.filterIsInstance<LogoutViewEvent>()
+            .mapLatest {
+                logoutUseCase()
+                intent<HomeMviViewState> {
+                    copy(uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedOut })
+                }
+            }
 }

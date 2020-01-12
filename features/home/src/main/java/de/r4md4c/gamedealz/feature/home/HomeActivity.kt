@@ -47,7 +47,6 @@ import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
@@ -61,7 +60,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -132,9 +130,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .onEach { render(it) }
             .launchIn(lifecycleScope)
 
-        viewModel.onViewEvents(
-            lifecycleScope,
-            viewEvents().onStart { emit(InitViewEvent(lifecycleScope)) })
+        viewModel.onViewEvents(viewEvents(), lifecycleScope)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -205,7 +201,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withIconTintingEnabled(true)
             .withIdentifier(R.id.home_drawer_night_mode_switch.toLong())
             .withOnCheckedChangeListener { _, _, _ ->
-                viewEventsChannel.offer(NightModeToggleViewEvent(lifecycleScope))
+                viewEventsChannel.offer(NightModeToggleViewEvent)
             }
 
         val section = SectionDrawerItem()

@@ -17,27 +17,19 @@
 
 package de.r4md4c.gamedealz.feature.home
 
-import androidx.lifecycle.ViewModel
+import de.r4md4c.gamedealz.common.mvi.BaseMviViewModel
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-class HomeViewModel @Inject internal constructor(
-    private val intentsProcessor: IntentProcessor<HomeMviViewEvent>,
+internal class HomeViewModel @Inject internal constructor(
+    intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<HomeMviViewEvent, HomeMviViewState>>,
     homeModelStore: ModelStore<HomeMviViewState>
-) : ViewModel() {
-
-    internal val modelState =
-        homeModelStore.modelState().distinctUntilChanged()
-
-    internal fun onViewEvents(lifecycle: CoroutineScope, viewEventFlow: Flow<HomeMviViewEvent>) {
-        viewEventFlow.onEach { intentsProcessor.process(it) }.launchIn(lifecycle)
-    }
-}
+) : BaseMviViewModel<HomeMviViewEvent, HomeMviViewState>(
+    intentProcessors,
+    homeModelStore,
+    InitViewEvent
+)

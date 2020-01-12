@@ -15,29 +15,25 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi.intent
+package de.r4md4c.gamedealz.feature.home.mvi.processor
 
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import de.r4md4c.gamedealz.common.mvi.Intent
+import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.transformLatest
+import javax.inject.Inject
 
-internal class NightModeToggleIntent @AssistedInject constructor(
-    private val toggleNightModeUseCase: ToggleNightModeUseCase,
-    @Assisted private val scope: CoroutineScope
-) : Intent<HomeMviViewState> {
+internal class NightModeToggleIntentProcessor @Inject constructor(
+    private val toggleNightModeUseCase: ToggleNightModeUseCase
+) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun reduce(oldState: HomeMviViewState): HomeMviViewState = oldState.apply {
-        scope.launch {
-            toggleNightModeUseCase()
-        }
-    }
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(scope: CoroutineScope): Intent<HomeMviViewState>
-    }
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+        viewEvent.filterIsInstance<HomeMviViewEvent.NightModeToggleViewEvent>()
+            .transformLatest {
+                toggleNightModeUseCase()
+            }
 }

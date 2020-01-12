@@ -49,7 +49,7 @@ object Libraries {
         const val annotations = "1.1.0"
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
-        const val dagger = "2.25.2"
+        const val dagger = "2.25.4"
         const val assistedInject = "0.5.2"
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
@@ -115,6 +115,7 @@ object Libraries {
 
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val kotlinFlowExtensions = "com.github.akarnokd:kotlin-flow-extensions:0.0.2"
 
     const val fastAdapter = "com.mikepenz:fastadapter-extensions:${Versions.fastAdapter}"
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"
@@ -131,7 +132,7 @@ object TestLibraries {
         const val mockito_kotlin = "2.2.0"
         const val core_testing = "2.1.0"
         const val liveDataTesting = "1.1.0"
-        const val junit4 = "4.12"
+        const val junit4 = "4.13"
         const val androidXTest = "1.2.0"
         const val espresso = "3.2.0"
         const val uiAutomator = "2.2.0"
