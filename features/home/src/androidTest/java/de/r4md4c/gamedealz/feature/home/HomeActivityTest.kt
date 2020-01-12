@@ -32,6 +32,7 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
+import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import de.r4md4c.gamedealz.test.scenario.InjectableActivityScenario
 import de.r4md4c.gamedealz.test.scenario.injectableActivityScenario
 import de.r4md4c.gamedealz.test.utils.Page.Companion.on
@@ -160,6 +161,20 @@ class HomeActivityTest {
             .clickLogout()
 
         assertThat(eventsCollections.last()).isEqualTo(HomeMviViewEvent.LogoutViewEvent)
+    }
+
+    @Test
+    fun priceAlertCount_renderedCorrectly(): Unit = injectorScenario.use {
+        ArrangeBuilder(it)
+            .withState(
+                HomeMviViewState(
+                    priceAlertsCount = PriceAlertCount.Set(20)
+                )
+            )
+            .arrange()
+
+        on<SideMenu>()
+            .verifyPriceAlertCount(20)
     }
 
     private inner class ArrangeBuilder(

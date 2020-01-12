@@ -5,10 +5,6 @@ android {
         testApplicationId "de.r4md4c.gamedealz.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    testOptions {
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
-    }
 }
 
 allOpen {
@@ -16,7 +12,6 @@ allOpen {
 }
 
 dependencies {
-    androidTestUtil TestLibraries.testOrchestrator
     androidTestImplementation project(':commonAndroidTest')
     androidTestImplementation TestLibraries.assertjCore
     androidTestImplementation TestLibraries.mockitoAndroid

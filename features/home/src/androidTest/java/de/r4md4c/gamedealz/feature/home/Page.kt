@@ -19,8 +19,7 @@ package de.r4md4c.gamedealz.feature.home
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.PositionAssertions.isCompletelyAbove
-import androidx.test.espresso.assertion.PositionAssertions.isCompletelyBelow
+import androidx.test.espresso.assertion.PositionAssertions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -78,6 +77,13 @@ internal class SideMenu : Page() {
 
     fun verifyUnknownUser() = apply {
         onView(withText(R.string.signed_in)).check(matches(isDisplayed()))
+    }
+
+    fun verifyPriceAlertCount(count: Int) = apply {
+        onView(withText(count.toString())).run {
+            check(matches(isDisplayed()))
+            check(isCompletelyRightOf(withText(R.string.title_manage_your_watchlist)))
+        }
     }
 
     fun clickAccountPanel(): AccountsListPage {
