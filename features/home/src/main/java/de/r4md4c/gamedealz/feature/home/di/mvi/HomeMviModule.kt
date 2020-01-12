@@ -43,37 +43,38 @@ internal abstract class HomeMviModule {
 
     @Binds
     @IntoSet
-    abstract fun bindsLogoutIntentProcessor(it: LogoutIntentProcessor): IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsLogoutIntentProcessor(it: LogoutIntentProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @Binds
     @IntoSet
-    abstract fun bindsNightModeInitIntentProcessor(it: NightModeInitIntentProcessor)
-            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsNightModeInitIntentProcessor(it: NightModeInitIntentProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @Binds
     @IntoSet
-    abstract fun bindsPriceAlertCountProcessor(it: PriceAlertCountProcessor)
-            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsPriceAlertCountProcessor(it: PriceAlertCountProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @Binds
     @IntoSet
-    abstract fun bindsNightModeToggleIntentProcessor(it: NightModeToggleIntentProcessor)
-            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsNightModeToggleIntentProcessor(it: NightModeToggleIntentProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @Binds
     @IntoSet
-    abstract fun bindsRegionsInitIntentProcessor(it: RegionsInitIntentProcessor)
-            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsRegionsInitIntentProcessor(it: RegionsInitIntentProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @Binds
     @IntoSet
-    abstract fun bindsUserInitIntentProcessor(it: UserInitIntentProcessor)
-            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsUserInitIntentProcessor(it: UserInitIntentProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @Binds
     @IntoSet
-    abstract fun bindsNavigationEventsProcessor(it: NavigationEventsProcessor)
-            : IntentProcessor<HomeMviViewEvent, HomeMviViewState>
+    abstract fun bindsNavigationEventsProcessor(it: NavigationEventsProcessor):
+            IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
     @FeatureScope
     @Binds

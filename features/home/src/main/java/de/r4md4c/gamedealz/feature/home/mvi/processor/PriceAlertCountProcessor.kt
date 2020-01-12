@@ -44,5 +44,4 @@ internal class PriceAlertCountProcessor @Inject constructor(
 
     private fun Int.priceAlertFromCount(): PriceAlertCount =
         if (this == 0) PriceAlertCount.NotSet else PriceAlertCount.Set(this)
-
 }
