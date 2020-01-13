@@ -28,6 +28,5 @@ open class Page {
     }
 
     open fun verify() {
-
     }
 }
