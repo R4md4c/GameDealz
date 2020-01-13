@@ -6,7 +6,7 @@ object BuildPlugins {
     object Versions {
         const val buildToolsVersion = "3.5.2"
         const val navVersion = "2.1.0"
-        const val detektVersion = "1.1.1"
+        const val detektVersion = "1.4.0"
     }
 
     const val kotlinAllOpenPlugin = "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
@@ -39,7 +39,7 @@ object Libraries {
         const val room = "2.2.1"
         const val timber = "4.7.1"
         const val lifecycle = "2.2.0-rc02"
-        const val glide = "4.10.0"
+        const val glide = "4.11.0"
         const val swiperefreshlayout = "1.0.0"
         const val appCompat = "1.1.0"
         const val recyclerView = "1.1.0-beta05"
