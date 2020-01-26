@@ -102,6 +102,7 @@ dependencies {
     implementation Libraries.materialDrawer
     implementation Libraries.stateMachine
     implementation Libraries.timber
+    implementation Libraries.timberSlf4j
 
     implementation project(':common-ui')
     implementation project(':features:deals')

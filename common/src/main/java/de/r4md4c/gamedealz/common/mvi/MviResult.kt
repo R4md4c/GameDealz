@@ -15,11 +15,14 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.di.mvi
+package de.r4md4c.gamedealz.common.mvi
 
-import com.squareup.inject.assisted.dagger2.AssistedModule
-import dagger.Module
+interface MviResult<S : MviState>
 
-@AssistedModule
-@Module(includes = [AssistedInject_HomeMviIntentsModule::class])
-internal abstract class HomeMviIntentsModule
+interface ReducibleMviResult<S : MviState> : MviResult<S> {
+    fun reduce(oldState: S): S
+}
+
+object EmptyResult : MviResult<Nothing> {
+    override fun toString(): String = "EmptyResult"
+}

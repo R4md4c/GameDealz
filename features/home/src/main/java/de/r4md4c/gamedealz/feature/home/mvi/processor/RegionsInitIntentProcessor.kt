@@ -18,15 +18,15 @@
 package de.r4md4c.gamedealz.feature.home.mvi.processor
 
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.coroutines.lifecycleLog
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.intent
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.ActiveRegionResult
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.RegionsLoadingResult
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -48,29 +48,28 @@ internal class RegionsInitIntentProcessor @Inject constructor(
     private val dispatchers: IDispatchers
 ) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<HomeMviResult> =
         viewEvent.filterIsInstance<HomeMviViewEvent.InitViewEvent>()
             .flatMapMerge(concurrency = 2) {
                 merge(retrieveActiveRegions(), regionChangeFlow())
             }
-            .lifecycleLog("RegionsInitIntentProcessor")
 
-    private fun retrieveActiveRegions(): Flow<Intent<HomeMviViewState>> = flow {
-        emit(intent { copy(isLoadingRegions = true) })
+    private fun retrieveActiveRegions(): Flow<HomeMviResult> = flow {
+        emit(RegionsLoadingResult(isLoading = true))
 
         kotlin.runCatching {
             withContext(dispatchers.IO) { activeRegionUseCase() }
         }.onSuccess {
-            emit(intent { copy(activeRegion = it) })
+            emit(ActiveRegionResult(it))
         }.onFailure { Timber.e(it, "Failure while retrieving action region") }
 
-        emit(intent { copy(isLoadingRegions = false) })
+        emit(RegionsLoadingResult(isLoading = false))
     }
 
-    private fun regionChangeFlow() =
+    private fun regionChangeFlow(): Flow<HomeMviResult> =
         onRegionChangeUseCase.activeRegionChange().onEach {
             getStoresUseCase(TypeParameter(it))
                 .catch { e -> Timber.e(e, "Failed while retrieving the stores.") }
                 .first()
-        }.map { intent<HomeMviViewState> { copy(activeRegion = it) } }
+        }.map { ActiveRegionResult(it) }
 }

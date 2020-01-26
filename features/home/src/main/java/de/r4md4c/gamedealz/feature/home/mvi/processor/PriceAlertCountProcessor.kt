@@ -17,11 +17,11 @@
 
 package de.r4md4c.gamedealz.feature.home.mvi.processor
 
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.intent
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.PriceAlertCountResult
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import kotlinx.coroutines.flow.Flow
@@ -34,11 +34,11 @@ internal class PriceAlertCountProcessor @Inject constructor(
     private val priceAlertsCountUseCase: GetAlertsCountUseCase
 ) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<HomeMviResult> =
         viewEvent.filterIsInstance<HomeMviViewEvent.InitViewEvent>()
             .transformLatest {
                 priceAlertsCountUseCase().collect { count ->
-                    emit(intent { copy(priceAlertsCount = count.priceAlertFromCount()) })
+                    emit(PriceAlertCountResult(currentCount = count.priceAlertFromCount()))
                 }
             }
 

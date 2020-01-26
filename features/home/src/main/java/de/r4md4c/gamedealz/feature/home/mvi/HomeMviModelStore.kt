@@ -17,9 +17,10 @@
 
 package de.r4md4c.gamedealz.feature.home.mvi
 
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.mvi.FlowModelStore
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import javax.inject.Inject
 
-internal class HomeMviModelStore @Inject constructor() :
-    FlowModelStore<HomeMviViewState>(HomeMviViewState())
+internal class HomeMviModelStore @Inject constructor(dispatchers: IDispatchers) :
+    FlowModelStore<HomeMviViewState>(HomeMviViewState(), dispatchers)

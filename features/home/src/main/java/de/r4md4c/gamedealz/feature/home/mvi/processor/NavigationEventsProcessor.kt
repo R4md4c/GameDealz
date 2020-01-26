@@ -17,15 +17,13 @@
 
 package de.r4md4c.gamedealz.feature.home.mvi.processor
 
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.intent
-import de.r4md4c.gamedealz.common.mvi.uiSideEffect
 import de.r4md4c.gamedealz.feature.home.R
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.NavigateToLoginResult
+import de.r4md4c.gamedealz.feature.home.mvi.NavigationResult
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect.NavigateSideEffect
-import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect.StartAuthenticationFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -35,34 +33,19 @@ import javax.inject.Inject
 internal class NavigationEventsProcessor @Inject constructor() :
     IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<HomeMviResult> =
         merge(
             viewEvent.filterIsInstance<HomeMviViewEvent.LoginViewEvent>(),
             viewEvent.filterIsInstance<HomeMviViewEvent.NavigateToManageWatchlistScreen>(),
             viewEvent.filterIsInstance<HomeMviViewEvent.NavigateToOngoingDealsScreen>()
         ).map {
             when (it) {
-                is HomeMviViewEvent.LoginViewEvent -> intent<HomeMviViewState> {
-                    copy(
-                        uiSideEffect = uiSideEffect {
-                            StartAuthenticationFlow
-                        }
-                    )
-                }
-                is HomeMviViewEvent.NavigateToManageWatchlistScreen -> intent {
-                    copy(
-                        uiSideEffect = uiSideEffect {
-                            NavigateSideEffect(R.id.manageWatchlistFragment)
-                        }
-                    )
-                }
-                is HomeMviViewEvent.NavigateToOngoingDealsScreen -> intent {
-                    copy(
-                        uiSideEffect = uiSideEffect {
-                            NavigateSideEffect(R.id.dealsFragment, popToRoot = true)
-                        }
-                    )
-                }
+                is HomeMviViewEvent.LoginViewEvent -> NavigateToLoginResult
+                is HomeMviViewEvent.NavigateToManageWatchlistScreen -> NavigationResult(R.id.manageWatchlistFragment)
+                is HomeMviViewEvent.NavigateToOngoingDealsScreen -> NavigationResult(
+                    R.id.dealsFragment,
+                    popToRoot = true
+                )
                 else -> throw IllegalArgumentException("Unsupported event type: $it")
             }
         }

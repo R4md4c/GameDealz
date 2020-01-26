@@ -39,7 +39,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
-import de.r4md4c.gamedealz.common.coroutines.lifecycleLog
 import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
@@ -126,7 +125,6 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         listenForDestinationChanges()
 
         viewModel.modelState
-            .lifecycleLog(name = "HomeActivity")
             .onEach { render(it) }
             .launchIn(lifecycleScope)
 

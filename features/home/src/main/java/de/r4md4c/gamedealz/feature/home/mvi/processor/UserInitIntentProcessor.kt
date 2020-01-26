@@ -17,16 +17,16 @@
 
 package de.r4md4c.gamedealz.feature.home.mvi.processor
 
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.intent
-import de.r4md4c.gamedealz.common.mvi.uiSideEffect
 import de.r4md4c.gamedealz.domain.model.UserInfo
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.AnonymousUserResult
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.KnownUserResult
+import de.r4md4c.gamedealz.feature.home.mvi.LoginFailedResult
+import de.r4md4c.gamedealz.feature.home.mvi.UserLoggedOutResult
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
-import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
@@ -49,7 +49,7 @@ internal class UserInitIntentProcessor @Inject constructor(
      * These prevent cases when user is logged in and rotates the screen, and we still notify
      * him that he's logged in.
      */
-    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<HomeMviResult> =
         viewEvent.filterIsInstance<HomeMviViewEvent.InitViewEvent>()
             .flatMapLatest {
                 val userInfo = getUserUseCase().first()
@@ -71,36 +71,13 @@ internal class UserInitIntentProcessor @Inject constructor(
                     )
                 }.distinctUntilChanged().map { result ->
                     when (result.info) {
-                        is UserInfo.LoggedInUser -> intent<HomeMviViewState> {
-                            copy(
-                                homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(result.info.username),
-                                uiSideEffect = if (result.shouldNotify) uiSideEffect {
-                                    HomeUiSideEffect.NotifyUserHasLoggedIn(
-                                        result.info.username
-                                    )
-                                } else null
-                            )
-                        }
-                        is UserInfo.LoggedInUnknownUser -> intent {
-                            copy(
-                                homeUserStatus = HomeUserStatus.LoggedIn.UnknownUser,
-                                uiSideEffect = if (result.shouldNotify) uiSideEffect {
-                                    HomeUiSideEffect.NotifyUserHasLoggedIn(
-                                        null
-                                    )
-                                } else null
-                            )
-                        }
-                        is UserInfo.UserLoggedOut -> intent {
-                            copy(homeUserStatus = HomeUserStatus.LoggedOut)
-                        }
-                        is UserInfo.LoggingUserFailed -> intent {
-                            copy(uiSideEffect = uiSideEffect {
-                                HomeUiSideEffect.ShowAuthenticationError(
-                                    result.info.reason
-                                )
-                            })
-                        }
+                        is UserInfo.LoggedInUser -> KnownUserResult(
+                            shouldNotify = result.shouldNotify,
+                            userName = result.info.username
+                        )
+                        is UserInfo.LoggedInUnknownUser -> AnonymousUserResult(result.shouldNotify)
+                        is UserInfo.UserLoggedOut -> UserLoggedOutResult
+                        is UserInfo.LoggingUserFailed -> LoginFailedResult(result.info.reason)
                     }
                 }
             }
