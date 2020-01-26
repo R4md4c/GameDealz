@@ -5,7 +5,7 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = "3.5.2"
-        const val navVersion = "2.1.0"
+        const val navVersion = "2.2.0"
         const val detektVersion = "1.4.0"
     }
 
@@ -31,21 +31,21 @@ object Libraries {
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
         const val acra = "5.2.1"
-        const val fragments = "1.1.0"
+        const val fragments = "1.2.0"
         const val constraintLayout = "2.0.0-beta2"
         const val nav_version = BuildPlugins.Versions.navVersion
-        const val paging_version = "2.1.0"
+        const val paging_version = "2.1.1"
         const val coroutines = "1.3.3"
-        const val room = "2.2.1"
+        const val room = "2.2.3"
         const val timber = "4.7.1"
-        const val lifecycle = "2.2.0-rc02"
+        const val lifecycle = "2.2.0"
         const val glide = "4.11.0"
         const val swiperefreshlayout = "1.0.0"
         const val appCompat = "1.1.0"
-        const val recyclerView = "1.1.0-beta05"
+        const val recyclerView = "1.1.0"
         const val androidX = "1.2.0-beta01"
-        const val material = "1.1.0-beta02"
-        const val workmanager = "2.2.0"
+        const val material = "1.1.0-rc02"
+        const val workmanager = "2.3.0"
         const val multidex = "2.0.1"
         const val annotations = "1.1.0"
         const val fastAdapter = "3.3.1"

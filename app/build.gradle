@@ -70,6 +70,7 @@ dependencies {
     implementation Libraries.pagingRuntimeKtx
     implementation Libraries.androidXAnnotations
     implementation Libraries.coreKtx
+    implementation Libraries.roomRuntime
 
     implementation Libraries.navigationFragmentKtx
     implementation Libraries.navigationUiKtx
