@@ -28,9 +28,15 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.ActiveRegionResult
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import de.r4md4c.gamedealz.test.FlowRecorder
 import de.r4md4c.gamedealz.test.TestDispatchers
+import de.r4md4c.gamedealz.test.recordWith
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.test.runBlockingTest
@@ -66,16 +72,27 @@ class RegionsInitIntentProcessorTest {
     }
 
     @Test
-    fun `should emit new state with changed active region when active region change `() =
+    fun `should emit new results with changed active region when active region change `() =
         runBlockingTest {
+            val channel = Channel<ActiveRegion>()
             ArrangeBuilder()
-                .withActiveRegionFromReactive(activeRegion())
+                .withActiveRegionFromReactive(channel)
+                .withGetCurrentActiveRegion(activeRegion())
 
-            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
-                mutableListOf()
+            val flowRecorder = FlowRecorder<HomeMviResult>(this)
+            processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).recordWith(flowRecorder)
+            channel.offer(activeRegion(regionCode = "US"))
+            channel.offer(activeRegion(regionCode = "EU"))
+
+            val result = flowRecorder.toList().takeLast(2)
+            assertThat(result).hasSize(2)
+            assertThat(result).isEqualTo(
+                listOf(
+                    ActiveRegionResult(region = activeRegion("US")),
+                    ActiveRegionResult(region = activeRegion("EU"))
+                )
             )
-
-            assertThat(result.last().reduce().activeRegion).isEqualTo(activeRegion())
+            channel.close()
         }
 
     @Test
@@ -89,13 +106,14 @@ class RegionsInitIntentProcessorTest {
                 mutableListOf()
             )
 
-            assertThat(result.last().reduce().activeRegion).isEqualTo(activeRegion())
+            assertThat(result.last()).isEqualTo(ActiveRegionResult(activeRegion()))
         }
 
     @Test
     fun `should call getStoresUseCase when reactive active region emits`() = runBlockingTest {
         ArrangeBuilder()
             .withActiveRegionFromReactive(activeRegion())
+            .withGetCurrentActiveRegion(activeRegion())
 
         val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
             mutableListOf()
@@ -126,6 +144,12 @@ class RegionsInitIntentProcessorTest {
                         activeRegion
                     )
                 )
+            }
+        }
+
+        fun withActiveRegionFromReactive(channel: Channel<ActiveRegion>) = apply {
+            runBlockingTest {
+                whenever(onRegionChangeUseCase.activeRegionChange()).thenReturn(channel.consumeAsFlow())
             }
         }
 

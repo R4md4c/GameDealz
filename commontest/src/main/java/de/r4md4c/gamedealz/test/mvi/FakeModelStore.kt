@@ -17,9 +17,10 @@
 
 package de.r4md4c.gamedealz.test.mvi
 
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.MviResult
 import de.r4md4c.gamedealz.common.mvi.MviState
+import de.r4md4c.gamedealz.common.mvi.ReducibleMviResult
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -28,8 +29,10 @@ import kotlinx.coroutines.flow.first
 class FakeModelStore<S : MviState>(initialState: S) : ModelStore<S> {
     private val conflatedBroadcastChannel = ConflatedBroadcastChannel(initialState)
 
-    override suspend fun process(intent: Intent<S>) {
-        conflatedBroadcastChannel.send(intent.reduce(conflatedBroadcastChannel.value))
+    override suspend fun process(result: MviResult<S>) {
+        if (result is ReducibleMviResult<S>) {
+            conflatedBroadcastChannel.send(result.reduce(conflatedBroadcastChannel.value))
+        }
     }
 
     override fun modelState(): Flow<S> = conflatedBroadcastChannel.asFlow()

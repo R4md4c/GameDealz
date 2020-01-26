@@ -5,6 +5,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation Libraries.kotlinStdLib
     implementation Libraries.kotlinCoroutines
+    implementation Libraries.slf4j
 }
 
 sourceCompatibility = "8"

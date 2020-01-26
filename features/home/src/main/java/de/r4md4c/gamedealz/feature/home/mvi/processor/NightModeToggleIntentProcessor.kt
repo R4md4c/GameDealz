@@ -17,9 +17,9 @@
 
 package de.r4md4c.gamedealz.feature.home.mvi.processor
 
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +31,7 @@ internal class NightModeToggleIntentProcessor @Inject constructor(
     private val toggleNightModeUseCase: ToggleNightModeUseCase
 ) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<HomeMviResult> =
         viewEvent.filterIsInstance<HomeMviViewEvent.NightModeToggleViewEvent>()
             .transformLatest {
                 toggleNightModeUseCase()

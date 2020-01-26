@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ModelStore<S : MviState> : DisposableHandle {
 
-    suspend fun process(intent: Intent<S>)
+    suspend fun process(result: MviResult<S>)
 
     fun modelState(): Flow<S>
 }

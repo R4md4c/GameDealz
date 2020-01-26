@@ -18,11 +18,11 @@
 package de.r4md4c.gamedealz.feature.home.mvi.processor
 
 import de.r4md4c.commonproviders.appcompat.NightMode
-import de.r4md4c.gamedealz.common.mvi.Intent
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.intent
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.ToggleNightModeResult
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -34,10 +34,10 @@ internal class NightModeInitIntentProcessor @Inject constructor(
     private val nightModeChangeUseCase: OnNightModeChangeUseCase
 ) : IntentProcessor<HomeMviViewEvent, HomeMviViewState> {
 
-    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<Intent<HomeMviViewState>> =
+    override fun process(viewEvent: Flow<HomeMviViewEvent>): Flow<HomeMviResult> =
         viewEvent.filterIsInstance<HomeMviViewEvent.InitViewEvent>().transformLatest {
             nightModeChangeUseCase.activeNightModeChange().collect { nightMode ->
-                emit(intent { copy(nightModeEnabled = nightMode == NightMode.Enabled) })
+                emit(ToggleNightModeResult(nightMode == NightMode.Enabled))
             }
         }
 }

@@ -34,11 +34,7 @@ import de.r4md4c.gamedealz.feature.home.mvi.processor.RegionsInitIntentProcessor
 import de.r4md4c.gamedealz.feature.home.mvi.processor.UserInitIntentProcessor
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 
-@Module(
-    includes = [
-        HomeMviIntentsModule::class
-    ]
-)
+@Module
 internal abstract class HomeMviModule {
 
     @Binds

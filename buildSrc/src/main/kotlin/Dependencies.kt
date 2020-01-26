@@ -94,6 +94,9 @@ object Libraries {
     const val pagingRuntimeKtx = "androidx.paging:paging-runtime-ktx:${Versions.paging_version}"
     const val androidXAnnotations = "androidx.annotation:annotation:${Versions.annotations}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.androidX}"
+    // Logging solution For pure Java modules
+    const val slf4j = "org.slf4j:slf4j-api:1.7.25"
+    const val timberSlf4j = "com.arcao:slf4j-timber:3.1@aar"
 
     const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.nav_version}"
     const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.nav_version}"

@@ -17,14 +17,15 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
+import de.r4md4c.gamedealz.test.FlowRecorder
+import de.r4md4c.gamedealz.test.TestDispatchers
+import de.r4md4c.gamedealz.test.recordWith
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -61,29 +62,27 @@ class BaseMviViewModelTest {
         testMviViewModel = TestMviViewModel(setOf(
             createProcessor {
                 it.filterIsInstance<TestMviViewEvent.Event1>()
-                    .map { intent<TestState> { copy(aField = aField + "Event1 ") } }
+                    .map { createResult<TestState> { copy(aField = aField + "Event1 ") } }
             },
             createProcessor {
                 it.filterIsInstance<TestMviViewEvent.Event2>()
-                    .map { intent<TestState> { copy(aField = aField + "Event2 ") } }
+                    .map { createResult<TestState> { copy(aField = aField + "Event2 ") } }
             }
-        ), FlowModelStore(TestState()))
+        ), FlowModelStore(TestState(), TestDispatchers))
     }
 
     @Test
     fun `it should work correctly when events are emitted`() = runBlockingTest {
-        val result = mutableListOf<TestState>()
-        val job = launch {
-            testMviViewModel.modelState.collect { result += it }
-        }
+        val flowRecorder = FlowRecorder<TestState>(this)
+        val job = testMviViewModel.modelState.recordWith(flowRecorder)
 
         testMviViewModel.onViewEvents(
             flowOf(TestMviViewEvent.Event1, TestMviViewEvent.Event2),
             this
         )
 
-        assertThat(result.drop(1)).hasSize(2)
-        assertThat(result.drop(1)).isEqualTo(
+        assertThat(flowRecorder.drop(1)).hasSize(2)
+        assertThat(flowRecorder.drop(1)).isEqualTo(
             listOf(TestState("Event1 "), TestState("Event1 Event2 "))
         )
         job.cancelAndJoin()
@@ -91,25 +90,28 @@ class BaseMviViewModelTest {
 
     @Test
     fun `it should handle thousands of events gracefully`() = runBlockingTest {
-        val result = mutableListOf<TestState>()
-        val job = launch {
-            testMviViewModel.modelState.collect { result += it }
-        }
+        val flowRecorder = FlowRecorder<TestState>(this)
+        val job = testMviViewModel.modelState.recordWith(flowRecorder)
 
         testMviViewModel.onViewEvents(flow {
             repeat(2000) { emit(TestMviViewEvent.Event1) }
         }, this)
 
-        assertThat(result.drop(1)).hasSize(2000)
-        assertThat(result.last().aField).endsWith("Event1 ")
+        assertThat(flowRecorder.drop(1)).hasSize(2000)
+        assertThat(flowRecorder.last().aField).endsWith("Event1 ")
         job.cancelAndJoin()
     }
 
     private inline fun createProcessor(
-        crossinline block: (Flow<TestMviViewEvent>) -> Flow<Intent<TestState>>
+        crossinline block: (Flow<TestMviViewEvent>) -> Flow<MviResult<TestState>>
     ): IntentProcessor<TestMviViewEvent, TestState> =
         object : IntentProcessor<TestMviViewEvent, TestState> {
-            override fun process(viewEvent: Flow<TestMviViewEvent>): Flow<Intent<TestState>> =
+            override fun process(viewEvent: Flow<TestMviViewEvent>): Flow<MviResult<TestState>> =
                 block(viewEvent)
+        }
+
+    private inline fun <T : MviState> createResult(crossinline block: T.() -> T): MviResult<T> =
+        object : ReducibleMviResult<T> {
+            override fun reduce(oldState: T): T = oldState.block()
         }
 }

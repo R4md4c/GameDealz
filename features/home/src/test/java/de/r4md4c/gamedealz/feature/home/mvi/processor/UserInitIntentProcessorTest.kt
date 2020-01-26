@@ -20,13 +20,17 @@ package de.r4md4c.gamedealz.feature.home.mvi.processor
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.common.mvi.Intent
-import de.r4md4c.gamedealz.common.mvi.uiSideEffect
 import de.r4md4c.gamedealz.domain.model.UserInfo
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
+import de.r4md4c.gamedealz.feature.home.mvi.AnonymousUserResult
+import de.r4md4c.gamedealz.feature.home.mvi.HomeMviResult
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
+import de.r4md4c.gamedealz.feature.home.mvi.KnownUserResult
+import de.r4md4c.gamedealz.feature.home.mvi.LoginFailedResult
+import de.r4md4c.gamedealz.feature.home.mvi.UserLoggedOutResult
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
-import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
+import de.r4md4c.gamedealz.test.FlowRecorder
+import de.r4md4c.gamedealz.test.recordWith
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -52,10 +56,11 @@ class UserInitIntentProcessorTest {
     fun `should emit LoggedOut when user is logged out`() = runBlockingTest {
         ArrangeBuilder().withSingleUserInfo(UserInfo.UserLoggedOut)
 
-        val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).first()
+        val recorder = FlowRecorder<HomeMviResult>(this)
+        processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).recordWith(recorder)
 
-        Assertions.assertThat(result.reduce())
-            .isEqualTo(HomeMviViewState().copy(homeUserStatus = HomeUserStatus.LoggedOut))
+        Assertions.assertThat(recorder.last())
+            .isEqualTo(UserLoggedOutResult)
     }
 
     @Test
@@ -65,11 +70,7 @@ class UserInitIntentProcessorTest {
 
             val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).first()
 
-            Assertions.assertThat(result.reduce()).isEqualTo(
-                HomeMviViewState().copy(
-                    homeUserStatus = HomeUserStatus.LoggedOut,
-                    uiSideEffect = uiSideEffect { HomeUiSideEffect.ShowAuthenticationError(message = "aMessage") }
-                ))
+            Assertions.assertThat(result).isEqualTo(LoginFailedResult("aMessage"))
         }
 
     @Test
@@ -79,11 +80,8 @@ class UserInitIntentProcessorTest {
 
             val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).first()
 
-            Assertions.assertThat(result.reduce()).isEqualTo(
-                HomeMviViewState().copy(
-                    homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser")
-                )
-            )
+            Assertions.assertThat(result)
+                .isEqualTo(KnownUserResult(userName = "aUser", shouldNotify = false))
         }
 
     @Test
@@ -100,11 +98,8 @@ class UserInitIntentProcessorTest {
                 mutableListOf()
             )
 
-            Assertions.assertThat(result.last().reduce()).isEqualTo(
-                HomeMviViewState().copy(
-                    homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser"),
-                    uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedIn("aUser") }
-                ))
+            Assertions.assertThat(result.last())
+                .isEqualTo(KnownUserResult(userName = "aUser", shouldNotify = true))
         }
 
     @Test
@@ -117,15 +112,11 @@ class UserInitIntentProcessorTest {
                 )
             )
 
-            val result = processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).toCollection(
-                mutableListOf()
-            )
+            val recorder = FlowRecorder<HomeMviResult>(this)
+            processor.process(flowOf(HomeMviViewEvent.InitViewEvent)).recordWith(recorder)
 
-            Assertions.assertThat(result.last().reduce()).isEqualTo(
-                HomeMviViewState().copy(
-                    homeUserStatus = HomeUserStatus.LoggedIn.UnknownUser,
-                    uiSideEffect = uiSideEffect { HomeUiSideEffect.NotifyUserHasLoggedIn(null) }
-                ))
+            Assertions.assertThat(recorder.toList())
+                .isEqualTo(listOf(UserLoggedOutResult, AnonymousUserResult(true)))
         }
 
     @Test
@@ -138,11 +129,8 @@ class UserInitIntentProcessorTest {
                 mutableListOf()
             )
 
-            Assertions.assertThat(result.last().reduce()).isEqualTo(
-                HomeMviViewState().copy(
-                    homeUserStatus = HomeUserStatus.LoggedIn.KnownUser(username = "aUser")
-                )
-            )
+            Assertions.assertThat(result.last())
+                .isEqualTo(KnownUserResult(userName = "aUser", shouldNotify = false))
         }
 
     private fun Intent<HomeMviViewState>.reduce() = this.reduce(HomeMviViewState())

@@ -69,6 +69,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':core')
 
+    testImplementation project(':commontest')
     testImplementation TestLibraries.robolectric
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit

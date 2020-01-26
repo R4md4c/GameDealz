@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
+import de.r4md4c.gamedealz.common.IDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -26,23 +27,43 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 
-open class FlowModelStore<S : MviState>(startingState: S) : ModelStore<S>,
+open class FlowModelStore<S : MviState>(
+    startingState: S,
+    dispatchers: IDispatchers
+) : ModelStore<S>,
     CoroutineScope by MainScope() {
 
-    private val intents: Channel<Intent<S>> = Channel()
+    private val logger = LoggerFactory.getLogger(FlowModelStore::class.java.simpleName)
+
+    private val intents: Channel<MviResult<S>> = Channel()
     private val store = ConflatedBroadcastChannel(startingState)
 
     init {
         launch {
             while (isActive) {
-                store.offer(intents.receive().reduce(store.value))
+                val result = intents.receive()
+                val newState = withContext(dispatchers.Default) {
+                    when (result) {
+                        is ReducibleMviResult<S> -> {
+                            logger.debug("State Pre-reduction: ${store.value}")
+                            logger.debug("Got Result: $result")
+                            result.reduce(store.value).also {
+                                logger.debug("State After-reduction: $it")
+                            }
+                        }
+                        else -> null
+                    }
+                }
+                newState?.let(store::offer)
             }
         }
     }
 
-    override suspend fun process(intent: Intent<S>) {
-        intents.send(intent)
+    override suspend fun process(result: MviResult<S>) {
+        intents.send(result)
     }
 
     override fun modelState(): Flow<S> = store.asFlow()

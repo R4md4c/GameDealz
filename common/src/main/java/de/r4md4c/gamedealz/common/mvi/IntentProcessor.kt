@@ -20,5 +20,5 @@ package de.r4md4c.gamedealz.common.mvi
 import kotlinx.coroutines.flow.Flow
 
 interface IntentProcessor<E : MviViewEvent, S : MviState> {
-    fun process(viewEvent: Flow<E>): Flow<Intent<S>>
+    fun process(viewEvent: Flow<E>): Flow<MviResult<S>>
 }

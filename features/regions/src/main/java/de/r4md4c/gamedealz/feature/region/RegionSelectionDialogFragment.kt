@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.region
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -115,17 +116,18 @@ class RegionSelectionDialogFragment : DialogFragment() {
         }
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     private fun setupRegions(regionIndex: Int?) {
         viewModel.requestRegions(activeRegion, regionIndex)
-        viewModel.regions.observe(viewLifecycleOwner, Observer { regionSelectedModel ->
+        viewModel.regions.observe(this, Observer { regionSelectedModel ->
             with(dialogView) {
                 region_spinner.adapter =
-                        ArrayAdapter(
-                            context,
-                            android.R.layout.simple_dropdown_item_1line,
-                            android.R.id.text1,
-                            regionSelectedModel.regions
-                        )
+                    ArrayAdapter(
+                        context,
+                        android.R.layout.simple_dropdown_item_1line,
+                        android.R.id.text1,
+                        regionSelectedModel.regions
+                    )
                 region_spinner.setSelection(regionSelectedModel.activeRegionIndex)
 
                 region_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -146,17 +148,18 @@ class RegionSelectionDialogFragment : DialogFragment() {
         })
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     private fun setupCountries(countryIndex: Int?) {
         viewModel.requestCountriesUnderRegion(activeRegion, countryIndex)
-        viewModel.countries.observe(viewLifecycleOwner, Observer { selectedCountryModel ->
+        viewModel.countries.observe(this, Observer { selectedCountryModel ->
             with(dialogView) {
                 country_spinner.adapter =
-                        ArrayAdapter(
-                            context,
-                            android.R.layout.simple_dropdown_item_1line,
-                            android.R.id.text1,
-                            selectedCountryModel.countries
-                        )
+                    ArrayAdapter(
+                        context,
+                        android.R.layout.simple_dropdown_item_1line,
+                        android.R.id.text1,
+                        selectedCountryModel.countries
+                    )
                 selectedCountryModel.activeCountryIndex?.let {
                     country_spinner.setSelection(it)
                 }
