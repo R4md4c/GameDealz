@@ -117,7 +117,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     private fun setupRegions(regionIndex: Int?) {
         viewModel.requestRegions(activeRegion, regionIndex)
-        viewModel.regions.observe(this, Observer { regionSelectedModel ->
+        viewModel.regions.observe(viewLifecycleOwner, Observer { regionSelectedModel ->
             with(dialogView) {
                 region_spinner.adapter =
                         ArrayAdapter(
@@ -148,7 +148,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     private fun setupCountries(countryIndex: Int?) {
         viewModel.requestCountriesUnderRegion(activeRegion, countryIndex)
-        viewModel.countries.observe(this, Observer { selectedCountryModel ->
+        viewModel.countries.observe(viewLifecycleOwner, Observer { selectedCountryModel ->
             with(dialogView) {
                 country_spinner.adapter =
                         ArrayAdapter(
