@@ -1,10 +1,11 @@
-const val kotlinVersion = "1.3.61"
+import buildSrc.BuildConfig
 
+const val kotlinVersion = BuildConfig.KOTLIN_VERSION
 
 object BuildPlugins {
 
     object Versions {
-        const val buildToolsVersion = "3.5.2"
+        const val buildToolsVersion = BuildConfig.AGP_VERSION
         const val navVersion = "2.2.0"
         const val detektVersion = "1.4.0"
     }
@@ -32,7 +33,7 @@ object Libraries {
         const val okio = "2.2.2"
         const val acra = "5.2.1"
         const val fragments = "1.2.0"
-        const val constraintLayout = "2.0.0-beta2"
+        const val constraintLayout = "2.0.0-beta3"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.1"
         const val coroutines = "1.3.3"

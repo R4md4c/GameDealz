@@ -61,4 +61,4 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-apply plugin: DaggerPlugin
+apply plugin: GameDealzPlugin
