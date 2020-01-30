@@ -1,3 +1,5 @@
+apply from: 'gradle/scripts/build-cache-settings.gradle'
+
 include ':app', ':common-ui', ':auth',
         ':network',
         ':data',

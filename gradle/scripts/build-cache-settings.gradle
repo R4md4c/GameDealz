@@ -1,0 +1,8 @@
+boolean isCiServer = System.getenv().containsKey("CI")
+
+buildCache {
+    local {
+        enabled = !isCiServer
+        removeUnusedEntriesAfterDays = 7
+    }
+}

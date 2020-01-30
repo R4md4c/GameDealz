@@ -17,12 +17,12 @@
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
- * A plugin that applies Dagger DI library through all modules.
+ * A plugin that applies common configuration to all module projects.
  */
-class DaggerPlugin : Plugin<Project> {
+class GameDealzPlugin : Plugin<Project> {
 
     companion object {
         private const val PLUGIN_KOTLIN = "kotlin"
@@ -32,7 +32,8 @@ class DaggerPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.subprojects {
-            this.afterEvaluate {
+            applyKotlinCompilerOptions()
+            afterEvaluate {
                 afterEvaluateProject(this)
             }
         }
@@ -52,6 +53,16 @@ class DaggerPlugin : Plugin<Project> {
                 this.dependencies.add("kaptAndroidTest", Libraries.assistedInjectCompiler)
                 this.dependencies.add("kaptAndroidTest", Libraries.daggerCompiler)
             }
+        }
+    }
+
+    private fun Project.applyKotlinCompilerOptions() {
+        tasks.withType(KotlinCompile::class.java).all {
+            kotlinOptions.jvmTarget = "1.8"
+            kotlinOptions.freeCompilerArgs = listOf(
+                "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+            )
         }
     }
 
