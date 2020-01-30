@@ -31,7 +31,7 @@ object Libraries {
         const val retrofit = "2.6.3"
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
-        const val acra = "5.2.1"
+        const val acra = "5.5.0"
         const val fragments = "1.2.0"
         const val constraintLayout = "2.0.0-beta3"
         const val nav_version = BuildPlugins.Versions.navVersion
@@ -51,7 +51,7 @@ object Libraries {
         const val annotations = "1.1.0"
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
-        const val dagger = "2.25.4"
+        const val dagger = "2.26"
         const val assistedInject = "0.5.2"
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
