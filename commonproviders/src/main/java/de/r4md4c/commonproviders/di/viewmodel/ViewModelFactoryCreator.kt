@@ -17,18 +17,13 @@
 
 package de.r4md4c.commonproviders.di.viewmodel
 
-import androidx.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.Multibinds
+import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
+import androidx.savedstate.SavedStateRegistryOwner
 
-@Module
-abstract class ViewModelInjectionModule {
-
-    @Multibinds
-    internal abstract fun multiBindsAssistedViewModelFactory():
-            Map<Class<out ViewModel>, AssistedSavedStateViewModelFactory<out ViewModel>>
-
-    @Binds
-    internal abstract fun bindsViewModelFactory(it: DaggerViewModelFactory): ViewModelFactoryCreator
+interface ViewModelFactoryCreator {
+    fun create(
+        savedStateOwner: SavedStateRegistryOwner,
+        defaultArgs: Bundle? = null
+    ): ViewModelProvider.Factory
 }

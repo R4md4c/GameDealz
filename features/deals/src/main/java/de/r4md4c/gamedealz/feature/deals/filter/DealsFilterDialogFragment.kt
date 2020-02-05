@@ -24,9 +24,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.feature.deals.R
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class DealsFilterDialogFragment : BottomSheetDialogFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
     private val itemAdapter by lazy {
         FastItemAdapter<FilterItem>().also {
@@ -48,7 +48,12 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private val filtersViewModel by viewModels<DealsFilterViewModel> { viewModelFactory }
+    private val filtersViewModel by viewModels<DealsFilterViewModel> {
+        viewModelFactory.create(
+            this,
+            null
+        )
+    }
 
     override fun onAttach(context: Context) {
         onInject(context)

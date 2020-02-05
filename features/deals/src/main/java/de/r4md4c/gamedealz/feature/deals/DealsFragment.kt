@@ -26,12 +26,12 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
@@ -47,12 +47,12 @@ import javax.inject.Inject
 class DealsFragment : BaseFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
     @Inject
     lateinit var stateVisibilityHandler: StateVisibilityHandler
 
-    private val dealsViewModel by viewModels<DealsViewModel> { viewModelFactory }
+    private val dealsViewModel by viewModels<DealsViewModel> { viewModelFactory.create(this) }
 
     private val dealsAdapter by lazy {
         DealsAdapter {

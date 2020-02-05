@@ -27,7 +27,6 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -39,6 +38,7 @@ import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.stfalcon.imageviewer.StfalconImageViewer
 import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
@@ -75,7 +75,7 @@ class DetailsFragment : BaseFragment() {
     private val plainId by lazy { fromBundle(arguments!!).plainId }
 
     @Inject
-    lateinit var viewFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactoryCreator: ViewModelFactoryCreator
 
     @field:ForActivity
     @Inject
@@ -93,7 +93,11 @@ class DetailsFragment : BaseFragment() {
     @Inject
     lateinit var navigator: Navigator
 
-    private val detailsViewModel by viewModels<DetailsViewModel> { viewFactory }
+    private val detailsViewModel by viewModels<DetailsViewModel> {
+        viewModelFactoryCreator.create(
+            this
+        )
+    }
 
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
