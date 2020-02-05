@@ -23,7 +23,6 @@ import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
@@ -36,6 +35,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
@@ -71,7 +71,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     private val viewEventsChannel = Channel<HomeMviViewEvent>()
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
     @Inject
     lateinit var authDelegate: AuthActivityDelegate
@@ -79,7 +79,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     @Inject
     lateinit var viewNotifier: ViewNotifier
 
-    private val viewModel by viewModels<HomeViewModel> { viewModelFactory }
+    private val viewModel by viewModels<HomeViewModel> { viewModelFactory.create(this) }
 
     private val navController
         get() = findNavController(R.id.nav_host_fragment)

@@ -29,8 +29,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.feature.region.di.DaggerRegionsComponent
@@ -42,9 +42,9 @@ import kotlin.properties.Delegates
 class RegionSelectionDialogFragment : DialogFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
-    private val viewModel by viewModels<RegionSelectionViewModel> { viewModelFactory }
+    private val viewModel by viewModels<RegionSelectionViewModel> { viewModelFactory.create(this) }
 
     private var dialogView: View by Delegates.notNull()
 

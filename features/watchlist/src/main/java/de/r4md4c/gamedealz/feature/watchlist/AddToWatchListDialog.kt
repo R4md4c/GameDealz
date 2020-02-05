@@ -41,7 +41,6 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -49,6 +48,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
@@ -72,12 +72,16 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
     @Inject
     lateinit var viewNotifier: ViewNotifier
 
-    private val addToWatchListViewModel by viewModels<AddToWatchListViewModel> { viewModelFactory }
+    private val addToWatchListViewModel by viewModels<AddToWatchListViewModel> {
+        viewModelFactory.create(
+            this
+        )
+    }
 
     private val bottomSheetCallback by lazy { AddToWatchListBottomSheetCallback() }
 

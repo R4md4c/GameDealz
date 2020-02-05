@@ -17,18 +17,12 @@
 
 package de.r4md4c.commonproviders.di.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.Multibinds
 
-@Module
-abstract class ViewModelInjectionModule {
-
-    @Multibinds
-    internal abstract fun multiBindsAssistedViewModelFactory():
-            Map<Class<out ViewModel>, AssistedSavedStateViewModelFactory<out ViewModel>>
-
-    @Binds
-    internal abstract fun bindsViewModelFactory(it: DaggerViewModelFactory): ViewModelFactoryCreator
+/**
+ * Main interface for the Assisted Inject ViewModels that will use the SavedStateHandle.
+ */
+interface AssistedSavedStateViewModelFactory<T : ViewModel> {
+    fun create(savedStateHandle: SavedStateHandle): T
 }

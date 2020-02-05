@@ -28,11 +28,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.commonproviders.date.DateFormatter
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
@@ -59,7 +59,7 @@ class SearchFragment : BaseFragment() {
     private var searchView: SearchView? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
     @Inject
     lateinit var navigator: Navigator
@@ -74,7 +74,7 @@ class SearchFragment : BaseFragment() {
     @Inject
     lateinit var stateVisibilityHandler: StateVisibilityHandler
 
-    private val viewModel by viewModels<SearchViewModel> { viewModelFactory }
+    private val viewModel by viewModels<SearchViewModel> { viewModelFactory.create(this) }
 
     private var searchResultsLoaded = false
 

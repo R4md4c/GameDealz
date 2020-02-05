@@ -28,7 +28,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -42,6 +41,7 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter_extensions.UndoHelper
 import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback
+import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
@@ -70,7 +70,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     private val itemsAdapter by lazy { FastItemAdapter<ManageWatchlistItem>() }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactoryCreator
 
     @field:ForActivity
     @Inject
@@ -82,7 +82,11 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     @Inject
     lateinit var shortcutManager: ShortcutManager
 
-    private val watchlistViewModel: ManageWatchlistViewModel by viewModels { viewModelFactory }
+    private val watchlistViewModel: ManageWatchlistViewModel by viewModels {
+        viewModelFactory.create(
+            this
+        )
+    }
 
     private val swipeToRefresh: SwipeRefreshLayout
         get() = view!!.findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
