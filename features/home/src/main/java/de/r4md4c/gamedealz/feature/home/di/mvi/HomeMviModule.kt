@@ -20,9 +20,10 @@ package de.r4md4c.gamedealz.feature.home.di.mvi
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
-import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.MviViewModel
+import de.r4md4c.gamedealz.feature.home.HomeViewModel
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviModelStore
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.processor.LogoutIntentProcessor
@@ -72,7 +73,9 @@ internal abstract class HomeMviModule {
     abstract fun bindsNavigationEventsProcessor(it: NavigationEventsProcessor):
             IntentProcessor<HomeMviViewEvent, HomeMviViewState>
 
-    @FeatureScope
     @Binds
     abstract fun bindsHomeMviStore(it: HomeMviModelStore): ModelStore<HomeMviViewState>
+
+    @Binds
+    abstract fun bindsHomeMviViewModel(it: HomeViewModel): MviViewModel<HomeMviViewState, HomeMviViewEvent>
 }

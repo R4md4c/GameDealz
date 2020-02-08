@@ -25,6 +25,7 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.auth.AuthActivityDelegate
+import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
@@ -37,7 +38,6 @@ import de.r4md4c.gamedealz.test.scenario.InjectableActivityScenario
 import de.r4md4c.gamedealz.test.scenario.injectableActivityScenario
 import de.r4md4c.gamedealz.test.utils.Page.Companion.on
 import de.r4md4c.gamedealz.test.utils.createFragmentFactory
-import de.r4md4c.gamedealz.test.utils.createViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -68,7 +68,7 @@ class HomeActivityTest {
                         else -> Fragment()
                     }
                 }
-                viewModelFactory = createViewModelFactory { homeViewModel }
+                viewModel = mockViewModel
                 viewNotifier = mockViewNotifier
                 authDelegate = mockAuthDelegate
             }
@@ -81,7 +81,7 @@ class HomeActivityTest {
     private lateinit var mockAuthDelegate: AuthActivityDelegate
 
     @Mock
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var mockViewModel: MviViewModel<HomeMviViewState, HomeMviViewEvent>
 
     private val eventsCollections = mutableListOf<HomeMviViewEvent>()
 
@@ -182,7 +182,7 @@ class HomeActivityTest {
     ) {
 
         init {
-            whenever(homeViewModel.onViewEvents(any(), any())).doAnswer { invocationOnMock ->
+            whenever(mockViewModel.onViewEvents(any(), any())).doAnswer { invocationOnMock ->
                 val flow = invocationOnMock.getArgument<Flow<HomeMviViewEvent>>(0)
                 val scope = invocationOnMock.getArgument<CoroutineScope>(1)
 
@@ -195,7 +195,7 @@ class HomeActivityTest {
         }
 
         fun withState(state: HomeMviViewState) = apply {
-            whenever(homeViewModel.modelState).doReturn(flowOf(state))
+            whenever(mockViewModel.modelState).doReturn(flowOf(state))
         }
 
         fun arrange() {

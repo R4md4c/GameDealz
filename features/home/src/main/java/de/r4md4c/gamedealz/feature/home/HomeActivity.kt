@@ -19,7 +19,6 @@ package de.r4md4c.gamedealz.feature.home
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -35,16 +34,18 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
+import de.r4md4c.commonproviders.di.viewmodel.components
 import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
+import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
+import de.r4md4c.gamedealz.feature.home.di.DaggerHomeViewModelComponent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
 import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
@@ -71,15 +72,17 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     private val viewEventsChannel = Channel<HomeMviViewEvent>()
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactoryCreator
-
-    @Inject
     lateinit var authDelegate: AuthActivityDelegate
 
     @Inject
     lateinit var viewNotifier: ViewNotifier
 
-    private val viewModel by viewModels<HomeViewModel> { viewModelFactory.create(this) }
+    @Inject
+    lateinit var viewModel: MviViewModel<HomeMviViewState, HomeMviViewEvent>
+
+    private val homeScopedComponent by components {
+        DaggerHomeViewModelComponent.factory().create(coreComponent())
+    }
 
     private val navController
         get() = findNavController(R.id.nav_host_fragment)
@@ -349,10 +352,10 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         drawer.getDrawerItem(identifier.toLong()) as? T
 
     private fun onInject() {
-        if (::viewModelFactory.isInitialized.not()) {
-            coreComponent().also {
+        if (::viewModel.isInitialized.not()) {
+            coreComponent().also { coreComponent ->
                 DaggerHomeComponent.factory()
-                    .create(this, it, it.authComponent)
+                    .create(this, coreComponent, coreComponent.authComponent, homeScopedComponent)
                     .inject(this)
             }
         }

@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
+import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.FlowRecorder
 import de.r4md4c.gamedealz.test.TestDispatchers
 import de.r4md4c.gamedealz.test.recordWith
@@ -29,11 +30,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.robolectric.RobolectricTestRunner
 
 private sealed class TestMviViewEvent : MviViewEvent {
     object Event1 : TestMviViewEvent()
@@ -45,10 +45,12 @@ private data class TestState(val aField: String = "") : MviState
 private class TestMviViewModel(
     intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<TestMviViewEvent, TestState>>,
     store: ModelStore<TestState>
-) : BaseMviViewModel<TestMviViewEvent, TestState>(intentProcessors, store)
+) : MviViewModel<TestState, TestMviViewEvent> by RealMviViewModel(intentProcessors, store)
 
-@RunWith(RobolectricTestRunner::class)
-class BaseMviViewModelTest {
+class RealMviViewModelTest {
+
+    @get:Rule
+    val coroutinesRule = CoroutinesTestRule()
 
     @Mock
     private lateinit var mockStore: ModelStore<TestState>
@@ -68,7 +70,8 @@ class BaseMviViewModelTest {
                 it.filterIsInstance<TestMviViewEvent.Event2>()
                     .map { createResult<TestState> { copy(aField = aField + "Event2 ") } }
             }
-        ), FlowModelStore(TestState(), TestDispatchers))
+        ), FlowModelStore(TestDispatchers, createSimpleStateFactory { TestState() })
+        )
     }
 
     @Test
