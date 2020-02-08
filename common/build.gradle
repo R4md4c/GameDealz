@@ -6,6 +6,12 @@ dependencies {
     implementation Libraries.kotlinStdLib
     implementation Libraries.kotlinCoroutines
     implementation Libraries.slf4j
+
+    testImplementation TestLibraries.mockitoKotlin
+    testImplementation TestLibraries.assertjCore
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.coroutinesTest
+    testImplementation project(':commontest')
 }
 
 sourceCompatibility = "8"

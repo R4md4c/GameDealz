@@ -15,20 +15,11 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.mvi
+package de.r4md4c.gamedealz.common.di
 
-import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.di.ViewModelScope
-import de.r4md4c.gamedealz.common.mvi.FlowModelStore
-import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.common.mvi.createSimpleStateFactory
-import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import javax.inject.Inject
+import javax.inject.Scope
 
-@ViewModelScope
-internal class HomeMviModelStore @Inject constructor(
-    dispatchers: IDispatchers
-) : ModelStore<HomeMviViewState> by FlowModelStore(
-    dispatchers,
-    createSimpleStateFactory { HomeMviViewState() }
-)
+@Scope
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ViewModelScope

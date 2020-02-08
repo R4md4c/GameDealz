@@ -39,6 +39,8 @@ dependencies {
     implementation Libraries.kotlinStdLib
     implementation Libraries.kotlinCoroutines
     implementation Libraries.lifecycleViewModelSavedState
+    implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.fragmentsKtx
 
     implementation Libraries.timber
     implementation project(':common')

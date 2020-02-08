@@ -30,16 +30,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 
-open class FlowModelStore<S : MviState>(
-    startingState: S,
-    dispatchers: IDispatchers
+class FlowModelStore<S : MviState>(
+    dispatchers: IDispatchers,
+    initialStateFactory: InitialStateFactory<S>
 ) : ModelStore<S>,
     CoroutineScope by MainScope() {
 
     private val logger = LoggerFactory.getLogger(FlowModelStore::class.java.simpleName)
 
     private val intents: Channel<MviResult<S>> = Channel()
-    private val store = ConflatedBroadcastChannel(startingState)
+    private val store by lazy { ConflatedBroadcastChannel(initialStateFactory.create()) }
 
     init {
         launch {
@@ -55,6 +55,9 @@ open class FlowModelStore<S : MviState>(
                             }
                         }
                         else -> null
+                    }.takeIf {
+                        // Only return a new state when there is a change.
+                        it != store.value
                     }
                 }
                 newState?.let(store::offer)

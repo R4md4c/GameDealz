@@ -17,28 +17,29 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import de.r4md4c.gamedealz.common.annotation.Mockable
+import de.r4md4c.gamedealz.common.unsafeLazy
 import hu.akarnokd.kotlin.flow.publish
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.broadcastIn
 import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
-@Mockable
-abstract class BaseMviViewModel<Event : MviViewEvent, State : MviState>(
+class RealMviViewModel<Event : MviViewEvent, State : MviState>(
     private val intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<Event, State>>,
     private val store: ModelStore<State>,
     initEvent: Event? = null
-) : ViewModel() {
+) : MviViewModel<State, Event> {
+
+    private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     private val eventsChannel = Channel<Event>()
 
@@ -56,15 +57,15 @@ abstract class BaseMviViewModel<Event : MviViewEvent, State : MviState>(
             .launchIn(viewModelScope)
     }
 
-    val modelState = store.modelState().distinctUntilChanged()
+    override val modelState by unsafeLazy { store.modelState() }
 
-    fun onViewEvents(viewEventFlow: Flow<Event>, viewScope: CoroutineScope) {
+    override fun onViewEvents(viewEventFlow: Flow<Event>, viewScope: CoroutineScope) {
         viewEventFlow.onEach { eventsChannel.send(it) }.launchIn(viewScope)
     }
 
     override fun onCleared() {
-        super.onCleared()
         eventsChannel.cancel()
+        viewModelScope.cancel()
         store.dispose()
     }
 }

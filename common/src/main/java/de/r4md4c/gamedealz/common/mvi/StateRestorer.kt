@@ -15,20 +15,6 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.home.di
+package de.r4md4c.gamedealz.common.mvi
 
-import androidx.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
-import de.r4md4c.gamedealz.feature.home.HomeViewModel
-
-@Module
-abstract class HomeViewModelBindsModule {
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(HomeViewModel::class)
-    internal abstract fun bindsHomeViewModelBinds(it: HomeViewModel): ViewModel
-}
+class StateRestorer<S : MviState>(val toRestoredState: Lazy<S>)

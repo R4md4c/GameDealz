@@ -41,8 +41,8 @@ interface CoreComponent : UseCaseComponent {
 
     val dateFormatter: DateFormatter
 
-    @ForApplication
-    fun resourcesProvider(): ResourcesProvider
+    @get:ForApplication
+    val resourcesProvider: ResourcesProvider
 
     val watchlistPushNotifier: Notifier<@JvmSuppressWildcards WatcheeNotificationModel>
 }
