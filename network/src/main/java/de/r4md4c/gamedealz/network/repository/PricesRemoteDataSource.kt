@@ -17,10 +17,10 @@
 
 package de.r4md4c.gamedealz.network.repository
 
-import de.r4md4c.gamedealz.network.model.HistoricalLow
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
+import de.r4md4c.gamedealz.network.model.PriceDTO
 
-interface PricesRemoteRepository {
+interface PricesRemoteDataSource {
 
     /**
      * Retrieve prices for a list of plain ids.
@@ -29,7 +29,7 @@ interface PricesRemoteRepository {
      * @param shops the shops that these plain ids will be searched for.
      * @param regionCode Region code to get more accurate results.
      * @param countryCode The country code, along with region code to get more accurate results.
-     * @param added the unix timestamp to get prices after that period.
+     * @param added the unix timestamp to get prices after that period.d
      *
      * @return A map between the requested plain ids and the list of prices that was retrieved.
      */
@@ -39,7 +39,7 @@ interface PricesRemoteRepository {
         regionCode: String? = null,
         countryCode: String? = null,
         added: Long? = null
-    ): Map<String, List<Price>>
+    ): Map<String, List<PriceDTO>>
 
     /**
      * Retrieve the historical low for a list of plain ids.
@@ -56,5 +56,5 @@ interface PricesRemoteRepository {
         shops: Set<String> = emptySet(),
         regionCode: String? = null,
         countryCode: String? = null
-    ): Map<String, HistoricalLow>
+    ): Map<String, HistoricalLowDTO>
 }

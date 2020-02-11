@@ -27,8 +27,8 @@ import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.model.Shop
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.model.ShopDTO
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -90,7 +90,16 @@ class PickMinimalWatcheesPricesHelperTest {
                     WATCHEE_WITH_STORES.copy(stores = setOf(STORE.copy(id = "not found")))
                 )
 
-            assertThat(helper.pick(mapOf("plainId" to listOf(PRICE, PRICE.copy(shop = Shop("2", "")))))).isEmpty()
+            assertThat(
+                helper.pick(
+                    mapOf(
+                        "plainId" to listOf(
+                            PRICE,
+                            PRICE.copy(shop = ShopDTO("2", ""))
+                        )
+                    )
+                )
+            ).isEmpty()
         }
     }
 
@@ -246,7 +255,7 @@ class PickMinimalWatcheesPricesHelperTest {
     }
 
     private companion object {
-        val PRICE = Price(1f, 1f, 2, "", Shop("1", ""), emptySet())
+        val PRICE = PriceDTO(1f, 1f, 2, "", ShopDTO("1", ""), emptySet())
 
         val WATCHEE = Watchee(1, "plainId", "", 0, 0, 0f, "", 0f, "", "", "")
 

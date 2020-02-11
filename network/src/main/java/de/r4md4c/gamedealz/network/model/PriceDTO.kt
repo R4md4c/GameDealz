@@ -21,14 +21,14 @@ import com.squareup.moshi.Json
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
-data class Shop(val id: String, val name: String)
+data class ShopDTO(val id: String, val name: String)
 
 @JsonSerializable
-data class Price(
+data class PriceDTO(
     @Json(name = "price_new") val newPrice: Float,
     @Json(name = "price_old") val oldPrice: Float,
     @Json(name = "price_cut") val priceCutPercentage: Short,
     val url: String,
-    val shop: Shop,
+    val shop: ShopDTO,
     val drm: Set<String>
 )

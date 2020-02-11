@@ -32,10 +32,10 @@ import de.r4md4c.gamedealz.domain.model.toModel
 import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
-import de.r4md4c.gamedealz.network.model.HistoricalLow
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.steam.AppDetails
-import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
+import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
 import de.r4md4c.gamedealz.network.repository.SteamRemoteRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -46,7 +46,7 @@ import javax.inject.Inject
 internal class GetPlainDetailsImpl @Inject constructor(
     private val steamRemoteRepository: SteamRemoteRepository,
     private val plainsRepository: PlainsRepository,
-    private val pricesRemoteRepository: PricesRemoteRepository,
+    private val pricesRemoteDataSource: PricesRemoteDataSource,
     private val storesRepository: StoresRepository,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase
 ) : GetPlainDetails {
@@ -92,7 +92,7 @@ internal class GetPlainDetailsImpl @Inject constructor(
         activeRegion: ActiveRegion
     ): Deferred<Map<ShopModel, PriceModelHistoricalLowModelPair>> = withContext(IO) {
         async {
-            val currentPrices = pricesRemoteRepository.retrievesPrices(
+            val currentPrices = pricesRemoteDataSource.retrievesPrices(
                 plainIds = setOf(plainId),
                 countryCode = activeRegion.country.code,
                 regionCode = activeRegion.regionCode
@@ -104,7 +104,7 @@ internal class GetPlainDetailsImpl @Inject constructor(
             // Retrieve the historical lows by looping through the shops inside current prices and convert them to
             // Historical Models.
             val historicalLowPrices = currentPrices.mapNotNull {
-                pricesRemoteRepository.historicalLow(
+                pricesRemoteDataSource.historicalLow(
                     setOf(plainId),
                     setOf(it.shop.id),
                     regionCode = activeRegion.regionCode,
@@ -120,13 +120,13 @@ internal class GetPlainDetailsImpl @Inject constructor(
     private fun String.getIdFromSteamAppId() =
         substring(indexOf('/') + 1)
 
-    private suspend fun pricesToPriceModel(prices: List<Price>?): List<PriceModel> =
+    private suspend fun pricesToPriceModel(prices: List<PriceDTO>?): List<PriceModel> =
         prices?.mapNotNull {
             val shop = storesRepository.findById(it.shop.id) ?: return@mapNotNull null
             it.toPriceModel(shop.color)
         } ?: emptyList()
 
-    private suspend fun historicalLowToModel(historicalLow: HistoricalLow): HistoricalLowModel? =
+    private suspend fun historicalLowToModel(historicalLow: HistoricalLowDTO): HistoricalLowModel? =
         historicalLow.run {
             if (this.shop != null) {
                 val shop = storesRepository.findById(this.shop!!.id) ?: return@run null

@@ -21,8 +21,8 @@ import com.squareup.moshi.Json
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
-data class HistoricalLow(
-    val shop: Shop?,
+data class HistoricalLowDTO(
+    val shop: ShopDTO?,
     val price: Float?,
     @Json(name = "cut") val priceCutPercentage: Short?,
     val added: Long?

@@ -21,7 +21,7 @@ import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.repository.WatchlistRepository
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -42,7 +42,7 @@ internal class PickMinimalWatcheesPricesHelper @Inject constructor(
      * @param prices A Map between the plain Ids and list of prices of that was retrieved from the server.
      * @return A map between the minimum price as key and the [Watchee] model that has reached the target price.
      */
-    suspend fun pick(prices: Map<String, List<Price>>): Map<Price, Watchee> {
+    suspend fun pick(prices: Map<String, List<PriceDTO>>): Map<PriceDTO, Watchee> {
         return prices.mapNotNull {
             val watchee = watchlistRepository.findById(it.key).first() ?: return@mapNotNull null
             val watcheesStoresIds =

@@ -18,8 +18,8 @@
 package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -31,7 +31,7 @@ import javax.inject.Inject
  * to retrieve the prices from a group of watchees with their stores.
  */
 internal class RetrievePricesGroupedByCountriesHelper @Inject constructor(
-    private val pricesRemoteRepository: PricesRemoteRepository
+    private val pricesRemoteDataSource: PricesRemoteDataSource
 ) {
 
     /**
@@ -41,13 +41,14 @@ internal class RetrievePricesGroupedByCountriesHelper @Inject constructor(
      * @param watchees the watchees that you want them to be queried.
      * @return A map of plain Ids and the list of their prices from the server.
      */
-    suspend fun prices(watchees: Iterable<Watchee>): Map<String, List<Price>> {
+    suspend fun prices(watchees: Iterable<Watchee>): Map<String, List<PriceDTO>> {
         val countryGroupedWatchees = watchees.groupBy { it.regionCode to it.countryCode }
 
-        val resultMap = mutableMapOf<String, List<Price>>()
-        val retrievedPricesMapList: List<Deferred<Map<String, List<Price>>>> = countryGroupedWatchees.map { entry ->
+        val resultMap = mutableMapOf<String, List<PriceDTO>>()
+        val retrievedPricesMapList: List<Deferred<Map<String, List<PriceDTO>>>> =
+            countryGroupedWatchees.map { entry ->
             GlobalScope.async {
-                pricesRemoteRepository.retrievesPrices(
+                pricesRemoteDataSource.retrievesPrices(
                     plainIds = entry.value.asSequence().map { it.plainId }.toSet(),
                     regionCode = entry.key.first,
                     countryCode = entry.key.second,

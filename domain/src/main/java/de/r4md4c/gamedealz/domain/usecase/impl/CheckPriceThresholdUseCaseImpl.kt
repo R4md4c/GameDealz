@@ -30,7 +30,7 @@ import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -55,7 +55,7 @@ internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
             return emptySet()
         }
 
-        val retrievedPrices: Map<String, List<Price>> =
+        val retrievedPrices: Map<String, List<PriceDTO>> =
             retrievePricesGroupedByCountriesHelper.prices(allWatcheesWithStores.map { it.watchee })
 
         val watcheesPriceModelMap = pickMinimalWatcheesPricesHelper.pick(retrievedPrices)
@@ -79,7 +79,7 @@ internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
         return watcheesNotificationModelsList.toSet()
     }
 
-    private suspend fun Map<Price, Watchee>.toList(): List<WatcheeNotificationModel> =
+    private suspend fun Map<PriceDTO, Watchee>.toList(): List<WatcheeNotificationModel> =
         this.mapNotNull {
             val watcheeModel = it.value.toModel()
             val priceModel = it.key.toPriceModel("") // We don't need the store color.
