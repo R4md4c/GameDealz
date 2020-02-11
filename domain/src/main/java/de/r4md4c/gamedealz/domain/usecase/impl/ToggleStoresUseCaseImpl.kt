@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class ToggleStoresUseCaseImpl @Inject constructor(
-    private val storesRepository: StoresRepository
+    private val storesRepository: StoresLocalDataSource
 ) : ToggleStoresUseCase {
 
     override suspend fun invoke(param: CollectionParameter<StoreModel>?) {

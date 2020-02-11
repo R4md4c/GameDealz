@@ -17,14 +17,24 @@
 
 package de.r4md4c.gamedealz.data.repository
 
+import de.r4md4c.gamedealz.data.dao.PlainsDao
 import de.r4md4c.gamedealz.data.entity.Plain
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-interface PlainsRepository : Repository<Plain, String> {
+internal class PlainsLocalDataSourceImpl @Inject constructor(
+    private val plainsDao: PlainsDao
+) : PlainsLocalDataSource {
 
-    /**
-     * Counts the number of items in that repository.
-     *
-     * @return the number of items.
-     */
-    suspend fun count(): Int
+    override suspend fun all(ids: Collection<String>?): Flow<List<Plain>> {
+        throw UnsupportedOperationException("PlainsDao doesn't support retrieving full list")
+    }
+
+    override suspend fun count(): Int = plainsDao.count()
+
+    override suspend fun save(models: List<Plain>) {
+        plainsDao.insert(models)
+    }
+
+    override suspend fun findById(id: String): Plain? = plainsDao.findOne(id)
 }

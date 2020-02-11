@@ -23,7 +23,7 @@ import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Plain
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
-import de.r4md4c.gamedealz.data.repository.PlainsRepository
+import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSource
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel
 import de.r4md4c.gamedealz.domain.model.toModel
@@ -32,13 +32,13 @@ import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionRepository
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource as LocalRegionRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionRepository
 
 internal class GetRegionsUseCaseImpl @Inject constructor(
     private val localRepository: LocalRegionRepository,
     private val remoteRepository: RemoteRegionRepository,
-    private val plainsLocalRepository: PlainsRepository,
+    private val plainsLocalRepository: PlainsLocalDataSource,
     private val plainsRemoteRepository: PlainsRemoteRepository
 ) : GetRegionsUseCase {
 

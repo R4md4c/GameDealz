@@ -17,7 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 internal class IsGameAddedToWatchListUseCaseImpl @Inject constructor(
-    private val watchlistRepository: WatchlistRepository
+    private val watchlistRepository: WatchlistLocalDataSource
 ) : IsGameAddedToWatchListUseCase {
 
     override suspend fun invoke(param: TypeParameter<String>?): Flow<Boolean> {

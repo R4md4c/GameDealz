@@ -17,14 +17,14 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 internal class GetLatestWatchlistCheckDateImpl @Inject constructor(
-    private val watchlistRepository: WatchlistRepository
+    private val watchlistRepository: WatchlistLocalDataSource
 ) : GetLatestWatchlistCheckDate {
 
     override suspend fun invoke(param: VoidParameter?): Flow<Long> = watchlistRepository.mostRecentCheckDate()

@@ -1,8 +1,12 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.RegionWithCountries
-import de.r4md4c.gamedealz.data.repository.PlainsRepository
+import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSource
 import de.r4md4c.gamedealz.network.model.Currency
 import de.r4md4c.gamedealz.network.model.Region
 import de.r4md4c.gamedealz.network.repository.PlainsRemoteRepository
@@ -14,7 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import de.r4md4c.gamedealz.data.repository.RegionsRepository as LocalRegionsRepository
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource as LocalRegionsRepository
 import de.r4md4c.gamedealz.network.repository.RegionsRemoteRepository as RemoteRegionsRepository
 
 class GetRegionsUseCaseImplTest {
@@ -26,7 +30,7 @@ class GetRegionsUseCaseImplTest {
     private lateinit var remoteRepository: RemoteRegionsRepository
 
     @Mock
-    private lateinit var plainsRepository: PlainsRepository
+    private lateinit var plainsRepository: PlainsLocalDataSource
 
     @Mock
     private lateinit var plainsRemoteRepository: PlainsRemoteRepository

@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.data.repository
 import de.r4md4c.gamedealz.data.entity.Watchee
 import kotlinx.coroutines.flow.Flow
 
-interface WatchlistRepository : Repository<Watchee, Long> {
+interface WatchlistLocalDataSource : LocalDataSource<Watchee, Long> {
 
     /**
      * Removes a watched game by id.

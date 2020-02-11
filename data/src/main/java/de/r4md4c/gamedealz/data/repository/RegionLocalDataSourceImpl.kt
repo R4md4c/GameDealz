@@ -22,9 +22,9 @@ import de.r4md4c.gamedealz.data.entity.RegionWithCountries
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-internal class RegionLocalRepository @Inject constructor(
+internal class RegionLocalDataSourceImpl @Inject constructor(
     private val regionWithCountriesDao: RegionWithCountriesDao
-) : RegionsRepository {
+) : RegionsLocalDataSource {
 
     override suspend fun all(ids: Collection<String>?): Flow<List<RegionWithCountries>> =
         (ids?.let { regionWithCountriesDao.allRegions(it.toSet()) } ?: regionWithCountriesDao.allRegions())

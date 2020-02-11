@@ -17,13 +17,13 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import javax.inject.Inject
 
 internal class RemoveFromWatchlistUseCaseImpl @Inject constructor(
-    private val watchlistRepository: WatchlistRepository
+    private val watchlistRepository: WatchlistLocalDataSource
 ) : RemoveFromWatchlistUseCase {
 
     override suspend fun invoke(param: TypeParameter<String>?): Boolean {

@@ -17,6 +17,21 @@
 
 package de.r4md4c.gamedealz.data.repository
 
-import de.r4md4c.gamedealz.data.entity.RegionWithCountries
+import de.r4md4c.gamedealz.data.entity.Store
+import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
 
-interface RegionsRepository : Repository<RegionWithCountries, String>
+interface WatchlistStoresDataSource {
+
+    /**
+     * Augments the watchee with the stores.
+     *
+     * @param watchee The watchee that its stores needs to be retrieved.
+     * @return the watchee along with its stores.
+     */
+    suspend fun findWatcheeWithStores(watchee: Watchee): WatcheeWithStores?
+
+    suspend fun allWatcheesWithStores(): List<WatcheeWithStores>
+
+    suspend fun saveWatcheeWithStores(watchee: Watchee, stores: List<Store>)
+}

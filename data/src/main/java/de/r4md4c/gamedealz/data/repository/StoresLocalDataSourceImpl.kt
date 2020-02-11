@@ -22,9 +22,9 @@ import de.r4md4c.gamedealz.data.entity.Store
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-internal class StoresLocalRepository @Inject constructor(
+internal class StoresLocalDataSourceImpl @Inject constructor(
     private val storesDao: StoresDao
-) : StoresRepository {
+) : StoresLocalDataSource {
 
     override suspend fun all(ids: Collection<String>?): Flow<List<Store>> =
         (ids?.let { storesDao.all(it.toSet()) } ?: storesDao.all())

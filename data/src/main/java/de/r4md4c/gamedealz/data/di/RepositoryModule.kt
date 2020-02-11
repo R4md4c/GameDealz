@@ -19,41 +19,41 @@ package de.r4md4c.gamedealz.data.di
 
 import dagger.Binds
 import dagger.Module
-import de.r4md4c.gamedealz.data.repository.CountriesLocalRepository
-import de.r4md4c.gamedealz.data.repository.CountriesRepository
-import de.r4md4c.gamedealz.data.repository.PlainsLocalRepository
-import de.r4md4c.gamedealz.data.repository.PlainsRepository
-import de.r4md4c.gamedealz.data.repository.PriceAlertLocalRepository
-import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
-import de.r4md4c.gamedealz.data.repository.RegionLocalRepository
-import de.r4md4c.gamedealz.data.repository.RegionsRepository
-import de.r4md4c.gamedealz.data.repository.StoresLocalRepository
-import de.r4md4c.gamedealz.data.repository.StoresRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistLocalRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
+import de.r4md4c.gamedealz.data.repository.CountriesLocalDataSource
+import de.r4md4c.gamedealz.data.repository.CountriesLocalDataSourceImpl
+import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSourceImpl
+import de.r4md4c.gamedealz.data.repository.PriceAlertLocalDataSource
+import de.r4md4c.gamedealz.data.repository.PriceAlertLocalDataSourceImpl
+import de.r4md4c.gamedealz.data.repository.RegionLocalDataSourceImpl
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSourceImpl
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSourceImpl
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 
 @Module
 abstract class RepositoryModule {
 
     @Binds
-    internal abstract fun bindsPriceAlertLocalRepository(it: PriceAlertLocalRepository): PriceAlertRepository
+    internal abstract fun bindsPriceAlertLocalRepository(it: PriceAlertLocalDataSourceImpl): PriceAlertLocalDataSource
 
     @Binds
-    internal abstract fun bindsWatchlistRepository(it: WatchlistLocalRepository): WatchlistRepository
+    internal abstract fun bindsWatchlistRepository(it: WatchlistLocalDataSourceImpl): WatchlistLocalDataSource
 
     @Binds
-    internal abstract fun bindsWatchlistStoresRepository(it: WatchlistLocalRepository): WatchlistStoresRepository
+    internal abstract fun bindsWatchlistStoresRepository(it: WatchlistLocalDataSourceImpl): WatchlistStoresDataSource
 
     @Binds
-    internal abstract fun bindsPlainsRepository(it: PlainsLocalRepository): PlainsRepository
+    internal abstract fun bindsPlainsRepository(it: PlainsLocalDataSourceImpl): PlainsLocalDataSource
 
     @Binds
-    internal abstract fun bindsRegionLocalRepository(it: RegionLocalRepository): RegionsRepository
+    internal abstract fun bindsRegionLocalRepository(it: RegionLocalDataSourceImpl): RegionsLocalDataSource
 
     @Binds
-    internal abstract fun bindsStoresRepository(it: StoresLocalRepository): StoresRepository
+    internal abstract fun bindsStoresRepository(it: StoresLocalDataSourceImpl): StoresLocalDataSource
 
     @Binds
-    internal abstract fun bindsCountriesLocalRepository(it: CountriesLocalRepository): CountriesRepository
+    internal abstract fun bindsCountriesLocalRepository(it: CountriesLocalDataSourceImpl): CountriesLocalDataSource
 }

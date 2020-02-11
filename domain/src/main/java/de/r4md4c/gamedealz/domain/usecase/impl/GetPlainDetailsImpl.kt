@@ -18,8 +18,8 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.PlainsRepository
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
@@ -45,9 +45,9 @@ import javax.inject.Inject
 
 internal class GetPlainDetailsImpl @Inject constructor(
     private val steamRemoteRepository: SteamRemoteRepository,
-    private val plainsRepository: PlainsRepository,
+    private val plainsRepository: PlainsLocalDataSource,
     private val pricesRemoteDataSource: PricesRemoteDataSource,
-    private val storesRepository: StoresRepository,
+    private val storesRepository: StoresLocalDataSource,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase
 ) : GetPlainDetails {
 

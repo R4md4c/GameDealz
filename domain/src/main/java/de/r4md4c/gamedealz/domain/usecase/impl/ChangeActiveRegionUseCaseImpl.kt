@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.data.entity.Store
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionParameter
@@ -34,7 +34,7 @@ import javax.inject.Inject
 internal class ChangeActiveRegionUseCaseImpl @Inject constructor(
     private val sharedPreferencesProvider: SharedPreferencesProvider,
     private val storesRemoteRepository: StoresRemoteRepository,
-    private val storesLocalRepository: StoresRepository,
+    private val storesLocalRepository: StoresLocalDataSource,
     private val getCurrentActiveRegionUseCase: GetCurrentActiveRegionUseCase
 ) : ChangeActiveRegionUseCase {
 

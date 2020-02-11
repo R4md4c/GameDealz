@@ -22,9 +22,9 @@ import de.r4md4c.gamedealz.data.entity.Country
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CountriesLocalRepository @Inject constructor(
+class CountriesLocalDataSourceImpl @Inject constructor(
     private val countriesDao: CountriesDao
-) : CountriesRepository {
+) : CountriesLocalDataSource {
 
     override suspend fun allCountriesUnderRegion(regionCode: String): List<Country> =
         countriesDao.allCountriesUnderRegion(regionCode)

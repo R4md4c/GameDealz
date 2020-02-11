@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
@@ -40,7 +40,7 @@ internal class SearchUseCaseImpl @Inject constructor(
     private val searchService: SearchService,
     private val pricesRemoteDataSource: PricesRemoteDataSource,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val storesRepository: StoresRepository,
+    private val storesRepository: StoresLocalDataSource,
     private val imageUrlUseCase: GetImageUrlUseCase
 ) : SearchUseCase {
 

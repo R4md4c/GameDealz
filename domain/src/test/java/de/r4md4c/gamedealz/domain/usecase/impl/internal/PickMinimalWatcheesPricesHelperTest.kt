@@ -25,8 +25,8 @@ import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.ShopDTO
 import kotlinx.coroutines.flow.flowOf
@@ -41,10 +41,10 @@ import java.util.concurrent.TimeUnit
 class PickMinimalWatcheesPricesHelperTest {
 
     @Mock
-    private lateinit var watchlistRepository: WatchlistRepository
+    private lateinit var watchlistRepository: WatchlistLocalDataSource
 
     @Mock
-    private lateinit var watchlistStoresRepository: WatchlistStoresRepository
+    private lateinit var watchlistStoresDataSource: WatchlistStoresDataSource
 
     @Mock
     private lateinit var dateProvider: DateProvider
@@ -55,7 +55,11 @@ class PickMinimalWatcheesPricesHelperTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        helper = PickMinimalWatcheesPricesHelper(watchlistRepository, watchlistStoresRepository, dateProvider)
+        helper = PickMinimalWatcheesPricesHelper(
+            watchlistRepository,
+            watchlistStoresDataSource,
+            dateProvider
+        )
     }
 
 
@@ -245,7 +249,11 @@ class PickMinimalWatcheesPricesHelperTest {
 
         fun withFindWatcheeWithStoresResult(watchee: Watchee?, result: WatcheeWithStores?) = apply {
             runBlocking {
-                whenever(watchlistStoresRepository.findWatcheeWithStores(watchee ?: anyOrNull())).thenReturn(result)
+                whenever(
+                    watchlistStoresDataSource.findWatcheeWithStores(
+                        watchee ?: anyOrNull()
+                    )
+                ).thenReturn(result)
             }
         }
 

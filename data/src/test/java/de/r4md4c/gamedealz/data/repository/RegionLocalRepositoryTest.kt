@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations
 
 class RegionLocalRepositoryTest {
 
-    private lateinit var regionLocalRepository: RegionLocalRepository
+    private lateinit var regionLocalRepository: RegionLocalDataSourceImpl
 
     @Mock
     private lateinit var regionsWithCountriesDao: RegionWithCountriesDao
@@ -26,7 +26,7 @@ class RegionLocalRepositoryTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        regionLocalRepository = RegionLocalRepository(regionsWithCountriesDao)
+        regionLocalRepository = RegionLocalDataSourceImpl(regionsWithCountriesDao)
     }
 
     @Test

@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -32,7 +32,7 @@ import org.mockito.MockitoAnnotations
 class RemoveFromWatchlistUseCaseImplTest {
 
     @Mock
-    private lateinit var watchlistRepository: WatchlistRepository
+    private lateinit var watchlistRepository: WatchlistLocalDataSource
 
     private lateinit var removeFromWatchlistUseCaseImpl: RemoveFromWatchlistUseCaseImpl
 

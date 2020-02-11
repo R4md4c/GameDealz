@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.data.repository
 import de.r4md4c.gamedealz.data.entity.Store
 import kotlinx.coroutines.flow.Flow
 
-interface StoresRepository : Repository<Store, String> {
+interface StoresLocalDataSource : LocalDataSource<Store, String> {
 
     /**
      * Updates the stores according to the selected state.

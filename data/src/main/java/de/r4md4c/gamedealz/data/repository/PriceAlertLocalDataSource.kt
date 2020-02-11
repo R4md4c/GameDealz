@@ -17,31 +17,16 @@
 
 package de.r4md4c.gamedealz.data.repository
 
+import de.r4md4c.gamedealz.data.entity.PriceAlert
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Base interface that will be extended by all repos.
- */
-interface Repository<Model, PrimaryKey> {
+interface PriceAlertLocalDataSource : LocalDataSource<PriceAlert, Long> {
 
-    /**
-     * Retrieves all models from the store.
-     *
-     * @param ids An optional collection of ids that needs to be retrieved, if null, all is going to be retrieved.
-     */
-    suspend fun all(ids: Collection<PrimaryKey>? = null): Flow<List<Model>>
+    suspend fun findByWatcheeId(watcheeId: Long): PriceAlert?
 
-    /**
-     * Saves all models to the store.
-     *
-     * @param models the models to be saved.
-     */
-    suspend fun save(models: List<Model>)
+    suspend fun remove(id: Long): Int
 
-    /**
-     * Finds a single model by id.
-     *
-     * @param id the id that will be used to retrieve the model form.
-     */
-    suspend fun findById(id: PrimaryKey): Model?
+    suspend fun removeByWatcheeId(watcheeId: Long): Int
+
+    fun unreadCount(): Flow<Int>
 }

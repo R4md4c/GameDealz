@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
-internal class PriceAlertLocalRepository @Inject constructor(
+internal class PriceAlertLocalDataSourceImpl @Inject constructor(
     private val priceAlertDao: PriceAlertDao
-) : PriceAlertRepository {
+) : PriceAlertLocalDataSource {
 
     override suspend fun all(ids: Collection<Long>?): Flow<List<PriceAlert>> =
         (ids?.let { priceAlertDao.findAll(ids) } ?: priceAlertDao.findAll()).distinctUntilChanged()

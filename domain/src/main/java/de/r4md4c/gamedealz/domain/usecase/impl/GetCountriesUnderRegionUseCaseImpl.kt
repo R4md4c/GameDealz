@@ -17,7 +17,7 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.gamedealz.data.repository.CountriesRepository
+import de.r4md4c.gamedealz.data.repository.CountriesLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.toCountryModel
@@ -25,7 +25,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetCountriesUnderRegionUseCase
 import javax.inject.Inject
 
 internal class GetCountriesUnderRegionUseCaseImpl @Inject constructor(
-    private val countriesRepository: CountriesRepository
+    private val countriesRepository: CountriesLocalDataSource
 ) : GetCountriesUnderRegionUseCase {
 
     override suspend fun invoke(param: TypeParameter<String>?): List<CountryModel> {

@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.toStoreModel
@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class GetSelectedStoresUseCaseImpl @Inject constructor(
-    private val storesRepository: StoresRepository
+    private val storesRepository: StoresLocalDataSource
 ) : GetSelectedStoresUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Flow<List<StoreModel>> =

@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
-internal class WatchlistLocalRepository @Inject constructor(
+internal class WatchlistLocalDataSourceImpl @Inject constructor(
     private val watchlistDao: WatchlistDao,
     private val watchlistStoresDao: WatcheeStoreJoinDao
-) : WatchlistRepository, WatchlistStoresRepository {
+) : WatchlistLocalDataSource, WatchlistStoresDataSource {
 
     override suspend fun findById(plainId: String): Flow<Watchee?> =
         watchlistDao.findOne(plainId).map { it.firstOrNull() }

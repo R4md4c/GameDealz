@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.data.repository.RegionsRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.toCurrencyModel
@@ -35,9 +35,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
-    private val watchlistRepository: WatchlistRepository,
-    private val watchlistStoresRepository: WatchlistStoresRepository,
-    private val regionsRepository: RegionsRepository,
+    private val watchlistRepository: WatchlistLocalDataSource,
+    private val watchlistStoresDataSource: WatchlistStoresDataSource,
+    private val regionsRepository: RegionsLocalDataSource,
     private val retrievePricesGroupedByCountriesHelper: RetrievePricesGroupedByCountriesHelper,
     private val pickMinimalWatcheesPricesHelper: PickMinimalWatcheesPricesHelper,
     private val priceAlertsHelper: PriceAlertsHelper
@@ -45,7 +45,7 @@ internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
 
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeNotificationModel> {
         Timber.i("Starting checking for Prices.")
-        val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
+        val allWatcheesWithStores = watchlistStoresDataSource.allWatcheesWithStores().filter {
             // Filter out the Watchees that have already reached its target price.
             it.watchee.lastFetchedPrice > it.watchee.targetPrice
         }
