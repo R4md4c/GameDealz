@@ -15,11 +15,15 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.repository
 
-import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.Resource
 import kotlinx.coroutines.flow.Flow
 
-interface GetPlainDetails : UseCase<TypeParameter<String>, Flow<Resource<PlainDetailsModel>>>
+/**
+ * Responsible of retrieving the game details along with its current prices and historical low price.
+ */
+interface GameDetailsRepository {
+    fun findDetails(plainId: String): Flow<Resource<PlainDetailsModel>>
+}

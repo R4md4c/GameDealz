@@ -17,7 +17,7 @@
 
 package de.r4md4c.gamedealz.network.service.steam
 
-import de.r4md4c.gamedealz.network.model.steam.AppDetails
+import de.r4md4c.gamedealz.network.model.steam.AppDetailsDTO
 import de.r4md4c.gamedealz.network.model.steam.PackageDetails
 import de.r4md4c.gamedealz.network.model.steam.ResponseWrapper
 import kotlinx.coroutines.Deferred
@@ -42,7 +42,7 @@ internal interface SteamService {
     fun appDetails(
         @Query("appids") appId: String,
         @Query("filters") filters: String = "basic,screenshots"
-    ): Deferred<SteamResponse<AppDetails>>
+    ): Deferred<SteamResponse<AppDetailsDTO>>
 
     @GET("packagedetails")
     fun packageDetails(@Query("packageids") packageId: String): Deferred<SteamResponse<PackageDetails>>

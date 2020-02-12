@@ -19,6 +19,8 @@ package de.r4md4c.gamedealz.domain.di
 
 import dagger.Binds
 import dagger.Module
+import de.r4md4c.gamedealz.domain.repository.GameDetailsRepository
+import de.r4md4c.gamedealz.domain.repository.GameDetailsRepositoryImpl
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
@@ -70,8 +72,11 @@ import de.r4md4c.gamedealz.domain.usecase.impl.ToggleNightModeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ToggleStoresUseCaseImpl
 
 @Suppress("TooManyFunctions")
-@Module
+@Module(includes = [MappersModule::class])
 abstract class UseCaseModule {
+
+    @Binds
+    internal abstract fun bindsGameDetailsRepository(it: GameDetailsRepositoryImpl): GameDetailsRepository
 
     @Binds
     internal abstract fun bindsGetRegionsUseCase(it: GetRegionsUseCaseImpl): GetRegionsUseCase

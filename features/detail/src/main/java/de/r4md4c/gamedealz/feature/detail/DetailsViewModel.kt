@@ -36,6 +36,7 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.Resource
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.domain.model.ShopModel
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
@@ -149,11 +150,15 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun loadPlainDetails(plainId: String) = viewModelScope.launchWithCatching(dispatchers.IO, {
+        getPlainDetails(TypeParameter(plainId))
+            .collect {
+                when (it) {
+                    is Resource.Loading -> stateMachineDelegate.transition(Event.OnLoadingStart)
+                    is Resource.Success -> postDetailsInfo(it.items)
+                    is Resource.Failed -> stateMachineDelegate.transition(Event.OnError(it.cause))
+                } as Any
+            }
 
-        stateMachineDelegate.transition(Event.OnLoadingStart)
-
-        val details = getPlainDetails(TypeParameter(plainId))
-        postDetailsInfo(details)
 
         stateMachineDelegate.transition(Event.OnLoadingEnded)
     }) {
@@ -177,17 +182,17 @@ class DetailsViewModel @Inject constructor(
     }
 
     private suspend fun postDetailsInfo(details: PlainDetailsModel) {
-        details.shortDescription?.let {
+        details.gameArtworkDetails?.shortDescription?.let {
             _gameInformation.postValue(
                 GameInformation(
-                    details.headerImage,
+                    details.gameArtworkDetails!!.headerImage,
                     it
                 )
             )
         }
 
-        if (details.screenshots.isNotEmpty()) {
-            _screenshots.postValue(details.screenshots)
+        if (details.gameArtworkDetails?.screenshots?.isNullOrEmpty() == false) {
+            _screenshots.postValue(details.gameArtworkDetails!!.screenshots)
         }
 
         withContext(dispatchers.Default) {

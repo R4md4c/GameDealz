@@ -17,41 +17,21 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSource
-import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.ActiveRegion
-import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
-import de.r4md4c.gamedealz.domain.model.PriceModel
-import de.r4md4c.gamedealz.domain.model.PriceModelHistoricalLowModelPair
-import de.r4md4c.gamedealz.domain.model.ScreenshotModel
-import de.r4md4c.gamedealz.domain.model.ShopModel
-import de.r4md4c.gamedealz.domain.model.toModel
-import de.r4md4c.gamedealz.domain.model.toPriceModel
-import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
+import de.r4md4c.gamedealz.domain.model.Resource
+import de.r4md4c.gamedealz.domain.repository.GameDetailsRepository
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
-import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
-import de.r4md4c.gamedealz.network.model.PriceDTO
-import de.r4md4c.gamedealz.network.model.steam.AppDetails
-import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
-import de.r4md4c.gamedealz.network.repository.SteamRemoteRepository
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
-import timber.log.Timber
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 internal class GetPlainDetailsImpl @Inject constructor(
-    private val steamRemoteRepository: SteamRemoteRepository,
-    private val plainsRepository: PlainsLocalDataSource,
-    private val pricesRemoteDataSource: PricesRemoteDataSource,
-    private val storesRepository: StoresLocalDataSource,
-    private val activeRegionUseCase: GetCurrentActiveRegionUseCase
+    private val gameDetailsRepository: GameDetailsRepository
 ) : GetPlainDetails {
 
-    override suspend fun invoke(param: TypeParameter<String>?): PlainDetailsModel = withContext(IO) {
+    override suspend fun invoke(param: TypeParameter<String>?): Flow<Resource<PlainDetailsModel>> {
+        return gameDetailsRepository.findDetails(param!!.value)
+    } /*withContext(IO) {
         val plainId = requireNotNull(param).value
 
         val shopId = plainsRepository.findById(plainId)?.shopId
@@ -145,5 +125,5 @@ internal class GetPlainDetailsImpl @Inject constructor(
                     }.getOrNull()
             }
         }
-    }
+    }*/
 }

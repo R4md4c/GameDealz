@@ -17,10 +17,10 @@
 
 package de.r4md4c.gamedealz.network.repository
 
-import de.r4md4c.gamedealz.network.model.steam.AppDetails
+import de.r4md4c.gamedealz.network.model.steam.AppDetailsDTO
 import de.r4md4c.gamedealz.network.model.steam.PackageDetails
 
-interface SteamRemoteRepository {
+interface SteamRemoteDataSource {
 
     /**
      * Gets appDetails from steam.
@@ -28,7 +28,7 @@ interface SteamRemoteRepository {
      * @param appId the app id that you want its details.
      * @return The app details, null if the response was not having success = true.
      */
-    suspend fun appDetails(appId: String): AppDetails?
+    suspend fun appDetails(appId: String): AppDetailsDTO?
 
     /**
      * Gets packageDetails from steam.

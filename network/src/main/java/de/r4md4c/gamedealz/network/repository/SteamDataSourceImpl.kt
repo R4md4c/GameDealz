@@ -17,16 +17,16 @@
 
 package de.r4md4c.gamedealz.network.repository
 
-import de.r4md4c.gamedealz.network.model.steam.AppDetails
+import de.r4md4c.gamedealz.network.model.steam.AppDetailsDTO
 import de.r4md4c.gamedealz.network.model.steam.PackageDetails
 import de.r4md4c.gamedealz.network.service.steam.SteamService
 import javax.inject.Inject
 
-internal class SteamRepository @Inject constructor(
+internal class SteamDataSourceImpl @Inject constructor(
     private val steamService: SteamService
-) : SteamRemoteRepository {
+) : SteamRemoteDataSource {
 
-    override suspend fun appDetails(appId: String): AppDetails? =
+    override suspend fun appDetails(appId: String): AppDetailsDTO? =
         steamService.appDetails(appId).await().run {
             get(appId)?.takeIf { it.success }?.data
         }

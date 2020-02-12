@@ -15,11 +15,14 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.mapper
 
-import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
-import de.r4md4c.gamedealz.domain.model.Resource
-import kotlinx.coroutines.flow.Flow
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.toPriceModel
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import javax.inject.Inject
 
-interface GetPlainDetails : UseCase<TypeParameter<String>, Flow<Resource<PlainDetailsModel>>>
+internal class PriceDTOMapperToPriceModelMapper @Inject constructor() :
+    Mapper<PriceDTO, PriceModel> {
+    override fun map(input: PriceDTO): PriceModel = input.toPriceModel("")
+}

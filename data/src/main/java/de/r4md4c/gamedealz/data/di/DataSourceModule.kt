@@ -34,7 +34,7 @@ import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSourceImpl
 import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 
 @Module
-abstract class RepositoryModule {
+abstract class DataSourceModule {
 
     @Binds
     internal abstract fun bindsPriceAlertLocalRepository(it: PriceAlertLocalDataSourceImpl): PriceAlertLocalDataSource

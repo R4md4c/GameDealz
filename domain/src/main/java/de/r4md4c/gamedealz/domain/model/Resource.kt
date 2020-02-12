@@ -15,11 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.model
 
-import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
-import de.r4md4c.gamedealz.domain.model.Resource
-import kotlinx.coroutines.flow.Flow
+sealed class Resource<T : Any> {
+    companion object {
+        fun <T : Any> success(data: T): Resource<T> = Success(data)
+        fun <T : Any> failed(cause: Throwable): Resource<T> = Failed(cause)
+        fun <T : Any> loading() = Loading<T>()
+    }
 
-interface GetPlainDetails : UseCase<TypeParameter<String>, Flow<Resource<PlainDetailsModel>>>
+    class Loading<T : Any> : Resource<T>()
+    data class Success<T : Any>(val items: T) : Resource<T>()
+    data class Failed<T : Any>(val cause: Throwable) : Resource<T>()
+}

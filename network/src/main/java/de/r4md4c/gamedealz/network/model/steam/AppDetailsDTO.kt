@@ -21,7 +21,7 @@ import com.squareup.moshi.Json
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
-data class AppDetails(
+data class AppDetailsDTO(
     val name: String,
     @Json(name = "steam_appid") val appId: String,
     val screenshots: List<Screenshot>,

@@ -15,11 +15,16 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.domain.mapper
 
-import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
-import de.r4md4c.gamedealz.domain.model.Resource
-import kotlinx.coroutines.flow.Flow
+import dagger.Reusable
+import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
+import de.r4md4c.gamedealz.domain.model.toModel
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
+import javax.inject.Inject
 
-interface GetPlainDetails : UseCase<TypeParameter<String>, Flow<Resource<PlainDetailsModel>>>
+@Reusable
+internal class HistoricalLowDTOMapper @Inject constructor() :
+    Mapper<HistoricalLowDTO, HistoricalLowModel?> {
+    override fun map(input: HistoricalLowDTO): HistoricalLowModel? = input.toModel("")
+}
