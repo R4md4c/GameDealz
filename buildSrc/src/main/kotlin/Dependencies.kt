@@ -56,6 +56,7 @@ object Libraries {
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
         const val appAuth = "0.7.1"
+        const val sqliteKtx = "2.1.0"
     }
 
     const val kotshiApi = "se.ansman.kotshi:api:${Versions.kotshi}"
@@ -97,6 +98,7 @@ object Libraries {
     const val pagingRuntimeKtx = "androidx.paging:paging-runtime-ktx:${Versions.paging_version}"
     const val androidXAnnotations = "androidx.annotation:annotation:${Versions.annotations}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.androidX}"
+    const val sqliteKtx = "androidx.sqlite:sqlite-ktx:${Versions.sqliteKtx}"
     // Logging solution For pure Java modules
     const val slf4j = "org.slf4j:slf4j-api:1.7.25"
     const val timberSlf4j = "com.arcao:slf4j-timber:3.1@aar"

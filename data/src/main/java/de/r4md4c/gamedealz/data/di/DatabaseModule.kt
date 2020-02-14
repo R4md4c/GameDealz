@@ -24,6 +24,7 @@ import dagger.Provides
 import de.r4md4c.gamedealz.data.GameDealzDatabase
 import de.r4md4c.gamedealz.data.migrations.MIGRATION_1_2
 import de.r4md4c.gamedealz.data.migrations.Migration2To3
+import de.r4md4c.gamedealz.data.migrations.Migration3To4
 import javax.inject.Singleton
 
 @Module
@@ -37,6 +38,6 @@ object DatabaseModule {
             GameDealzDatabase::class.java,
             GameDealzDatabase.DATABASE_NAME
         )
-            .addMigrations(MIGRATION_1_2, Migration2To3())
+            .addMigrations(MIGRATION_1_2, Migration2To3(), Migration3To4())
             .build()
 }

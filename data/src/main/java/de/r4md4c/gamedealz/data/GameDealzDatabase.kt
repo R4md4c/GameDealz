@@ -22,13 +22,16 @@ import androidx.room.RoomDatabase
 import de.r4md4c.gamedealz.data.dao.CountriesDao
 import de.r4md4c.gamedealz.data.dao.PlainsDao
 import de.r4md4c.gamedealz.data.dao.PriceAlertDao
+import de.r4md4c.gamedealz.data.dao.PriceInfoDao
 import de.r4md4c.gamedealz.data.dao.RegionWithCountriesDao
 import de.r4md4c.gamedealz.data.dao.StoresDao
 import de.r4md4c.gamedealz.data.dao.WatcheeStoreJoinDao
 import de.r4md4c.gamedealz.data.dao.WatchlistDao
 import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
+import de.r4md4c.gamedealz.data.entity.HistoricalLowPrice
 import de.r4md4c.gamedealz.data.entity.Plain
+import de.r4md4c.gamedealz.data.entity.Price
 import de.r4md4c.gamedealz.data.entity.PriceAlert
 import de.r4md4c.gamedealz.data.entity.Region
 import de.r4md4c.gamedealz.data.entity.Store
@@ -36,12 +39,14 @@ import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
 
 @Database(
-    version = 3, entities = [Region::class,
+    version = 4, entities = [Region::class,
         Country::class,
         Currency::class,
         Store::class,
         Plain::class,
         Watchee::class,
+        HistoricalLowPrice::class,
+        Price::class,
         WatcheeStoreJoin::class,
         PriceAlert::class]
 )
@@ -60,6 +65,8 @@ abstract class GameDealzDatabase : RoomDatabase() {
     internal abstract fun watcheeStoreJoinDao(): WatcheeStoreJoinDao
 
     internal abstract fun priceAlertDao(): PriceAlertDao
+
+    internal abstract fun priceInfoDao(): PriceInfoDao
 
     companion object {
         const val DATABASE_NAME = "game_dealz.db"

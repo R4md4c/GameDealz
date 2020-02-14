@@ -51,6 +51,7 @@ dependencies {
     implementation Libraries.roomRuntime
     kapt Libraries.roomCompiler
     implementation Libraries.lifecycleLiveData
+    implementation Libraries.sqliteKtx
     implementation (Libraries.roomKtx) {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
