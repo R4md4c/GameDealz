@@ -17,13 +17,13 @@
 
 package de.r4md4c.gamedealz.domain.repository
 
+import com.dropbox.android.external.store4.StoreResponse
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
-import de.r4md4c.gamedealz.domain.model.Resource
 import kotlinx.coroutines.flow.Flow
 
 /**
  * Responsible of retrieving the game details along with its current prices and historical low price.
  */
 interface GameDetailsRepository {
-    fun findDetails(plainId: String): Flow<Resource<PlainDetailsModel>>
+    fun findDetails(plainId: String, fresh: Boolean = false): Flow<StoreResponse<PlainDetailsModel>>
 }

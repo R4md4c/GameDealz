@@ -39,6 +39,7 @@ dependencies {
     implementation Libraries.kotlinStdLib
     implementation Libraries.kotlinCoroutines
 
+    implementation Libraries.store4
     implementation Libraries.timber
 
     implementation project(':common')

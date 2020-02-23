@@ -39,7 +39,7 @@ interface PriceInfoDao {
         Store.name,
         Store.id as storeId,
         HistoricalLowPrice.price as lowestPrice,
-        HistoricalLowPrice.priceDate,
+        HistoricalLowPrice.priceDate as wasAt,
         HistoricalLowPrice.priceCutPercentage as historicalLowCutPercentage,
         HistoricalLowPrice.dateUpdated as historicalLowLastUpdate
         FROM Price 

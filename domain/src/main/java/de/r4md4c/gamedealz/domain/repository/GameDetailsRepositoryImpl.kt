@@ -17,7 +17,10 @@
 
 package de.r4md4c.gamedealz.domain.repository
 
-import de.r4md4c.gamedealz.common.IDispatchers
+import com.dropbox.android.external.store4.MemoryPolicy
+import com.dropbox.android.external.store4.StoreBuilder
+import com.dropbox.android.external.store4.StoreRequest
+import com.dropbox.android.external.store4.StoreResponse
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.repository.PlainsLocalDataSource
 import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
@@ -27,7 +30,6 @@ import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.PriceModelHistoricalLowModelPair
-import de.r4md4c.gamedealz.domain.model.Resource
 import de.r4md4c.gamedealz.domain.model.ShopModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
@@ -36,16 +38,15 @@ import de.r4md4c.gamedealz.network.model.steam.AppDetailsDTO
 import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
 import de.r4md4c.gamedealz.network.repository.SteamRemoteDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class GameDetailsRepositoryImpl @Inject constructor(
     private val gamePricesRemoteDataSource: PricesRemoteDataSource,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val steamRemoteDataSource: SteamRemoteDataSource,
-    private val dispatchers: IDispatchers,
     private val plainsDataSource: PlainsLocalDataSource,
     private val storesLocalDataSource: StoresLocalDataSource,
     private val storeEntityMapper: Mapper<Store, ShopModel>,
@@ -54,31 +55,38 @@ internal class GameDetailsRepositoryImpl @Inject constructor(
     private val appDetailsMapper: Mapper<AppDetailsDTO, PlainDetailsModel.GameArtworkDetails>
 ) : GameDetailsRepository {
 
-    override fun findDetails(plainId: String): Flow<Resource<PlainDetailsModel>> = flow {
-        val activeRegion = activeRegionUseCase()
+    private val store by lazy {
+        StoreBuilder.fromNonFlow<String, PlainDetailsModel> { plainId ->
+            val activeRegion = activeRegionUseCase()
+            val prices = retrievePrices(plainId, activeRegion)
+            val historicalLows =
+                prices.map { historicalLowAsync(plainId, it.key, activeRegion) }.toMap()
+            val shopId = plainsDataSource.findById(plainId)?.shopId
+            val steamAppDetails = shopId?.let { retrieveSteamApp(shopId) }
+            PlainDetailsModel(
+                currencyModel = activeRegion.currency,
+                plainId = plainId,
+                shopPrices = prices.entries.associate {
+                    it.key to PriceModelHistoricalLowModelPair(
+                        prices[it.key]!!,
+                        historicalLows[it.key]
+                    )
+                },
+                gameArtworkDetails = steamAppDetails?.let(appDetailsMapper::map),
+                drmNotice = null
+            )
+        }.cachePolicy(
+            MemoryPolicy.MemoryPolicyBuilder()
+                .setExpireAfterTimeUnit(TimeUnit.MINUTES)
+                .setExpireAfterWrite(EXPIRE_DURATION_MINUTES) // Expire after 30 Minutes
+                .build()
+        ).build()
+    }
 
-        emit(Resource.loading())
-
-        val prices = retrievePrices(plainId, activeRegion)
-        val historicalLows =
-            prices.map { historicalLowAsync(plainId, it.key, activeRegion) }.toMap()
-        val shopId = plainsDataSource.findById(plainId)?.shopId
-        val steamAppDetails = shopId?.let { retrieveSteamApp(shopId) }
-
-        PlainDetailsModel(
-            currencyModel = activeRegion.currency,
-            plainId = plainId,
-            shopPrices = prices.entries.associate {
-                it.key to PriceModelHistoricalLowModelPair(
-                    prices[it.key]!!,
-                    historicalLows[it.key]
-                )
-            },
-            gameArtworkDetails = steamAppDetails?.let(appDetailsMapper::map),
-            drmNotice = null
-        ).also { emit(Resource.success(it)) }
-
-    }.flowOn(dispatchers.IO).catch { throwable -> emit(Resource.failed(throwable)) }
+    override fun findDetails(
+        plainId: String,
+        fresh: Boolean
+    ): Flow<StoreResponse<PlainDetailsModel>> = store.stream(StoreRequest.cached(plainId, fresh))
 
     private suspend fun historicalLowAsync(
         plainId: String,
@@ -137,4 +145,8 @@ internal class GameDetailsRepositoryImpl @Inject constructor(
 
     private fun String.getIdFromSteamAppId() =
         substring(indexOf('/') + 1)
+
+    private companion object {
+        private const val EXPIRE_DURATION_MINUTES = 30L
+    }
 }

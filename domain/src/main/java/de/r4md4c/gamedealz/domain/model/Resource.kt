@@ -17,14 +17,29 @@
 
 package de.r4md4c.gamedealz.domain.model
 
-sealed class Resource<T : Any> {
+/**
+ *
+ * A generic class that holds a value with its loading status.
+ * @param <T>
+</T> */
+data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
     companion object {
-        fun <T : Any> success(data: T): Resource<T> = Success(data)
-        fun <T : Any> failed(cause: Throwable): Resource<T> = Failed(cause)
-        fun <T : Any> loading() = Loading<T>()
-    }
+        fun <T> success(data: T?): Resource<T> {
+            return Resource(Status.SUCCESS, data, null)
+        }
 
-    class Loading<T : Any> : Resource<T>()
-    data class Success<T : Any>(val items: T) : Resource<T>()
-    data class Failed<T : Any>(val cause: Throwable) : Resource<T>()
+        fun <T> error(msg: String, data: T?): Resource<T> {
+            return Resource(Status.ERROR, data, msg)
+        }
+
+        fun <T> loading(data: T?): Resource<T> {
+            return Resource(Status.LOADING, data, null)
+        }
+    }
+}
+
+enum class Status {
+    SUCCESS,
+    ERROR,
+    LOADING
 }

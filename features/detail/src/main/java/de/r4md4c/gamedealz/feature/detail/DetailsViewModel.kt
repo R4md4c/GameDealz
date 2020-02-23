@@ -36,9 +36,9 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
-import de.r4md4c.gamedealz.domain.model.Resource
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.domain.model.ShopModel
+import de.r4md4c.gamedealz.domain.model.Status
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
@@ -149,18 +149,19 @@ class DetailsViewModel @Inject constructor(
         return _screenshots.value!!.takeLast(_screenshots.value!!.size - spanCount)
     }
 
-    fun loadPlainDetails(plainId: String) = viewModelScope.launchWithCatching(dispatchers.IO, {
-        getPlainDetails(TypeParameter(plainId))
+    fun loadPlainDetails(plainId: String) = viewModelScope.launchWithCatching(dispatchers.Main, {
+        getPlainDetails(TypeParameter(GetPlainDetails.Params(plainId = plainId)))
             .collect {
-                when (it) {
-                    is Resource.Loading -> stateMachineDelegate.transition(Event.OnLoadingStart)
-                    is Resource.Success -> postDetailsInfo(it.items)
-                    is Resource.Failed -> stateMachineDelegate.transition(Event.OnError(it.cause))
+                Timber.d("Resource $it")
+                when (it.status) {
+                    Status.LOADING -> stateMachineDelegate.transition(Event.OnLoadingStart)
+                    Status.SUCCESS -> {
+                        postDetailsInfo(it.data!!)
+                        stateMachineDelegate.transition(Event.OnLoadingEnded)
+                    }
+                    Status.ERROR -> stateMachineDelegate.transition(Event.OnError(Exception(it.message)))
                 } as Any
             }
-
-
-        stateMachineDelegate.transition(Event.OnLoadingEnded)
     }) {
         stateMachineDelegate.transition(Event.OnError(it))
     }

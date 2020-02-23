@@ -57,7 +57,10 @@ object Libraries {
         const val kotshi = "2.0.1"
         const val appAuth = "0.7.1"
         const val sqliteKtx = "2.1.0"
+        const val store4 = "4.0.0-alpha03"
     }
+
+    const val store4 = "com.dropbox.mobile.store:store4:${Versions.store4}"
 
     const val kotshiApi = "se.ansman.kotshi:api:${Versions.kotshi}"
     const val kotshiCompiler = "se.ansman.kotshi:compiler:${Versions.kotshi}"
