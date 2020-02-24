@@ -146,6 +146,8 @@ class DetailsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         NavigationUI.setupWithNavController(collapsing_toolbar, toolbar, findNavController())
         stateVisibilityHandler.onViewCreated()
+        stateVisibilityHandler.onRetryClick =
+            { eventsChannel.offer(DetailsMviEvent.RetryClickEvent) }
         setupTitle()
         setupFab()
         setupRecyclerView()
@@ -185,13 +187,6 @@ class DetailsFragment : BaseFragment() {
         addToWatchList.hide()
         addToWatchList.setOnClickListener {
             eventsChannel.offer(DetailsMviEvent.WatchlistFabClickEvent)
-            /*if (detailsViewModel.isAddedToWatchList.value == true) {
-                askToRemove()
-            } else {
-                detailsViewModel.prices.value?.firstOrNull()?.let { priceDetails ->
-                    navigateToAddToWatchlistDialog(priceDetails)
-                }
-            }*/
         }
     }
 
@@ -219,6 +214,12 @@ class DetailsFragment : BaseFragment() {
             stateVisibilityHandler.onSideEffect(SideEffect.ShowLoading)
         } else {
             stateVisibilityHandler.onSideEffect(SideEffect.HideLoading)
+        }
+
+        if (state.errorMessage.isNullOrEmpty().not()) {
+            stateVisibilityHandler.onSideEffect(
+                SideEffect.ShowError(Throwable(state.errorMessage))
+            )
         }
 
         renderSections(state.sections)

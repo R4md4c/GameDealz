@@ -45,9 +45,9 @@ internal class WatchlistFabClickProcessor @Inject constructor(
     override fun process(
         viewEvent: Flow<DetailsMviEvent>
     ): Flow<MviResult<DetailsViewState>> =
-        listOf(viewEvent.handleFabClickEvent(), viewEvent.handleAddToWatchlist()).merge()
+        listOf(viewEvent.handleFabClickEvent(), viewEvent.handleRemoveFromWatchlist()).merge()
 
-    private fun Flow<DetailsMviEvent>.handleAddToWatchlist() =
+    private fun Flow<DetailsMviEvent>.handleRemoveFromWatchlist() =
         filterIsInstance<DetailsMviEvent.RemoveFromWatchlistYes>()
             .onEach {
                 val isRemoved = removeFromWatchlist(TypeParameter(detailsFragmentArgs.plainId))

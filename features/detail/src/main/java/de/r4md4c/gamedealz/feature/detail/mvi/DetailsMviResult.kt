@@ -21,17 +21,13 @@ import de.r4md4c.gamedealz.common.mvi.ReducibleMviResult
 
 internal sealed class DetailsMviResult : ReducibleMviResult<DetailsViewState>
 
-internal object EmptyResult : DetailsMviResult() {
-    override fun reduce(oldState: DetailsViewState): DetailsViewState = oldState
-}
-
-internal class LoadingResult(val showLoading: Boolean) : DetailsMviResult() {
+internal data class LoadingResult(val showLoading: Boolean) : DetailsMviResult() {
     override fun reduce(oldState: DetailsViewState): DetailsViewState = oldState.run {
-        copy(loading = showLoading)
+        copy(loading = showLoading, errorMessage = null)
     }
 }
 
-internal class ErrorResult(private val errorMessage: String) : DetailsMviResult() {
+internal data class ErrorResult(private val errorMessage: String) : DetailsMviResult() {
     override fun reduce(oldState: DetailsViewState): DetailsViewState = oldState.run {
         copy(loading = false, errorMessage = this@ErrorResult.errorMessage)
     }

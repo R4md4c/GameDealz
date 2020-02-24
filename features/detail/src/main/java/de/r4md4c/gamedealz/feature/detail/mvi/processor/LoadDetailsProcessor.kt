@@ -24,6 +24,7 @@ import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.Status
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
+import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
@@ -34,19 +35,26 @@ import de.r4md4c.gamedealz.feature.detail.mvi.SectionsResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
 
 internal class LoadDetailsProcessor @Inject constructor(
+    private val detailsFragmentArgs: DetailsFragmentArgs,
     private val getPlainDetails: GetPlainDetails,
     private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
 ) : IntentProcessor<DetailsMviEvent, DetailsViewState> {
 
     override fun process(viewEvent: Flow<DetailsMviEvent>): Flow<MviResult<DetailsViewState>> =
-        viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>()
-            .flatMapConcat {
-                getPlainDetails(TypeParameter(GetPlainDetails.Params(it.plainId)))
-                    .combine(isGameAddedToWatchListUseCase(TypeParameter(it.plainId)))
+        listOf(
+            viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>(),
+            viewEvent.filterIsInstance<DetailsMviEvent.RetryClickEvent>()
+        ).merge()
+            .map { detailsFragmentArgs.plainId }
+            .flatMapLatest { plainId ->
+                getPlainDetails(TypeParameter(GetPlainDetails.Params(plainId)))
+                    .combine(isGameAddedToWatchListUseCase(TypeParameter(plainId)))
                     { plainDetails, isAddedToWatchlist ->
                         when (plainDetails.status) {
                             Status.LOADING -> LoadingResult(showLoading = true)
