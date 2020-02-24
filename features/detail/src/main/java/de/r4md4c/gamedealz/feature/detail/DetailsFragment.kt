@@ -40,6 +40,7 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.di.ForActivity
+import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.navigation.Navigator
@@ -239,7 +240,7 @@ class DetailsFragment : BaseFragment() {
                     pricesAdapterItems += filterHeaderItem
                     pricesAdapterItems += prices
                 }
-            } as Any
+            }.exhaustive
         }.takeIf { sections.isNotEmpty() }?.let {
             gameDetailsAdapter.setNewList(gameDetailsAdapterItems.toList())
             pricesAdapter.setNewList(pricesAdapterItems.toList())

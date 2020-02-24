@@ -26,6 +26,7 @@ import androidx.lifecycle.viewModelScope
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.di.ForApplication
+import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.common.state.Event
@@ -160,7 +161,7 @@ class DetailsViewModel @Inject constructor(
                         stateMachineDelegate.transition(Event.OnLoadingEnded)
                     }
                     Status.ERROR -> stateMachineDelegate.transition(Event.OnError(Exception(it.message)))
-                } as Any
+                }.exhaustive
             }
     }) {
         stateMachineDelegate.transition(Event.OnError(it))
