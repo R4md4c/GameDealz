@@ -17,10 +17,13 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
-interface MviViewEvent
+import kotlinx.coroutines.flow.Flow
 
-interface MviState
+interface UIEventsDispatcher<T : UIEvent> {
 
-interface MviInitEvent : MviViewEvent
+    val uiEvents: Flow<T>
 
-interface UIEvent
+    fun dispatchEvent(event: T)
+
+    fun clear()
+}

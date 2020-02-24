@@ -193,6 +193,21 @@ class DetailsFragment : BaseFragment() {
         }
 
         renderSections(state.sections)
+
+        renderAddToWatchlistButton(isWatched)
+    }
+
+    private fun renderAddToWatchlistButton(isWatched: Boolean?) {
+        if (isWatched == null) {
+            addToWatchList.hide()
+            return
+        }
+
+        addToWatchList.show()
+        addToWatchList.setImageResource(
+            if (isWatched) R.drawable.ic_added_to_watch_list
+            else R.drawable.ic_add_to_watch_list
+        )
     }
 
     private fun renderSections(sections: List<Section>) {

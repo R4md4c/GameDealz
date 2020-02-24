@@ -17,10 +17,25 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
-interface MviViewEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.consumeAsFlow
 
-interface MviState
+class UnlimitedChannelUIEventsDispatcher<T : UIEvent> : UIEventsDispatcher<T> {
 
-interface MviInitEvent : MviViewEvent
+    private val eventsChannel = Channel<T>(capacity = UNLIMITED)
 
-interface UIEvent
+    override val uiEvents: Flow<T> = eventsChannel.consumeAsFlow()
+
+    override fun dispatchEvent(event: T) {
+        if (eventsChannel.isClosedForSend) {
+            return
+        }
+        eventsChannel.offer(event)
+    }
+
+    override fun clear() {
+        eventsChannel.close()
+    }
+}

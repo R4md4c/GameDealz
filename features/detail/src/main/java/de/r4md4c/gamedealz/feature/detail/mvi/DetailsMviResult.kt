@@ -33,11 +33,15 @@ internal class ErrorResult(private val errorMessage: String) : DetailsMviResult(
     }
 }
 
-internal class SectionsResult(private val newSections: List<Section>) : DetailsMviResult() {
+internal data class SectionsResult(
+    private val newSections: List<Section>,
+    private val isAddedToWatchlist: Boolean
+) : DetailsMviResult() {
     override fun reduce(oldState: DetailsViewState): DetailsViewState = oldState.run {
         copy(
             loading = false,
             errorMessage = null,
+            isWatched = isAddedToWatchlist,
             sections = newSections.sortedBy { it.position }
         )
     }

@@ -32,9 +32,9 @@ import de.r4md4c.gamedealz.feature.detail.mvi.LoadingResult
 import de.r4md4c.gamedealz.feature.detail.mvi.Section
 import de.r4md4c.gamedealz.feature.detail.mvi.SectionsResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.transformLatest
 import javax.inject.Inject
 
 internal class LoadDetailsProcessor @Inject constructor(
@@ -46,12 +46,17 @@ internal class LoadDetailsProcessor @Inject constructor(
         viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>()
             .flatMapConcat {
                 getPlainDetails(TypeParameter(GetPlainDetails.Params(it.plainId)))
-            }.transformLatest {
-                when (it.status) {
-                    Status.LOADING -> emit(LoadingResult(showLoading = true))
-                    Status.SUCCESS -> emit(SectionsResult(it.data!!.toSections()))
-                    Status.ERROR -> emit(ErrorResult(it.message!!))
-                }
+                    .combine(isGameAddedToWatchListUseCase(TypeParameter(it.plainId)))
+                    { plainDetails, isAddedToWatchlist ->
+                        when (plainDetails.status) {
+                            Status.LOADING -> LoadingResult(showLoading = true)
+                            Status.SUCCESS -> SectionsResult(
+                                plainDetails.data!!.toSections(),
+                                isAddedToWatchlist
+                            )
+                            Status.ERROR -> ErrorResult(plainDetails.message!!)
+                        }
+                    }
             }
 
     private fun PlainDetailsModel.toSections(): List<Section> {
