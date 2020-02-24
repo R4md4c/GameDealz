@@ -22,11 +22,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
@@ -43,6 +45,7 @@ import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.mvi.MviViewModel
+import de.r4md4c.gamedealz.common.mvi.UIEventsDispatcher
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.SideEffect
@@ -61,6 +64,7 @@ import de.r4md4c.gamedealz.feature.detail.item.HeaderItem
 import de.r4md4c.gamedealz.feature.detail.item.ScreenshotItem
 import de.r4md4c.gamedealz.feature.detail.item.toPriceItem
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 import de.r4md4c.gamedealz.feature.detail.mvi.Section
 import de.r4md4c.gamedealz.feature.detail.mvi.toMenuIdRes
@@ -69,7 +73,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Suppress("TooManyFunctions")
 class DetailsFragment : BaseFragment() {
@@ -99,6 +106,9 @@ class DetailsFragment : BaseFragment() {
 
     @Inject
     internal lateinit var detailsMviViewModel: MviViewModel<DetailsViewState, DetailsMviEvent>
+
+    @Inject
+    internal lateinit var detailsUIEventsDispatcher: UIEventsDispatcher<DetailsUIEvent>
 
     private val eventsChannel = Channel<DetailsMviEvent>()
 
@@ -147,6 +157,9 @@ class DetailsFragment : BaseFragment() {
         detailsMviViewModel.modelState
             .onEach { renderState(it) }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+        detailsUIEventsDispatcher.uiEvents
+            .onEach { handleUIDetailsEvent(it) }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun setupRecyclerView() {
@@ -171,6 +184,7 @@ class DetailsFragment : BaseFragment() {
     private fun setupFab() {
         addToWatchList.hide()
         addToWatchList.setOnClickListener {
+            eventsChannel.offer(DetailsMviEvent.WatchlistFabClickEvent)
             /*if (detailsViewModel.isAddedToWatchList.value == true) {
                 askToRemove()
             } else {
@@ -179,6 +193,21 @@ class DetailsFragment : BaseFragment() {
                 }
             }*/
         }
+    }
+
+    private fun handleUIDetailsEvent(detailsUIEvent: DetailsUIEvent) {
+        when (detailsUIEvent) {
+            is DetailsUIEvent.AskUserToRemoveFromWatchlist -> askToRemove()
+            is DetailsUIEvent.NavigateToAddToWatchlistScreen ->
+                navigateToAddToWatchlistDialog(detailsUIEvent.priceDetails)
+            is DetailsUIEvent.NotifyRemoveFromWatchlistSuccessfully ->
+                viewNotifier.notify(
+                    getString(
+                        R.string.watchlist_remove_successfully,
+                        detailsUIEvent.gameTitle
+                    )
+                )
+        }.exhaustive
     }
 
     private fun setupTitle() {
@@ -260,6 +289,37 @@ class DetailsFragment : BaseFragment() {
             gameDetailsAdapter.setNewList(gameDetailsAdapterItems.toList())
             pricesAdapter.setNewList(pricesAdapterItems.toList())
         }
+    }
+
+    private fun askToRemove() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val yes = ask()
+            if (yes) {
+                eventsChannel.offer(DetailsMviEvent.RemoveFromWatchlistYes)
+            }
+        }
+    }
+
+    private suspend fun ask() = suspendCoroutine<Boolean> { continuation ->
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(
+                HtmlCompat.fromHtml(
+                    getString(R.string.dialog_ask_remove_from_watch_list, title),
+                    HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
+            )
+            .setPositiveButton(android.R.string.yes) { dialog, _ -> continuation.resume(true); dialog.dismiss() }
+            .setNegativeButton(android.R.string.no) { dialog, _ -> continuation.resume(false); dialog.dismiss() }
+            .show()
+    }
+
+    private fun navigateToAddToWatchlistDialog(priceDetails: PriceDetails) {
+        val directions = DetailsFragmentDirections.actionGamedetailsToAddToWatchlistDialog(
+            title,
+            plainId,
+            priceDetails.priceModel
+        )
+        findNavController().navigate(directions)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -20,10 +20,7 @@ package de.r4md4c.gamedealz.common.mvi
 import kotlinx.coroutines.flow.Flow
 
 interface UIEventsDispatcher<T : UIEvent> {
-
     val uiEvents: Flow<T>
-
     fun dispatchEvent(event: T)
-
-    fun clear()
+    fun onClear()
 }

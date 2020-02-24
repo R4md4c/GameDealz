@@ -51,7 +51,7 @@ class RealMviViewModel<Event : MviViewEvent, State : MviState>(
                 initEvent?.let { emit(it) }
             }
 
-        intentProcessors.flatMap { listOf(it.process(eventsFlow), it.process(eventsFlow, store)) }
+        intentProcessors.map { it.process(eventsFlow) }
             .merge()
             .onEach { store.process(it) }
             .launchIn(viewModelScope)

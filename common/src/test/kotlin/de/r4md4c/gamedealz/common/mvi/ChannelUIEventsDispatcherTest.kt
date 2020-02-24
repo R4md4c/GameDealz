@@ -19,23 +19,24 @@ package de.r4md4c.gamedealz.common.mvi
 
 import de.r4md4c.gamedealz.test.FlowRecorder
 import de.r4md4c.gamedealz.test.recordWith
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 
-class UnlimitedChannelUIEventsDispatcherTest {
+class ChannelUIEventsDispatcherTest {
 
     private sealed class TestUIEvent : UIEvent {
         object Success : TestUIEvent()
         object Failed : TestUIEvent()
     }
 
-    private lateinit var eventsDispatcher: UnlimitedChannelUIEventsDispatcher<TestUIEvent>
+    private lateinit var eventsDispatcher: ChannelUIEventsDispatcher<TestUIEvent>
 
     @Before
     fun beforeEach() {
-        eventsDispatcher = UnlimitedChannelUIEventsDispatcher()
+        eventsDispatcher = ChannelUIEventsDispatcher()
     }
 
     @Test
@@ -45,38 +46,9 @@ class UnlimitedChannelUIEventsDispatcherTest {
         eventsDispatcher.dispatchEvent(TestUIEvent.Success)
         eventsDispatcher.dispatchEvent(TestUIEvent.Failed)
 
-        eventsDispatcher.uiEvents.recordWith(flowRecorder)
+        val job = eventsDispatcher.uiEvents.recordWith(flowRecorder)
 
         assertThat(flowRecorder.iterator()).hasSize(3)
-        eventsDispatcher.clear()
-    }
-
-    @Test
-    fun `clear should not clear the buffer`() = runBlockingTest {
-        eventsDispatcher.dispatchEvent(TestUIEvent.Success)
-        eventsDispatcher.dispatchEvent(TestUIEvent.Success)
-        eventsDispatcher.dispatchEvent(TestUIEvent.Failed)
-
-        eventsDispatcher.clear()
-
-        val flowRecorder = FlowRecorder<UIEvent>(this)
-        eventsDispatcher.uiEvents.recordWith(flowRecorder)
-        assertThat(flowRecorder).hasSize(3)
-    }
-
-    @Test
-    fun `clear should not dispatch another event`() = runBlockingTest {
-        eventsDispatcher.dispatchEvent(TestUIEvent.Success)
-        eventsDispatcher.dispatchEvent(TestUIEvent.Success)
-        eventsDispatcher.dispatchEvent(TestUIEvent.Failed)
-
-        eventsDispatcher.clear()
-        // Dispatch after clear
-        eventsDispatcher.dispatchEvent(TestUIEvent.Success)
-
-        val flowRecorder = FlowRecorder<UIEvent>(this)
-        eventsDispatcher.uiEvents.recordWith(flowRecorder)
-        // Count is still 3
-        assertThat(flowRecorder).hasSize(3)
+        job.cancelAndJoin()
     }
 }

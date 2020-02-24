@@ -17,25 +17,34 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
+import de.r4md4c.gamedealz.common.IDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.broadcastIn
 import kotlinx.coroutines.flow.consumeAsFlow
+import javax.inject.Inject
 
-class UnlimitedChannelUIEventsDispatcher<T : UIEvent> : UIEventsDispatcher<T> {
+class ChannelUIEventsDispatcher<T : UIEvent> @Inject constructor(
+    dispatchers: IDispatchers
+) : UIEventsDispatcher<T> {
+
+    private val dispatcherScope = CoroutineScope(SupervisorJob() + dispatchers.Main)
 
     private val eventsChannel = Channel<T>(capacity = UNLIMITED)
 
-    override val uiEvents: Flow<T> = eventsChannel.consumeAsFlow()
+    override val uiEvents: Flow<T> =
+        eventsChannel.consumeAsFlow().broadcastIn(dispatcherScope).asFlow()
 
     override fun dispatchEvent(event: T) {
-        if (eventsChannel.isClosedForSend) {
-            return
-        }
         eventsChannel.offer(event)
     }
 
-    override fun clear() {
-        eventsChannel.close()
+    override fun onClear() {
+        dispatcherScope.cancel()
     }
 }

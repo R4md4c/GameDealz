@@ -33,12 +33,12 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.transformLatest
 import javax.inject.Inject
 
-internal class PriceSortChangeProcessor @Inject constructor() :
-    IntentProcessor<DetailsMviEvent, DetailsViewState> {
+internal class PriceSortChangeProcessor @Inject constructor(
+    private val stateStore: ModelStore<DetailsViewState>
+) : IntentProcessor<DetailsMviEvent, DetailsViewState> {
 
     override fun process(
-        viewEvent: Flow<DetailsMviEvent>,
-        stateStore: ModelStore<DetailsViewState>
+        viewEvent: Flow<DetailsMviEvent>
     ): Flow<MviResult<DetailsViewState>> =
         viewEvent.filterIsInstance<DetailsMviEvent.PriceFilterChangeEvent>()
             .filter {

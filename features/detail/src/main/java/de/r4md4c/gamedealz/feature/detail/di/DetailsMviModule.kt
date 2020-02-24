@@ -20,15 +20,20 @@ package de.r4md4c.gamedealz.feature.detail.di
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
+import de.r4md4c.gamedealz.common.di.ViewModelScope
+import de.r4md4c.gamedealz.common.mvi.ChannelUIEventsDispatcher
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.common.mvi.MviViewModel
+import de.r4md4c.gamedealz.common.mvi.UIEventsDispatcher
 import de.r4md4c.gamedealz.feature.detail.DetailsMviViewModel
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsStateStore
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 import de.r4md4c.gamedealz.feature.detail.mvi.processor.LoadDetailsProcessor
 import de.r4md4c.gamedealz.feature.detail.mvi.processor.PriceSortChangeProcessor
+import de.r4md4c.gamedealz.feature.detail.mvi.processor.WatchlistFabClickProcessor
 
 @Module
 internal abstract class DetailsMviModule {
@@ -44,8 +49,18 @@ internal abstract class DetailsMviModule {
             IntentProcessor<DetailsMviEvent, DetailsViewState>
 
     @Binds
+    @IntoSet
+    abstract fun bindsWatchlistFabClickProcessor(it: WatchlistFabClickProcessor):
+            IntentProcessor<DetailsMviEvent, DetailsViewState>
+
+    @Binds
     abstract fun bindsDetailsMviStore(it: DetailsStateStore): ModelStore<DetailsViewState>
 
     @Binds
     abstract fun bindsDetailsMviViewModel(it: DetailsMviViewModel): MviViewModel<DetailsViewState, DetailsMviEvent>
+
+    @ViewModelScope
+    @Binds
+    abstract fun bindsDetailsUIEventDispatcher(it: ChannelUIEventsDispatcher<DetailsUIEvent>)
+            : UIEventsDispatcher<DetailsUIEvent>
 }

@@ -18,9 +18,18 @@
 package de.r4md4c.gamedealz.feature.detail.mvi
 
 import de.r4md4c.gamedealz.common.mvi.MviInitEvent
+import de.r4md4c.gamedealz.common.mvi.UIEvent
+import de.r4md4c.gamedealz.feature.detail.PriceDetails
 
 sealed class DetailsMviEvent : MviInitEvent {
     data class InitEvent(val plainId: String) : DetailsMviEvent()
-
     data class PriceFilterChangeEvent(val sortOrder: SortOrder) : DetailsMviEvent()
+    object WatchlistFabClickEvent : DetailsMviEvent()
+    object RemoveFromWatchlistYes : DetailsMviEvent()
+}
+
+sealed class DetailsUIEvent : UIEvent {
+    object AskUserToRemoveFromWatchlist : DetailsUIEvent()
+    data class NavigateToAddToWatchlistScreen(val priceDetails: PriceDetails) : DetailsUIEvent()
+    data class NotifyRemoveFromWatchlistSuccessfully(val gameTitle: String) : DetailsUIEvent()
 }

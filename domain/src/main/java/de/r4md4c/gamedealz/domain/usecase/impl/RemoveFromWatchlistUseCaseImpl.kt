@@ -17,18 +17,23 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
+import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class RemoveFromWatchlistUseCaseImpl @Inject constructor(
-    private val watchlistRepository: WatchlistLocalDataSource
+    private val watchlistRepository: WatchlistLocalDataSource,
+    private val dispatchers: IDispatchers
 ) : RemoveFromWatchlistUseCase {
 
     override suspend fun invoke(param: TypeParameter<String>?): Boolean {
         val plainId = requireNotNull(param).value
 
-        return watchlistRepository.removeById(plainId) > 0
+        return withContext(dispatchers.IO) {
+            watchlistRepository.removeById(plainId) > 0
+        }
     }
 }

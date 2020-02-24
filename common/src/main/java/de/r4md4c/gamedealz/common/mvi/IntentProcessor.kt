@@ -22,5 +22,4 @@ import kotlinx.coroutines.flow.emptyFlow
 
 interface IntentProcessor<E : MviViewEvent, S : MviState> {
     fun process(viewEvent: Flow<E>): Flow<MviResult<S>> = emptyFlow()
-    fun process(viewEvent: Flow<E>, stateStore: ModelStore<S>): Flow<MviResult<S>> = emptyFlow()
 }
