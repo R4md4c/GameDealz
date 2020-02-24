@@ -15,16 +15,19 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.mvi
+package de.r4md4c.gamedealz.feature.detail.mvi
 
-import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.flow.Flow
+import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.common.di.ViewModelScope
+import de.r4md4c.gamedealz.common.mvi.FlowModelStore
+import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.createSimpleStateFactory
+import javax.inject.Inject
 
-interface ModelStore<S : MviState> : DisposableHandle {
-
-    suspend fun process(result: MviResult<S>)
-
-    fun modelState(): Flow<S>
-
-    val currentState: S
-}
+@ViewModelScope
+internal class DetailsStateStore @Inject constructor(
+    dispatchers: IDispatchers
+) : ModelStore<DetailsViewState> by FlowModelStore(
+    dispatchers,
+    createSimpleStateFactory<DetailsViewState> { DetailsViewState() }
+)

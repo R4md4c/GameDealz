@@ -37,6 +37,10 @@ class AboutGameItem(
     private val shortDescription: String
 ) : AbstractItem<AboutGameItem, AboutGameItem.ViewHolder>() {
 
+    init {
+        withIdentifier(R.id.about_game_item_id.toLong())
+    }
+
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_about_game_item
 

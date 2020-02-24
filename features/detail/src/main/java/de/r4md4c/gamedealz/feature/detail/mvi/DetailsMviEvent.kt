@@ -15,16 +15,12 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.mvi
+package de.r4md4c.gamedealz.feature.detail.mvi
 
-import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.flow.Flow
+import de.r4md4c.gamedealz.common.mvi.MviInitEvent
 
-interface ModelStore<S : MviState> : DisposableHandle {
+sealed class DetailsMviEvent : MviInitEvent {
+    data class InitEvent(val plainId: String) : DetailsMviEvent()
 
-    suspend fun process(result: MviResult<S>)
-
-    fun modelState(): Flow<S>
-
-    val currentState: S
+    data class PriceFilterChangeEvent(val sortOrder: SortOrder) : DetailsMviEvent()
 }

@@ -22,50 +22,53 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IdRes
-import androidx.core.text.HtmlCompat
-import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.items.AbstractItem
 import com.stfalcon.imageviewer.StfalconImageViewer
 import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
+import de.r4md4c.commonproviders.di.viewmodel.components
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.image.GlideApp
-import de.r4md4c.gamedealz.common.launchWithCatching
+import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
+import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.core.CoreComponent
+import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.feature.detail.decorator.DetailsFragmentItemDecorator
 import de.r4md4c.gamedealz.feature.detail.di.DaggerDetailComponent
+import de.r4md4c.gamedealz.feature.detail.di.DaggerDetailsRetainedComponent
 import de.r4md4c.gamedealz.feature.detail.item.AboutGameItem
 import de.r4md4c.gamedealz.feature.detail.item.ExpandableScreenshotsHeader
 import de.r4md4c.gamedealz.feature.detail.item.FilterHeaderItem
 import de.r4md4c.gamedealz.feature.detail.item.HeaderItem
 import de.r4md4c.gamedealz.feature.detail.item.ScreenshotItem
 import de.r4md4c.gamedealz.feature.detail.item.toPriceItem
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
+import de.r4md4c.gamedealz.feature.detail.mvi.Section
+import de.r4md4c.gamedealz.feature.detail.mvi.toMenuIdRes
 import kotlinx.android.synthetic.main.fragment_game_detail.*
-import kotlinx.coroutines.withContext
-import timber.log.Timber
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @Suppress("TooManyFunctions")
 class DetailsFragment : BaseFragment() {
@@ -93,11 +96,24 @@ class DetailsFragment : BaseFragment() {
     @Inject
     lateinit var navigator: Navigator
 
-    private val detailsViewModel by viewModels<DetailsViewModel> {
+    @Inject
+    internal lateinit var detailsMviViewModel: MviViewModel<DetailsViewState, DetailsMviEvent>
+
+    private val eventsChannel = Channel<DetailsMviEvent>()
+
+    private val scopedComponent by components {
+        DaggerDetailsRetainedComponent.factory()
+            .create(
+                fromBundle(requireArguments()),
+                requireContext().coreComponent()
+            )
+    }
+
+    /*private val detailsViewModel by viewModels<DetailsViewModel> {
         viewModelFactoryCreator.create(
             this
         )
-    }
+    }*/
 
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
@@ -117,24 +133,129 @@ class DetailsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        stateVisibilityHandler.onRetryClick = { detailsViewModel.loadPlainDetails(plainId) }
         NavigationUI.setupWithNavController(collapsing_toolbar, toolbar, findNavController())
         stateVisibilityHandler.onViewCreated()
         setupTitle()
         setupFab()
         setupRecyclerView()
+
+        detailsMviViewModel.onViewEvents(
+            eventsChannel.consumeAsFlow(),
+            viewLifecycleOwner.lifecycleScope
+        )
+        detailsMviViewModel.modelState
+            .onEach { renderState(it) }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun setupRecyclerView() {
+        content.apply {
+            addItemDecoration(itemsDecorator)
+            layoutManager =
+                GridLayoutManager(context, spanCount).apply {
+                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            mainAdapter.getItem(position) ?: return spanCount
+                            return when (mainAdapter.getItemViewType(position)) {
+                                R.layout.layout_screenshot_item -> 1
+                                else -> spanCount
+                            }
+                        }
+                    }.apply { isSpanIndexCacheEnabled = true }
+                }
+            adapter = mainAdapter
+        }
+    }
+
+    private fun setupFab() {
+        addToWatchList.hide()
+        addToWatchList.setOnClickListener {
+            /*if (detailsViewModel.isAddedToWatchList.value == true) {
+                askToRemove()
+            } else {
+                detailsViewModel.prices.value?.firstOrNull()?.let { priceDetails ->
+                    navigateToAddToWatchlistDialog(priceDetails)
+                }
+            }*/
+        }
+    }
+
+    private fun setupTitle() {
+        collapsing_toolbar.title = title
+    }
+
+    private fun renderState(state: DetailsViewState) = with(state) {
+        if (loading) {
+            stateVisibilityHandler.onSideEffect(SideEffect.ShowLoading)
+        } else {
+            stateVisibilityHandler.onSideEffect(SideEffect.HideLoading)
+        }
+
+        renderSections(state.sections)
+    }
+
+    private fun renderSections(sections: List<Section>) {
+        val gameDetailsAdapterItems = mutableListOf<AbstractItem<*, *>>()
+        val pricesAdapterItems = mutableListOf<AbstractItem<*, *>>()
+
+        sections.forEach { section ->
+            when (section) {
+                is Section.GameInfoSection -> {
+                    gameDetailsAdapterItems += HeaderItem(getString(section.titleRes))
+                    gameDetailsAdapterItems += AboutGameItem(section.imageUrl, section.description)
+                }
+                is Section.ScreenshotSection -> {
+                    gameDetailsAdapterItems += ExpandableScreenshotsHeader(
+                        section.screenshots.size > spanCount
+                    ) {
+                        applyRestOfScreenshots(section, section.isExpanded).also {
+                            isExpanded = !isExpanded
+                        }
+                    }
+                    gameDetailsAdapterItems += section.screenshots
+                        .take(spanCount)
+                        .mapIndexed { index, aScreenshot ->
+                            ScreenshotItem(aScreenshot, index)
+                            { position -> onScreenShotClick(section.screenshots, position) }
+                        }
+                }
+                is Section.PriceSection -> {
+                    val filterHeaderItem = FilterHeaderItem(
+                        getString(section.titleRes),
+                        R.menu.details_prices_sort_menu,
+                        section.currentSortOrder.toMenuIdRes()
+                    ) { sortType ->
+                        eventsChannel.offer(DetailsMviEvent.PriceFilterChangeEvent(sortType))
+                    }
+
+                    val prices = section.priceDetails.map { priceDetails ->
+                        priceDetails.toPriceItem(
+                            resourcesProvider,
+                            dateFormatter,
+                            section.currentSortOrder,
+                            navigator::navigateToUrl
+                        )
+                    }
+                    pricesAdapterItems += filterHeaderItem
+                    pricesAdapterItems += prices
+                }
+            } as Any
+        }.takeIf { sections.isNotEmpty() }?.let {
+            gameDetailsAdapter.setNewList(gameDetailsAdapterItems.toList())
+            pricesAdapter.setNewList(pricesAdapterItems.toList())
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        detailsViewModel.onSaveState()?.let {
-            outState.putParcelable(STATE_DETAILS, it)
-        }
+//        detailsViewModel.onSaveState()?.let {
+//            outState.putParcelable(STATE_DETAILS, it)
+//        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             detailsViewModel.loadPlainDetails(plainId)
         } else {
             savedInstanceState.getParcelable<DetailsViewModelState>(STATE_DETAILS)
@@ -175,10 +296,10 @@ class DetailsFragment : BaseFragment() {
 
         detailsViewModel.prices.observe(viewLifecycleOwner, Observer {
             renderPrices(it)
-        })
+        })*/
     }
 
-    private fun renderPrices(it: List<PriceDetails>) {
+    /*private fun renderPrices(it: List<PriceDetails>) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             progress.isVisible = true
             val pricesItems = withContext(dispatchers.Default) {
@@ -211,18 +332,7 @@ class DetailsFragment : BaseFragment() {
         }
     }
 
-    private fun setupFab() {
-        addToWatchList.hide()
-        addToWatchList.setOnClickListener {
-            if (detailsViewModel.isAddedToWatchList.value == true) {
-                askToRemove()
-            } else {
-                detailsViewModel.prices.value?.firstOrNull()?.let { priceDetails ->
-                    navigateToAddToWatchlistDialog(priceDetails)
-                }
-            }
-        }
-    }
+
 
     private fun navigateToAddToWatchlistDialog(priceDetails: PriceDetails) {
         val directions = DetailsFragmentDirections.actionGamedetailsToAddToWatchlistDialog(
@@ -231,10 +341,6 @@ class DetailsFragment : BaseFragment() {
             priceDetails.priceModel
         )
         findNavController().navigate(directions)
-    }
-
-    private fun setupTitle() {
-        collapsing_toolbar.title = title
     }
 
     private fun handleFilterItemClick(@IdRes clickedFilterItemId: Int) {
@@ -305,29 +411,53 @@ class DetailsFragment : BaseFragment() {
         }
     }
 
-    private fun setupRecyclerView() {
-        content.apply {
-            addItemDecoration(itemsDecorator)
-            layoutManager =
-                GridLayoutManager(context, spanCount).apply {
-                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            mainAdapter.getItem(position) ?: return spanCount
-                            return when (mainAdapter.getItemViewType(position)) {
-                                R.layout.layout_screenshot_item -> 1
-                                else -> spanCount
-                            }
-                        }
-                    }.apply { isSpanIndexCacheEnabled = true }
-                }
-            adapter = mainAdapter
+    */
+
+    private fun onScreenShotClick(screenshots: List<ScreenshotModel>, screenshotPosition: Int) {
+        StfalconImageViewer.Builder<ScreenshotModel>(requireContext(), screenshots) { view, image ->
+            val circularProgressDrawable = CircularProgressDrawable(requireContext()).apply {
+                strokeWidth = resourcesProvider.getDimension(R.dimen.progress_stroke_size)
+                centerRadius = resourcesProvider.getDimension(R.dimen.progress_size)
+                setColorSchemeColors(requireContext().resolveThemeColor(R.attr.colorSecondary))
+                start()
+            }
+            GlideApp.with(view)
+                .load(image.full)
+                .placeholder(circularProgressDrawable)
+                .into(view)
+        }.also {
+            it.withStartPosition(screenshotPosition)
+                .show()
+        }
+    }
+
+    private fun applyRestOfScreenshots(
+        screenshotsSection: Section.ScreenshotSection,
+        remove: Boolean
+    ) {
+        val allScreenshots = screenshotsSection.screenshots
+        val restScreenshots = screenshotsSection.restOfScreenshots(resourcesProvider)
+        val thirdScreenshot = allScreenshots.getOrNull(spanCount - 1) ?: return
+
+        val lastScreenshotPivot =
+            gameDetailsAdapter.getAdapterPosition(thirdScreenshot.hashCode().toLong())
+
+        if (remove) {
+            gameDetailsAdapter.removeRange(lastScreenshotPivot + 1, restScreenshots.size)
+        } else {
+            gameDetailsAdapter.add(restScreenshots.mapIndexed { index, item ->
+                ScreenshotItem(
+                    item,
+                    index + spanCount
+                ) { position -> onScreenShotClick(screenshotsSection.screenshots, position) }
+            })
         }
     }
 
     override fun onInject(coreComponent: CoreComponent) {
         super.onInject(coreComponent)
         DaggerDetailComponent.factory()
-            .create(requireActivity(), this, coreComponent)
+            .create(requireActivity(), this, scopedComponent, coreComponent)
             .inject(this)
     }
 

@@ -29,9 +29,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
 import kotlinx.android.synthetic.main.layout_detail_header_filter_item.view.*
 
-typealias OnFilterItemClick = (Int) -> Unit
+typealias OnFilterItemClick = (SortOrder) -> Unit
 
 class FilterHeaderItem(
     private val headerString: String,
@@ -39,6 +40,10 @@ class FilterHeaderItem(
     @IdRes private val defaultChosenItem: Int,
     private val onFilterItemClick: OnFilterItemClick
 ) : AbstractItem<FilterHeaderItem, FilterHeaderItem.ViewHolder>() {
+
+    init {
+        withIdentifier(R.id.filter_header_item_id.toLong())
+    }
 
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_header_filter_item
@@ -66,7 +71,13 @@ class FilterHeaderItem(
                     popupMenu.menu.findItem(defaultChosenItem)?.isChecked = true
                     popupMenu.show()
                     popupMenu.setOnMenuItemClickListener { menuItem ->
-                        onFilterItemClick(menuItem.itemId)
+                        onFilterItemClick(
+                            when (menuItem.itemId) {
+                                R.id.menu_item_historical_low -> SortOrder.ByHistoricalLow
+                                R.id.menu_item_current_best -> SortOrder.ByCurrentPrice
+                                else -> throw IllegalArgumentException("Unknown MenuItem ${menuItem.itemId}")
+                            }
+                        )
                         menuItem.isChecked = true
                         true
                     }

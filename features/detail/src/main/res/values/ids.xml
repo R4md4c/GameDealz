@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="about_game_item_id" type="id" />
+    <item name="header_item_id" type="id" />
+    <item name="filter_header_item_id" type="id" />
+    <item name="expandable_screenshot_header_item_id" type="id" />
+</resources>

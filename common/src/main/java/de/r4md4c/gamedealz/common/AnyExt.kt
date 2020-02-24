@@ -15,16 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common.mvi
+package de.r4md4c.gamedealz.common
 
-import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.flow.Flow
-
-interface ModelStore<S : MviState> : DisposableHandle {
-
-    suspend fun process(result: MviResult<S>)
-
-    fun modelState(): Flow<S>
-
-    val currentState: S
-}
+val <T> T.exhaustive: T
+    get() = this

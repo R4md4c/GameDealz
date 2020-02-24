@@ -17,41 +17,35 @@
 
 package de.r4md4c.gamedealz.feature.detail.di
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Component
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
-import de.r4md4c.gamedealz.common.di.FeatureScope
-import de.r4md4c.gamedealz.common.di.activity.ActivityModule
-import de.r4md4c.gamedealz.common.di.state.StateMachineModule
+import de.r4md4c.commonproviders.di.viewmodel.ScopedComponent
+import de.r4md4c.gamedealz.common.di.ViewModelScope
+import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.core.CoreComponent
-import de.r4md4c.gamedealz.feature.detail.DetailsFragment
+import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 
-@FeatureScope
+@ViewModelScope
 @Component(
-    modules = [
-        ViewModelInjectionModule::class,
-        DetailFeatureModule::class,
-        StateMachineModule::class,
-        ActivityModule::class
-    ],
-    dependencies = [
-        CoreComponent::class,
-        DetailsRetainedComponent::class
-    ]
+    modules = [DetailsMviModule::class],
+    dependencies = [CoreComponent::class]
 )
-internal interface DetailComponent {
+internal abstract class DetailsRetainedComponent : ScopedComponent() {
 
-    fun inject(detailsFragment: DetailsFragment)
+    abstract val viewModel: MviViewModel<DetailsViewState, DetailsMviEvent>
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModel.onCleared()
+    }
 
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance fragmentActivity: FragmentActivity,
-            @BindsInstance fragment: Fragment,
-            retainedComponent: DetailsRetainedComponent,
+            @BindsInstance detailsFragmentArgs: DetailsFragmentArgs,
             coreComponent: CoreComponent
-        ): DetailComponent
+        ): DetailsRetainedComponent
     }
 }
