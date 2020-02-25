@@ -47,6 +47,16 @@ internal data class SectionsResult(
     }
 }
 
+internal data class IsAddedToWatchlistResult(
+    private val addedToWatchlistResult: Boolean
+) : DetailsMviResult() {
+    override fun reduce(oldState: DetailsViewState): DetailsViewState = oldState.run {
+        copy(
+            isWatched = addedToWatchlistResult
+        )
+    }
+}
+
 internal data class SortPricesResult(private val newPricesSection: Section.PriceSection) :
     DetailsMviResult() {
 

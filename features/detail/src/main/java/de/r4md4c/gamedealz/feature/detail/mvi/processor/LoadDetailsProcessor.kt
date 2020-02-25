@@ -31,19 +31,19 @@ import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.R
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
+import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviResult
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 import de.r4md4c.gamedealz.feature.detail.mvi.ErrorResult
+import de.r4md4c.gamedealz.feature.detail.mvi.IsAddedToWatchlistResult
 import de.r4md4c.gamedealz.feature.detail.mvi.LoadingResult
 import de.r4md4c.gamedealz.feature.detail.mvi.Section
 import de.r4md4c.gamedealz.feature.detail.mvi.SectionsResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import timber.log.Timber
 import javax.inject.Inject
 
 internal class LoadDetailsProcessor @Inject constructor(
@@ -56,27 +56,32 @@ internal class LoadDetailsProcessor @Inject constructor(
 
     override fun process(viewEvent: Flow<DetailsMviEvent>): Flow<MviResult<DetailsViewState>> =
         listOf(
-            viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>()
-                .filter {
-                    Timber.d("InitEvent ${stateStore.currentState.sections}")
-                    stateStore.currentState.sections.isEmpty()
-                },
+            viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>(),
             viewEvent.filterIsInstance<DetailsMviEvent.RetryClickEvent>()
         ).merge()
             .map { detailsFragmentArgs.plainId }
             .flatMapLatest { plainId ->
-                getPlainDetails(TypeParameter(GetPlainDetails.Params(plainId)))
-                    .combine(isGameAddedToWatchListUseCase(TypeParameter(plainId)))
-                    { plainDetails, isAddedToWatchlist ->
-                        when (plainDetails.status) {
-                            Status.LOADING -> LoadingResult(showLoading = true)
-                            Status.SUCCESS -> SectionsResult(
-                                plainDetails.data!!.toSections(),
-                                isAddedToWatchlist
-                            )
-                            Status.ERROR -> ErrorResult(plainDetails.message!!)
-                        }
-                    }
+                // When restoring we just watch the watchlist status.
+                if (stateStore.currentState.sections.isNotEmpty()) {
+                    isGameAddedToWatchListUseCase(TypeParameter(plainId))
+                        .map { IsAddedToWatchlistResult(it) }
+                } else {
+                    getPlainsWithWatchlistStatus(plainId)
+                }
+            }
+
+    private suspend fun getPlainsWithWatchlistStatus(plainId: String): Flow<DetailsMviResult> =
+        getPlainDetails(TypeParameter(GetPlainDetails.Params(plainId)))
+            .combine(isGameAddedToWatchListUseCase(TypeParameter(plainId)))
+            { plainDetails, isAddedToWatchlist ->
+                when (plainDetails.status) {
+                    Status.LOADING -> LoadingResult(showLoading = true)
+                    Status.SUCCESS -> SectionsResult(
+                        newSections = plainDetails.data!!.toSections(),
+                        isAddedToWatchlist = isAddedToWatchlist
+                    )
+                    Status.ERROR -> ErrorResult(errorMessage = plainDetails.message!!)
+                }
             }
 
     private fun PlainDetailsModel.toSections(): List<Section> {
