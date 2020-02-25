@@ -43,7 +43,8 @@ internal sealed class Section : Parcelable {
     @Parcelize
     data class ScreenshotSection(
         @StringRes val titleRes: Int = R.string.screenshots,
-        val screenshots: List<ScreenshotModel>,
+        val allScreenshots: List<ScreenshotModel>,
+        val visibleScreenshots: List<ScreenshotModel>,
         val isExpanded: Boolean = false,
         @IntegerRes val visibleItemsInSection: Int = R.integer.screenshots_span_count,
         override val position: Int = 1
@@ -51,7 +52,7 @@ internal sealed class Section : Parcelable {
 
         fun restOfScreenshots(resourcesProvider: ResourcesProvider): List<ScreenshotModel> {
             val spanCount = resourcesProvider.getInteger(visibleItemsInSection)
-            return screenshots.takeLast(screenshots.size - spanCount)
+            return allScreenshots.takeLast(allScreenshots.size - spanCount)
         }
     }
 

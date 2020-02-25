@@ -24,6 +24,7 @@ import de.r4md4c.gamedealz.feature.detail.PriceDetails
 sealed class DetailsMviEvent : MviInitEvent {
     data class InitEvent(val plainId: String) : DetailsMviEvent()
     data class PriceFilterChangeEvent(val sortOrder: SortOrder) : DetailsMviEvent()
+    object ExpandIconClicked : DetailsMviEvent()
     object RetryClickEvent : DetailsMviEvent()
     object WatchlistFabClickEvent : DetailsMviEvent()
     object RemoveFromWatchlistYes : DetailsMviEvent()

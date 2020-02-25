@@ -79,9 +79,9 @@ import kotlin.coroutines.suspendCoroutine
 @Suppress("TooManyFunctions")
 class DetailsFragment : BaseFragment() {
 
-    private val title by lazy { fromBundle(arguments!!).title }
+    private val title by lazy { fromBundle(requireArguments()).title }
 
-    private val plainId by lazy { fromBundle(arguments!!).plainId }
+    private val plainId by lazy { fromBundle(requireArguments()).plainId }
 
     @field:ForActivity
     @Inject
@@ -250,17 +250,14 @@ class DetailsFragment : BaseFragment() {
                 }
                 is Section.ScreenshotSection -> {
                     gameDetailsAdapterItems += ExpandableScreenshotsHeader(
-                        section.screenshots.size > spanCount
-                    ) {
-                        applyRestOfScreenshots(section, section.isExpanded).also {
-                            isExpanded = !isExpanded
-                        }
-                    }
-                    gameDetailsAdapterItems += section.screenshots
-                        .take(spanCount)
+                        section.allScreenshots.size > spanCount,
+                        section.isExpanded
+                    ) { eventsChannel.offer(DetailsMviEvent.ExpandIconClicked) }
+
+                    gameDetailsAdapterItems += section.visibleScreenshots
                         .mapIndexed { index, aScreenshot ->
                             ScreenshotItem(aScreenshot, index)
-                            { position -> onScreenShotClick(section.screenshots, position) }
+                            { position -> onScreenShotClick(section.allScreenshots, position) }
                         }
                 }
                 is Section.PriceSection -> {
@@ -339,7 +336,7 @@ class DetailsFragment : BaseFragment() {
         }
     }
 
-    private fun applyRestOfScreenshots(
+    /*private fun applyRestOfScreenshots(
         screenshotsSection: Section.ScreenshotSection,
         remove: Boolean
     ) {
@@ -360,7 +357,7 @@ class DetailsFragment : BaseFragment() {
                 ) { position -> onScreenShotClick(screenshotsSection.screenshots, position) }
             })
         }
-    }
+    }*/
 
     override fun onInject(coreComponent: CoreComponent) {
         super.onInject(coreComponent)

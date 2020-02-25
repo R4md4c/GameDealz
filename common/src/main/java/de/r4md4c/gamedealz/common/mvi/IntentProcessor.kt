@@ -18,8 +18,7 @@
 package de.r4md4c.gamedealz.common.mvi
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 
 interface IntentProcessor<E : MviViewEvent, S : MviState> {
-    fun process(viewEvent: Flow<E>): Flow<MviResult<S>> = emptyFlow()
+    fun process(viewEvent: Flow<E>): Flow<MviResult<S>>
 }

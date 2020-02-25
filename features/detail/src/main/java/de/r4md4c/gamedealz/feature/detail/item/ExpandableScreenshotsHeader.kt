@@ -30,15 +30,13 @@ typealias OnExpandClick = ExpandableScreenshotsHeader.() -> Unit
 
 class ExpandableScreenshotsHeader(
     private val showExpandIcon: Boolean,
+    private val isExpanded: Boolean,
     private val onExpandClick: OnExpandClick
-) :
-    AbstractItem<ExpandableScreenshotsHeader, ExpandableScreenshotsHeader.ViewHolder>() {
+) : AbstractItem<ExpandableScreenshotsHeader, ExpandableScreenshotsHeader.ViewHolder>() {
 
     init {
         withIdentifier(R.id.expandable_screenshot_header_item_id.toLong())
     }
-
-    var isExpanded = false
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)

@@ -61,14 +61,14 @@ import javax.inject.Inject
 
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
-    private val title: String by lazy { fromBundle(arguments!!).title }
+    private val title: String by lazy { fromBundle(requireArguments()).title }
 
-    private val plainId: String by lazy { fromBundle(arguments!!).plainId }
+    private val plainId: String by lazy { fromBundle(requireArguments()).plainId }
 
-    private val priceModel: PriceModel by lazy { fromBundle(arguments!!).priceModel }
+    private val priceModel: PriceModel by lazy { fromBundle(requireArguments()).priceModel }
 
     private val toolbar: Toolbar by lazy {
-        view!!.findViewById(R.id.toolbar) as Toolbar
+        requireView().findViewById(R.id.toolbar) as Toolbar
     }
 
     @Inject

@@ -17,6 +17,8 @@
 
 package de.r4md4c.gamedealz.feature.detail.mvi.processor
 
+import de.r4md4c.commonproviders.res.ResourcesProvider
+import de.r4md4c.gamedealz.common.di.ForApplication
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.common.mvi.MviResult
@@ -27,6 +29,7 @@ import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
 import de.r4md4c.gamedealz.feature.detail.PriceDetails
+import de.r4md4c.gamedealz.feature.detail.R
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 import de.r4md4c.gamedealz.feature.detail.mvi.ErrorResult
@@ -47,6 +50,7 @@ internal class LoadDetailsProcessor @Inject constructor(
     private val detailsFragmentArgs: DetailsFragmentArgs,
     private val getPlainDetails: GetPlainDetails,
     private val stateStore: ModelStore<DetailsViewState>,
+    @ForApplication private val resourcesProvider: ResourcesProvider,
     private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
 ) : IntentProcessor<DetailsMviEvent, DetailsViewState> {
 
@@ -86,7 +90,13 @@ internal class LoadDetailsProcessor @Inject constructor(
         }
 
         if (gameArtworkDetails?.screenshots?.isNullOrEmpty() == false) {
-            result += Section.ScreenshotSection(screenshots = gameArtworkDetails!!.screenshots)
+            val allScreenshots = gameArtworkDetails!!.screenshots
+            val spanCount = resourcesProvider.getInteger(R.integer.screenshots_span_count)
+
+            result += Section.ScreenshotSection(
+                allScreenshots = allScreenshots,
+                visibleScreenshots = allScreenshots.take(spanCount)
+            )
         }
 
         val priceDetailsList = shopPrices.map {

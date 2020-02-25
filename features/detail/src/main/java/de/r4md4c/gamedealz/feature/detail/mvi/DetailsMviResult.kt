@@ -62,3 +62,19 @@ internal data class SortPricesResult(private val newPricesSection: Section.Price
         )
     }
 }
+
+internal data class ExpandClickResult(private val newSection: Section.ScreenshotSection) :
+    DetailsMviResult() {
+
+    override fun reduce(oldState: DetailsViewState): DetailsViewState = oldState.run {
+        copy(
+            sections = sections.map {
+                if (it is Section.ScreenshotSection) {
+                    newSection
+                } else {
+                    it
+                }
+            }
+        )
+    }
+}

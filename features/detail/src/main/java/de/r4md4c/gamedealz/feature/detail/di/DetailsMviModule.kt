@@ -34,6 +34,7 @@ import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsStateStore
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
+import de.r4md4c.gamedealz.feature.detail.mvi.processor.ExpandClickProcessor
 import de.r4md4c.gamedealz.feature.detail.mvi.processor.LoadDetailsProcessor
 import de.r4md4c.gamedealz.feature.detail.mvi.processor.PriceSortChangeProcessor
 import de.r4md4c.gamedealz.feature.detail.mvi.processor.WatchlistFabClickProcessor
@@ -54,6 +55,11 @@ internal abstract class DetailsMviModule {
     @Binds
     @IntoSet
     abstract fun bindsWatchlistFabClickProcessor(it: WatchlistFabClickProcessor):
+            IntentProcessor<DetailsMviEvent, DetailsViewState>
+
+    @Binds
+    @IntoSet
+    abstract fun bindsExpandClickProcessor(it: ExpandClickProcessor):
             IntentProcessor<DetailsMviEvent, DetailsViewState>
 
     @Binds
