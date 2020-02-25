@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "8bfd5c44fd519d5206ac0405ec253568",
+    "identityHash": "dd9f5824f8283a6ce3a6c207ed57ae0a",
     "entities": [
       {
         "tableName": "Region",
@@ -270,184 +270,6 @@
         "foreignKeys": []
       },
       {
-        "tableName": "HistoricalLowPrice",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fk_plainId` TEXT NOT NULL, `fk_storeId` TEXT NOT NULL, `price` REAL NOT NULL, `priceCutPercentage` INTEGER NOT NULL, `priceDate` INTEGER NOT NULL, `dateCreated` INTEGER NOT NULL, `dateUpdated` INTEGER NOT NULL, PRIMARY KEY(`fk_plainId`, `fk_storeId`), FOREIGN KEY(`fk_storeId`) REFERENCES `Store`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`fk_plainId`) REFERENCES `Plain`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "plainId",
-            "columnName": "fk_plainId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "storeId",
-            "columnName": "fk_storeId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "price",
-            "columnName": "price",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "priceCutPercentage",
-            "columnName": "priceCutPercentage",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "priceDate",
-            "columnName": "priceDate",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "dateCreated",
-            "columnName": "dateCreated",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "dateUpdated",
-            "columnName": "dateUpdated",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "fk_plainId",
-            "fk_storeId"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [
-          {
-            "name": "index_HistoricalLowPrice_fk_plainId",
-            "unique": false,
-            "columnNames": [
-              "fk_plainId"
-            ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_HistoricalLowPrice_fk_plainId` ON `${TABLE_NAME}` (`fk_plainId`)"
-          }
-        ],
-        "foreignKeys": [
-          {
-            "table": "Store",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "fk_storeId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          },
-          {
-            "table": "Plain",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "fk_plainId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
-      },
-      {
-        "tableName": "Price",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fk_plainId` TEXT NOT NULL, `fk_storeId` TEXT NOT NULL, `newPrice` REAL NOT NULL, `oldPrice` REAL NOT NULL, `priceCutPercentage` INTEGER NOT NULL, `dateCreated` INTEGER NOT NULL, `dateUpdated` INTEGER NOT NULL, PRIMARY KEY(`fk_plainId`, `fk_storeId`), FOREIGN KEY(`fk_storeId`) REFERENCES `Store`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`fk_plainId`) REFERENCES `Plain`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
-        "fields": [
-          {
-            "fieldPath": "plainId",
-            "columnName": "fk_plainId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "storeId",
-            "columnName": "fk_storeId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "newPrice",
-            "columnName": "newPrice",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "oldPrice",
-            "columnName": "oldPrice",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "priceCutPercentage",
-            "columnName": "priceCutPercentage",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "dateCreated",
-            "columnName": "dateCreated",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "dateUpdated",
-            "columnName": "dateUpdated",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "fk_plainId",
-            "fk_storeId"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [
-          {
-            "name": "index_Price_fk_plainId",
-            "unique": false,
-            "columnNames": [
-              "fk_plainId"
-            ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_Price_fk_plainId` ON `${TABLE_NAME}` (`fk_plainId`)"
-          }
-        ],
-        "foreignKeys": [
-          {
-            "table": "Store",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "fk_storeId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          },
-          {
-            "table": "Plain",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "fk_plainId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
-      },
-      {
         "tableName": "watchlist_store_join",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`watcheeId` INTEGER NOT NULL, `storeId` TEXT NOT NULL, PRIMARY KEY(`watcheeId`, `storeId`), FOREIGN KEY(`watcheeId`) REFERENCES `Watchlist`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
@@ -564,7 +386,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8bfd5c44fd519d5206ac0405ec253568')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd9f5824f8283a6ce3a6c207ed57ae0a')"
     ]
   }
 }
