@@ -15,7 +15,11 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common
+package de.r4md4c.gamedealz.common.aware
 
-inline fun <T> unsafeLazy(crossinline initializer: () -> T): Lazy<T> =
-    lazy(mode = LazyThreadSafetyMode.NONE, initializer = { initializer() })
+import de.r4md4c.gamedealz.common.mvi.MviState
+import de.r4md4c.gamedealz.common.mvi.StateRestorer
+
+interface SavedStateAware<S : MviState> {
+    fun createStateRestorer(): StateRestorer<S>
+}

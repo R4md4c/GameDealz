@@ -17,4 +17,4 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
-class StateRestorer<S : MviState>(val toRestoredState: Lazy<S>)
+class StateRestorer<S : MviState>(val toRestoredState: Lazy<S?>)

@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.feature.detail.di
 import dagger.BindsInstance
 import dagger.Component
 import de.r4md4c.commonproviders.di.viewmodel.ScopedComponent
+import de.r4md4c.gamedealz.common.aware.LifecycleAware
 import de.r4md4c.gamedealz.common.di.ViewModelScope
 import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.mvi.UIEventsDispatcher
@@ -39,6 +40,8 @@ internal abstract class DetailsRetainedComponent : ScopedComponent() {
     abstract val viewModel: MviViewModel<DetailsViewState, DetailsMviEvent>
 
     abstract val dispatcher: UIEventsDispatcher<DetailsUIEvent>
+
+    abstract val lifecycleAware: LifecycleAware
 
     override fun onCleared() {
         super.onCleared()

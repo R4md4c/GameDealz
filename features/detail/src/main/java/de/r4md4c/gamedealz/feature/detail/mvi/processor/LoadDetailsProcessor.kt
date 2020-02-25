@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.feature.detail.mvi.processor
 
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
+import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.common.mvi.MviResult
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
@@ -34,21 +35,28 @@ import de.r4md4c.gamedealz.feature.detail.mvi.Section
 import de.r4md4c.gamedealz.feature.detail.mvi.SectionsResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import timber.log.Timber
 import javax.inject.Inject
 
 internal class LoadDetailsProcessor @Inject constructor(
     private val detailsFragmentArgs: DetailsFragmentArgs,
     private val getPlainDetails: GetPlainDetails,
+    private val stateStore: ModelStore<DetailsViewState>,
     private val isGameAddedToWatchListUseCase: IsGameAddedToWatchListUseCase
 ) : IntentProcessor<DetailsMviEvent, DetailsViewState> {
 
     override fun process(viewEvent: Flow<DetailsMviEvent>): Flow<MviResult<DetailsViewState>> =
         listOf(
-            viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>(),
+            viewEvent.filterIsInstance<DetailsMviEvent.InitEvent>()
+                .filter {
+                    Timber.d("InitEvent ${stateStore.currentState.sections}")
+                    stateStore.currentState.sections.isEmpty()
+                },
             viewEvent.filterIsInstance<DetailsMviEvent.RetryClickEvent>()
         ).merge()
             .map { detailsFragmentArgs.plainId }

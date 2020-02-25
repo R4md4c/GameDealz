@@ -32,7 +32,7 @@ object Libraries {
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
         const val acra = "5.5.0"
-        const val fragments = "1.2.0"
+        const val fragments = "1.2.2"
         const val constraintLayout = "2.0.0-beta3"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.1"
@@ -95,8 +95,11 @@ object Libraries {
     const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
     const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata:${Versions.lifecycle}"
+    const val lifecycleJava8Common =
+        "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
     const val fragmentsKtx = "androidx.fragment:fragment-ktx:${Versions.fragments}"
+    const val fragmentTesting = "androidx.fragment:fragment-testing:${Versions.fragments}"
     const val pagingCommonKtx = "androidx.paging:paging-common-ktx:${Versions.paging_version}"
     const val pagingRuntimeKtx = "androidx.paging:paging-runtime-ktx:${Versions.paging_version}"
     const val androidXAnnotations = "androidx.annotation:annotation:${Versions.annotations}"

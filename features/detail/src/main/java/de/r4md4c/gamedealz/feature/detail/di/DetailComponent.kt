@@ -32,7 +32,6 @@ import de.r4md4c.gamedealz.feature.detail.DetailsFragment
 @Component(
     modules = [
         ViewModelInjectionModule::class,
-        DetailFeatureModule::class,
         StateMachineModule::class,
         ActivityModule::class
     ],

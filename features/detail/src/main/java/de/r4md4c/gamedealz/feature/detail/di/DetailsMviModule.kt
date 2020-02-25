@@ -20,10 +20,13 @@ package de.r4md4c.gamedealz.feature.detail.di
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
+import de.r4md4c.gamedealz.common.aware.LifecycleAware
+import de.r4md4c.gamedealz.common.aware.SavedStateAware
 import de.r4md4c.gamedealz.common.di.ViewModelScope
 import de.r4md4c.gamedealz.common.mvi.ChannelUIEventsDispatcher
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
+import de.r4md4c.gamedealz.common.mvi.MviStateHandler
 import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.mvi.UIEventsDispatcher
 import de.r4md4c.gamedealz.feature.detail.DetailsMviViewModel
@@ -58,6 +61,16 @@ internal abstract class DetailsMviModule {
 
     @Binds
     abstract fun bindsDetailsMviViewModel(it: DetailsMviViewModel): MviViewModel<DetailsViewState, DetailsMviEvent>
+
+    @ViewModelScope
+    @Binds
+    abstract fun bindsLifecycleAware(mviStateHandler: MviStateHandler<DetailsViewState>): LifecycleAware
+
+    @ViewModelScope
+    @Binds
+    abstract fun bindsSavedStateAware(
+        mviStateHandler: MviStateHandler<DetailsViewState>
+    ): SavedStateAware<DetailsViewState>
 
     @ViewModelScope
     @Binds

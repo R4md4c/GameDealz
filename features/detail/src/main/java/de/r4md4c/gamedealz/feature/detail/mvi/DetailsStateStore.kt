@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.feature.detail.mvi
 
 import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.common.aware.SavedStateAware
 import de.r4md4c.gamedealz.common.di.ViewModelScope
 import de.r4md4c.gamedealz.common.mvi.FlowModelStore
 import de.r4md4c.gamedealz.common.mvi.ModelStore
@@ -26,8 +27,11 @@ import javax.inject.Inject
 
 @ViewModelScope
 internal class DetailsStateStore @Inject constructor(
-    dispatchers: IDispatchers
+    dispatchers: IDispatchers,
+    stateRestorer: dagger.Lazy<SavedStateAware<DetailsViewState>>
 ) : ModelStore<DetailsViewState> by FlowModelStore(
     dispatchers,
-    createSimpleStateFactory<DetailsViewState> { DetailsViewState() }
+    createSimpleStateFactory {
+        stateRestorer.get().createStateRestorer().toRestoredState.value ?: DetailsViewState()
+    }
 )

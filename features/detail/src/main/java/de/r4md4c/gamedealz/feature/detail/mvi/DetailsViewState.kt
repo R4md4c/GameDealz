@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.feature.detail.mvi
 
+import android.os.Parcelable
 import androidx.annotation.IdRes
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
@@ -25,10 +26,13 @@ import de.r4md4c.gamedealz.common.mvi.MviState
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.R
+import kotlinx.android.parcel.IgnoredOnParcel
+import kotlinx.android.parcel.Parcelize
 
-internal sealed class Section {
+internal sealed class Section : Parcelable {
     abstract val position: Int
 
+    @Parcelize
     data class GameInfoSection(
         @StringRes val titleRes: Int = R.string.about_game,
         val imageUrl: String,
@@ -36,6 +40,7 @@ internal sealed class Section {
         override val position: Int = 0
     ) : Section()
 
+    @Parcelize
     data class ScreenshotSection(
         @StringRes val titleRes: Int = R.string.screenshots,
         val screenshots: List<ScreenshotModel>,
@@ -50,20 +55,24 @@ internal sealed class Section {
         }
     }
 
+    @Parcelize
     data class PriceSection(
         @StringRes val titleRes: Int = R.string.prices,
         val currentSortOrder: SortOrder = SortOrder.ByCurrentPrice,
         val priceDetails: List<PriceDetails>,
         override val position: Int = 2
-    ) : Section()
+    ) : Section(), Parcelable
 }
 
-sealed class SortOrder {
-    object ByCurrentPrice : SortOrder() {
+sealed class SortOrder : Parcelable {
+
+    @Parcelize
+    object ByCurrentPrice : SortOrder(), Parcelable {
         override fun toString(): String = "ByCurrentPrice"
     }
 
-    object ByHistoricalLow : SortOrder() {
+    @Parcelize
+    object ByHistoricalLow : SortOrder(), Parcelable {
         override fun toString(): String = "ByHistoricalLow"
     }
 }
@@ -75,9 +84,10 @@ fun SortOrder.toMenuIdRes() =
         SortOrder.ByHistoricalLow -> R.id.menu_item_historical_low
     }
 
+@Parcelize
 internal data class DetailsViewState(
     val sections: List<Section> = emptyList(),
     val isWatched: Boolean? = null,
-    val loading: Boolean = false,
-    val errorMessage: String? = null
-) : MviState
+    @IgnoredOnParcel val loading: Boolean = false,
+    @IgnoredOnParcel val errorMessage: String? = null
+) : MviState, Parcelable

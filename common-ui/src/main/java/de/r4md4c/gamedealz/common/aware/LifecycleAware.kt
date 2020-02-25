@@ -15,7 +15,8 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.common
+package de.r4md4c.gamedealz.common.aware
 
-inline fun <T> unsafeLazy(crossinline initializer: () -> T): Lazy<T> =
-    lazy(mode = LazyThreadSafetyMode.NONE, initializer = { initializer() })
+import androidx.lifecycle.DefaultLifecycleObserver
+
+interface LifecycleAware : DefaultLifecycleObserver

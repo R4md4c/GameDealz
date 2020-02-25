@@ -17,11 +17,11 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -40,9 +40,9 @@ class RemoveFromWatchlistUseCaseImplTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        removeFromWatchlistUseCaseImpl = RemoveFromWatchlistUseCaseImpl(watchlistRepository)
+        removeFromWatchlistUseCaseImpl =
+            RemoveFromWatchlistUseCaseImpl(watchlistRepository, TestDispatchers)
     }
-
 
     @Test
     fun `it should return false when remove returns 0`() {
