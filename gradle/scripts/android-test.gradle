@@ -3,7 +3,7 @@ apply plugin: 'kotlin-allopen'
 android {
     defaultConfig {
         testApplicationId "de.r4md4c.gamedealz.test"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "de.r4md4c.gamedealz.test.runner.CustomGameDealzRunner"
     }
 }
 
@@ -14,6 +14,8 @@ allOpen {
 dependencies {
     androidTestImplementation project(':commonAndroidTest')
     androidTestImplementation TestLibraries.assertjCore
+    androidTestImplementation TestLibraries.navigationTest
+    debugImplementation Libraries.fragmentTesting
     androidTestImplementation TestLibraries.mockitoAndroid
     androidTestImplementation TestLibraries.mockitoKotlin
 }

@@ -361,8 +361,10 @@ class DetailsFragment : BaseFragment() {
 
     override fun onInject(coreComponent: CoreComponent) {
         super.onInject(coreComponent)
-        DaggerDetailComponent.factory()
-            .create(requireActivity(), this, scopedComponent, coreComponent)
-            .inject(this)
+        if (::detailsMviViewModel.isInitialized.not()) {
+            DaggerDetailComponent.factory()
+                .create(requireActivity(), this, scopedComponent, coreComponent)
+                .inject(this)
+        }
     }
 }

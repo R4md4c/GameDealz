@@ -6,7 +6,7 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
-        const val navVersion = "2.2.0"
+        const val navVersion = "2.3.0-alpha02"
         const val detektVersion = "1.4.0"
     }
 
@@ -152,6 +152,7 @@ object TestLibraries {
         const val espresso = "3.2.0"
         const val uiAutomator = "2.2.0"
         const val mockitoAndroid = "2.28.2"
+        const val kakao = "2.3.0"
     }
 
     const val workManager = "androidx.work:work-testing:${Libraries.Versions.workmanager}"
@@ -170,6 +171,9 @@ object TestLibraries {
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val androidXTestCore = "androidx.test:core:${Versions.androidXTest}"
 
+    const val kakao = "com.agoda.kakao:kakao:${Versions.kakao}"
+    const val navigationTest =
+        "androidx.navigation:navigation-testing:${BuildPlugins.Versions.navVersion}"
     const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockitoAndroid}"
     const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"

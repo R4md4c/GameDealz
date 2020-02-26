@@ -15,19 +15,22 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.test.runner
 
+import android.app.Application
 import android.content.Context
-import android.text.format.DateUtils
-import javax.inject.Inject
+import androidx.test.runner.AndroidJUnitRunner
+import de.r4md4c.gamedealz.test.TestApplication
 
-class AndroidDateFormatter @Inject constructor(
-    private val context: Context
-) : DateFormatter {
 
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
+class CustomGameDealzRunner : AndroidJUnitRunner() {
 
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
+    override fun newApplication(
+        cl: ClassLoader?,
+        className: String?,
+        context: Context?
+    ): Application {
+        System.setProperty("org.mockito.android.target", context!!.cacheDir.absolutePath)
+        return super.newApplication(cl, TestApplication::class.java.name, context)
+    }
 }

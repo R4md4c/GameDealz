@@ -15,19 +15,14 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.commonproviders.date
+package de.r4md4c.gamedealz.test
 
-import android.content.Context
-import android.text.format.DateUtils
-import javax.inject.Inject
+import android.app.Application
+import com.nhaarman.mockitokotlin2.mock
+import de.r4md4c.gamedealz.common.di.HasComponent
+import de.r4md4c.gamedealz.core.CoreComponent
 
-class AndroidDateFormatter @Inject constructor(
-    private val context: Context
-) : DateFormatter {
+class TestApplication : Application(), HasComponent<CoreComponent> {
 
-    override fun formatDateTime(millis: Long, flags: Int): String =
-        DateUtils.formatDateTime(context, millis, flags)
-
-    override fun getRelativeTimeSpanString(millis: Long, minResolution: Long): String =
-        DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(), minResolution).toString()
+    override val daggerComponent: CoreComponent = mock()
 }
