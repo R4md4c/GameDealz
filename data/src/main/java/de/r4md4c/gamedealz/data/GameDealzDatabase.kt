@@ -36,7 +36,7 @@ import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeStoreJoin
 
 @Database(
-    version = 3, entities = [Region::class,
+    version = 4, entities = [Region::class,
         Country::class,
         Currency::class,
         Store::class,

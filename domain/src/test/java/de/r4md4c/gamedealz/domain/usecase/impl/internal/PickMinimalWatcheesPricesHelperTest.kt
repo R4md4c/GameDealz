@@ -25,10 +25,10 @@ import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.model.Shop
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.model.ShopDTO
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -41,10 +41,10 @@ import java.util.concurrent.TimeUnit
 class PickMinimalWatcheesPricesHelperTest {
 
     @Mock
-    private lateinit var watchlistRepository: WatchlistRepository
+    private lateinit var watchlistRepository: WatchlistLocalDataSource
 
     @Mock
-    private lateinit var watchlistStoresRepository: WatchlistStoresRepository
+    private lateinit var watchlistStoresDataSource: WatchlistStoresDataSource
 
     @Mock
     private lateinit var dateProvider: DateProvider
@@ -55,7 +55,11 @@ class PickMinimalWatcheesPricesHelperTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        helper = PickMinimalWatcheesPricesHelper(watchlistRepository, watchlistStoresRepository, dateProvider)
+        helper = PickMinimalWatcheesPricesHelper(
+            watchlistRepository,
+            watchlistStoresDataSource,
+            dateProvider
+        )
     }
 
 
@@ -90,7 +94,16 @@ class PickMinimalWatcheesPricesHelperTest {
                     WATCHEE_WITH_STORES.copy(stores = setOf(STORE.copy(id = "not found")))
                 )
 
-            assertThat(helper.pick(mapOf("plainId" to listOf(PRICE, PRICE.copy(shop = Shop("2", "")))))).isEmpty()
+            assertThat(
+                helper.pick(
+                    mapOf(
+                        "plainId" to listOf(
+                            PRICE,
+                            PRICE.copy(shop = ShopDTO("2", ""))
+                        )
+                    )
+                )
+            ).isEmpty()
         }
     }
 
@@ -236,7 +249,11 @@ class PickMinimalWatcheesPricesHelperTest {
 
         fun withFindWatcheeWithStoresResult(watchee: Watchee?, result: WatcheeWithStores?) = apply {
             runBlocking {
-                whenever(watchlistStoresRepository.findWatcheeWithStores(watchee ?: anyOrNull())).thenReturn(result)
+                whenever(
+                    watchlistStoresDataSource.findWatcheeWithStores(
+                        watchee ?: anyOrNull()
+                    )
+                ).thenReturn(result)
             }
         }
 
@@ -246,7 +263,7 @@ class PickMinimalWatcheesPricesHelperTest {
     }
 
     private companion object {
-        val PRICE = Price(1f, 1f, 2, "", Shop("1", ""), emptySet())
+        val PRICE = PriceDTO(1f, 1f, 2, "", ShopDTO("1", ""), emptySet())
 
         val WATCHEE = Watchee(1, "plainId", "", 0, 0, 0f, "", 0f, "", "", "")
 

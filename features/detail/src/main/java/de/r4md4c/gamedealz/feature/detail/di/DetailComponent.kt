@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Component
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
 import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.common.di.activity.ActivityModule
 import de.r4md4c.gamedealz.common.di.state.StateMachineModule
@@ -31,16 +30,15 @@ import de.r4md4c.gamedealz.feature.detail.DetailsFragment
 @FeatureScope
 @Component(
     modules = [
-        ViewModelInjectionModule::class,
-        DetailFeatureModule::class,
         StateMachineModule::class,
         ActivityModule::class
     ],
     dependencies = [
-        CoreComponent::class
+        CoreComponent::class,
+        DetailsRetainedComponent::class
     ]
 )
-interface DetailComponent {
+internal interface DetailComponent {
 
     fun inject(detailsFragment: DetailsFragment)
 
@@ -49,6 +47,7 @@ interface DetailComponent {
         fun create(
             @BindsInstance fragmentActivity: FragmentActivity,
             @BindsInstance fragment: Fragment,
+            retainedComponent: DetailsRetainedComponent,
             coreComponent: CoreComponent
         ): DetailComponent
     }

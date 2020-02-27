@@ -17,10 +17,15 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -31,7 +36,7 @@ import org.mockito.MockitoAnnotations
 class RetrievePricesGroupedByCountriesHelperTest {
 
     @Mock
-    lateinit var pricesRemoteRepository: PricesRemoteRepository
+    lateinit var pricesRemoteDataSource: PricesRemoteDataSource
 
     private lateinit var subject: RetrievePricesGroupedByCountriesHelper
 
@@ -39,7 +44,7 @@ class RetrievePricesGroupedByCountriesHelperTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        subject = RetrievePricesGroupedByCountriesHelper(pricesRemoteRepository)
+        subject = RetrievePricesGroupedByCountriesHelper(pricesRemoteDataSource)
     }
 
     @Test
@@ -57,16 +62,16 @@ class RetrievePricesGroupedByCountriesHelperTest {
                 )
             )
 
-            verify(pricesRemoteRepository).retrievesPrices(
+            verify(pricesRemoteDataSource).retrievesPrices(
                 eq(setOf("plainId", "plainId2")),
                 any(),
                 eq("US"),
                 eq("us"),
                 any()
             )
-            verify(pricesRemoteRepository).retrievesPrices(any(), any(), eq("US"), eq("CA"), any())
-            verify(pricesRemoteRepository).retrievesPrices(any(), any(), eq("EU"), eq("DE"), any())
-            verify(pricesRemoteRepository).retrievesPrices(any(), any(), eq("EU"), eq("UK"), any())
+            verify(pricesRemoteDataSource).retrievesPrices(any(), any(), eq("US"), eq("CA"), any())
+            verify(pricesRemoteDataSource).retrievesPrices(any(), any(), eq("EU"), eq("DE"), any())
+            verify(pricesRemoteDataSource).retrievesPrices(any(), any(), eq("EU"), eq("UK"), any())
         }
     }
 
@@ -83,7 +88,13 @@ class RetrievePricesGroupedByCountriesHelperTest {
                 )
             )
 
-            verify(pricesRemoteRepository).retrievesPrices(eq(setOf("plainId")), any(), any(), any(), eq(4))
+            verify(pricesRemoteDataSource).retrievesPrices(
+                eq(setOf("plainId")),
+                any(),
+                any(),
+                any(),
+                eq(4)
+            )
         }
     }
 
@@ -99,14 +110,21 @@ class RetrievePricesGroupedByCountriesHelperTest {
                 )
             )
 
-            verify(pricesRemoteRepository).retrievesPrices(eq(setOf("plainId")), any(), any(), any(), eq(10))
+            verify(pricesRemoteDataSource).retrievesPrices(
+                eq(setOf("plainId")),
+                any(),
+                any(),
+                any(),
+                eq(10)
+            )
         }
     }
 
     @Test
     fun `it returns prices from priceRemoteRepository`() {
         runBlocking {
-            val expected: Map<String, List<Price>> = mapOf("planId" to listOf(mock(), mock(), mock()))
+            val expected: Map<String, List<PriceDTO>> =
+                mapOf("planId" to listOf(mock(), mock(), mock()))
             ArrangeBuilder()
                 .withReturnedPrices(expected)
 
@@ -124,14 +142,30 @@ class RetrievePricesGroupedByCountriesHelperTest {
     inner class ArrangeBuilder {
         init {
             runBlocking {
-                whenever(pricesRemoteRepository.retrievesPrices(any(), any(), anyOrNull(), anyOrNull(), anyOrNull()))
+                whenever(
+                    pricesRemoteDataSource.retrievesPrices(
+                        any(),
+                        any(),
+                        anyOrNull(),
+                        anyOrNull(),
+                        anyOrNull()
+                    )
+                )
                     .thenReturn(emptyMap())
             }
         }
 
-        fun withReturnedPrices(map: Map<String, List<Price>>) {
+        fun withReturnedPrices(map: Map<String, List<PriceDTO>>) {
             runBlocking {
-                whenever(pricesRemoteRepository.retrievesPrices(any(), any(), anyOrNull(), anyOrNull(), anyOrNull()))
+                whenever(
+                    pricesRemoteDataSource.retrievesPrices(
+                        any(),
+                        any(),
+                        anyOrNull(),
+                        anyOrNull(),
+                        anyOrNull()
+                    )
+                )
                     .thenReturn(map)
             }
         }

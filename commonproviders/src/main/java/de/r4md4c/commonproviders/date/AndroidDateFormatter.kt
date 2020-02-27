@@ -21,7 +21,7 @@ import android.content.Context
 import android.text.format.DateUtils
 import javax.inject.Inject
 
-internal class AndroidDateFormatter @Inject constructor(
+class AndroidDateFormatter @Inject constructor(
     private val context: Context
 ) : DateFormatter {
 

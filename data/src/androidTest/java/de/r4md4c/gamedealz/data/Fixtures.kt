@@ -4,6 +4,7 @@ import de.r4md4c.gamedealz.data.entity.Country
 import de.r4md4c.gamedealz.data.entity.Currency
 import de.r4md4c.gamedealz.data.entity.Plain
 import de.r4md4c.gamedealz.data.entity.Region
+import de.r4md4c.gamedealz.data.entity.Store
 
 object Fixtures {
 
@@ -13,5 +14,7 @@ object Fixtures {
 
     fun currency(code: String = "currency") = Currency(code, "currency")
 
-    fun plain() = Plain("id", "shopId")
+    fun plain(id: String = "id", shopId: String = "shopId") = Plain(id, shopId)
+
+    fun store(name: String = "Steam", id: String = "steam") = Store(id, name, "")
 }

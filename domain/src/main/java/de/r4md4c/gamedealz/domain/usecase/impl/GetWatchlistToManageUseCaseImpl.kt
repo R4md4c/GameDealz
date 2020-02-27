@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
-import de.r4md4c.gamedealz.data.repository.RegionsRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.PriceAlertLocalDataSource
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.toCurrencyModel
@@ -33,9 +33,9 @@ import javax.inject.Inject
 import kotlin.collections.mapNotNull
 
 internal class GetWatchlistToManageUseCaseImpl @Inject constructor(
-    private val watchlistRepository: WatchlistRepository,
-    private val regionsRepository: RegionsRepository,
-    private val priceAlertRepository: PriceAlertRepository
+    private val watchlistRepository: WatchlistLocalDataSource,
+    private val regionsRepository: RegionsLocalDataSource,
+    private val priceAlertRepository: PriceAlertLocalDataSource
 ) : GetWatchlistToManageUseCase {
 
     override suspend fun invoke(param: VoidParameter?): Flow<List<ManageWatchlistModel>> = coroutineScope {

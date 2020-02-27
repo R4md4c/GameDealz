@@ -34,8 +34,9 @@ import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.formatCurrency
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
+import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
 import kotlinx.android.synthetic.main.layout_detail_prices_item.view.*
 import java.util.concurrent.TimeUnit
 
@@ -44,16 +45,9 @@ class PriceItem(
     private val currentBestText: CharSequence,
     private val buyUrl: String,
     private val shopName: String,
-    private val desiredConstraintLayoutState: Int,
+    private val sortOrder: SortOrder,
     private val onBuyClick: (String) -> Unit
 ) : AbstractItem<PriceItem, PriceItem.ViewHolder>() {
-
-    init {
-        require(
-            desiredConstraintLayoutState == R.id.state_historical_low ||
-                    desiredConstraintLayoutState == R.id.state_current_best
-        ) { "PriceItem only accepts R.id.state_historical_low or R.id.state_current_best" }
-    }
 
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_prices_item
@@ -69,9 +63,13 @@ class PriceItem(
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
         with(holder.itemView) {
-            constraintLayout.setState(desiredConstraintLayoutState, 0, 0)
+            val layoutState = when (sortOrder) {
+                SortOrder.ByHistoricalLow -> R.id.state_historical_low
+                SortOrder.ByCurrentPrice -> R.id.state_current_best
+            }
+            constraintLayout.setState(layoutState, 0, 0)
 
-            val (currentBestAppearance, historicalLowAppearance) = when (desiredConstraintLayoutState) {
+            val (currentBestAppearance, historicalLowAppearance) = when (layoutState) {
                 R.id.state_historical_low -> {
                     R.style.TextAppearance_MaterialComponents_Body2 to R.style.TextAppearance_MaterialComponents_Body1
                 }
@@ -98,7 +96,7 @@ class PriceItem(
 fun PriceDetails.toPriceItem(
     resourcesProvider: ResourcesProvider,
     dateFormatter: DateFormatter,
-    desiredConstraintLayoutState: Int,
+    sortOrder: SortOrder,
     onBuyClick: (String) -> Unit
 ): PriceItem {
     val currentBestText = currentBestText(resourcesProvider)
@@ -108,7 +106,7 @@ fun PriceDetails.toPriceItem(
         currentBestText,
         priceModel.url,
         shopModel.name,
-        desiredConstraintLayoutState,
+        sortOrder,
         onBuyClick
     )
 }

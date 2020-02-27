@@ -18,12 +18,12 @@
 package de.r4md4c.gamedealz.common.mvi
 
 import de.r4md4c.gamedealz.common.unsafeLazy
-import hu.akarnokd.kotlin.flow.publish
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.broadcastIn
@@ -34,25 +34,25 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
 class RealMviViewModel<Event : MviViewEvent, State : MviState>(
-    private val intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<Event, State>>,
+    intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<Event, State>>,
     private val store: ModelStore<State>,
     initEvent: Event? = null
 ) : MviViewModel<State, Event> {
 
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    private val eventsChannel = Channel<Event>()
+    private val eventsChannel = Channel<Event>(UNLIMITED)
 
     init {
-        eventsChannel.consumeAsFlow()
+        val eventsFlow = eventsChannel.consumeAsFlow()
             .broadcastIn(viewModelScope)
             .asFlow()
-            .publish { events ->
-                val eventsWithInitEvent = events.onStart {
-                    initEvent?.let { emit(it) }
-                }
-                intentProcessors.map { it.process(eventsWithInitEvent) }.merge()
+            .onStart {
+                initEvent?.let { emit(it) }
             }
+
+        intentProcessors.map { it.process(eventsFlow) }
+            .merge()
             .onEach { store.process(it) }
             .launchIn(viewModelScope)
     }

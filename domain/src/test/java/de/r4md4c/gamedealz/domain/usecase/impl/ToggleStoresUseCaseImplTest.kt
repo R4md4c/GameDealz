@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.Store
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.CollectionParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.coroutines.flow.flowOf
@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations
 class ToggleStoresUseCaseImplTest {
 
     @Mock
-    private lateinit var storesRepository: StoresRepository
+    private lateinit var storesRepository: StoresLocalDataSource
 
     private lateinit var testSubject: ToggleStoresUseCaseImpl
 

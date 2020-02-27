@@ -38,6 +38,7 @@ import de.r4md4c.commonproviders.di.viewmodel.components
 import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
+import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.common.mvi.UiSideEffect
 import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
@@ -337,7 +338,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
                 it.navigationIdentifier,
                 it.popToRoot
             )
-        } as Any
+        }.exhaustive
     }
 
     private fun onLogoutClick() {

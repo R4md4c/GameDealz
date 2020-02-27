@@ -69,6 +69,10 @@ class FlowModelStore<S : MviState>(
         intents.send(result)
     }
 
+    @get:Synchronized
+    override val currentState: S
+        get() = store.value
+
     override fun modelState(): Flow<S> = store.asFlow()
 
     override fun dispose() {

@@ -25,9 +25,9 @@ import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.domain.cache.NumberFormatCurrencyCache
 import de.r4md4c.gamedealz.network.model.Deal
 import de.r4md4c.gamedealz.network.model.GameUrls
-import de.r4md4c.gamedealz.network.model.HistoricalLow
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.model.Shop
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.model.ShopDTO
 import java.util.*
 
 internal fun RegionWithCountriesModel.findCountry(countryCode: String): CountryModel? =
@@ -58,19 +58,19 @@ internal fun Deal.toDealModel(currencyModel: CurrencyModel, colorRgb: String): D
         currencyModel
     )
 
-internal fun Shop.toShopModel(rgbColor: String): ShopModel = ShopModel(id, name, rgbColor)
+internal fun ShopDTO.toShopModel(rgbColor: String): ShopModel = ShopModel(id, name, rgbColor)
 
 internal fun GameUrls.toUrls(): Urls = Urls(buy, gameInfo)
 
 internal fun Store.toStoreModel(): StoreModel = StoreModel(id, name, selected)
 
-internal fun Price.toPriceModel(storeColor: String): PriceModel =
+internal fun PriceDTO.toPriceModel(storeColor: String): PriceModel =
     PriceModel(newPrice, oldPrice, priceCutPercentage, url, shop.toShopModel(storeColor), drm)
 
 fun DealModel.toPriceModel(): PriceModel =
     PriceModel(newPrice, oldPrice, priceCutPercentage, urls.buyUrl, shop, drm)
 
-internal fun HistoricalLow.toModel(colorRgb: String): HistoricalLowModel? {
+internal fun HistoricalLowDTO.toModel(colorRgb: String): HistoricalLowModel? {
     val shop = shop ?: return null
     val price = price ?: return null
     val priceCutPercentage = priceCutPercentage ?: return null

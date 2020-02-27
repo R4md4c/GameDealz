@@ -21,7 +21,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -36,7 +36,7 @@ import org.mockito.MockitoAnnotations
 class IsGameAddedToWatchListUseCaseImplTest {
 
     @Mock
-    lateinit var watchlistRepository: WatchlistRepository
+    lateinit var watchlistRepository: WatchlistLocalDataSource
 
     private lateinit var subject: IsGameAddedToWatchListUseCaseImpl
 

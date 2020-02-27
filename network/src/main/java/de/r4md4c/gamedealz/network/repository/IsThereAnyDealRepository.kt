@@ -19,9 +19,9 @@ package de.r4md4c.gamedealz.network.repository
 
 import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.Deal
-import de.r4md4c.gamedealz.network.model.HistoricalLow
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
 import de.r4md4c.gamedealz.network.model.PageResult
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.Store
 import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
@@ -33,7 +33,7 @@ internal class IsThereAnyDealRepository @Inject constructor(
     private val service: IsThereAnyDealService
 ) : RegionsRemoteRepository, StoresRemoteRepository,
     DealsRemoteRepository, PlainsRemoteRepository,
-    PricesRemoteRepository, UserRemoteRepository {
+    PricesRemoteDataSource, UserRemoteRepository {
 
     override suspend fun regions(): RegionCodes = service.regions().await().data
 
@@ -66,7 +66,7 @@ internal class IsThereAnyDealRepository @Inject constructor(
         regionCode: String?,
         countryCode: String?,
         added: Long?
-    ): Map<String, List<Price>> =
+    ): Map<String, List<PriceDTO>> =
         service.prices(
             plains = plainIds.toCommaSeparated(),
             shops = shops.toCommaSeparated(),
@@ -80,7 +80,7 @@ internal class IsThereAnyDealRepository @Inject constructor(
         shops: Set<String>,
         regionCode: String?,
         countryCode: String?
-    ): Map<String, HistoricalLow> =
+    ): Map<String, HistoricalLowDTO> =
         service.historicalLow(
             plains = plainIds.toCommaSeparated(),
             shops = shops.toCommaSeparated(),

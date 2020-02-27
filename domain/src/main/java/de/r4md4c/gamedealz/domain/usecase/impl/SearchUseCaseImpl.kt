@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
@@ -28,9 +28,9 @@ import de.r4md4c.gamedealz.domain.model.toPriceModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
-import de.r4md4c.gamedealz.network.model.HistoricalLow
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.repository.PricesRemoteRepository
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
 import de.r4md4c.gamedealz.network.service.SearchService
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -38,9 +38,9 @@ import javax.inject.Inject
 
 internal class SearchUseCaseImpl @Inject constructor(
     private val searchService: SearchService,
-    private val pricesRemoteRepository: PricesRemoteRepository,
+    private val pricesRemoteDataSource: PricesRemoteDataSource,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val storesRepository: StoresRepository,
+    private val storesRepository: StoresLocalDataSource,
     private val imageUrlUseCase: GetImageUrlUseCase
 ) : SearchUseCase {
 
@@ -58,14 +58,14 @@ internal class SearchUseCaseImpl @Inject constructor(
 
         val searchResultsPlainId = searchResults.mapTo(mutableSetOf()) { it.plain.value }
 
-        val prices = pricesRemoteRepository.retrievesPrices(
+        val prices = pricesRemoteDataSource.retrievesPrices(
             searchResultsPlainId,
             emptySet(), activeRegion.regionCode, activeRegion.country.code
         )
 
         check(isActive) { "Search was cancelled" }
 
-        val historicalLow = pricesRemoteRepository.historicalLow(
+        val historicalLow = pricesRemoteDataSource.historicalLow(
             searchResultsPlainId,
             emptySet(),
             activeRegion.regionCode,
@@ -84,13 +84,13 @@ internal class SearchUseCaseImpl @Inject constructor(
             }
     }
 
-    private suspend fun List<Price>.pricesWithStoreColor(): List<PriceModel> =
+    private suspend fun List<PriceDTO>.pricesWithStoreColor(): List<PriceModel> =
         mapNotNull {
             val storeColor = storesRepository.findById(it.shop.id)?.color ?: return@mapNotNull null
             it.toPriceModel(storeColor)
         }
 
-    private suspend fun HistoricalLow.toHistoricalModelWithColor(): HistoricalLowModel? {
+    private suspend fun HistoricalLowDTO.toHistoricalModelWithColor(): HistoricalLowModel? {
         val shopId = shop?.id ?: return null
         val color = storesRepository.findById(shopId)?.color ?: return null
         return this.toModel(color)

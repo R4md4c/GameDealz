@@ -19,9 +19,9 @@ package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
 import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -31,8 +31,8 @@ import javax.inject.Inject
  * This respects also the stores that are available for these watchees.
  */
 internal class PickMinimalWatcheesPricesHelper @Inject constructor(
-    private val watchlistRepository: WatchlistRepository,
-    private val watchlistStoresRepository: WatchlistStoresRepository,
+    private val watchlistRepository: WatchlistLocalDataSource,
+    private val watchlistStoresDataSource: WatchlistStoresDataSource,
     private val dateProvider: DateProvider
 ) {
 
@@ -42,11 +42,11 @@ internal class PickMinimalWatcheesPricesHelper @Inject constructor(
      * @param prices A Map between the plain Ids and list of prices of that was retrieved from the server.
      * @return A map between the minimum price as key and the [Watchee] model that has reached the target price.
      */
-    suspend fun pick(prices: Map<String, List<Price>>): Map<Price, Watchee> {
+    suspend fun pick(prices: Map<String, List<PriceDTO>>): Map<PriceDTO, Watchee> {
         return prices.mapNotNull {
             val watchee = watchlistRepository.findById(it.key).first() ?: return@mapNotNull null
             val watcheesStoresIds =
-                watchlistStoresRepository.findWatcheeWithStores(watchee)?.stores?.map { s -> s.id }
+                watchlistStoresDataSource.findWatcheeWithStores(watchee)?.stores?.map { s -> s.id }
                     ?: return@mapNotNull null
             val minPrice =
                 it.value.firstOrNull { price -> watcheesStoresIds.contains(price.shop.id) } ?: return@mapNotNull null

@@ -10,7 +10,7 @@ import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.DataWrapper
 import de.r4md4c.gamedealz.network.model.Deal
 import de.r4md4c.gamedealz.network.model.ListWrapper
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.Stores
 import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
@@ -75,7 +75,7 @@ class IsThereAnyDealRepositoryTest {
             DataWrapper(
                 mapOf(
                     "battlefield" to ListWrapper(
-                        listOf(mock<Price>(), mock<Price>()),
+                        listOf(mock<PriceDTO>(), mock<PriceDTO>()),
                         0
                     )
                 )

@@ -25,4 +25,6 @@ interface ModelStore<S : MviState> : DisposableHandle {
     suspend fun process(result: MviResult<S>)
 
     fun modelState(): Flow<S>
+
+    val currentState: S
 }

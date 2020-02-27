@@ -19,9 +19,9 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.data.repository.StoresRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.AddToWatchListArgument
 import de.r4md4c.gamedealz.domain.model.WatcheeModel
@@ -35,10 +35,10 @@ import javax.inject.Inject
 
 internal class AddToWatchListUseCaseImpl @Inject constructor(
     private val dispatchers: IDispatchers,
-    private val watchlistStoresRepository: WatchlistStoresRepository,
-    private val watchlistRepository: WatchlistRepository,
+    private val watchlistStoresDataSource: WatchlistStoresDataSource,
+    private val watchlistRepository: WatchlistLocalDataSource,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
-    private val storesRepository: StoresRepository,
+    private val storesRepository: StoresLocalDataSource,
     private val dateProvider: DateProvider
 ) : AddToWatchListUseCase {
 
@@ -66,7 +66,10 @@ internal class AddToWatchListUseCaseImpl @Inject constructor(
                 .toRepositoryModel()
 
             runCatching {
-                watchlistStoresRepository.saveWatcheeWithStores(repositoryModel, savedRepositoryStores)
+                watchlistStoresDataSource.saveWatcheeWithStores(
+                    repositoryModel,
+                    savedRepositoryStores
+                )
             }.onFailure {
                 watchlistRepository.removeById(parameter.plainId)
             }.getOrThrow()

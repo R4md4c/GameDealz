@@ -54,7 +54,7 @@ import javax.inject.Inject
 
 class SearchFragment : BaseFragment() {
 
-    private val searchTerm by lazy { fromBundle(arguments!!).searchTerm }
+    private val searchTerm by lazy { fromBundle(requireArguments()).searchTerm }
 
     private var searchView: SearchView? = null
 

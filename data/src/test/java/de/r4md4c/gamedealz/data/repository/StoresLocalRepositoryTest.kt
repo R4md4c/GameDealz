@@ -16,13 +16,13 @@ class StoresLocalRepositoryTest {
     @Mock
     private lateinit var storesDao: StoresDao
 
-    private lateinit var storesLocalRepository: StoresLocalRepository
+    private lateinit var storesLocalRepository: StoresLocalDataSourceImpl
 
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        storesLocalRepository = StoresLocalRepository(storesDao)
+        storesLocalRepository = StoresLocalDataSourceImpl(storesDao)
     }
 
     @Test

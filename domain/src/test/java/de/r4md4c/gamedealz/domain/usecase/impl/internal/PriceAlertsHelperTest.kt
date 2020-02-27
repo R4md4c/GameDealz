@@ -19,16 +19,27 @@ package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
 import de.r4md4c.commonproviders.date.DateProvider
 import de.r4md4c.gamedealz.data.entity.PriceAlert
-import de.r4md4c.gamedealz.data.repository.PriceAlertRepository
-import de.r4md4c.gamedealz.domain.model.*
-import io.mockk.*
+import de.r4md4c.gamedealz.data.repository.PriceAlertLocalDataSource
+import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.ShopModel
+import de.r4md4c.gamedealz.domain.model.WatcheeModel
+import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
+import io.mockk.Runs
+import io.mockk.clearMocks
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
 class PriceAlertsHelperTest {
 
-    private val priceAlertRepository = mockk<PriceAlertRepository>()
+    private val priceAlertRepository = mockk<PriceAlertLocalDataSource>()
 
     private val dateProvider = mockk<DateProvider>()
 

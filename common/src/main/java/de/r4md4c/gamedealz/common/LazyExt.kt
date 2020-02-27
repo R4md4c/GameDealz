@@ -17,5 +17,5 @@
 
 package de.r4md4c.gamedealz.common
 
-inline fun <T : Any> unsafeLazy(crossinline initializer: () -> T): Lazy<T> =
+inline fun <T> unsafeLazy(crossinline initializer: () -> T): Lazy<T> =
     lazy(mode = LazyThreadSafetyMode.NONE, initializer = { initializer() })

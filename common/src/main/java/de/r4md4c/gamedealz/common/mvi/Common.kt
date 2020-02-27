@@ -22,3 +22,5 @@ interface MviViewEvent
 interface MviState
 
 interface MviInitEvent : MviViewEvent
+
+interface UIEvent

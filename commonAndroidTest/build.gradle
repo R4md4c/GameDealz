@@ -16,6 +16,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
+
+    lintOptions {
+        warning 'InvalidPackage'
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -25,11 +34,15 @@ dependencies {
     implementation Libraries.fragmentsKtx
     implementation Libraries.coreKtx
     implementation TestLibraries.coroutinesTest
+    implementation TestLibraries.mockitoKotlin
+    implementation TestLibraries.mockitoAndroid
     implementation TestLibraries.junit
     implementation Libraries.material
+    implementation project(':core')
     implementation project(':common')
     implementation project(':common-ui')
 
+    api TestLibraries.kakao
     api TestLibraries.androidXTestCore
     api TestLibraries.testRunner
     api TestLibraries.testRules

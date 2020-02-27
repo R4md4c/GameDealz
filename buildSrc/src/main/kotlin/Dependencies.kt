@@ -6,7 +6,7 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
-        const val navVersion = "2.2.0"
+        const val navVersion = "2.3.0-alpha02"
         const val detektVersion = "1.4.0"
     }
 
@@ -32,7 +32,7 @@ object Libraries {
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
         const val acra = "5.5.0"
-        const val fragments = "1.2.0"
+        const val fragments = "1.2.2"
         const val constraintLayout = "2.0.0-beta3"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.1"
@@ -56,7 +56,11 @@ object Libraries {
         const val moshi = "1.8.0"
         const val kotshi = "2.0.1"
         const val appAuth = "0.7.1"
+        const val sqliteKtx = "2.1.0"
+        const val store4 = "4.0.0-alpha03"
     }
+
+    const val store4 = "com.dropbox.mobile.store:store4:${Versions.store4}"
 
     const val kotshiApi = "se.ansman.kotshi:api:${Versions.kotshi}"
     const val kotshiCompiler = "se.ansman.kotshi:compiler:${Versions.kotshi}"
@@ -91,12 +95,16 @@ object Libraries {
     const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
     const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata:${Versions.lifecycle}"
+    const val lifecycleJava8Common =
+        "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
     const val fragmentsKtx = "androidx.fragment:fragment-ktx:${Versions.fragments}"
+    const val fragmentTesting = "androidx.fragment:fragment-testing:${Versions.fragments}"
     const val pagingCommonKtx = "androidx.paging:paging-common-ktx:${Versions.paging_version}"
     const val pagingRuntimeKtx = "androidx.paging:paging-runtime-ktx:${Versions.paging_version}"
     const val androidXAnnotations = "androidx.annotation:annotation:${Versions.annotations}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.androidX}"
+    const val sqliteKtx = "androidx.sqlite:sqlite-ktx:${Versions.sqliteKtx}"
     // Logging solution For pure Java modules
     const val slf4j = "org.slf4j:slf4j-api:1.7.25"
     const val timberSlf4j = "com.arcao:slf4j-timber:3.1@aar"
@@ -144,6 +152,7 @@ object TestLibraries {
         const val espresso = "3.2.0"
         const val uiAutomator = "2.2.0"
         const val mockitoAndroid = "2.28.2"
+        const val kakao = "2.3.0"
     }
 
     const val workManager = "androidx.work:work-testing:${Libraries.Versions.workmanager}"
@@ -162,6 +171,9 @@ object TestLibraries {
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val androidXTestCore = "androidx.test:core:${Versions.androidXTest}"
 
+    const val kakao = "com.agoda.kakao:kakao:${Versions.kakao}"
+    const val navigationTest =
+        "androidx.navigation:navigation-testing:${BuildPlugins.Versions.navVersion}"
     const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockitoAndroid}"
     const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"

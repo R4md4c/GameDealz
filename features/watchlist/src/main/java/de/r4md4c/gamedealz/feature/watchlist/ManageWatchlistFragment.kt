@@ -89,16 +89,16 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     }
 
     private val swipeToRefresh: SwipeRefreshLayout
-        get() = view!!.findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
+        get() = requireView().findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
 
     private val toolbar: Toolbar
-        get() = view!!.findViewById(R.id.toolbar) as Toolbar
+        get() = requireView().findViewById(R.id.toolbar) as Toolbar
 
     private val content: RecyclerView
-        get() = view!!.findViewById(R.id.content) as RecyclerView
+        get() = requireView().findViewById(R.id.content) as RecyclerView
 
     private val emptyResultsTitleText: TextView
-        get() = view!!.findViewById(R.id.emptyResultsTitleText) as TextView
+        get() = requireView().findViewById(R.id.emptyResultsTitleText) as TextView
 
     private val undoHelper by lazy {
         UndoHelper<ManageWatchlistItem>(itemsAdapter, UndoListener())

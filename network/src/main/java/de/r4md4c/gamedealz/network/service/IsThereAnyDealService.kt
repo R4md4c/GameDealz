@@ -20,11 +20,11 @@ package de.r4md4c.gamedealz.network.service
 import de.r4md4c.gamedealz.network.BuildConfig
 import de.r4md4c.gamedealz.network.model.DataWrapper
 import de.r4md4c.gamedealz.network.model.Deal
-import de.r4md4c.gamedealz.network.model.HistoricalLow
+import de.r4md4c.gamedealz.network.model.HistoricalLowDTO
 import de.r4md4c.gamedealz.network.model.IdToPlainMap
 import de.r4md4c.gamedealz.network.model.ListWrapper
 import de.r4md4c.gamedealz.network.model.Plain
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.Region
 import de.r4md4c.gamedealz.network.model.Stores
 import kotlinx.coroutines.Deferred
@@ -33,7 +33,7 @@ import retrofit2.http.Query
 
 typealias RegionCodes = Map<String, Region>
 typealias ShopPlains = Map<String, IdToPlainMap>
-typealias PlainPriceList = Map<String, ListWrapper<Price>>
+typealias PlainPriceList = Map<String, ListWrapper<PriceDTO>>
 
 /**
  * A retrofit interface for accessing IsThereAnyDeal's API.
@@ -80,7 +80,7 @@ interface IsThereAnyDealService {
         @Query("country") country: String? = null,
         @Query("shops") shops: String? = null
     ):
-            Deferred<DataWrapper<Map<String, HistoricalLow>>>
+            Deferred<DataWrapper<Map<String, HistoricalLowDTO>>>
 
     @GET("v01/deals/list")
     fun deals(

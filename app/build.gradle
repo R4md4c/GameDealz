@@ -146,4 +146,3 @@ configurations.all {
         force 'net.bytebuddy:byte-buddy-agent:1.8.22'
     }
 }
-

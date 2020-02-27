@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Store
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 internal class GetStoresUseCaseImpl @Inject constructor(
     private val storesRemoteRepository: StoresRemoteRepository,
-    private val storesRepository: StoresRepository,
+    private val storesRepository: StoresLocalDataSource,
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase
 ) : GetStoresUseCase {
 

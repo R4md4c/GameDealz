@@ -28,7 +28,7 @@ data class Deal(
     @Json(name = "price_old") val oldPrice: Float,
     @Json(name = "price_cut") val priceCutPercentage: Short,
     val added: Long,
-    val shop: Shop,
+    val shop: ShopDTO,
     val drm: Set<String>,
     val urls: GameUrls
 )

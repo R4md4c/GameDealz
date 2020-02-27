@@ -27,6 +27,10 @@ import kotlinx.android.synthetic.main.layout_detail_header.view.*
 class HeaderItem(private val headerString: String) :
     AbstractItem<HeaderItem, HeaderItem.ViewHolder>() {
 
+    init {
+        withIdentifier(R.id.header_item_id.toLong())
+    }
+
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_detail_header
 

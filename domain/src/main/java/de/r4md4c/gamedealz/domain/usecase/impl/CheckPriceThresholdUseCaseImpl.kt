@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Watchee
-import de.r4md4c.gamedealz.data.repository.RegionsRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.domain.model.toCurrencyModel
@@ -30,14 +30,14 @@ import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
-import de.r4md4c.gamedealz.network.model.Price
+import de.r4md4c.gamedealz.network.model.PriceDTO
 import timber.log.Timber
 import javax.inject.Inject
 
 internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
-    private val watchlistRepository: WatchlistRepository,
-    private val watchlistStoresRepository: WatchlistStoresRepository,
-    private val regionsRepository: RegionsRepository,
+    private val watchlistRepository: WatchlistLocalDataSource,
+    private val watchlistStoresDataSource: WatchlistStoresDataSource,
+    private val regionsRepository: RegionsLocalDataSource,
     private val retrievePricesGroupedByCountriesHelper: RetrievePricesGroupedByCountriesHelper,
     private val pickMinimalWatcheesPricesHelper: PickMinimalWatcheesPricesHelper,
     private val priceAlertsHelper: PriceAlertsHelper
@@ -45,7 +45,7 @@ internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
 
     override suspend fun invoke(param: VoidParameter?): Set<WatcheeNotificationModel> {
         Timber.i("Starting checking for Prices.")
-        val allWatcheesWithStores = watchlistStoresRepository.allWatcheesWithStores().filter {
+        val allWatcheesWithStores = watchlistStoresDataSource.allWatcheesWithStores().filter {
             // Filter out the Watchees that have already reached its target price.
             it.watchee.lastFetchedPrice > it.watchee.targetPrice
         }
@@ -55,7 +55,7 @@ internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
             return emptySet()
         }
 
-        val retrievedPrices: Map<String, List<Price>> =
+        val retrievedPrices: Map<String, List<PriceDTO>> =
             retrievePricesGroupedByCountriesHelper.prices(allWatcheesWithStores.map { it.watchee })
 
         val watcheesPriceModelMap = pickMinimalWatcheesPricesHelper.pick(retrievedPrices)
@@ -79,7 +79,7 @@ internal class CheckPriceThresholdUseCaseImpl @Inject constructor(
         return watcheesNotificationModelsList.toSet()
     }
 
-    private suspend fun Map<Price, Watchee>.toList(): List<WatcheeNotificationModel> =
+    private suspend fun Map<PriceDTO, Watchee>.toList(): List<WatcheeNotificationModel> =
         this.mapNotNull {
             val watcheeModel = it.value.toModel()
             val priceModel = it.key.toPriceModel("") // We don't need the store color.

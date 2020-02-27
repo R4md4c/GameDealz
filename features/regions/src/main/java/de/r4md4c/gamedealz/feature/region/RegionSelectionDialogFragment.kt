@@ -52,7 +52,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
     private var skipFirstSelection: Int = 1
 
     private val activeRegion by lazy {
-        RegionSelectionDialogFragmentArgs.fromBundle(arguments!!).region
+        RegionSelectionDialogFragmentArgs.fromBundle(requireArguments()).region
     }
 
     override fun onAttach(context: Context) {

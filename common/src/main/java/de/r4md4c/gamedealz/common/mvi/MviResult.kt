@@ -17,12 +17,19 @@
 
 package de.r4md4c.gamedealz.common.mvi
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 interface MviResult<S : MviState>
 
 interface ReducibleMviResult<S : MviState> : MviResult<S> {
     fun reduce(oldState: S): S
 }
 
-object EmptyResult : MviResult<Nothing> {
-    override fun toString(): String = "EmptyResult"
-}
+fun <S : MviState> emptyResult(): MviResult<S> =
+    object : ReducibleMviResult<S> {
+        override fun reduce(oldState: S): S = oldState
+    }
+
+fun <S : MviState> Flow<*>.ignoreResult(): Flow<MviResult<S>> =
+    map { emptyResult<S>() }

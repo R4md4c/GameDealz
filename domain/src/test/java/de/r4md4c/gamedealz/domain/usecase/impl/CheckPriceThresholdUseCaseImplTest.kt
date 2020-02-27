@@ -17,11 +17,19 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import com.nhaarman.mockitokotlin2.*
-import de.r4md4c.gamedealz.data.entity.*
-import de.r4md4c.gamedealz.data.repository.RegionsRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistRepository
-import de.r4md4c.gamedealz.data.repository.WatchlistStoresRepository
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import de.r4md4c.gamedealz.data.entity.Currency
+import de.r4md4c.gamedealz.data.entity.RegionWithCountries
+import de.r4md4c.gamedealz.data.entity.Store
+import de.r4md4c.gamedealz.data.entity.Watchee
+import de.r4md4c.gamedealz.data.entity.WatcheeWithStores
+import de.r4md4c.gamedealz.data.repository.RegionsLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import de.r4md4c.gamedealz.data.repository.WatchlistStoresDataSource
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
@@ -29,8 +37,8 @@ import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PickMinimalWatcheesPricesHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.PriceAlertsHelper
 import de.r4md4c.gamedealz.domain.usecase.impl.internal.RetrievePricesGroupedByCountriesHelper
-import de.r4md4c.gamedealz.network.model.Price
-import de.r4md4c.gamedealz.network.model.Shop
+import de.r4md4c.gamedealz.network.model.PriceDTO
+import de.r4md4c.gamedealz.network.model.ShopDTO
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -42,10 +50,10 @@ import org.mockito.MockitoAnnotations
 class CheckPriceThresholdUseCaseImplTest {
 
     @Mock
-    private lateinit var watchlistRepository: WatchlistRepository
+    private lateinit var watchlistRepository: WatchlistLocalDataSource
 
     @Mock
-    private lateinit var watchlistStoresRepository: WatchlistStoresRepository
+    private lateinit var watchlistStoresDataSource: WatchlistStoresDataSource
 
     @Mock
     private lateinit var currentActiveRegionUseCase: GetCurrentActiveRegionUseCase
@@ -60,7 +68,7 @@ class CheckPriceThresholdUseCaseImplTest {
     private lateinit var priceAlertsHelper: PriceAlertsHelper
 
     @Mock
-    private lateinit var regionsRepostiory: RegionsRepository
+    private lateinit var regionsRepostiory: RegionsLocalDataSource
 
     private lateinit var subject: CheckPriceThresholdUseCaseImpl
 
@@ -70,7 +78,7 @@ class CheckPriceThresholdUseCaseImplTest {
 
         subject = CheckPriceThresholdUseCaseImpl(
             watchlistRepository,
-            watchlistStoresRepository,
+            watchlistStoresDataSource,
             regionsRepostiory,
             pricesGroupedByCountriesHelper,
             pickMinimalWatcheesPricesHelper,
@@ -232,17 +240,20 @@ class CheckPriceThresholdUseCaseImplTest {
 
         fun withWatcheesWithStores(watcheeWithStores: List<WatcheeWithStores>) = apply {
             runBlocking {
-                whenever(watchlistStoresRepository.allWatcheesWithStores()).thenReturn(watcheeWithStores)
+                whenever(watchlistStoresDataSource.allWatcheesWithStores()).thenReturn(
+                    watcheeWithStores
+                )
             }
         }
 
-        fun withResultFromPricePickerHelper(result: Map<Price, Watchee>) = apply {
+        fun withResultFromPricePickerHelper(result: Map<PriceDTO, Watchee>) = apply {
             runBlocking {
                 whenever(pickMinimalWatcheesPricesHelper.pick(any())).thenReturn(result)
             }
         }
 
-        fun withResultFromPricesGroupedByCountriesHelper(result: Map<String, List<Price>>) = apply {
+        fun withResultFromPricesGroupedByCountriesHelper(result: Map<String, List<PriceDTO>>) =
+            apply {
             runBlocking {
                 whenever(pricesGroupedByCountriesHelper.prices(any())).thenReturn(result)
             }
@@ -267,7 +278,7 @@ class CheckPriceThresholdUseCaseImplTest {
 
         val WATCHEES_WITH_STORES = WatcheeWithStores(WATCHEE, STORES.toSet())
 
-        val PRICE = Price(1f, 1f, 2, "", Shop("", ""), emptySet())
+        val PRICE = PriceDTO(1f, 1f, 2, "", ShopDTO("", ""), emptySet())
 
         val CURRENCY = Currency("EUR", "")
     }

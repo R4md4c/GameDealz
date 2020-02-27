@@ -18,7 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
-import de.r4md4c.gamedealz.data.repository.StoresRepository
+import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.DealModel
@@ -38,7 +38,7 @@ internal class GetDealsUseCaseImpl @Inject constructor(
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
     private val selectedStoresUseCase: GetSelectedStoresUseCase,
     private val getImageUrlUseCase: GetImageUrlUseCase,
-    private val storesRepository: StoresRepository
+    private val storesRepository: StoresLocalDataSource
 ) : GetDealsUseCase {
 
     override suspend fun invoke(param: PageParameter?): DealsResult {

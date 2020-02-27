@@ -25,8 +25,8 @@ import de.r4md4c.gamedealz.GameDealzApplication
 import de.r4md4c.gamedealz.auth.di.AuthModule
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.data.di.DaoModule
+import de.r4md4c.gamedealz.data.di.DataSourceModule
 import de.r4md4c.gamedealz.data.di.DatabaseModule
-import de.r4md4c.gamedealz.data.di.RepositoryModule
 import de.r4md4c.gamedealz.domain.di.UseCaseModule
 import de.r4md4c.gamedealz.network.di.NetworkModule
 import de.r4md4c.gamedealz.network.di.RemoteRepositoryModule
@@ -39,7 +39,7 @@ import javax.inject.Singleton
         CommonProvidersModule::class,
         WorkManagerModule::class,
         ApplicationModule::class,
-        RepositoryModule::class,
+        DataSourceModule::class,
         RemoteRepositoryModule::class,
         UseCaseModule::class,
         AuthModule::class,
