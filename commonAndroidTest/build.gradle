@@ -30,8 +30,6 @@ dependencies {
     implementation Libraries.fragmentsKtx
     implementation Libraries.coreKtx
     implementation TestLibraries.coroutinesTest
-    implementation TestLibraries.mockitoKotlin
-    implementation TestLibraries.mockitoAndroid
     implementation TestLibraries.junit
     implementation Libraries.material
     implementation project(':core')
