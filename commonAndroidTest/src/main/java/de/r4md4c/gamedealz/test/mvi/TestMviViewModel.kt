@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UIEvent>
-    : MviViewModel<State, Event>, UIEventsDispatcher<UISideEffect> {
+class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UIEvent> :
+    MviViewModel<State, Event>, UIEventsDispatcher<UISideEffect> {
 
     private val sideEffectsChannel = Channel<UISideEffect>()
 
@@ -40,7 +40,7 @@ class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UI
 
     private val conflatedBroadcastChannel = ConflatedBroadcastChannel<State>()
 
-    val gatheredMviEvents = eventsList.toList()
+    val recordedEvents = eventsList.toList()
 
     fun emitState(state: State) {
         conflatedBroadcastChannel.offer(state)

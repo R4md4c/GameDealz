@@ -24,8 +24,8 @@ import androidx.annotation.StringRes
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.mvi.MviState
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 

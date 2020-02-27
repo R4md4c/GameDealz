@@ -61,6 +61,7 @@ import de.r4md4c.gamedealz.feature.detail.item.FilterHeaderItem
 import de.r4md4c.gamedealz.feature.detail.item.HeaderItem
 import de.r4md4c.gamedealz.feature.detail.item.ScreenshotItem
 import de.r4md4c.gamedealz.feature.detail.item.toPriceItem
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
@@ -256,8 +257,12 @@ class DetailsFragment : BaseFragment() {
 
                     gameDetailsAdapterItems += section.visibleScreenshots
                         .mapIndexed { index, aScreenshot ->
-                            ScreenshotItem(aScreenshot, index)
-                            { position -> onScreenShotClick(section.allScreenshots, position) }
+                            ScreenshotItem(aScreenshot, index) { position ->
+                                onScreenShotClick(
+                                    section.allScreenshots,
+                                    position
+                                )
+                            }
                         }
                 }
                 is Section.PriceSection -> {

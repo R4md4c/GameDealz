@@ -21,21 +21,23 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.ShopModel
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 
 object Fixtures {
 
-    fun priceDetails(shopName: String) = PriceDetails(
-        shopModel = ShopModel("Shop", shopName, ""),
-        currencyModel = CurrencyModel("USD", "$"),
-        priceModel = PriceModel(
-            10f, 10f, 0, "http://google.com",
-            ShopModel("shop1", shopName, ""), emptySet()
-        ),
-        historicalLowModel = HistoricalLowModel(
-            shop = ShopModel("Shop", "Shop", ""),
-            price = 10f,
-            added = 0,
-            priceCutPercentage = 10
+    fun priceDetails(shopName: String) =
+        PriceDetails(
+            shopModel = ShopModel("Shop", shopName, ""),
+            currencyModel = CurrencyModel("USD", "$"),
+            priceModel = PriceModel(
+                10f, 10f, 0, "http://google.com",
+                ShopModel("shop1", shopName, ""), emptySet()
+            ),
+            historicalLowModel = HistoricalLowModel(
+                shop = ShopModel("Shop", "Shop", ""),
+                price = 10f,
+                added = 0,
+                priceCutPercentage = 10
+            )
         )
-    )
 }

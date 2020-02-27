@@ -28,8 +28,8 @@ import de.r4md4c.gamedealz.domain.model.Status
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.IsGameAddedToWatchListUseCase
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviResult
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
@@ -72,8 +72,7 @@ internal class LoadDetailsProcessor @Inject constructor(
 
     private suspend fun getPlainsWithWatchlistStatus(plainId: String): Flow<DetailsMviResult> =
         getPlainDetails(TypeParameter(GetPlainDetails.Params(plainId)))
-            .combine(isGameAddedToWatchListUseCase(TypeParameter(plainId)))
-            { plainDetails, isAddedToWatchlist ->
+            .combine(isGameAddedToWatchListUseCase(TypeParameter(plainId))) { plainDetails, isAddedToWatchlist ->
                 when (plainDetails.status) {
                     Status.LOADING -> LoadingResult(showLoading = true)
                     Status.SUCCESS -> SectionsResult(

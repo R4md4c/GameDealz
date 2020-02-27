@@ -80,6 +80,6 @@ internal abstract class DetailsMviModule {
 
     @ViewModelScope
     @Binds
-    abstract fun bindsDetailsUIEventDispatcher(it: ChannelUIEventsDispatcher<DetailsUIEvent>)
-            : UIEventsDispatcher<DetailsUIEvent>
+    abstract fun bindsDetailsUIEventDispatcher(it: ChannelUIEventsDispatcher<DetailsUIEvent>):
+            UIEventsDispatcher<DetailsUIEvent>
 }

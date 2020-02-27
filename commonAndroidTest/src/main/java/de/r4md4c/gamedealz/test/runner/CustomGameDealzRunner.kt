@@ -22,7 +22,6 @@ import android.content.Context
 import androidx.test.runner.AndroidJUnitRunner
 import de.r4md4c.gamedealz.test.TestApplication
 
-
 class CustomGameDealzRunner : AndroidJUnitRunner() {
 
     override fun newApplication(

@@ -37,18 +37,18 @@ import de.r4md4c.gamedealz.network.model.steam.AppDetailsDTO
 internal abstract class MappersModule {
 
     @Binds
-    abstract fun bindsHistoricalLowDTOMapper(it: HistoricalLowDTOMapper)
-            : Mapper<HistoricalLowDTO, HistoricalLowModel>
+    abstract fun bindsHistoricalLowDTOMapper(it: HistoricalLowDTOMapper):
+            Mapper<HistoricalLowDTO, HistoricalLowModel>
 
     @Binds
-    abstract fun bindsPriceDTOMapper(it: PriceDTOMapperToPriceModelMapper)
-            : Mapper<PriceDTO, PriceModel>
+    abstract fun bindsPriceDTOMapper(it: PriceDTOMapperToPriceModelMapper):
+            Mapper<PriceDTO, PriceModel>
 
     @Binds
-    abstract fun bindsStoreEntityMapper(it: StoreEntityToShopModelMapper)
-            : Mapper<Store, ShopModel>
+    abstract fun bindsStoreEntityMapper(it: StoreEntityToShopModelMapper):
+            Mapper<Store, ShopModel>
 
     @Binds
-    abstract fun bindsAppDetailsDTOGameArtworkMapper(it: AppDetailsDTOGameArtworkMapper)
-            : Mapper<AppDetailsDTO, PlainDetailsModel.GameArtworkDetails>
+    abstract fun bindsAppDetailsDTOGameArtworkMapper(it: AppDetailsDTOGameArtworkMapper):
+            Mapper<AppDetailsDTO, PlainDetailsModel.GameArtworkDetails>
 }

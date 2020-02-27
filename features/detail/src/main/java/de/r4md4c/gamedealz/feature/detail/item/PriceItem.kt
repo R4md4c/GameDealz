@@ -34,8 +34,8 @@ import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.formatCurrency
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
 import kotlinx.android.synthetic.main.layout_detail_prices_item.view.*
 import java.util.concurrent.TimeUnit

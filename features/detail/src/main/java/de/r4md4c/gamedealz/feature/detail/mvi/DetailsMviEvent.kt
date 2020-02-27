@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.feature.detail.mvi
 
 import de.r4md4c.gamedealz.common.mvi.MviInitEvent
 import de.r4md4c.gamedealz.common.mvi.UIEvent
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 
 sealed class DetailsMviEvent : MviInitEvent {
     data class InitEvent(val plainId: String) : DetailsMviEvent()

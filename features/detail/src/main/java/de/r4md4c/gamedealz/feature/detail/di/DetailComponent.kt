@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Component
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
 import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.common.di.activity.ActivityModule
 import de.r4md4c.gamedealz.common.di.state.StateMachineModule
@@ -31,7 +30,6 @@ import de.r4md4c.gamedealz.feature.detail.DetailsFragment
 @FeatureScope
 @Component(
     modules = [
-        ViewModelInjectionModule::class,
         StateMachineModule::class,
         ActivityModule::class
     ],

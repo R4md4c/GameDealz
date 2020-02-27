@@ -15,20 +15,19 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.detail.di
+package de.r4md4c.gamedealz.feature.detail.model
 
-import androidx.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
-import de.r4md4c.gamedealz.feature.detail.DetailsViewModel
+import android.os.Parcelable
+import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
+import de.r4md4c.gamedealz.domain.model.PriceModel
+import de.r4md4c.gamedealz.domain.model.ShopModel
+import kotlinx.android.parcel.Parcelize
 
-@Module
-abstract class DetailFeatureModule {
-
-    @IntoMap
-    @ViewModelKey(DetailsViewModel::class)
-    @Binds
-    abstract fun bindsDetailViewModel(it: DetailsViewModel): ViewModel
-}
+@Parcelize
+data class PriceDetails(
+    val priceModel: PriceModel,
+    val shopModel: ShopModel,
+    val historicalLowModel: HistoricalLowModel?,
+    val currencyModel: CurrencyModel
+) : Parcelable

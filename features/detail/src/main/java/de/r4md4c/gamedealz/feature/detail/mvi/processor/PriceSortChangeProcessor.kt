@@ -21,7 +21,7 @@ import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.mvi.IntentProcessor
 import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.common.mvi.MviResult
-import de.r4md4c.gamedealz.feature.detail.PriceDetails
+import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 import de.r4md4c.gamedealz.feature.detail.mvi.Section
