@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.feature.watchlist
 
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
+import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.WatcheeModel
 
 object Fixtures {
@@ -27,11 +28,18 @@ object Fixtures {
         watcheeModel: WatcheeModel = watcheeModel(),
         hasNotification: Boolean = true,
         currencyModel: CurrencyModel = currencyModel()
-    ) =
+    ): ManageWatchlistModel =
         ManageWatchlistModel(
             watcheeModel = watcheeModel,
             hasNotification = hasNotification,
             currencyModel = currencyModel
+        )
+
+    fun plainDetailsModel(plainId: String): PlainDetailsModel =
+        PlainDetailsModel(
+            currencyModel = currencyModel(),
+            shopPrices = emptyMap(),
+            plainId = plainId
         )
 
     fun watcheeModel(
@@ -46,11 +54,12 @@ object Fixtures {
         regionCode: String = "regionCode",
         countryCode: String = "countryCode",
         currencyCode: String = "code"
-    ) =
+    ): WatcheeModel =
         WatcheeModel(
             id, plainId, title, dateAdded, lastCheckDate,
             lastFetchedPrice, targetPrice, lastFetchedStoreName, regionCode, countryCode, currencyCode
         )
 
-    fun currencyModel(currencyCode: String = "currencyCode", sign: String = "$") = CurrencyModel(currencyCode, sign)
+    private fun currencyModel(currencyCode: String = "currencyCode", sign: String = "$"):
+            CurrencyModel = CurrencyModel(currencyCode, sign)
 }

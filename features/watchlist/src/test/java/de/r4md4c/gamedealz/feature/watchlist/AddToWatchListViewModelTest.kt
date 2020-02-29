@@ -17,21 +17,29 @@
 
 package de.r4md4c.gamedealz.feature.watchlist
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.SavedStateHandle
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
+import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
+import de.r4md4c.gamedealz.domain.model.Resource
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.*
@@ -39,7 +47,8 @@ import java.util.*
 class AddToWatchListViewModelTest {
 
     @get:Rule
-    val coroutinesTestRule = CoroutinesTestRule()
+    val testRule: RuleChain = RuleChain.outerRule(CoroutinesTestRule())
+        .around(InstantTaskExecutorRule())
 
     @Mock
     private lateinit var resourcesProvider: ResourcesProvider
@@ -48,10 +57,12 @@ class AddToWatchListViewModelTest {
     private lateinit var getCurrentActiveRegionUseCase: GetCurrentActiveRegionUseCase
 
     @Mock
-    private lateinit var getStoresUseCase: GetStoresUseCase
+    private lateinit var getPlainDetails: GetPlainDetails
 
     @Mock
     private lateinit var addToWatchListUseCase: AddToWatchListUseCase
+
+    private val savedStateHandle = SavedStateHandle(mutableMapOf())
 
     private lateinit var viewModel: AddToWatchListViewModel
 
@@ -59,13 +70,58 @@ class AddToWatchListViewModelTest {
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
 
-        viewModel = AddToWatchListViewModel(
-            TestDispatchers,
-            resourcesProvider,
-            getCurrentActiveRegionUseCase,
-            getStoresUseCase,
-            addToWatchListUseCase
-        )
+        savedStateHandle.keys().forEach { savedStateHandle.remove<Any>(it) }
+    }
+
+    @Test
+    fun `should post show loading UIEvent when use case emits loading resource`() {
+        val arrangeBuilder = ArrangeBuilder()
+            .arrange()
+
+        arrangeBuilder.emitLoading()
+
+        assertThat(viewModel.uiEvents.value)
+            .isEqualTo(AddToWatchListViewModel.UIEvent.ShowLoading)
+    }
+
+    @Test
+    fun `should post hide loading when use case emits data`() {
+        val arrangeBuilder = ArrangeBuilder()
+            .arrange()
+
+        arrangeBuilder.emitData(Fixtures.plainDetailsModel(PLAIN_ID))
+
+        assertThat(viewModel.uiEvents.value)
+            .isEqualTo(AddToWatchListViewModel.UIEvent.HideLoading)
+    }
+
+    @Test
+    fun `should post error use case emits error resource`() {
+        val arrangeBuilder = ArrangeBuilder()
+            .arrange()
+
+        arrangeBuilder.emitError()
+
+        assertThat(viewModel.uiEvents.value)
+            .isEqualTo(AddToWatchListViewModel.UIEvent.ShowError("Error"))
+    }
+
+    @Test
+    fun `should post correct initial ui model when use case emits data`() {
+        val arrangeBuilder = ArrangeBuilder()
+            .arrange()
+
+        arrangeBuilder.emitData(Fixtures.plainDetailsModel(PLAIN_ID))
+
+        assertThat(viewModel.addToWatchlistUIModel.value)
+            .isEqualTo(
+                AddToWatchlistUIModel(
+                    areAllStoresMarked = true,
+                    shopPrices = emptyMap(),
+                    availableStores = emptyList(),
+                    toggledStoreMap = emptyMap()
+                )
+            )
     }
 
     @Test
@@ -87,6 +143,14 @@ class AddToWatchListViewModelTest {
     }
 
     inner class ArrangeBuilder {
+
+        private val plainDetailsChannel = Channel<Resource<PlainDetailsModel>>()
+
+        init {
+            savedStateHandle.set("plainId", PLAIN_ID)
+            whenever(getPlainDetails.invoke(anyOrNull())).thenReturn(plainDetailsChannel.consumeAsFlow())
+        }
+
         fun withCurrencyCode(currencyCode: String) = apply {
             runBlocking {
                 whenever(
@@ -105,8 +169,29 @@ class AddToWatchListViewModelTest {
             }
         }
 
-        fun arrange() {
-            viewModel.loadStores()
+        fun emitLoading() = apply {
+            plainDetailsChannel.offer(Resource.loading(null))
+        }
+
+        fun emitData(priceDetailsModel: PlainDetailsModel) = apply {
+            plainDetailsChannel.offer(Resource.success(priceDetailsModel))
+        }
+
+        fun emitError() = apply {
+            plainDetailsChannel.offer(Resource.error("Error", null))
+        }
+
+        fun arrange() = apply {
+            viewModel = AddToWatchListViewModel(
+                savedStateHandle,
+                getPlainDetails,
+                TestDispatchers,
+                getCurrentActiveRegionUseCase,
+                resourcesProvider,
+                addToWatchListUseCase
+            )
         }
     }
 }
+
+private const val PLAIN_ID = "aPlain"

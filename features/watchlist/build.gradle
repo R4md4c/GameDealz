@@ -28,6 +28,10 @@ android {
         jvmTarget = "1.8"
     }
 
+    viewBinding {
+        enabled true
+    }
+
     testOptions {
         unitTests {
             includeAndroidResources = true
@@ -43,12 +47,15 @@ dependencies {
     implementation Libraries.lifecycleViewModel
     implementation Libraries.lifecycleViewModelKtx
     implementation Libraries.lifecycleRuntimeKtx
+    implementation Libraries.lifecycleJava8Common
+    implementation Libraries.lifecycleLiveData
     implementation Libraries.recyclerView
     implementation Libraries.pagingRuntimeKtx
     implementation Libraries.fragmentsKtx
     implementation Libraries.material
     implementation Libraries.navigationUiKtx
     implementation Libraries.swipeRefreshLayout
+    implementation Libraries.constraintLayout
     implementation Libraries.navigationFragmentKtx
     implementation Libraries.timber
     implementation Libraries.fastAdapter

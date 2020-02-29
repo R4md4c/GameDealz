@@ -32,14 +32,14 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
-import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -50,14 +50,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
+import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.PriceModel
-import de.r4md4c.gamedealz.domain.model.StoreModel
+import de.r4md4c.gamedealz.domain.model.ShopModel
 import de.r4md4c.gamedealz.feature.watchlist.AddToWatchListDialogArgs.Companion.fromBundle
+import de.r4md4c.gamedealz.feature.watchlist.databinding.LayoutAddToWatchListBinding
 import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistComponent
-import kotlinx.android.synthetic.main.layout_add_to_watch_list.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 class AddToWatchListDialog : BottomSheetDialogFragment() {
 
@@ -71,17 +73,19 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         requireView().findViewById(R.id.toolbar) as Toolbar
     }
 
+    private var isChangingCheckSwitch = false
+
+    private val addToWatchListViewModel by viewModels<AddToWatchListViewModel> {
+        viewModelFactory.create(this, requireArguments())
+    }
+
+    private var binding: LayoutAddToWatchListBinding? = null
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactoryCreator
 
     @Inject
     lateinit var viewNotifier: ViewNotifier
-
-    private val addToWatchListViewModel by viewModels<AddToWatchListViewModel> {
-        viewModelFactory.create(
-            this
-        )
-    }
 
     private val bottomSheetCallback by lazy { AddToWatchListBottomSheetCallback() }
 
@@ -96,8 +100,15 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.layout_add_to_watch_list, container, false)
+    ): View? = inflater.inflate(R.layout.layout_add_to_watch_list, container, false).also {
+        binding = LayoutAddToWatchListBinding.bind(it)
+        viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                binding = null
+                owner.lifecycle.removeObserver(this)
+            }
+        })
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         BottomSheetDialog(requireContext()).apply {
@@ -109,30 +120,23 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         styleNotifyMeHeader()
-        priceEditText.addTextChangedListener(MoneyTextWatcher())
-        setCurrentBest()
+        binding!!.priceEditText.addTextChangedListener(MoneyTextWatcher())
         prepareToolbar()
+        observeUIModel()
+        observeUIEvent()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        addToWatchListViewModel.dismiss.observe(viewLifecycleOwner, Observer {
-            viewNotifier.notify(getString(R.string.watchlist_added_successfully, title))
-            dismiss()
-        })
-        addToWatchListViewModel.emptyPriceError.observe(
-            viewLifecycleOwner,
-            Observer { priceEditText.error = it })
-        addToWatchListViewModel.generalError.observe(
-            viewLifecycleOwner,
-            Observer { Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show() })
-
-        observeStores()
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        binding!!.storeAllSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChangingCheckSwitch) {
+                addToWatchListViewModel.onAllStoresChecked(isChecked)
+            }
+        }
     }
 
     private fun styleNotifyMeHeader() {
-        notifyMeHeader.text = getString(R.string.notify_when_price_reaches, title).let {
+        binding!!.notifyMeHeader.text = getString(R.string.notify_when_price_reaches, title).let {
             val indexOfTitle = it.indexOf(title)
             SpannableString(it).apply {
                 setSpan(
@@ -157,65 +161,80 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private fun onSubmit() {
         kotlin.runCatching {
-            storesChipGroup.children.mapNotNull {
+            binding!!.storesChipGroup.children.mapNotNull {
                 (it as? Chip)?.takeIf { chip -> chip.isChecked }
-                    ?.let { chip -> chip.tag as StoreModel }
+                    ?.let { chip -> chip.tag as ShopModel }
             }.toList()
         }.onSuccess {
-            addToWatchListViewModel.onSubmit(
-                priceEditText.text.toString(),
-                title,
-                plainId,
-                priceModel,
-                it
-            )
+            addToWatchListViewModel.onSubmit(binding!!.priceEditText.text.toString())
         }.onFailure {
-            Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
+            viewNotifier.notify(it.localizedMessage)
         }
     }
 
-    private fun observeStores() {
-        addToWatchListViewModel.loadStores().observe(viewLifecycleOwner, Observer { stores ->
+    private fun observeUIModel() {
+        addToWatchListViewModel.addToWatchlistUIModel.observe(
+            viewLifecycleOwner,
+            Observer { uiModel ->
+                setCurrentBest(uiModel.currentBest)
+                renderStores(uiModel.toggledStoreMap)
+                isChangingCheckSwitch = true
+                binding!!.storeAllSwitch.isChecked = uiModel.areAllStoresMarked
+                isChangingCheckSwitch = false
+            })
+    }
 
-            storesChipGroup.removeAllViews()
-
-            stores.map { store ->
-                (LayoutInflater.from(activity).inflate(
-                    R.layout.layout_add_to_watch_list_chip_item,
-                    storesChipGroup,
-                    false
-                ) as Chip).also { chip ->
-                    chip.text = store.name
-                    chip.tag = store
-                    chip.id = Math.abs(store.id.hashCode())
-                    chip.isChecked = true
-                    storesChipGroup.addView(chip)
+    private fun observeUIEvent() {
+        addToWatchListViewModel.uiEvents.observe(viewLifecycleOwner, Observer { event ->
+            when (event) {
+                AddToWatchListViewModel.UIEvent.ShowLoading -> binding!!.progress.isVisible = true
+                AddToWatchListViewModel.UIEvent.HideLoading -> binding!!.progress.isVisible = false
+                AddToWatchListViewModel.UIEvent.Dismiss -> {
+                    viewNotifier.notify(getString(R.string.watchlist_added_successfully, title))
+                    dismiss()
                 }
-            }
-
-            storeAllSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (!isChecked) {
-                    storesChipGroup.clearCheck()
-                } else {
-                    stores.forEach {
-                        (storesChipGroup.findViewById(Math.abs(it.id.hashCode())) as? Chip)?.isChecked =
-                            true
-                    }
+                is AddToWatchListViewModel.UIEvent.ShowError -> {
+                    viewNotifier.notify(event.errorString)
                 }
-            }
+                is AddToWatchListViewModel.UIEvent.PriceError -> {
+                    binding!!.priceEditText.error = event.errorString
+                }
+            }.exhaustive
         })
     }
 
-    private fun setCurrentBest() {
-        val currentBestData = addToWatchListViewModel.formatCurrentBestCurrencyModel(priceModel)
-        currentBestData.observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                currentBest.isVisible = false
-            } else {
-                currentBest.isVisible = true
-                currentBest.text = TextUtils.concat(getString(R.string.current_best), " ", it)
+    private fun renderStores(stores: Map<ShopModel, Boolean>) {
+        binding!!.storesChipGroup.removeAllViews()
+
+        stores.forEach { (store, isChecked) ->
+            (LayoutInflater.from(requireActivity()).inflate(
+                R.layout.layout_add_to_watch_list_chip_item,
+                binding!!.storesChipGroup,
+                false
+            ) as Chip).also { chip ->
+                chip.text = store.name
+                chip.tag = store
+                chip.id = abs(store.id.hashCode())
+                chip.isChecked = isChecked
+                binding!!.storesChipGroup.addView(chip)
+                chip.setOnCheckedChangeListener { buttonView, isChecked ->
+                    addToWatchListViewModel.onStoreChipToggled(
+                        buttonView.tag as ShopModel,
+                        isChecked
+                    )
+                }
             }
-        })
+        }
+    }
+
+    private fun setCurrentBest(currentBestPrice: String?) {
+        if (currentBestPrice == null) {
+            binding!!.currentBest.isVisible = false
+        } else {
+            binding!!.currentBest.isVisible = true
+            binding!!.currentBest.text =
+                TextUtils.concat(getString(R.string.current_best), " ", currentBestPrice)
+        }
     }
 
     inner class MoneyTextWatcher : TextWatcher {
@@ -226,12 +245,12 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
         override fun afterTextChanged(editable: Editable) {
             val s = editable.toString()
             if (s.isEmpty()) return
-            priceEditText.removeTextChangedListener(this)
+            binding!!.priceEditText.removeTextChangedListener(this)
 
             val formatted = addToWatchListViewModel.formatPrice(s)
-            priceEditText.setText(formatted)
-            priceEditText.setSelection(formatted?.length ?: 0)
-            priceEditText.addTextChangedListener(this)
+            binding!!.priceEditText.setText(formatted)
+            binding!!.priceEditText.setSelection(formatted?.length ?: 0)
+            binding!!.priceEditText.addTextChangedListener(this)
         }
     }
 
@@ -262,20 +281,5 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                 else -> toolbar.setOnClickListener { dismiss() }
             }
         }
-    }
-
-    companion object {
-        fun newInstance(plainId: String, title: String, priceModel: PriceModel) =
-            AddToWatchListDialog().apply {
-                arguments = bundleOf(
-                    ARG_PLAIN_ID to plainId,
-                    ARG_TITLE to title,
-                    ARG_PRICE_MODEL to priceModel
-                )
-            }
-
-        private const val ARG_TITLE = "title"
-        private const val ARG_PLAIN_ID = "plain_id"
-        private const val ARG_PRICE_MODEL = "price_model"
     }
 }

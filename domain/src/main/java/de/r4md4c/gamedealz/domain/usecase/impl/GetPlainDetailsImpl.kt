@@ -25,17 +25,13 @@ import de.r4md4c.gamedealz.domain.repository.GameDetailsRepository
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
 import javax.inject.Inject
 
 internal class GetPlainDetailsImpl @Inject constructor(
     private val gameDetailsRepository: GameDetailsRepository
 ) : GetPlainDetails {
 
-    override suspend fun invoke(param: TypeParameter<GetPlainDetails.Params>?): Flow<Resource<PlainDetailsModel>> {
-        requireNotNull(param)
-
+    override fun invoke(param: TypeParameter<GetPlainDetails.Params>): Flow<Resource<PlainDetailsModel>> {
         return gameDetailsRepository.findDetails(param.value.plainId, param.value.fresh)
             .map {
                 when (it) {
@@ -46,6 +42,6 @@ internal class GetPlainDetailsImpl @Inject constructor(
                         it.dataOrNull()
                     )
                 }
-            }.onEach { Timber.d("Response $it") }
+            }
     }
 }

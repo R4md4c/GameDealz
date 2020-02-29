@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.domain.usecase
 
 import de.r4md4c.gamedealz.domain.Parameter
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Base interface for all Usecases.
@@ -25,4 +26,8 @@ import de.r4md4c.gamedealz.domain.Parameter
 interface UseCase<in P : Parameter, out T> {
 
     suspend operator fun invoke(param: P? = null): T
+}
+
+interface FlowUseCase<in P : Parameter, out T> {
+    operator fun invoke(param: P): Flow<T>
 }

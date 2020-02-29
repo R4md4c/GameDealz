@@ -45,7 +45,7 @@ object Libraries {
         const val appCompat = "1.1.0"
         const val recyclerView = "1.1.0"
         const val androidX = "1.2.0-beta01"
-        const val material = "1.1.0-rc02"
+        const val material = "1.1.0"
         const val workmanager = "2.3.0"
         const val multidex = "2.0.1"
         const val annotations = "1.1.0"
@@ -94,7 +94,7 @@ object Libraries {
         "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.lifecycle}"
     const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
     const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
-    const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata:${Versions.lifecycle}"
+    const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
     const val lifecycleJava8Common =
         "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"

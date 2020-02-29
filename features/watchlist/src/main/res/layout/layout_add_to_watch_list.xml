@@ -6,9 +6,11 @@
 
     <include layout="@layout/layout_toolbar" />
 
+    <!-- minHeight: More than 50% of the screen to make expandable till the full screen -->
     <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="1000dp"
             android:layout_marginTop="?actionBarSize"
             android:background="?android:attr/colorBackground">
 
@@ -85,6 +87,15 @@
                     android:checked="true"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/currentBest" />
+
+            <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="@+id/storesChipGroup"
+                    app:layout_constraintRight_toRightOf="@+id/storesChipGroup"
+                    app:layout_constraintTop_toTopOf="@+id/storesChipGroup"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content" />
 
             <com.google.android.material.chip.ChipGroup
                     android:id="@+id/storesChipGroup"
