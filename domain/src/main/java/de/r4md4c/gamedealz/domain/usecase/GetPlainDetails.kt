@@ -20,10 +20,9 @@ package de.r4md4c.gamedealz.domain.usecase
 import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.Resource
-import kotlinx.coroutines.flow.Flow
 
 interface GetPlainDetails :
-    UseCase<TypeParameter<GetPlainDetails.Params>, Flow<Resource<PlainDetailsModel>>> {
+    FlowUseCase<TypeParameter<GetPlainDetails.Params>, Resource<PlainDetailsModel>> {
 
     data class Params(val plainId: String, val fresh: Boolean = false)
 }

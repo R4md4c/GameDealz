@@ -33,5 +33,5 @@ data class AddToWatchListArgument(
     val currentPrice: Float,
     val currentStoreName: String,
     val targetPrice: Float,
-    val stores: List<StoreModel>
+    val stores: List<ShopModel>
 )

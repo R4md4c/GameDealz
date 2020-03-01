@@ -18,22 +18,26 @@
 package de.r4md4c.gamedealz.feature.watchlist.di
 
 import androidx.lifecycle.ViewModel
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import de.r4md4c.commonproviders.di.viewmodel.AssistedSavedStateViewModelFactory
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
 import de.r4md4c.gamedealz.feature.watchlist.AddToWatchListViewModel
 import de.r4md4c.gamedealz.feature.watchlist.ManageWatchlistViewModel
 import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManager
 import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManagerImpl
 
-@Module
+@AssistedModule
+@Module(includes = [AssistedInject_WatchlistFeatureModule::class])
 abstract class WatchlistFeatureModule {
 
     @Binds
     @IntoMap
     @ViewModelKey(AddToWatchListViewModel::class)
-    abstract fun bindsAddToWatchListViewModel(it: AddToWatchListViewModel): ViewModel
+    abstract fun bindsAddToWatchListViewModel(it: AddToWatchListViewModel.Factory):
+            AssistedSavedStateViewModelFactory<out ViewModel>
 
     @Binds
     @IntoMap
