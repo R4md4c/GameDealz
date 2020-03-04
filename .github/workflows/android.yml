@@ -41,9 +41,24 @@ jobs:
             echo "ITAD_CLIENT_SECRET=$ITAD_CLIENT_SECRET" >> $GRADLE_PROPERTIES
             echo "ITAD_API_KEY=$ITAD_API_KEY" >> $GRADLE_PROPERTIES
         fi
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Download Dependencies
+      run: ./gradlew androidDependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+
     - name: Build with Gradle
       run: ./gradlew assembleDebug
+
     - name: Run detekt
       run: ./gradlew detekt
+
     - name: Run unit tests
       run: ./gradlew testDebug --stacktrace
