@@ -38,6 +38,7 @@ class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun onBind(dealModel: DealRenderModel?, clickListener: (DealRenderModel) -> Unit) {
         with(itemView) {
+
             setOnClickListener { dealModel?.let { clickListener(dealModel) } }
 
             name.text = dealModel?.title
