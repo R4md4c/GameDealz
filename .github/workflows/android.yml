@@ -1,0 +1,64 @@
+name: Android CI
+
+on: 
+  pull_request:
+    branches:
+      - 'master'
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      env: # Or as an environment variable
+        ITAD_CLIENT_ID: ${{ secrets.ITAD_CLIENT_ID }}
+        ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
+        ITAD_CLIENT_SECRET: ${{ secrets.ITAD_CLIENT_SECRET }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Create gradle.properties file
+      run: |
+        GRADLE_HOME=$HOME"/.gradle"
+        GRADLE_PROPERTIES=$GRADLE_HOME"/gradle.properties"
+        export GRADLE_HOME
+        export GRADLE_PROPERTIES
+        echo "Gradle Properties should exist at $GRADLE_PROPERTIES"
+
+        if [[ ! -f "$GRADLE_PROPERTIES" ]]; then
+            echo "Gradle Properties does not exist"
+
+            echo "Creating Gradle Properties file..."
+            mkdir -p $GRADLE_HOME && touch $GRADLE_PROPERTIES
+
+            echo "Writing ITAD_KEYS to gradle.properties..."
+            echo "ITAD_CLIENT_ID=$ITAD_CLIENT_ID" >> $GRADLE_PROPERTIES
+            echo "ITAD_CLIENT_SECRET=$ITAD_CLIENT_SECRET" >> $GRADLE_PROPERTIES
+            echo "ITAD_API_KEY=$ITAD_API_KEY" >> $GRADLE_PROPERTIES
+        fi
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Download Dependencies
+      run: ./gradlew androidDependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
+
+    - name: Run detekt
+      run: ./gradlew detekt
+
+    - name: Run unit tests
+      run: ./gradlew testDebug --stacktrace
