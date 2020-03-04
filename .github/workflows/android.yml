@@ -15,10 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: set up JDK 1.8
-      env:
-        - ITAD_CLIENT_ID: ${{ secrets.ITAD_CLIENT_ID }}
-        - ITAD_CLIENT_SECRET: ${{ secrets.ITAD_CLIENT_SECRET }}
-        - ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
+      env: # Or as an environment variable
+        ITAD_CLIENT_ID: ${{ secrets.ITAD_CLIENT_ID }}
+        ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
+        ITAD_CLIENT_SECRET: ${{ secrets.ITAD_CLIENT_SECRET }}
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
