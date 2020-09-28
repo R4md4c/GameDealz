@@ -17,10 +17,10 @@
 
 package de.r4md4c.gamedealz.network.model
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class Region(val countries: List<String>, val currency: Currency)
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class Currency(val code: String, val html: String, val sign: String)

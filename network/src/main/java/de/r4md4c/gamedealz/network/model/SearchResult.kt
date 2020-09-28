@@ -17,7 +17,7 @@
 
 package de.r4md4c.gamedealz.network.model
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class SearchResult(val title: String, val plain: Plain)

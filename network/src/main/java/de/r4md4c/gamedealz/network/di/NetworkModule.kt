@@ -25,7 +25,6 @@ import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
-import de.r4md4c.gamedealz.network.json.ApplicationJsonAdapterFactory
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.steam.SteamService
 import okhttp3.Cache
@@ -68,7 +67,6 @@ object NetworkModule {
     @Provides
     fun provideMoshiInstance(): Moshi =
         Moshi.Builder()
-            .add(ApplicationJsonAdapterFactory.INSTANCE)
             .build()
 
     @Singleton

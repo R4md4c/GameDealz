@@ -39,8 +39,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation Libraries.kotshiApi
-    kapt Libraries.kotshiCompiler
+    kapt Libraries.moshiCodeGen
     api Libraries.moshi
     implementation Libraries.okio
 

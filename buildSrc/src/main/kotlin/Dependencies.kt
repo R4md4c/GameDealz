@@ -6,7 +6,7 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
-        const val navVersion = "2.3.0-alpha02"
+        const val navVersion = "2.3.0"
         const val detektVersion = "1.4.0"
     }
 
@@ -32,12 +32,12 @@ object Libraries {
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.2.2"
         const val acra = "5.5.0"
-        const val fragments = "1.2.2"
+        const val fragments = "1.2.5"
         const val constraintLayout = "2.0.0-beta3"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.1"
-        const val coroutines = "1.3.3"
-        const val room = "2.2.3"
+        const val coroutines = "1.3.9"
+        const val room = "2.2.5"
         const val timber = "4.7.1"
         const val lifecycle = "2.2.0"
         const val glide = "4.11.0"
@@ -53,17 +53,15 @@ object Libraries {
         const val materialDrawer = "6.1.2"
         const val dagger = "2.26"
         const val assistedInject = "0.5.2"
-        const val moshi = "1.8.0"
-        const val kotshi = "2.0.1"
-        const val appAuth = "0.7.1"
+        const val moshi = "1.9.3"
+        const val appAuth = "27b62d5da9" // AndroidX support
         const val sqliteKtx = "2.1.0"
         const val store4 = "4.0.0-alpha03"
     }
 
     const val store4 = "com.dropbox.mobile.store:store4:${Versions.store4}"
 
-    const val kotshiApi = "se.ansman.kotshi:api:${Versions.kotshi}"
-    const val kotshiCompiler = "se.ansman.kotshi:compiler:${Versions.kotshi}"
+    const val moshiCodeGen = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.moshi}"
     const val moshi = "com.squareup.moshi:moshi:${Versions.moshi}"
 
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
@@ -136,7 +134,7 @@ object Libraries {
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"
     const val stateMachine = "com.github.tinder:statemachine:0.1.2"
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
-    const val appAuth = "net.openid:appauth:${Versions.appAuth}"
+    const val appAuth = "com.github.openid:AppAuth-Android:${Versions.appAuth}"
 }
 
 object TestLibraries {
