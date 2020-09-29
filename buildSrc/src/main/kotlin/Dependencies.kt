@@ -7,7 +7,7 @@ object BuildPlugins {
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
         const val navVersion = "2.3.0"
-        const val detektVersion = "1.4.0"
+        const val detektVersion = "1.14.0"
     }
 
     const val kotlinAllOpenPlugin = "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
@@ -46,13 +46,13 @@ object Libraries {
         const val recyclerView = "1.1.0"
         const val androidX = "1.2.0-beta01"
         const val material = "1.1.0"
-        const val workmanager = "2.3.0"
+        const val workmanager = "2.4.0"
         const val multidex = "2.0.1"
         const val annotations = "1.1.0"
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
         const val dagger = "2.26"
-        const val assistedInject = "0.5.2"
+        const val assistedInject = "0.6.0"
         const val moshi = "1.9.3"
         const val appAuth = "27b62d5da9" // AndroidX support
         const val sqliteKtx = "2.1.0"
@@ -139,7 +139,7 @@ object Libraries {
 
 object TestLibraries {
     private object Versions {
-        const val mockk = "1.9.3"
+        const val mockk = "1.10.0"
         const val robolectric = "4.2.1"
         const val assertj = "2.9.1"
         const val mockito_kotlin = "2.2.0"

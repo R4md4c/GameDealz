@@ -15,8 +15,10 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -50,6 +52,8 @@ class GameDealzPlugin : Plugin<Project> {
             this.dependencies.add("kapt", Libraries.assistedInjectCompiler)
 
             if (pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)) {
+                val baseExtension = this.extensions.getByType<BaseExtension>()
+                applyCommonAndroidOptions(baseExtension)
                 this.dependencies.add("kaptAndroidTest", Libraries.assistedInjectCompiler)
                 this.dependencies.add("kaptAndroidTest", Libraries.daggerCompiler)
             }
@@ -68,4 +72,21 @@ class GameDealzPlugin : Plugin<Project> {
 
     private fun Project.hasKotlinPlugin() =
         pluginManager.hasPlugin(PLUGIN_KOTLIN) || pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)
+
+    private fun applyCommonAndroidOptions(extension: BaseExtension) {
+        extension.packagingOptions {
+            excludes = excludes + setOf(
+                "win32-x86-64/attach_hotspot_windows.dll",
+                "win32-x86/attach_hotspot_windows.dll",
+                "META-INF/LGPL2.1",
+                "META-INF/ASL2.0",
+                "META-INF/AL2.0",
+                "META-INF/MANIFEST.MF",
+                "META-INF/licenses/ASM",
+                "LICENSE.txt",
+                "META-INF/LICENSE",
+                "META-INF/*.kotlin_module"
+            )
+        }
+    }
 }
