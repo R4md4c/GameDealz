@@ -18,12 +18,12 @@
 package de.r4md4c.gamedealz.network.model
 
 import com.squareup.moshi.Json
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class ShopDTO(val id: String, val name: String)
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class PriceDTO(
     @Json(name = "price_new") val newPrice: Float,
     @Json(name = "price_old") val oldPrice: Float,

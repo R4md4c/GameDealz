@@ -17,10 +17,10 @@
 
 package de.r4md4c.gamedealz.network.model
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class DataWrapper<out T>(val data: T)
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class ListWrapper<out T>(val list: List<T>, val count: Int?)

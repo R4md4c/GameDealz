@@ -17,7 +17,7 @@
 
 package de.r4md4c.gamedealz.network.model.steam
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class ResponseWrapper<T>(val success: Boolean, val data: T?)

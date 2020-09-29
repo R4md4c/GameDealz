@@ -17,10 +17,10 @@
 
 package de.r4md4c.gamedealz.network.model.steam
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class AppId(val id: String, val name: String)
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class PackageDetails(val apps: List<AppId>?)

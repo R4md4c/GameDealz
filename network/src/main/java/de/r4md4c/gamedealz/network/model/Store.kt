@@ -17,10 +17,10 @@
 
 package de.r4md4c.gamedealz.network.model
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class Stores(val data: List<Store>)
 
-@JsonSerializable
+@JsonClass(generateAdapter = true)
 data class Store(val id: String, val title: String, val color: String)
