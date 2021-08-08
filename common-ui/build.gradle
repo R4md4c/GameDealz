@@ -60,7 +60,9 @@ dependencies {
     implementation Libraries.navigationFragmentKtx
     implementation Libraries.navigationUiKtx
     implementation Libraries.kotlinFlowExtensions
-    debugImplementation Libraries.fragmentTesting
+    debugImplementation (Libraries.fragmentTesting) {
+        exclude group: 'androidx.test', module: 'core'
+    }
 
     implementation project(':commonproviders')
     implementation project(':common')

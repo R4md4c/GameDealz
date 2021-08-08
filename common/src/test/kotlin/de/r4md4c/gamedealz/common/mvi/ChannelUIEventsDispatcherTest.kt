@@ -18,6 +18,7 @@
 package de.r4md4c.gamedealz.common.mvi
 
 import de.r4md4c.gamedealz.test.FlowRecorder
+import de.r4md4c.gamedealz.test.TestDispatchers
 import de.r4md4c.gamedealz.test.recordWith
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.test.runBlockingTest
@@ -36,7 +37,7 @@ class ChannelUIEventsDispatcherTest {
 
     @Before
     fun beforeEach() {
-        eventsDispatcher = ChannelUIEventsDispatcher()
+        eventsDispatcher = ChannelUIEventsDispatcher(TestDispatchers)
     }
 
     @Test

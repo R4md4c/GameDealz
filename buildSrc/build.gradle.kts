@@ -10,7 +10,7 @@ plugins {
 }
 
 val kotlinVersion = "1.5.21"
-val androidGradlePluginVersion = "4.2.1"
+val androidGradlePluginVersion = "7.0.0"
 
 buildConfig {
     buildConfigField("String", "KOTLIN_VERSION", "\"$kotlinVersion\"")

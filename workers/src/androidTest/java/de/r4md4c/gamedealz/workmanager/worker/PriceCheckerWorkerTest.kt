@@ -54,7 +54,7 @@ class PriceCheckerWorkerTest {
 
     @Before
     fun beforeEach() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
     }
 
     @Test

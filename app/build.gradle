@@ -135,10 +135,3 @@ dependencies {
     androidTestImplementation TestLibraries.espressoCore
     androidTestImplementation TestLibraries.androidXTestCore
 }
-
-configurations.all {
-    resolutionStrategy {
-        force 'net.bytebuddy:byte-buddy:1.8.22'
-        force 'net.bytebuddy:byte-buddy-agent:1.8.22'
-    }
-}
