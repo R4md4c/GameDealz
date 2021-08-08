@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
@@ -34,14 +33,15 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
+import de.r4md4c.gamedealz.common.base.fragment.viewBinding
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
 import de.r4md4c.gamedealz.common.state.SideEffect
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.core.CoreComponent
+import de.r4md4c.gamedealz.feature.deals.databinding.FragmentDealsBinding
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent
 import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
-import kotlinx.android.synthetic.main.fragment_deals.*
 import javax.inject.Inject
 
 class DealsFragment : BaseFragment() {
@@ -66,6 +66,8 @@ class DealsFragment : BaseFragment() {
         }
     }
 
+    private val binding by viewBinding(FragmentDealsBinding::bind)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,34 +79,37 @@ class DealsFragment : BaseFragment() {
         dealsViewModel.init()
 
         val context = requireContext()
-        toolbar?.let { NavigationUI.setupWithNavController(it, findNavController(), drawerLayout) }
+        drawerLayout?.let {
+            NavigationUI.setupWithNavController(
+                binding.toolbar,
+                findNavController(),
+                drawerLayout
+            )
+        }
         setupRecyclerView()
         setupFilterFab()
         stateVisibilityHandler.onViewCreated()
         stateVisibilityHandler.onRetryClick = { dealsViewModel.onRefresh() }
 
-        swipeToRefresh.setColorSchemeColors(context.resolveThemeColor(R.attr.colorSecondary))
-        swipeToRefresh.setProgressBackgroundColorSchemeColor(
+        binding.swipeToRefresh.setColorSchemeColors(context.resolveThemeColor(R.attr.colorSecondary))
+        binding.swipeToRefresh.setProgressBackgroundColorSchemeColor(
             context.resolveThemeColor(R.attr.swipe_refresh_background)
         )
-        swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
-    }
+        binding.swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        dealsViewModel.deals.observe(viewLifecycleOwner, Observer {
+        dealsViewModel.deals.observe(viewLifecycleOwner, {
+            println("Fuck: $it")
             dealsAdapter.submitList(it)
         })
-        dealsViewModel.sideEffect.observe(viewLifecycleOwner, Observer {
+        dealsViewModel.sideEffect.observe(viewLifecycleOwner, {
             when (it) {
                 is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
-                is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(false)
+                is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(true)
                 is SideEffect.ShowLoading, SideEffect.HideLoading, SideEffect.ShowEmpty -> {
                     if (it is SideEffect.ShowLoading) {
-                        filterFab.hide()
+                        binding.filterFab.hide()
                     } else {
-                        filterFab.show()
+                        binding.filterFab.show()
                     }
                     stateVisibilityHandler.onSideEffect(it)
                 }
@@ -120,20 +125,25 @@ class DealsFragment : BaseFragment() {
         (searchMenuItem.actionView as? SearchView)?.setOnQueryTextListener(OnQueryTextListener(searchMenuItem))
     }
 
-    private fun setupRecyclerView() = with(content) {
+    private fun setupRecyclerView() = with(binding.content) {
         adapter = dealsAdapter
         addItemDecoration(StaggeredGridDecorator(requireContext()))
         layoutManager =
-                StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
+            StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) filterFab?.hide() else filterFab?.show()
+                if (dy > 0) binding.filterFab.hide() else binding.filterFab.show()
             }
         })
     }
 
     private fun setupFilterFab() {
-        filterFab.setOnClickListener { DealsFilterDialogFragment().show(childFragmentManager, null) }
+        binding.filterFab.setOnClickListener {
+            DealsFilterDialogFragment().show(
+                childFragmentManager,
+                null
+            )
+        }
     }
 
     override fun onInject(coreComponent: CoreComponent) {

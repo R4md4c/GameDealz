@@ -35,9 +35,9 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.databinding.LayoutDetailPricesItemBinding
 import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
 import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
-import kotlinx.android.synthetic.main.layout_detail_prices_item.view.*
 import java.util.concurrent.TimeUnit
 
 class PriceItem(
@@ -54,7 +54,7 @@ class PriceItem(
 
     override fun getViewHolder(v: View): ViewHolder = ViewHolder(v).apply {
         with(v) {
-            constraintLayout.loadLayoutDescription(R.xml.layout_detail_prices_item_state)
+            binding.constraintLayout.loadLayoutDescription(R.xml.layout_detail_prices_item_state)
         }
     }
 
@@ -62,7 +62,7 @@ class PriceItem(
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
-        with(holder.itemView) {
+        with(holder.binding) {
             val layoutState = when (sortOrder) {
                 SortOrder.ByHistoricalLow -> R.id.state_historical_low
                 SortOrder.ByCurrentPrice -> R.id.state_current_best
@@ -85,11 +85,13 @@ class PriceItem(
             currentBest.text = currentBestText
             historicalLow.text = historicalLowText
             shop.text = shopName
-            setOnClickListener { onBuyClick(buyUrl) }
+            root.setOnClickListener { onBuyClick(buyUrl) }
         }
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutDetailPricesItemBinding.bind(itemView)
+    }
 }
 
 @WorkerThread

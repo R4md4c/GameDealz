@@ -6,10 +6,10 @@ repositories {
 
 plugins {
     `kotlin-dsl`
-    id("com.github.gmazzo.buildconfig") version "1.6.2"
+    id("com.github.gmazzo.buildconfig") version "3.0.2"
 }
 
-val kotlinVersion = "1.4.10"
+val kotlinVersion = "1.5.21"
 val androidGradlePluginVersion = "4.0.1"
 
 buildConfig {

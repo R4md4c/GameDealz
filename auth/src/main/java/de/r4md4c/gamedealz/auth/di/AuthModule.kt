@@ -32,9 +32,8 @@ import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
+import net.openid.appauth.connectivity.DefaultConnectionBuilder
 import okhttp3.OkHttpClient
-import okhttp3.OkUrlFactory
-import java.net.URL
 
 @Module
 object AuthModule {
@@ -54,11 +53,9 @@ object AuthModule {
         context: Context,
         okHttpClient: OkHttpClient
     ): AuthorizationService {
-        @Suppress("DEPRECATION") val urlOkFactory = OkUrlFactory(okHttpClient)
-
         return AuthorizationService(context,
             AppAuthConfiguration.Builder()
-                .setConnectionBuilder { urlOkFactory.open(URL(it.toString())) }
+                .setConnectionBuilder(DefaultConnectionBuilder.INSTANCE)
                 .build()
         )
     }

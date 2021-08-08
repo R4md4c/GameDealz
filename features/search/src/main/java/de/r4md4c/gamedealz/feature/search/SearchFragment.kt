@@ -35,6 +35,7 @@ import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
+import de.r4md4c.gamedealz.common.base.fragment.viewBinding
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.di.ForActivity
@@ -44,10 +45,10 @@ import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.feature.search.SearchFragmentArgs.Companion.fromBundle
+import de.r4md4c.gamedealz.feature.search.databinding.FragmentSearchBinding
 import de.r4md4c.gamedealz.feature.search.di.DaggerSearchComponent
 import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
 import de.r4md4c.gamedealz.feature.search.model.toRenderModel
-import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -73,6 +74,8 @@ class SearchFragment : BaseFragment() {
 
     @Inject
     lateinit var stateVisibilityHandler: StateVisibilityHandler
+
+    private val binding by viewBinding(FragmentSearchBinding::bind)
 
     private val viewModel by viewModels<SearchViewModel> { viewModelFactory.create(this) }
 
@@ -127,7 +130,7 @@ class SearchFragment : BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        with(content) {
+        with(binding.content) {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(VerticalLinearDecorator(context))
             adapter = searchAdapter
@@ -136,7 +139,7 @@ class SearchFragment : BaseFragment() {
 
     private fun renderSearchResults(it: List<SearchResultModel>) {
         viewLifecycleOwner.lifecycleScope.launch {
-            progress.isVisible = true
+            binding.progress.isVisible = true
             withContext(dispatchers.Default) {
                 it.map { searchResult ->
                     searchResult.toRenderModel(
@@ -148,7 +151,7 @@ class SearchFragment : BaseFragment() {
                 searchAdapter.submitList(renderModels)
                 searchResultsLoaded = true
                 searchView?.clearFocus()
-                progress.isVisible = false
+                binding.progress.isVisible = false
             }
         }
     }

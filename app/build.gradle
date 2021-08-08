@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 apply plugin: 'kotlin-kapt'
 
@@ -51,10 +51,6 @@ android {
         }
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
-}
-
-androidExtensions {
-    experimental = true
 }
 
 dependencies {

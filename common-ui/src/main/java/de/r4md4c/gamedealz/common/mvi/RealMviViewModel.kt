@@ -25,13 +25,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.broadcastIn
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 
 class RealMviViewModel<Event : MviViewEvent, State : MviState>(
     intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<Event, State>>,
@@ -45,8 +45,7 @@ class RealMviViewModel<Event : MviViewEvent, State : MviState>(
 
     init {
         val eventsFlow = eventsChannel.consumeAsFlow()
-            .broadcastIn(viewModelScope)
-            .asFlow()
+            .shareIn(viewModelScope, SharingStarted.Lazily)
             .onStart {
                 initEvent?.let { emit(it) }
             }

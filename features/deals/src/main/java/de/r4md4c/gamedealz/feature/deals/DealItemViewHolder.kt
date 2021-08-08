@@ -25,33 +25,34 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.image.GlideApp
+import de.r4md4c.gamedealz.feature.deals.databinding.LayoutDealItemBinding
 import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
-import kotlinx.android.synthetic.main.layout_deal_item.view.*
 
 class DealItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+    private val binding = LayoutDealItemBinding.bind(itemView)
+
     init {
-        with(itemView) {
-            price.setSpannableFactory(PriceTextSpannableFactory())
-        }
+        binding.price.setSpannableFactory(PriceTextSpannableFactory())
     }
 
     fun onBind(dealModel: DealRenderModel?, clickListener: (DealRenderModel) -> Unit) {
-        with(itemView) {
-            setOnClickListener { dealModel?.let { clickListener(dealModel) } }
+        binding.root.setOnClickListener { dealModel?.let { clickListener(dealModel) } }
 
-            name.text = dealModel?.title
-            price.setText(dealModel?.newPrice, TextView.BufferType.SPANNABLE)
-            replaceNewPriceForegroundColorSpanWithColorFromTheme(context, price.text as Spannable)
+        binding.name.text = dealModel?.title
+        binding.price.setText(dealModel?.newPrice, TextView.BufferType.SPANNABLE)
+        replaceNewPriceForegroundColorSpanWithColorFromTheme(
+            binding.root.context,
+            binding.price.text as Spannable
+        )
 
-            stores.text = dealModel?.storesAndTime
+        binding.stores.text = dealModel?.storesAndTime
 
-            GlideApp.with(image)
-                .load(dealModel?.imageUrl)
-                .placeholder(R.drawable.ic_placeholder)
-                .fitCenter()
-                .into(image)
-        }
+        GlideApp.with(binding.image)
+            .load(dealModel?.imageUrl)
+            .placeholder(R.drawable.ic_placeholder)
+            .fitCenter()
+            .into(binding.image)
     }
 
     private fun replaceNewPriceForegroundColorSpanWithColorFromTheme(context: Context, spannableText: Spannable) {

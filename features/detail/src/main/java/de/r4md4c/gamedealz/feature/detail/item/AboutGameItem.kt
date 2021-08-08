@@ -30,7 +30,7 @@ import com.bumptech.glide.request.target.Target
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.feature.detail.R
-import kotlinx.android.synthetic.main.layout_about_game_item.view.*
+import de.r4md4c.gamedealz.feature.detail.databinding.LayoutAboutGameItemBinding
 
 class AboutGameItem(
     private val headerImage: String?,
@@ -51,11 +51,11 @@ class AboutGameItem(
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
-        with(holder.itemView) {
+        with(holder.binding) {
             if (headerImage == null) {
-                GlideApp.with(this).clear(image)
+                GlideApp.with(holder.itemView).clear(image)
             } else {
-                GlideApp.with(this)
+                GlideApp.with(holder.itemView)
                     .load(headerImage)
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
@@ -87,5 +87,7 @@ class AboutGameItem(
         }
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutAboutGameItemBinding.bind(itemView)
+    }
 }

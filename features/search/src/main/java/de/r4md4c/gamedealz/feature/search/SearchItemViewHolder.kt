@@ -20,21 +20,21 @@ package de.r4md4c.gamedealz.feature.search
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.common.image.GlideApp
+import de.r4md4c.gamedealz.feature.search.databinding.LayoutSearchResultItemBinding
 import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
-import kotlinx.android.synthetic.main.layout_search_result_item.view.*
 
 class SearchItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun onBind(searchResultModel: SearchItemRenderModel) {
-        with(itemView) {
-            name.text = searchResultModel.title
-            currentBest.text = searchResultModel.currentBest
-            historicalLow.text = searchResultModel.historicalLow
+    private val binding = LayoutSearchResultItemBinding.bind(itemView)
 
-            GlideApp.with(image)
-                .load(searchResultModel.imageUrl)
-                .placeholder(R.drawable.ic_placeholder)
-                .into(image)
-        }
+    fun onBind(searchResultModel: SearchItemRenderModel) {
+        binding.name.text = searchResultModel.title
+        binding.currentBest.text = searchResultModel.currentBest
+        binding.historicalLow.text = searchResultModel.historicalLow
+
+        GlideApp.with(binding.image)
+            .load(searchResultModel.imageUrl)
+            .placeholder(R.drawable.ic_placeholder)
+            .into(binding.image)
     }
 }

@@ -54,7 +54,7 @@ internal class RetrievePricesGroupedByCountriesHelper @Inject constructor(
                     countryCode = entry.key.second,
                     added = entry.value.asSequence()
                         .map { if (it.lastCheckDate == 0L) it.dateAdded else it.lastCheckDate }
-                        .max()
+                        .maxOrNull()
                 )
             }
         }

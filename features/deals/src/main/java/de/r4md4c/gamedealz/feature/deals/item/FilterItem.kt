@@ -24,14 +24,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.feature.deals.R
-import kotlinx.android.synthetic.main.layout_deals_filter_item.view.*
+import de.r4md4c.gamedealz.feature.deals.databinding.LayoutDealsFilterItemBinding
 
 data class FilterItem(val storeModel: StoreModel) : AbstractItem<FilterItem, FilterItem.ViewHolder>() {
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
         val isSelected = isSelected
-        with(holder.itemView) {
+        with(holder.binding) {
             text.text = storeModel.name
             image.isVisible = isSelected
         }
@@ -46,5 +46,7 @@ data class FilterItem(val storeModel: StoreModel) : AbstractItem<FilterItem, Fil
 
     override fun getIdentifier(): Long = storeModel.hashCode().toLong()
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutDealsFilterItemBinding.bind(itemView)
+    }
 }

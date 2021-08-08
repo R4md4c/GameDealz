@@ -35,8 +35,10 @@ internal class IsThereAnyDealScrappingService @Inject constructor(
 
         document.select(".card-container")
             .mapNotNull { element ->
-                (element.selectFirst("a.card__img").attr("href").extractPlainId() ?: "") to
-                        element.selectFirst("a.card__title").text()
+                val plainId =
+                    (element.selectFirst("a.card__img")?.attr("href")?.extractPlainId() ?: "")
+                val title = element.selectFirst("a.card__title")?.text() ?: return@mapNotNull null
+                plainId to title
             }
             .filter { it.first.isNotEmpty() && it.second.isNotEmpty() }
             .map { SearchResult(it.second, Plain(it.first)) }

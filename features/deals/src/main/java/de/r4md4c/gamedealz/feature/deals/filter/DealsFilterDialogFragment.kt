@@ -27,11 +27,12 @@ import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
+import de.r4md4c.gamedealz.common.base.fragment.viewBinding
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.feature.deals.R
+import de.r4md4c.gamedealz.feature.deals.databinding.FragmentDialogDealsFilterBinding
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent
 import de.r4md4c.gamedealz.feature.deals.item.FilterItem
-import kotlinx.android.synthetic.main.fragment_dialog_deals_filter.*
 import javax.inject.Inject
 
 class DealsFilterDialogFragment : BottomSheetDialogFragment() {
@@ -40,11 +41,11 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
     lateinit var viewModelFactory: ViewModelFactoryCreator
 
     private val itemAdapter by lazy {
-        FastItemAdapter<FilterItem>().also {
-            it.withSelectable(true)
-            it.setHasStableIds(true)
-            it.withSelectWithItemUpdate(true)
-            it.withMultiSelect(true)
+        FastItemAdapter<FilterItem>().apply {
+            withSelectable(true)
+            setHasStableIds(true)
+            withSelectWithItemUpdate(true)
+            withMultiSelect(true)
         }
     }
 
@@ -55,6 +56,8 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
         )
     }
 
+    private val binding by viewBinding(FragmentDialogDealsFilterBinding::bind)
+
     override fun onAttach(context: Context) {
         onInject(context)
         super.onAttach(context)
@@ -62,20 +65,22 @@ class DealsFilterDialogFragment : BottomSheetDialogFragment() {
 
     // override fun getTheme(): Int = R.style.AppTheme_BottomSheetDialog
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         layoutInflater.inflate(R.layout.fragment_dialog_deals_filter, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(content) {
-            adapter = itemAdapter
-        }
+        binding.content.adapter = itemAdapter
 
         itemAdapter.withSelectionListener { item, selected ->
             item?.let { filtersViewModel.onSelection(it, selected) }
         }
 
-        toolbar.setNavigationOnClickListener { filtersViewModel.submit() }
+        binding.toolbar.setNavigationOnClickListener { filtersViewModel.submit() }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

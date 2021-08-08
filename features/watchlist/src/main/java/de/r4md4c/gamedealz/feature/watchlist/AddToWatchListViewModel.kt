@@ -202,9 +202,7 @@ class AddToWatchListViewModel @AssistedInject constructor(
         uiModel.toggledStoreMap.asSequence()
             .filter { it.value }
             .map { plainDetailsModel.shopPrices[it.key]!!.priceModel }
-            .minBy {
-                it.newPrice
-            }
+            .minByOrNull { it.newPrice }
 
     fun onAllStoresChecked(isChecked: Boolean) {
         stateEventsChannel.offer(StateEvent.AllStoresToggleEvent(isChecked))
@@ -257,7 +255,7 @@ class AddToWatchListViewModel @AssistedInject constructor(
 
     private suspend fun formatCurrentBestCurrencyModel(priceModels: Iterable<PriceModel>): String? {
         val activeRegion = getCurrentActiveRegionUseCase()
-        val smallestPriceModel = priceModels.minBy { it.newPrice }
+        val smallestPriceModel = priceModels.minByOrNull { it.newPrice }
         return smallestPriceModel?.newPrice?.formatCurrency(activeRegion.currency)
     }
 

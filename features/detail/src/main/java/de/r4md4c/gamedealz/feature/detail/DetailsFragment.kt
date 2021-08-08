@@ -39,6 +39,7 @@ import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.aware.LifecycleAware
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
+import de.r4md4c.gamedealz.common.base.fragment.viewBinding
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.image.GlideApp
@@ -52,6 +53,7 @@ import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs.Companion.fromBundle
+import de.r4md4c.gamedealz.feature.detail.databinding.FragmentGameDetailBinding
 import de.r4md4c.gamedealz.feature.detail.decorator.DetailsFragmentItemDecorator
 import de.r4md4c.gamedealz.feature.detail.di.DaggerDetailComponent
 import de.r4md4c.gamedealz.feature.detail.di.DaggerDetailsRetainedComponent
@@ -67,7 +69,6 @@ import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
 import de.r4md4c.gamedealz.feature.detail.mvi.Section
 import de.r4md4c.gamedealz.feature.detail.mvi.toMenuIdRes
-import kotlinx.android.synthetic.main.fragment_game_detail.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
@@ -122,7 +123,12 @@ class DetailsFragment : BaseFragment() {
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val pricesAdapter by lazy { ItemAdapter<IItem<*, *>>() }
     private val mainAdapter by lazy {
-        FastItemAdapter.with<IItem<*, *>, ItemAdapter<IItem<*, *>>>(listOf(gameDetailsAdapter, pricesAdapter))
+        FastItemAdapter.with<IItem<*, *>, ItemAdapter<IItem<*, *>>>(
+            listOf(
+                gameDetailsAdapter,
+                pricesAdapter
+            )
+        )
     }
 
     private val spanCount
@@ -132,18 +138,28 @@ class DetailsFragment : BaseFragment() {
         DetailsFragmentItemDecorator(requireContext())
     }
 
+    private val binding by viewBinding(FragmentGameDetailBinding::bind)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(lifecycleAware)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         inflater.inflate(R.layout.fragment_game_detail, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        NavigationUI.setupWithNavController(collapsing_toolbar, toolbar, findNavController())
+        NavigationUI.setupWithNavController(
+            binding.collapsingToolbar,
+            binding.toolbar,
+            findNavController()
+        )
         stateVisibilityHandler.onViewCreated()
         stateVisibilityHandler.onRetryClick =
             { eventsChannel.offer(DetailsMviEvent.RetryClickEvent) }
@@ -164,7 +180,7 @@ class DetailsFragment : BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        content.apply {
+        binding.content.apply {
             addItemDecoration(itemsDecorator)
             layoutManager =
                 GridLayoutManager(context, spanCount).apply {
@@ -183,8 +199,8 @@ class DetailsFragment : BaseFragment() {
     }
 
     private fun setupFab() {
-        addToWatchList.hide()
-        addToWatchList.setOnClickListener {
+        binding.addToWatchList.hide()
+        binding.addToWatchList.setOnClickListener {
             eventsChannel.offer(DetailsMviEvent.WatchlistFabClickEvent)
         }
     }
@@ -205,7 +221,7 @@ class DetailsFragment : BaseFragment() {
     }
 
     private fun setupTitle() {
-        collapsing_toolbar.title = title
+        binding.collapsingToolbar.title = title
     }
 
     private fun renderState(state: DetailsViewState) = with(state) {
@@ -228,12 +244,12 @@ class DetailsFragment : BaseFragment() {
 
     private fun renderAddToWatchlistButton(isWatched: Boolean?) {
         if (isWatched == null) {
-            addToWatchList.hide()
+            binding.addToWatchList.hide()
             return
         }
 
-        addToWatchList.show()
-        addToWatchList.setImageResource(
+        binding.addToWatchList.show()
+        binding.addToWatchList.setImageResource(
             if (isWatched) R.drawable.ic_added_to_watch_list
             else R.drawable.ic_add_to_watch_list
         )

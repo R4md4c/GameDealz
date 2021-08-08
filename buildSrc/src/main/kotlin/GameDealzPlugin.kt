@@ -56,6 +56,8 @@ class GameDealzPlugin : Plugin<Project> {
                 applyCommonAndroidOptions(baseExtension)
                 this.dependencies.add("kaptAndroidTest", Libraries.assistedInjectCompiler)
                 this.dependencies.add("kaptAndroidTest", Libraries.daggerCompiler)
+
+                baseExtension.buildFeatures.viewBinding = true
             }
         }
     }
