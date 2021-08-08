@@ -62,7 +62,7 @@ class RegionSelectionViewModel @Inject constructor(
 
             _regions.postValue(
                 RegionSelectionModel(
-                    allRegions.map { it.regionCode.toUpperCase() },
+                    allRegions.map { it.regionCode.uppercase() },
                     restoreRegionIndex
                         ?: allRegions.indexOfFirst { r -> r.regionCode == activeRegion.regionCode })
             )
@@ -70,7 +70,7 @@ class RegionSelectionViewModel @Inject constructor(
     }
 
     fun requestCountriesUnderRegion(activeRegion: ActiveRegion, restoreCountryIndex: Int?) {
-        loadCountries(activeRegion.regionCode.toLowerCase()) {
+        loadCountries(activeRegion.regionCode.lowercase()) {
             _countries.postValue(
                 CountrySelectionModel(it.map { model -> model.displayName() },
                     restoreCountryIndex
@@ -80,7 +80,7 @@ class RegionSelectionViewModel @Inject constructor(
     }
 
     fun onRegionSelected(regionCode: String) {
-        loadCountries(regionCode.toLowerCase()) {
+        loadCountries(regionCode.lowercase()) {
             _countries.postValue(
                 CountrySelectionModel(
                     it.map { model -> model.displayName() },
@@ -98,7 +98,7 @@ class RegionSelectionViewModel @Inject constructor(
             changeActiveRegionUseCase(
                 TypeParameter(
                     ChangeActiveRegionParameter(
-                        regionCode.toLowerCase(),
+                        regionCode.lowercase(),
                         countryModel.code
                     )
                 )

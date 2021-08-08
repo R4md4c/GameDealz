@@ -77,17 +77,19 @@ class GameDealzPlugin : Plugin<Project> {
 
     private fun applyCommonAndroidOptions(extension: BaseExtension) {
         extension.packagingOptions {
-            excludes = excludes + setOf(
-                "win32-x86-64/attach_hotspot_windows.dll",
-                "win32-x86/attach_hotspot_windows.dll",
-                "META-INF/LGPL2.1",
-                "META-INF/ASL2.0",
-                "META-INF/AL2.0",
-                "META-INF/MANIFEST.MF",
-                "META-INF/licenses/ASM",
-                "LICENSE.txt",
-                "META-INF/LICENSE",
-                "META-INF/*.kotlin_module"
+            excludes.addAll(
+                setOf(
+                    "win32-x86-64/attach_hotspot_windows.dll",
+                    "win32-x86/attach_hotspot_windows.dll",
+                    "META-INF/LGPL2.1",
+                    "META-INF/ASL2.0",
+                    "META-INF/AL2.0",
+                    "META-INF/MANIFEST.MF",
+                    "META-INF/licenses/ASM",
+                    "LICENSE.txt",
+                    "META-INF/LICENSE",
+                    "META-INF/*.kotlin_module"
+                )
             )
         }
     }
