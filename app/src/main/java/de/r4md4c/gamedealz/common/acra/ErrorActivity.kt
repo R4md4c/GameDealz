@@ -73,7 +73,7 @@ class ErrorActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_SUBJECT, ERROR_EMAIL_SUBJECT)
             putExtra(
                 Intent.EXTRA_TEXT,
-                errorInfo.toJsonObject(binding).toString(INDENT_SPACES_NUMBER)
+                errorInfo?.toJsonObject(binding)?.toString(INDENT_SPACES_NUMBER)
             )
         }
         kotlin.runCatching {
@@ -85,6 +85,7 @@ class ErrorActivity : AppCompatActivity() {
 
     private fun formString(): String =
         with(errorInfo) {
+            this ?: return@with ""
             StringBuilder()
                 .append("Phone Model: $deviceModel\n")
                 .append("Android Version: $androidVersion\n")

@@ -71,6 +71,7 @@ dependencies {
 
     testImplementation project(':commontest')
     testImplementation TestLibraries.robolectric
+    testImplementation TestLibraries.androidXTestCore
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.mockitoKotlin

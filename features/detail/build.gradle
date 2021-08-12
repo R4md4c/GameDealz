@@ -4,7 +4,7 @@ apply plugin: 'kotlin-parcelize'
 apply from: "../../gradle/scripts/android-test.gradle"
 
 android {
-    compileSdkVersion AndroidSdk.compile
+    compileSdk AndroidSdk.compile
 
     defaultConfig {
         minSdkVersion AndroidSdk.min

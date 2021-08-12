@@ -49,7 +49,7 @@ class ChannelUIEventsDispatcherTest {
 
         val job = eventsDispatcher.uiEvents.recordWith(flowRecorder)
 
-        assertThat(flowRecorder.iterator()).hasSize(3)
+        assertThat(flowRecorder.take(5)).hasSize(3)
         job.cancelAndJoin()
     }
 }

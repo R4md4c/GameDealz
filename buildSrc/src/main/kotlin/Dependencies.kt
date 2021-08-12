@@ -20,9 +20,9 @@ object BuildPlugins {
 }
 
 object AndroidSdk {
-    const val min = 19
-    const val compile = 28
-    const val target = compile
+    const val min = 21
+    const val compile = 31
+    const val target = 30
 }
 
 object Libraries {
@@ -152,7 +152,7 @@ object TestLibraries {
         const val androidXTest = "1.4.0"
         const val espresso = "3.4.0"
         const val uiAutomator = "2.2.0"
-        const val mockitoAndroid = "3.11.2"
+        const val mockito = "3.11.2"
         const val kakao = "2.4.0"
     }
 
@@ -161,11 +161,14 @@ object TestLibraries {
     const val androidXTestExtJunit = "androidx.test.ext:junit:1.1.3"
     const val room = "androidx.room:room-testing:${Libraries.Versions.room}"
     const val mockK = "io.mockk:mockk:${Versions.mockk}"
-    const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockitoKotlin =
+        "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"
     const val assertjCore = "org.assertj:assertj-core:${Versions.assertj}"
     const val liveDataTesting = "com.jraska.livedata:testing:${Versions.liveDataTesting}"
     const val liveDataTestingKtx = "com.jraska.livedata:testing-ktx:${Versions.liveDataTesting}"
-    const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Libraries.Versions.coroutines}"
+    const val coroutinesTest =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Libraries.Versions.coroutines}"
     const val archComponentsCoreTesting = "androidx.arch.core:core-testing:${Versions.core_testing}"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     const val junit = "junit:junit:${Versions.junit4}"
@@ -175,7 +178,8 @@ object TestLibraries {
     const val kakao = "com.agoda.kakao:kakao:${Versions.kakao}"
     const val navigationTest =
         "androidx.navigation:navigation-testing:${BuildPlugins.Versions.navVersion}"
-    const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockitoAndroid}"
+    const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockito}"
+    const val dexMaker = "com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.0"
     const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"
     const val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"

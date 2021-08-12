@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.feature.detail
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
@@ -58,9 +59,6 @@ class DetailsFragmentTest {
     @Before
     fun beforeEach() {
         MockitoAnnotations.initMocks(this)
-        navController = TestNavHostController(ApplicationProvider.getApplicationContext()).also {
-            it.setGraph(R.navigation.nav_graph)
-        }
         testMviViewModel = TestMviViewModel()
     }
 
@@ -119,9 +117,10 @@ class DetailsFragmentTest {
     }
 
     private fun launchFragment() {
-        launchFragmentInContainer(
+        val scenario = launchFragmentInContainer(
             fragmentArgs = getArguments(),
-            themeResId = R.style.BaseAppTheme
+            themeResId = R.style.BaseAppTheme,
+            initialState = Lifecycle.State.INITIALIZED
         ) {
             DetailsFragment().also { fragment ->
                 val context = ApplicationProvider.getApplicationContext<Context>()
@@ -142,6 +141,15 @@ class DetailsFragmentTest {
                 }
             }
         }
+
+        scenario.onFragment { _ ->
+            navController =
+                TestNavHostController(ApplicationProvider.getApplicationContext()).also {
+                    it.setGraph(R.navigation.nav_graph)
+                }
+        }
+
+        scenario.moveToState(Lifecycle.State.RESUMED)
     }
 
     private fun createState(

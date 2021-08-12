@@ -2,7 +2,9 @@
         package="de.r4md4c.gamedealz.feature.home">
 
     <application>
-        <activity android:name=".HomeActivity">
+        <activity
+                android:name=".HomeActivity"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

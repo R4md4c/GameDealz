@@ -18,6 +18,7 @@ dependencies {
     debugImplementation (Libraries.fragmentTesting)  {
         exclude group: 'androidx.test', module: 'core'
     }
-    androidTestImplementation TestLibraries.mockitoAndroid
+    androidTestImplementation TestLibraries.mockitoCore
+    androidTestImplementation TestLibraries.dexMaker
     androidTestImplementation TestLibraries.mockitoKotlin
 }
