@@ -24,9 +24,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.broadcastIn
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
 class ChannelUIEventsDispatcher<T : UIEvent> @Inject constructor(
@@ -38,7 +38,7 @@ class ChannelUIEventsDispatcher<T : UIEvent> @Inject constructor(
     private val eventsChannel = Channel<T>(capacity = UNLIMITED)
 
     override val uiEvents: Flow<T> =
-        eventsChannel.consumeAsFlow().broadcastIn(dispatcherScope).asFlow()
+        eventsChannel.consumeAsFlow().shareIn(dispatcherScope, SharingStarted.Lazily)
 
     override fun dispatchEvent(event: T) {
         eventsChannel.offer(event)

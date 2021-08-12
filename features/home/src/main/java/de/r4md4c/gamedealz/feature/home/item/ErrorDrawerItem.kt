@@ -18,10 +18,12 @@
 package de.r4md4c.gamedealz.feature.home.item
 
 import android.annotation.SuppressLint
+import android.view.View
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import de.r4md4c.gamedealz.common.state.OnRetryClick
 import de.r4md4c.gamedealz.feature.home.R
-import kotlinx.android.synthetic.main.layout_drawer_retry.view.*
+import de.r4md4c.gamedealz.feature.home.databinding.LayoutDrawerRetryBinding
 
 class ErrorDrawerItem(
     private val retryText: String,
@@ -33,10 +35,17 @@ class ErrorDrawerItem(
     @SuppressLint("ResourceType")
     override fun getType(): Int = R.layout.layout_drawer_retry
 
+    override fun getViewHolder(v: View?): ViewHolder {
+        return super.getViewHolder(v)
+    }
+
+    override fun onPostBindView(drawerItem: IDrawerItem<*, *>?, view: View?) {
+        super.onPostBindView(drawerItem, view)
+    }
+
     override fun bindView(viewHolder: ViewHolder, payloads: MutableList<Any?>) {
-        with(viewHolder.itemView) {
-            errorText.text = retryText
-            retry.setOnClickListener { onRetryClick() }
-        }
+        val binding = LayoutDrawerRetryBinding.bind(viewHolder.itemView)
+        binding.errorText.text = retryText
+        binding.retry.setOnClickListener { onRetryClick() }
     }
 }

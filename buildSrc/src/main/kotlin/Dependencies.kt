@@ -6,8 +6,8 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
-        const val navVersion = "2.3.0"
-        const val detektVersion = "1.14.0"
+        const val navVersion = "2.3.5"
+        const val detektVersion = "1.17.1"
     }
 
     const val kotlinAllOpenPlugin = "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
@@ -20,41 +20,41 @@ object BuildPlugins {
 }
 
 object AndroidSdk {
-    const val min = 19
-    const val compile = 28
-    const val target = compile
+    const val min = 21
+    const val compile = 31
+    const val target = 30
 }
 
 object Libraries {
     internal object Versions {
-        const val okhttp = "3.12.1"
-        const val retrofit = "2.6.3"
+        const val okhttp = "4.9.1"
+        const val retrofit = "2.9.0"
         const val retrofitCoroutinesAdapter = "0.9.2"
-        const val okio = "2.2.2"
+        const val okio = "2.10.0"
         const val acra = "5.5.0"
-        const val fragments = "1.2.5"
-        const val constraintLayout = "2.0.0-beta3"
+        const val fragments = "1.3.6"
+        const val constraintLayout = "2.1.0"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.1"
-        const val coroutines = "1.3.9"
-        const val room = "2.2.5"
+        const val coroutines = "1.5.1"
+        const val room = "2.3.0"
         const val timber = "4.7.1"
-        const val lifecycle = "2.2.0"
-        const val glide = "4.11.0"
+        const val lifecycle = "2.3.1"
+        const val glide = "4.12.0"
         const val swiperefreshlayout = "1.0.0"
-        const val appCompat = "1.1.0"
-        const val recyclerView = "1.1.0"
-        const val androidX = "1.2.0-beta01"
-        const val material = "1.1.0"
-        const val workmanager = "2.4.0"
+        const val appCompat = "1.3.1"
+        const val recyclerView = "1.2.1"
+        const val androidX = "1.6.0"
+        const val material = "1.4.0"
+        const val workmanager = "2.5.0"
         const val multidex = "2.0.1"
-        const val annotations = "1.1.0"
+        const val annotations = "1.2.0"
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
-        const val dagger = "2.26"
+        const val dagger = "2.38.1"
         const val assistedInject = "0.6.0"
-        const val moshi = "1.9.3"
-        const val appAuth = "27b62d5da9" // AndroidX support
+        const val moshi = "1.12.0"
+        const val appAuth = "0.8.1" // AndroidX support
         const val sqliteKtx = "2.1.0"
         const val store4 = "4.0.0-alpha03"
     }
@@ -77,7 +77,7 @@ object Libraries {
     const val assistedInjectCompiler =
         "com.squareup.inject:assisted-inject-processor-dagger2:${Versions.assistedInject}"
 
-    const val jsoup = "org.jsoup:jsoup:1.12.1"
+    const val jsoup = "org.jsoup:jsoup:1.14.1"
 
     const val retrofitCoroutinesAdapter =
         "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:${Versions.retrofitCoroutinesAdapter}"
@@ -103,16 +103,18 @@ object Libraries {
     const val androidXAnnotations = "androidx.annotation:annotation:${Versions.annotations}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.androidX}"
     const val sqliteKtx = "androidx.sqlite:sqlite-ktx:${Versions.sqliteKtx}"
+
     // Logging solution For pure Java modules
-    const val slf4j = "org.slf4j:slf4j-api:1.7.25"
+    const val slf4j = "org.slf4j:slf4j-api:1.7.32"
     const val timberSlf4j = "com.arcao:slf4j-timber:3.1@aar"
 
     const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.nav_version}"
     const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.nav_version}"
     const val material = "com.google.android.material:material:${Versions.material}"
 
-    const val swipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefreshlayout}"
-    const val stfalImageViewer = "com.github.stfalcon:stfalcon-imageviewer:0.1.0"
+    const val swipeRefreshLayout =
+        "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefreshlayout}"
+    const val stfalImageViewer = "com.github.stfalcon:stfalcon-imageviewer:1.0.10"
 
     const val glide = "com.github.bumptech.glide:glide:${Versions.glide}"
     const val glideHttpIntegration = "com.github.bumptech.glide:okhttp3-integration:${Versions.glide}"
@@ -127,12 +129,13 @@ object Libraries {
     const val acraCore = "ch.acra:acra-core:${Versions.acra}"
 
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    const val kotlinFlowExtensions = "com.github.akarnokd:kotlin-flow-extensions:0.0.2"
+    const val kotlinCoroutines =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val kotlinFlowExtensions = "com.github.akarnokd:kotlin-flow-extensions:0.0.8"
 
     const val fastAdapter = "com.mikepenz:fastadapter-extensions:${Versions.fastAdapter}"
     const val materialDrawer = "com.mikepenz:materialdrawer:${Versions.materialDrawer}"
-    const val stateMachine = "com.github.tinder:statemachine:0.1.2"
+    const val stateMachine = "com.github.tinder:statemachine:0.2.0"
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
     const val appAuth = "com.github.openid:AppAuth-Android:${Versions.appAuth}"
 }
@@ -140,29 +143,32 @@ object Libraries {
 object TestLibraries {
     private object Versions {
         const val mockk = "1.10.0"
-        const val robolectric = "4.2.1"
-        const val assertj = "2.9.1"
+        const val robolectric = "4.6.1"
+        const val assertj = "3.20.2"
         const val mockito_kotlin = "2.2.0"
         const val core_testing = "2.1.0"
-        const val liveDataTesting = "1.1.0"
-        const val junit4 = "4.13"
-        const val androidXTest = "1.2.0"
-        const val espresso = "3.2.0"
+        const val liveDataTesting = "1.2.0"
+        const val junit4 = "4.13.2"
+        const val androidXTest = "1.4.0"
+        const val espresso = "3.4.0"
         const val uiAutomator = "2.2.0"
-        const val mockitoAndroid = "2.28.2"
-        const val kakao = "2.3.0"
+        const val mockito = "3.11.2"
+        const val kakao = "2.4.0"
     }
 
     const val workManager = "androidx.work:work-testing:${Libraries.Versions.workmanager}"
 
-    const val androidXTestExtJunit = "androidx.test.ext:junit:1.1.1"
+    const val androidXTestExtJunit = "androidx.test.ext:junit:1.1.3"
     const val room = "androidx.room:room-testing:${Libraries.Versions.room}"
     const val mockK = "io.mockk:mockk:${Versions.mockk}"
-    const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockitoKotlin =
+        "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"
     const val assertjCore = "org.assertj:assertj-core:${Versions.assertj}"
     const val liveDataTesting = "com.jraska.livedata:testing:${Versions.liveDataTesting}"
     const val liveDataTestingKtx = "com.jraska.livedata:testing-ktx:${Versions.liveDataTesting}"
-    const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Libraries.Versions.coroutines}"
+    const val coroutinesTest =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Libraries.Versions.coroutines}"
     const val archComponentsCoreTesting = "androidx.arch.core:core-testing:${Versions.core_testing}"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     const val junit = "junit:junit:${Versions.junit4}"
@@ -172,7 +178,8 @@ object TestLibraries {
     const val kakao = "com.agoda.kakao:kakao:${Versions.kakao}"
     const val navigationTest =
         "androidx.navigation:navigation-testing:${BuildPlugins.Versions.navVersion}"
-    const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockitoAndroid}"
+    const val mockitoAndroid = "org.mockito:mockito-android:${Versions.mockito}"
+    const val dexMaker = "com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.0"
     const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"
     const val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"

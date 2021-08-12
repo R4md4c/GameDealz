@@ -24,7 +24,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.feature.detail.R
-import kotlinx.android.synthetic.main.layout_expandable_screenshot_header_item.view.*
+import de.r4md4c.gamedealz.feature.detail.databinding.LayoutExpandableScreenshotHeaderItemBinding
 
 typealias OnExpandClick = ExpandableScreenshotsHeader.() -> Unit
 
@@ -41,14 +41,14 @@ class ExpandableScreenshotsHeader(
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
         val item = this
-        with(holder.itemView) {
-            expand_icon.isVisible = showExpandIcon
-            ViewCompat.animate(expand_icon).cancel()
-            expand_icon.setOnClickListener {
+        with(holder.binding) {
+            expandIcon.isVisible = showExpandIcon
+            ViewCompat.animate(expandIcon).cancel()
+            expandIcon.setOnClickListener {
                 onExpandClick()
-                ViewCompat.animate(expand_icon).rotation(item.rotation)
+                ViewCompat.animate(expandIcon).rotation(item.rotation)
             }
-            expand_icon.rotation = item.rotation
+            expandIcon.rotation = item.rotation
         }
     }
 
@@ -65,7 +65,9 @@ class ExpandableScreenshotsHeader(
 
     override fun getLayoutRes(): Int = R.layout.layout_expandable_screenshot_header_item
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutExpandableScreenshotHeaderItemBinding.bind(itemView)
+    }
 
     private companion object {
         private const val DEGREES_90 = 90F

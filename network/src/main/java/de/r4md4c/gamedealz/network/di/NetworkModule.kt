@@ -18,29 +18,22 @@
 package de.r4md4c.gamedealz.network.di
 
 import android.content.Context
-import android.os.Build
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import de.r4md4c.gamedealz.network.client.Tls12SocketFactory
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.steam.SteamService
 import okhttp3.Cache
-import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.TlsVersion
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import timber.log.Timber
 import java.io.File
-import java.security.NoSuchAlgorithmException
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import javax.net.ssl.SSLContext
 
 const val URL_IS_THERE_ANY_DEAL = "https://api.isthereanydeal.com/"
 const val READ_TIMEOUT_IN_SECONDS = 30L
@@ -57,7 +50,6 @@ object NetworkModule {
             .apply {
                 interceptors.forEach { addInterceptor(it) }
             }
-            .enableTls12OnPreLollipop()
             .build()
 
     @Provides
@@ -106,25 +98,4 @@ object NetworkModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(SteamService::class.java)
-}
-
-private fun OkHttpClient.Builder.enableTls12OnPreLollipop(): OkHttpClient.Builder {
-    if (Build.VERSION.SDK_INT in Build.VERSION_CODES.JELLY_BEAN..Build.VERSION_CODES.KITKAT) {
-        try {
-            val sc = SSLContext.getInstance("TLSv1.2")
-            sc.init(null, null, null)
-            sslSocketFactory(Tls12SocketFactory(sc.socketFactory))
-
-            val cs = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2).build()
-
-            val specs = arrayListOf(cs, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT)
-
-            connectionSpecs(specs)
-        } catch (exc: NoSuchAlgorithmException) {
-            Timber.e(exc, "Error while setting TLS 1.2")
-        }
-    }
-
-    return this
 }

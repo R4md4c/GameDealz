@@ -26,7 +26,7 @@
             android:rotation="270"
             app:layout_constraintBaseline_toBaselineOf="@+id/header"
             app:layout_constraintBottom_toBottomOf="@+id/header"
-            android:tint="?colorOnSurface"
+            app:tint="?colorOnSurface"
             app:srcCompat="@drawable/ic_chevron_right_black_24dp"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_height="wrap_content"/>

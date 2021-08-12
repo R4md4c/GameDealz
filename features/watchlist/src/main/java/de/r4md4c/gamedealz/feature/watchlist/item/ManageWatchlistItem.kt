@@ -30,7 +30,7 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.domain.model.ManageWatchlistModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import de.r4md4c.gamedealz.feature.watchlist.R
-import kotlinx.android.synthetic.main.layout_manage_watchlist_item.view.*
+import de.r4md4c.gamedealz.feature.watchlist.databinding.LayoutManageWatchlistItemBinding
 
 data class ManageWatchlistItem(
     private val watchModelTitle: CharSequence,
@@ -42,7 +42,7 @@ data class ManageWatchlistItem(
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
-        with(holder.itemView) {
+        with(holder.binding) {
             title.text = watchModelTitle
             targetPrice.text = watchModelTargetPrice
             currentPrice.text = watchModelCurrentPrice
@@ -60,7 +60,9 @@ data class ManageWatchlistItem(
 
     override fun getLayoutRes(): Int = R.layout.layout_manage_watchlist_item
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutManageWatchlistItemBinding.bind(itemView)
+    }
 }
 
 @WorkerThread

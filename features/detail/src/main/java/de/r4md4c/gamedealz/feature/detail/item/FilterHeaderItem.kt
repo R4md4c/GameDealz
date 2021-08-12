@@ -29,8 +29,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.databinding.LayoutDetailHeaderFilterItemBinding
 import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
-import kotlinx.android.synthetic.main.layout_detail_header_filter_item.view.*
 
 typealias OnFilterItemClick = (SortOrder) -> Unit
 
@@ -55,18 +55,23 @@ class FilterHeaderItem(
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
-        with(holder.itemView) {
+        with(holder.binding) {
             header.text = headerString
-            val icon = AppCompatResources.getDrawable(context, R.drawable.ic_sort_list)?.apply {
-                DrawableCompat.setTint(this, context.resolveThemeColor(R.attr.colorOnSurface))
-            }
+            val icon =
+                AppCompatResources.getDrawable(holder.itemView.context, R.drawable.ic_sort_list)
+                    ?.apply {
+                        DrawableCompat.setTint(
+                            this,
+                            holder.itemView.context.resolveThemeColor(R.attr.colorOnSurface)
+                        )
+                    }
             TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 filterView, null,
                 null, icon, null
             )
 
             filterView.setOnClickListener {
-                PopupMenu(context, filterView).also { popupMenu ->
+                PopupMenu(holder.itemView.context, filterView).also { popupMenu ->
                     popupMenu.inflate(menuItem)
                     popupMenu.menu.findItem(defaultChosenItem)?.isChecked = true
                     popupMenu.show()
@@ -86,5 +91,7 @@ class FilterHeaderItem(
         }
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutDetailHeaderFilterItemBinding.bind(itemView)
+    }
 }

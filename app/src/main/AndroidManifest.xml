@@ -19,6 +19,7 @@
 
         <activity
                 android:name=".common.acra.ErrorActivity"
+                android:exported="false"
                 android:label="@string/title_submit_error_report"/>
 
         <provider

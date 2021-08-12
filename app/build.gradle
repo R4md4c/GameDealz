@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 apply plugin: 'kotlin-kapt'
 
@@ -51,10 +51,6 @@ android {
         }
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
-}
-
-androidExtensions {
-    experimental = true
 }
 
 dependencies {
@@ -138,11 +134,4 @@ dependencies {
     androidTestImplementation TestLibraries.testRunner
     androidTestImplementation TestLibraries.espressoCore
     androidTestImplementation TestLibraries.androidXTestCore
-}
-
-configurations.all {
-    resolutionStrategy {
-        force 'net.bytebuddy:byte-buddy:1.8.22'
-        force 'net.bytebuddy:byte-buddy-agent:1.8.22'
-    }
 }

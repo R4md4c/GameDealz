@@ -26,8 +26,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.r4md4c.gamedealz.BuildConfig
 import de.r4md4c.gamedealz.R
-import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.activity_error.*
+import de.r4md4c.gamedealz.databinding.ActivityErrorBinding
+import kotlinx.parcelize.Parcelize
 import org.acra.ReportField
 import org.acra.data.CrashReportData
 import org.json.JSONObject
@@ -56,21 +56,25 @@ class ErrorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_error)
-        setSupportActionBar(toolbar)
+        val binding = ActivityErrorBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         setTitle(R.string.title_submit_error_report)
 
-        reportButton.setOnClickListener {
-            reportBugReport()
+        binding.reportButton.setOnClickListener {
+            reportBugReport(binding)
         }
-        errorMessageView.text = formString()
+        binding.errorMessageView.text = formString()
     }
 
-    private fun reportBugReport() {
+    private fun reportBugReport(binding: ActivityErrorBinding) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:$ERROR_EMAIL_ADDRESS")
             putExtra(Intent.EXTRA_SUBJECT, ERROR_EMAIL_SUBJECT)
-            putExtra(Intent.EXTRA_TEXT, errorInfo.toJsonObject().toString(INDENT_SPACES_NUMBER))
+            putExtra(
+                Intent.EXTRA_TEXT,
+                errorInfo?.toJsonObject(binding)?.toString(INDENT_SPACES_NUMBER)
+            )
         }
         kotlin.runCatching {
             startActivity(intent)
@@ -81,6 +85,7 @@ class ErrorActivity : AppCompatActivity() {
 
     private fun formString(): String =
         with(errorInfo) {
+            this ?: return@with ""
             StringBuilder()
                 .append("Phone Model: $deviceModel\n")
                 .append("Android Version: $androidVersion\n")
@@ -96,7 +101,7 @@ class ErrorActivity : AppCompatActivity() {
                 .toString()
         }
 
-    private fun ErrorInfo.toJsonObject(): JSONObject =
+    private fun ErrorInfo.toJsonObject(binding: ActivityErrorBinding): JSONObject =
         JSONObject().apply {
             put("phone_model", deviceModel)
             put("android_version", androidVersion)
@@ -105,7 +110,7 @@ class ErrorActivity : AppCompatActivity() {
             put("current_timestamp", currentTimestamp)
             put("package_name", packageName)
             Locale.getDefault()?.let { put("locale", it) }
-            put("comment", yourCommentEditText.text.toString())
+            put("comment", binding.yourCommentEditText.text.toString())
             put("stacktrace", stacktrace)
         }
 

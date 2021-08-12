@@ -15,7 +15,10 @@ dependencies {
     androidTestImplementation project(':commonAndroidTest')
     androidTestImplementation TestLibraries.assertjCore
     androidTestImplementation TestLibraries.navigationTest
-    debugImplementation Libraries.fragmentTesting
-    androidTestImplementation TestLibraries.mockitoAndroid
+    debugImplementation (Libraries.fragmentTesting)  {
+        exclude group: 'androidx.test', module: 'core'
+    }
+    androidTestImplementation TestLibraries.mockitoCore
+    androidTestImplementation TestLibraries.dexMaker
     androidTestImplementation TestLibraries.mockitoKotlin
 }

@@ -35,12 +35,12 @@ import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.test.TestDispatchers
 import de.r4md4c.gamedealz.workmanager.factory.GameDealzWorkManagerFactory
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-import javax.inject.Provider
+import org.mockito.junit.MockitoJUnitRunner
 
+@RunWith(MockitoJUnitRunner::class)
 class PriceCheckerWorkerTest {
 
     private val context: Context
@@ -51,11 +51,6 @@ class PriceCheckerWorkerTest {
 
     @Mock
     lateinit var checkPriceThresholdUseCase: CheckPriceThresholdUseCase
-
-    @Before
-    fun beforeEach() {
-        MockitoAnnotations.initMocks(this)
-    }
 
     @Test
     fun doWorkNotifies_whenUseCase_ReturnsWatchees() {
@@ -116,9 +111,9 @@ class PriceCheckerWorkerTest {
             TestListenableWorkerBuilder.from<PriceCheckerWorker>(context, PriceCheckerWorker::class.java)
                 .setWorkerFactory(
                     GameDealzWorkManagerFactory(
-                        Provider { TestDispatchers },
-                        Provider { notifier },
-                        Provider { checkPriceThresholdUseCase })
+                        { TestDispatchers },
+                        { notifier },
+                        { checkPriceThresholdUseCase })
                 )
                 .build() as PriceCheckerWorker
     }

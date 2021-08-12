@@ -23,7 +23,8 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.navigation.ui.NavigationUI
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
@@ -45,6 +46,7 @@ import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
+import de.r4md4c.gamedealz.feature.home.databinding.ActivityMainBinding
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeViewModelComponent
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
@@ -85,8 +87,12 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         DaggerHomeViewModelComponent.factory().create(coreComponent())
     }
 
-    private val navController
-        get() = findNavController(R.id.nav_host_fragment)
+    private val navController: NavController
+        get() {
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            return navHostFragment.navController
+        }
 
     private val accountHeader by lazy {
         AccountHeaderBuilder()
@@ -122,7 +128,8 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     override fun onCreate(savedInstanceState: Bundle?) {
         onInject()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         loadDrawer(savedInstanceState)
         insertMenuItems()

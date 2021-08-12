@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion AndroidSdk.compile
+    compileSdk AndroidSdk.compile
 
     defaultConfig {
         minSdkVersion AndroidSdk.min
@@ -45,7 +45,8 @@ dependencies {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-android'
     }
 
-    androidTestImplementation TestLibraries.mockitoAndroid
+    androidTestImplementation TestLibraries.mockitoCore
+    androidTestImplementation TestLibraries.dexMaker
     androidTestImplementation project(":commontest")
     androidTestImplementation TestLibraries.androidXTestExtJunit
     androidTestImplementation TestLibraries.assertjCore

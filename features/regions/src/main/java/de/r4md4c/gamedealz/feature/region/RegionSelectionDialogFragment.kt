@@ -32,10 +32,11 @@ import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.gamedealz.common.aware.DrawerAware
+import de.r4md4c.gamedealz.common.base.fragment.viewBinding
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.feature.region.di.DaggerRegionsComponent
 import de.r4md4c.gamedealz.feature.regions.R
-import kotlinx.android.synthetic.main.dialog_region_choice.view.*
+import de.r4md4c.gamedealz.feature.regions.databinding.DialogRegionChoiceBinding
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -55,6 +56,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
         RegionSelectionDialogFragmentArgs.fromBundle(requireArguments()).region
     }
 
+    private val binding by viewBinding(DialogRegionChoiceBinding::bind)
+
     override fun onAttach(context: Context) {
         onInject(context)
         super.onAttach(context)
@@ -71,8 +74,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
             .create()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val regionIndex = savedInstanceState?.getInt(STATE_REGION_INDEX)
         val countryIndex = savedInstanceState?.getInt(STATE_COUNTRY_INDEX)
 
@@ -82,10 +85,8 @@ class RegionSelectionDialogFragment : DialogFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        with(dialogView) {
-            outState.putInt(STATE_REGION_INDEX, region_spinner.selectedItemPosition)
-            outState.putInt(STATE_COUNTRY_INDEX, country_spinner.selectedItemPosition)
-        }
+        outState.putInt(STATE_REGION_INDEX, binding.regionSpinner.selectedItemPosition)
+        outState.putInt(STATE_COUNTRY_INDEX, binding.countrySpinner.selectedItemPosition)
     }
 
     override fun onResume() {
@@ -96,23 +97,21 @@ class RegionSelectionDialogFragment : DialogFragment() {
     }
 
     private fun submitResult() {
-        with(dialogView) {
-            val selectedRegionCode = viewModel.regions.value?.let {
-                it.regions[region_spinner.selectedItemPosition]
-            }
-            val selectedCountryCode =
-                viewModel.countries.value
-                    ?.takeIf { country_spinner.selectedItemPosition > -1 }
-                    ?.let {
-                        it.countries[country_spinner.selectedItemPosition]
-                    }
-            (selectedRegionCode to selectedCountryCode).takeIf {
-                it.first != null && it.second != null
-            }?.let {
-                viewModel.onSubmitResult(it.first!!, it.second!!)
-                (requireActivity() as? DrawerAware)?.closeDrawer()
-                dismiss()
-            }
+        val selectedRegionCode = viewModel.regions.value?.let {
+            it.regions[binding.regionSpinner.selectedItemPosition]
+        }
+        val selectedCountryCode =
+            viewModel.countries.value
+                ?.takeIf { binding.countrySpinner.selectedItemPosition > -1 }
+                ?.let {
+                    it.countries[binding.countrySpinner.selectedItemPosition]
+                }
+        (selectedRegionCode to selectedCountryCode).takeIf {
+            it.first != null && it.second != null
+        }?.let {
+            viewModel.onSubmitResult(it.first!!, it.second!!)
+            (requireActivity() as? DrawerAware)?.closeDrawer()
+            dismiss()
         }
     }
 
@@ -121,26 +120,27 @@ class RegionSelectionDialogFragment : DialogFragment() {
         viewModel.requestRegions(activeRegion, regionIndex)
         viewModel.regions.observe(this, Observer { regionSelectedModel ->
             with(dialogView) {
-                region_spinner.adapter =
+                binding.regionSpinner.adapter =
                     ArrayAdapter(
                         context,
                         android.R.layout.simple_dropdown_item_1line,
                         android.R.id.text1,
                         regionSelectedModel.regions
                     )
-                region_spinner.setSelection(regionSelectedModel.activeRegionIndex)
+                binding.regionSpinner.setSelection(regionSelectedModel.activeRegionIndex)
 
-                region_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+                binding.regionSpinner.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
-                    override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        if (skipFirstSelection-- <= 0) {
-                            viewModel.onRegionSelected(parent.adapter.getItem(position) as String)
+                        override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            if (skipFirstSelection-- <= 0) {
+                                viewModel.onRegionSelected(parent.adapter.getItem(position) as String)
                         }
                     }
                 }
@@ -153,7 +153,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
         viewModel.requestCountriesUnderRegion(activeRegion, countryIndex)
         viewModel.countries.observe(this, Observer { selectedCountryModel ->
             with(dialogView) {
-                country_spinner.adapter =
+                binding.countrySpinner.adapter =
                     ArrayAdapter(
                         context,
                         android.R.layout.simple_dropdown_item_1line,
@@ -161,7 +161,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
                         selectedCountryModel.countries
                     )
                 selectedCountryModel.activeCountryIndex?.let {
-                    country_spinner.setSelection(it)
+                    binding.countrySpinner.setSelection(it)
                 }
             }
         })

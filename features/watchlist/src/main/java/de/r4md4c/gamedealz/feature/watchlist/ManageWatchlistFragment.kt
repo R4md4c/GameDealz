@@ -233,7 +233,7 @@ class ManageWatchlistFragment : BaseFragment(), SimpleSwipeCallback.ItemSwipeCal
     }
 
     private suspend fun showDialog(): Boolean = suspendCoroutine { continuation ->
-        MaterialAlertDialogBuilder(context)
+        MaterialAlertDialogBuilder(requireContext())
             .setMessage(R.string.watchlist_shortcut_dialog_message)
             .setPositiveButton(android.R.string.yes) { dialog, _ -> dialog.dismiss(); continuation.resume(true) }
             .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss(); continuation.resume(false) }

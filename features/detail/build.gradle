@@ -1,11 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
+apply plugin: 'kotlin-parcelize'
 apply from: "../../gradle/scripts/android-test.gradle"
 
 android {
-    compileSdkVersion AndroidSdk.compile
+    compileSdk AndroidSdk.compile
 
     defaultConfig {
         minSdkVersion AndroidSdk.min

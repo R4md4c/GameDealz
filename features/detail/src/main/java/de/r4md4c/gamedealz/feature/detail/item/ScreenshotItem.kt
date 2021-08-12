@@ -24,7 +24,7 @@ import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.feature.detail.R
-import kotlinx.android.synthetic.main.layout_screenshot_item.view.*
+import de.r4md4c.gamedealz.feature.detail.databinding.LayoutScreenshotItemBinding
 
 typealias OnScreenShotClick = (Int) -> Unit
 
@@ -40,7 +40,7 @@ class ScreenshotItem(
 
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
-        with(holder.itemView) {
+        with(holder.binding) {
             image.setOnClickListener { onScreenShotClick(screenshotPosition) }
             GlideApp.with(image)
                 .load(screenshotModel.thumbnail)
@@ -57,5 +57,7 @@ class ScreenshotItem(
 
     override fun getLayoutRes(): Int = R.layout.layout_screenshot_item
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = LayoutScreenshotItemBinding.bind(itemView)
+    }
 }

@@ -23,8 +23,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import de.r4md4c.gamedealz.test.mvi.FakeModelStore
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.runBlocking
+import kotlinx.parcelize.Parcelize
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test

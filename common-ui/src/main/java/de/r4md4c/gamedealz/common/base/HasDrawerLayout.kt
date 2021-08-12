@@ -21,5 +21,5 @@ import androidx.drawerlayout.widget.DrawerLayout
 
 interface HasDrawerLayout {
 
-    val drawerLayout: DrawerLayout
+    val drawerLayout: DrawerLayout?
 }

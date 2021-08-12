@@ -28,7 +28,6 @@ import de.r4md4c.gamedealz.common.R
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.core.coreComponent
-import kotlinx.android.synthetic.*
 import javax.inject.Inject
 
 abstract class BaseFragment : Fragment() {
@@ -36,8 +35,8 @@ abstract class BaseFragment : Fragment() {
     @Inject
     lateinit var dispatchers: IDispatchers
 
-    private val toolbar: Toolbar?
-        get() = view?.findViewById(R.id.toolbar) as Toolbar
+    private val toolbar: Toolbar
+        get() = requireView().findViewById(R.id.toolbar) as Toolbar
 
     override fun onAttach(context: Context) {
         onInject(context.coreComponent())
@@ -46,12 +45,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar?.let { onCreateOptionsMenu(it) }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        clearFindViewByIdCache()
+        onCreateOptionsMenu(toolbar)
     }
 
     val drawerLayout: DrawerLayout?

@@ -39,7 +39,7 @@ internal class JsoupScrapper @Inject constructor(okHttpClient: OkHttpClient) : S
 
     override suspend fun scrap(url: String): Document {
         val responseString = withContext(IO) {
-            okHttpClient.newCall(Request.Builder().url(url).get().build()).execute().body()?.string()
+            okHttpClient.newCall(Request.Builder().url(url).get().build()).execute().body?.string()
         }
         return Jsoup.parse(responseString)
     }

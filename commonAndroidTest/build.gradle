@@ -35,7 +35,8 @@ dependencies {
     implementation Libraries.coreKtx
     implementation TestLibraries.coroutinesTest
     implementation TestLibraries.mockitoKotlin
-    implementation TestLibraries.mockitoAndroid
+    implementation TestLibraries.mockitoCore
+    implementation TestLibraries.dexMaker
     implementation TestLibraries.junit
     implementation Libraries.material
     implementation project(':core')

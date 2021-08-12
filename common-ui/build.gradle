@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-allopen'
@@ -26,10 +26,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
-
-androidExtensions {
-    experimental = true
 }
 
 allOpen {
@@ -64,7 +60,9 @@ dependencies {
     implementation Libraries.navigationFragmentKtx
     implementation Libraries.navigationUiKtx
     implementation Libraries.kotlinFlowExtensions
-    debugImplementation Libraries.fragmentTesting
+    debugImplementation (Libraries.fragmentTesting) {
+        exclude group: 'androidx.test', module: 'core'
+    }
 
     implementation project(':commonproviders')
     implementation project(':common')
@@ -73,6 +71,7 @@ dependencies {
 
     testImplementation project(':commontest')
     testImplementation TestLibraries.robolectric
+    testImplementation TestLibraries.androidXTestCore
     testImplementation TestLibraries.assertjCore
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.mockitoKotlin
