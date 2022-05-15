@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      - image: circleci/android:api-28-node
+      - image: cimg/android:2022.04.1
     environment:
       CI: true
       JVM_OPTS: -Xmx3200m
