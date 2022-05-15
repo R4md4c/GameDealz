@@ -6,8 +6,8 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
-        const val navVersion = "2.3.5"
-        const val detektVersion = "1.17.1"
+        const val navVersion = "2.4.2"
+        const val detektVersion = "1.20.0"
     }
 
     const val kotlinAllOpenPlugin = "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
@@ -32,7 +32,7 @@ object Libraries {
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.10.0"
         const val acra = "5.5.0"
-        const val fragments = "1.3.6"
+        const val fragments = "1.4.1"
         const val constraintLayout = "2.1.0"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "2.1.1"
@@ -53,7 +53,7 @@ object Libraries {
         const val materialDrawer = "6.1.2"
         const val dagger = "2.38.1"
         const val assistedInject = "0.6.0"
-        const val moshi = "1.12.0"
+        const val moshi = "1.13.0"
         const val appAuth = "0.8.1" // AndroidX support
         const val sqliteKtx = "2.1.0"
         const val store4 = "4.0.0-alpha03"
