@@ -30,7 +30,7 @@ import kotlinx.coroutines.MainCoroutineDispatcher
  */
 object GameDealzDispatchers : IDispatchers {
 
-    @UseExperimental(InternalCoroutinesApi::class)
+    @OptIn(InternalCoroutinesApi::class)
     override val Main: MainCoroutineDispatcher = Dispatchers.Main
 
     override val IO = Dispatchers.IO

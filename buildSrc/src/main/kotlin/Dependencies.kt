@@ -53,7 +53,7 @@ object Libraries {
         const val materialDrawer = "6.1.2"
         const val dagger = "2.38.1"
         const val assistedInject = "0.6.0"
-        const val moshi = "1.12.0"
+        const val moshi = "1.13.0"
         const val appAuth = "0.8.1" // AndroidX support
         const val sqliteKtx = "2.1.0"
         const val store4 = "4.0.0-alpha03"

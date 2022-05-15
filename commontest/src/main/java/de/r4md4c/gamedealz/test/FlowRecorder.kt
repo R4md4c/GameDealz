@@ -27,7 +27,7 @@ import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.TimeUnit
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 fun <T> Flow<T>.recordWith(recorder: FlowRecorder<T>): Job =
     onEach { recorder.values.addLast(it) }.launchIn(recorder.coroutineScope)
 

@@ -9,8 +9,8 @@ plugins {
     id("com.github.gmazzo.buildconfig") version "3.0.2"
 }
 
-val kotlinVersion = "1.5.21"
-val androidGradlePluginVersion = "7.0.0"
+val kotlinVersion = "1.6.21"
+val androidGradlePluginVersion = "7.1.3"
 
 buildConfig {
     buildConfigField("String", "KOTLIN_VERSION", "\"$kotlinVersion\"")
