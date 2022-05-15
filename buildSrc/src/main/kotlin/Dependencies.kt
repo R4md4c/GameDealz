@@ -7,7 +7,7 @@ object BuildPlugins {
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
         const val navVersion = "2.4.2"
-        const val detektVersion = "1.17.1"
+        const val detektVersion = "1.20.0"
     }
 
     const val kotlinAllOpenPlugin = "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
