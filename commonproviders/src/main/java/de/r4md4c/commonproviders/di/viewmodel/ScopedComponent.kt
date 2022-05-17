@@ -46,5 +46,5 @@ inline fun <reified VM : ViewModel> viewModelFactoryOf(
 ): ViewModelProvider.Factory =
     object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T = factory() as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = factory() as T
     }

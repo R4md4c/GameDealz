@@ -33,6 +33,7 @@ dependencies {
     implementation Libraries.kotlinStdLib
     implementation Libraries.lifecycleViewModel
     implementation Libraries.lifecycleViewModelKtx
+    implementation Libraries.lifecycleLiveData
     implementation Libraries.lifecycleRuntimeKtx
     implementation Libraries.recyclerView
     implementation Libraries.pagingRuntimeKtx

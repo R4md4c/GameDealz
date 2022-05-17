@@ -31,7 +31,6 @@ import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
 @Component(
     modules = [
         ViewModelInjectionModule::class,
-        DataSourceModule::class,
         StateMachineModule::class,
         DealsFeatureModule::class
     ],

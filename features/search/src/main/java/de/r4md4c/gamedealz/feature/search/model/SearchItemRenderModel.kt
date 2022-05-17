@@ -33,6 +33,7 @@ import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import de.r4md4c.gamedealz.feature.search.R
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 data class SearchItemRenderModel(
@@ -50,7 +51,8 @@ fun SearchResultModel.toRenderModel(
     dateFormatter: DateFormatter
 ): SearchItemRenderModel =
     SearchItemRenderModel(
-        gameId, title,
+        gameId,
+        title,
         currentBest(resourcesProvider, R.color.newPriceColor, R.color.oldPriceColor),
         historicalLow(resourcesProvider, dateFormatter, R.color.newPriceColor),
         imageUrl,
@@ -76,7 +78,7 @@ private fun SearchResultModel.currentBest(
             )
         )
         .append(' ')
-        .append(resourcesProvider.getString(R.string.on).toLowerCase())
+        .append(resourcesProvider.getString(R.string.on).lowercase(Locale.ROOT))
         .append(' ')
         .append(shop)
         .apply {
@@ -101,17 +103,20 @@ private fun SearchResultModel.historicalLow(
     return SpannableStringBuilder()
         .append(resourcesProvider.getString(R.string.historical_low))
         .append(' ')
-        .inSpans(StyleSpan(Typeface.BOLD), ForegroundColorSpan(resourcesProvider.getColor(newPriceColor))) {
+        .inSpans(
+            StyleSpan(Typeface.BOLD),
+            ForegroundColorSpan(resourcesProvider.getColor(newPriceColor))
+        ) {
             append(price)
         }
         .append(' ')
-        .append(resourcesProvider.getString(R.string.on).toLowerCase())
+        .append(resourcesProvider.getString(R.string.on).lowercase(Locale.ROOT))
         .append(' ')
         .inSpans(StyleSpan(Typeface.BOLD)) {
             append(shop)
         }
         .append(' ')
-        .append(resourcesProvider.getString(R.string.on).toLowerCase())
+        .append(resourcesProvider.getString(R.string.on).lowercase(Locale.ROOT))
         .append(' ')
         .inSpans(StyleSpan(Typeface.BOLD_ITALIC)) {
             append(addedDate)

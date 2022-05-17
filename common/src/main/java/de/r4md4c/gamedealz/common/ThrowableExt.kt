@@ -15,10 +15,17 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.domain.usecase
+package de.r4md4c.gamedealz.common
 
-import de.r4md4c.gamedealz.domain.VoidParameter
-import de.r4md4c.gamedealz.domain.model.StoreModel
-import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.cancellation.CancellationException
 
-interface GetSelectedStoresUseCase : UseCase<VoidParameter, Flow<List<StoreModel>>>
+@Suppress("TooGenericExceptionCaught")
+inline fun <T, R> T.runSuspendCatching(block: T.() -> R): Result<R> {
+    return try {
+        Result.success(block())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        Result.failure(e)
+    }
+}

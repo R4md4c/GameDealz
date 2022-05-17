@@ -27,7 +27,6 @@ import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
@@ -41,6 +40,7 @@ import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.impl.GetSelectedStoresUseCase
 
 interface UseCaseComponent {
 

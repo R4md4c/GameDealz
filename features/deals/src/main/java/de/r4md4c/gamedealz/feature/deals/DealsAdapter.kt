@@ -19,14 +19,16 @@ package de.r4md4c.gamedealz.feature.deals
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
+import androidx.paging.LoadState
+import androidx.paging.LoadStateAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import de.r4md4c.gamedealz.feature.deals.item.ProgressViewHolder
 import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
 
 class DealsAdapter(private val dealClick: (deal: DealRenderModel) -> Unit) :
-    PagedListAdapter<DealRenderModel, RecyclerView.ViewHolder>(COMPARATOR) {
+    PagingDataAdapter<DealRenderModel, RecyclerView.ViewHolder>(COMPARATOR) {
     private var progress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -82,5 +84,20 @@ private val COMPARATOR = object : DiffUtil.ItemCallback<DealRenderModel>() {
     override fun areItemsTheSame(oldItem: DealRenderModel, newItem: DealRenderModel): Boolean =
         oldItem.gameId == newItem.gameId
 
-    override fun areContentsTheSame(oldItem: DealRenderModel, newItem: DealRenderModel): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: DealRenderModel, newItem: DealRenderModel): Boolean =
+        oldItem == newItem
+}
+
+class DealsFooterLoadStateAdapter : LoadStateAdapter<ProgressViewHolder>() {
+    override fun onBindViewHolder(holder: ProgressViewHolder, loadState: LoadState) = Unit
+
+    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): ProgressViewHolder {
+        return ProgressViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_load_more_progress,
+                parent,
+                false
+            )
+        )
+    }
 }

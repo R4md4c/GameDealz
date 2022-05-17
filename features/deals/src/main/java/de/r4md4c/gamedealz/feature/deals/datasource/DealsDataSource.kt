@@ -17,100 +17,46 @@
 
 package de.r4md4c.gamedealz.feature.deals.datasource
 
-import androidx.paging.PositionalDataSource
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.common.state.Event
-import de.r4md4c.gamedealz.common.state.State
-import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
+import de.r4md4c.gamedealz.common.di.ForApplication
 import de.r4md4c.gamedealz.domain.PageParameter
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import de.r4md4c.gamedealz.feature.deals.R
+import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
 import de.r4md4c.gamedealz.feature.deals.model.toRenderModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
 
-class DealsDataSource @Inject constructor(
+class DealsDataSource(
     private val getDealsUseCase: GetDealsUseCase,
-    private val stateMachineDelegate: StateMachineDelegate,
-    private val resourcesProvider: ResourcesProvider
-) : PositionalDataSource<DealRenderModel>() {
+    @ForApplication private val resourcesProvider: ResourcesProvider
+) : PagingSource<Int, DealRenderModel>() {
 
-    private var job: Job? = null
-    private val scope = CoroutineScope(IO)
+    override fun getRefreshKey(state: PagingState<Int, DealRenderModel>): Int = 0
 
-    override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<DealRenderModel>) {
-        if (params.startPosition == 0 || stateMachineDelegate.state is State.LoadingMore) {
-            return
-        }
-        job?.cancel()
-        job = scope.launch {
-            runCatching {
-                stateMachineDelegate.transition(Event.OnLoadingMoreStarted)
-                getDealsUseCase(
-                    PageParameter(
-                        params.startPosition + 1,
-                        params.loadSize
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DealRenderModel> {
+        val key = params.key ?: 0
+
+        return kotlin.runCatching {
+            val (_, deals) = getDealsUseCase.invoke(
+                PageParameter(
+                    offset = key,
+                    pageSize = params.loadSize
+                )
+            )
+            LoadResult.Page(
+                data = deals.map {
+                    it.toRenderModel(
+                        resourcesProvider,
+                        R.color.newPriceColor,
+                        R.color.oldPriceColor
                     )
-                ).apply {
-                    check(isActive)
-                }
-            }.onSuccess {
-                stateMachineDelegate.transition(Event.OnLoadingMoreEnded)
-                if (!it.second.isEmpty()) {
-                    callback.onResult(it.second.map { d ->
-                        d.toRenderModel(
-                            resourcesProvider,
-                            R.color.newPriceColor,
-                            R.color.oldPriceColor
-                        )
-                    })
-                }
-            }.onFailure {
-                stateMachineDelegate.transition(Event.OnError(it))
-                Timber.e(
-                    it,
-                    "Failed to deals in loadRange method startPosition:" +
-                            " ${params.startPosition + 1}, pageSize: ${params.loadSize}"
-                )
-            }
-        }
-    }
-
-    override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<DealRenderModel>) {
-        job?.cancel()
-        job = scope.launch {
-            stateMachineDelegate.transition(Event.OnLoadingStart)
-
-            runCatching {
-                getDealsUseCase(PageParameter(params.requestedStartPosition, params.pageSize)).apply {
-                    check(isActive)
-                }
-            }.onSuccess { deals ->
-                stateMachineDelegate.transition(Event.OnLoadingEnded)
-                if (deals.second.isEmpty()) {
-                    stateMachineDelegate.transition(Event.OnShowEmpty)
-                }
-                callback.onResult(
-                    deals.second.map {
-                        it.toRenderModel(
-                            resourcesProvider,
-                            R.color.newPriceColor,
-                            R.color.oldPriceColor
-                        )
-                    },
-                    deals.second.size
-                )
-            }.onFailure {
-
-                stateMachineDelegate.transition(Event.OnError(it))
-                Timber.e(it, "Failed to get initial deals")
-            }
+                },
+                prevKey = null,
+                nextKey = key + params.loadSize
+            )
+        }.getOrElse { throwable ->
+            LoadResult.Error(throwable)
         }
     }
 }

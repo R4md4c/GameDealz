@@ -32,7 +32,6 @@ import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import de.r4md4c.gamedealz.domain.usecase.GetPlainDetails
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
@@ -43,7 +42,6 @@ import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveFromWatchlistUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
-import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.AddToWatchListUseCaseImpl
@@ -57,7 +55,6 @@ import de.r4md4c.gamedealz.domain.usecase.impl.GetLatestWatchlistCheckDateImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetPlainDetailsImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetPriceAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.GetRegionsUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.GetSelectedStoresUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetStoresUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetUserUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetWatchlistToManageUseCaseImpl
@@ -67,7 +64,6 @@ import de.r4md4c.gamedealz.domain.usecase.impl.MarkNotificationAsReadUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.OnNightModeChangeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.RemoveFromWatchlistUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.RemoveWatcheesUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.SearchUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ToggleNightModeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ToggleStoresUseCaseImpl
 
@@ -112,11 +108,6 @@ abstract class UseCaseModule {
     ): GetDealsUseCase
 
     @Binds
-    internal abstract fun bindsGetSelectedStoresUseCase(
-        it: GetSelectedStoresUseCaseImpl
-    ): GetSelectedStoresUseCase
-
-    @Binds
     internal abstract fun bindsGetImageUrlUseCase(
         it: GetImageUrlFromSteamUseCaseImpl
     ): GetImageUrlUseCase
@@ -130,11 +121,6 @@ abstract class UseCaseModule {
     internal abstract fun bindsGetPlainDetails(
         it: GetPlainDetailsImpl
     ): GetPlainDetails
-
-    @Binds
-    internal abstract fun bindsSearchUseCase(
-        it: SearchUseCaseImpl
-    ): SearchUseCase
 
     @Binds
     internal abstract fun bindsAddToWatchListUseCase(
