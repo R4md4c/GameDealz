@@ -35,7 +35,7 @@ interface StoresLocalDataSource : LocalDataSource<Store, String> {
      *
      * @return A collection of selected stores.
      */
-    suspend fun selectedStores(): Flow<Collection<Store>>
+    fun selectedStores(): Flow<Collection<Store>>
 
     /**
      * Clears the repository then insert the stores.

@@ -29,6 +29,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     implementation Libraries.kotlinStdLib
+    implementation Libraries.lifecycleLiveData
     implementation Libraries.lifecycleViewModel
     implementation Libraries.lifecycleViewModelKtx
     implementation Libraries.lifecycleRuntimeKtx

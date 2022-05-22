@@ -17,62 +17,38 @@
 
 package de.r4md4c.gamedealz.feature.deals
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Config
-import androidx.paging.DataSource
-import androidx.paging.toLiveData
-import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.state.SideEffect
-import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
-import de.r4md4c.gamedealz.feature.deals.model.DealRenderModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.launch
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import de.r4md4c.commonproviders.res.ResourcesProvider
+import de.r4md4c.gamedealz.common.di.ForApplication
+import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
+import de.r4md4c.gamedealz.domain.usecase.impl.GetSelectedStoresUseCase
+import de.r4md4c.gamedealz.feature.deals.datasource.DealsDataSource
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 class DealsViewModel @Inject constructor(
-    private val dispatchers: IDispatchers,
-    private val factory: DataSource.Factory<Int, DealRenderModel>,
-    private val selectedStoresUseCase: GetSelectedStoresUseCase,
-    private val uiStateMachineDelegate: StateMachineDelegate
+    private val getDealsUseCase: GetDealsUseCase,
+    @ForApplication private val resourcesProvider: ResourcesProvider,
+    selectedStoresUseCase: GetSelectedStoresUseCase,
 ) : ViewModel() {
 
-    val deals by lazy {
-        factory.toLiveData(
-            Config(
+    val pager = selectedStoresUseCase().flatMapLatest {
+        Pager(
+            PagingConfig(
                 pageSize = BuildConfig.DEFAULT_PAGE_SIZE,
-                enablePlaceholders = false,
-                initialLoadSizeHint = BuildConfig.DEFAULT_PAGE_SIZE * RATIO
+                initialLoadSize = BuildConfig.DEFAULT_PAGE_SIZE * RATIO,
+                enablePlaceholders = false
             )
-        )
-    }
-
-    val sideEffect: MutableLiveData<SideEffect> by lazy {
-        MutableLiveData<SideEffect>()
-    }
-
-    fun init() {
-        viewModelScope.launch(dispatchers.IO) {
-            selectedStoresUseCase().debounce(DEBOUNCE_TIMEOUT_MILLIS).drop(1).collect {
-                deals.value?.dataSource?.invalidate()
-            }
-        }
-
-        uiStateMachineDelegate.onTransition {
-            sideEffect.postValue(it)
-        }
-    }
-
-    fun onRefresh() {
-        deals.value?.dataSource?.invalidate()
+        ) {
+            DealsDataSource(getDealsUseCase, resourcesProvider)
+        }.flow.cachedIn(viewModelScope)
     }
 
     companion object {
         private const val RATIO = 2
-        private const val DEBOUNCE_TIMEOUT_MILLIS = 500L
     }
 }

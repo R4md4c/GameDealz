@@ -26,12 +26,7 @@ import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
 class SearchAdapter(
     private val layoutInflater: LayoutInflater,
     private val onClickListener: (SearchItemRenderModel) -> Unit
-) :
-    ListAdapter<SearchItemRenderModel, SearchItemViewHolder>(COMPARATOR) {
-
-    init {
-        setHasStableIds(true)
-    }
+) : ListAdapter<SearchItemRenderModel, SearchItemViewHolder>(COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchItemViewHolder {
         return layoutInflater.inflate(R.layout.layout_search_result_item, parent, false).run {
@@ -44,8 +39,6 @@ class SearchAdapter(
         holder.onBind(searchItem)
         holder.itemView.setOnClickListener { onClickListener(searchItem) }
     }
-
-    override fun getItemId(position: Int): Long = getItem(position).hashCode().toLong()
 }
 
 private val COMPARATOR = object : DiffUtil.ItemCallback<SearchItemRenderModel>() {

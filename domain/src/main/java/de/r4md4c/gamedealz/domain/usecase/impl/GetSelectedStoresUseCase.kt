@@ -17,23 +17,17 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
-import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.model.toStoreModel
-import de.r4md4c.gamedealz.domain.usecase.GetSelectedStoresUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class GetSelectedStoresUseCaseImpl @Inject constructor(
+class GetSelectedStoresUseCase @Inject constructor(
     private val storesRepository: StoresLocalDataSource
-) : GetSelectedStoresUseCase {
+) {
 
-    override suspend fun invoke(param: VoidParameter?): Flow<List<StoreModel>> =
-        withContext(IO) {
-            storesRepository.selectedStores().map { it.map { store -> store.toStoreModel() } }
-        }
+    operator fun invoke(): Flow<List<StoreModel>> =
+        storesRepository.selectedStores().map { it.map { store -> store.toStoreModel() } }
 }

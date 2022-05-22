@@ -41,6 +41,6 @@ internal class StoresLocalDataSourceImpl @Inject constructor(
         storesDao.replaceAll(stores)
     }
 
-    override suspend fun selectedStores(): Flow<Collection<Store>> =
+    override fun selectedStores(): Flow<Collection<Store>> =
         storesDao.allSelected()
 }

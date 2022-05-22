@@ -35,11 +35,11 @@ object Libraries {
         const val fragments = "1.4.1"
         const val constraintLayout = "2.1.0"
         const val nav_version = BuildPlugins.Versions.navVersion
-        const val paging_version = "2.1.1"
+        const val paging_version = "3.1.1"
         const val coroutines = "1.5.1"
         const val room = "2.3.0"
         const val timber = "4.7.1"
-        const val lifecycle = "2.3.1"
+        const val lifecycle = "2.4.1"
         const val glide = "4.12.0"
         const val swiperefreshlayout = "1.0.0"
         const val appCompat = "1.3.1"

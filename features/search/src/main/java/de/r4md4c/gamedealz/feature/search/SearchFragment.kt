@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.feature.search
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -27,30 +26,29 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.r4md4c.commonproviders.date.DateFormatter
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.base.fragment.viewBinding
+import de.r4md4c.gamedealz.common.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
-import de.r4md4c.gamedealz.common.deepllink.DeepLinks
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.navigation.Navigator
-import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
+import de.r4md4c.gamedealz.common.viewmodel.createAbstractSavedStateFactory
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.PriceModel
-import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.feature.search.SearchFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.feature.search.databinding.FragmentSearchBinding
 import de.r4md4c.gamedealz.feature.search.di.DaggerSearchComponent
 import de.r4md4c.gamedealz.feature.search.model.SearchItemRenderModel
 import de.r4md4c.gamedealz.feature.search.model.toRenderModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchFragment : BaseFragment() {
@@ -60,7 +58,7 @@ class SearchFragment : BaseFragment() {
     private var searchView: SearchView? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactoryCreator
+    lateinit var viewModelFactory: SearchViewModel.Factory
 
     @Inject
     lateinit var navigator: Navigator
@@ -72,14 +70,13 @@ class SearchFragment : BaseFragment() {
     @Inject
     lateinit var dateFormatter: DateFormatter
 
-    @Inject
-    lateinit var stateVisibilityHandler: StateVisibilityHandler
-
     private val binding by viewBinding(FragmentSearchBinding::bind)
 
-    private val viewModel by viewModels<SearchViewModel> { viewModelFactory.create(this) }
-
-    private var searchResultsLoaded = false
+    private val viewModel by viewModels<SearchViewModel> {
+        createAbstractSavedStateFactory(this, arguments) {
+            viewModelFactory.create(it)
+        }
+    }
 
     private val searchAdapter by lazy {
         SearchAdapter(layoutInflater) { renderModel ->
@@ -102,30 +99,17 @@ class SearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val retryEmptyBinding = LayoutErrorRetryEmptyBinding.bind(view)
+        retryEmptyBinding.retry.setOnClickListener { viewModel.onRefresh() }
+
         setupRecyclerView()
-        stateVisibilityHandler.onViewCreated()
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        savedInstanceState?.let { searchResultsLoaded = it.getBoolean(EXTRA_ALREADY_LOADED, false) }
-
-        if (!searchResultsLoaded) {
-            viewModel.startSearch(searchTerm)
-        }
-
-        viewModel.searchResults.observe(viewLifecycleOwner, Observer {
-            renderSearchResults(it)
-        })
-        viewModel.sideEffects.observe(viewLifecycleOwner, Observer {
-            stateVisibilityHandler.onSideEffect(it)
-        })
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (activity?.isChangingConfigurations == true) {
-            outState.putBoolean(EXTRA_ALREADY_LOADED, searchResultsLoaded)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest { state ->
+                    renderState(state, retryEmptyBinding)
+                }
+            }
         }
     }
 
@@ -134,25 +118,6 @@ class SearchFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(VerticalLinearDecorator(context))
             adapter = searchAdapter
-        }
-    }
-
-    private fun renderSearchResults(it: List<SearchResultModel>) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            binding.progress.isVisible = true
-            withContext(dispatchers.Default) {
-                it.map { searchResult ->
-                    searchResult.toRenderModel(
-                        resourcesProvider,
-                        dateFormatter
-                    )
-                }
-            }.also { renderModels ->
-                searchAdapter.submitList(renderModels)
-                searchResultsLoaded = true
-                searchView?.clearFocus()
-                binding.progress.isVisible = false
-            }
         }
     }
 
@@ -194,6 +159,37 @@ class SearchFragment : BaseFragment() {
             .inject(this)
     }
 
+    private fun renderState(
+        state: SearchViewModel.State,
+        retryEmptyBinding: LayoutErrorRetryEmptyBinding
+    ) {
+        val errorState =
+            state.searchResultsRequest as? SearchViewModel.RequestState.Error
+        val loadedState =
+            state.searchResultsRequest as? SearchViewModel.RequestState.Loaded
+        val loadingState =
+            state.searchResultsRequest as? SearchViewModel.RequestState.Loading
+
+        retryEmptyBinding.errorGroup.isVisible = errorState != null
+        retryEmptyBinding.errorText.text = errorState?.message
+
+        retryEmptyBinding.emptyGroup.isVisible =
+            loadedState?.searchResults?.isEmpty() ?: false
+        binding.progress.isVisible = loadingState != null
+        binding.content.isVisible = loadedState != null
+
+        loadedState?.let { loaded ->
+            searchAdapter.submitList(
+                loaded.searchResults.map {
+                    it.toRenderModel(
+                        resourcesProvider,
+                        dateFormatter
+                    )
+                }
+            )
+        }
+    }
+
     private fun navigateToGameDetails(
         renderModel: SearchItemRenderModel,
         priceModel: PriceModel
@@ -204,12 +200,5 @@ class SearchFragment : BaseFragment() {
             priceModel.url
         )
         findNavController().navigate(directions)
-    }
-
-    companion object {
-        @JvmStatic
-        fun toUri(searchTerm: String): Uri = DeepLinks.buildSearchUri(searchTerm)
-
-        private const val EXTRA_ALREADY_LOADED = "already_loaded"
     }
 }

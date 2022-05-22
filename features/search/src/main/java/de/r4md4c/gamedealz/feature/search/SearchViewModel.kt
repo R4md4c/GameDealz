@@ -17,91 +17,102 @@
 
 package de.r4md4c.gamedealz.feature.search
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
-import de.r4md4c.gamedealz.common.IDispatchers
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import de.r4md4c.gamedealz.common.navigation.Navigator
-import de.r4md4c.gamedealz.common.state.Event
-import de.r4md4c.gamedealz.common.state.SideEffect
-import de.r4md4c.gamedealz.common.state.StateMachineDelegate
-import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.SearchResultModel
 import de.r4md4c.gamedealz.domain.usecase.SearchUseCase
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.channels.actor
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 
-class SearchViewModel @Inject constructor(
-    private val dispatchers: IDispatchers,
+class SearchViewModel @AssistedInject constructor(
     private val searchUseCase: SearchUseCase,
-    private val stateMachineDelegate: StateMachineDelegate
+    @Assisted private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private var currentJob: Job? = null
+    data class State(
+        val currentQuery: String = "",
+        val searchResultsRequest: RequestState = RequestState.Loading,
+    )
 
-    private val queryChannel = viewModelScope.actor<String>(dispatchers.Default) {
-        consumeAsFlow()
-            .filter { it.isNotBlank() }
-            .debounce(DEBOUNCE_TIME)
-            .distinctUntilChanged()
-            .collect {
-                currentJob?.cancelAndJoin()
-                loadSearchResults(it)
-            }
-    }
+    private val searchArgs = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
-    private val _searchResults by lazy { MutableLiveData<List<SearchResultModel>>() }
-    val searchResults: LiveData<List<SearchResultModel>> by lazy { _searchResults }
+    private val refreshEvent = Channel<Unit>(Channel.UNLIMITED)
 
-    private val _stateMachineSignals by lazy { MutableLiveData<SideEffect>() }
-    val sideEffects: LiveData<SideEffect> by lazy { _stateMachineSignals }
+    private val query = savedStateHandle.getLiveData(KEY_QUERY, searchArgs.searchTerm).asFlow()
 
-    init {
-        stateMachineDelegate.onTransition { _stateMachineSignals.postValue(it) }
+    private val queryAfterFiltering = query.debounce(DEBOUNCE_TIME).distinctUntilChanged()
+
+    private val searchResultsFlow =
+        merge(refreshEvent.receiveAsFlow().map { query.first() }, queryAfterFiltering)
+            .filter(String::isNotBlank)
+            .flatMapLatest(this::getSearchResultsFlow)
+
+    val state: StateFlow<State> by lazy {
+        combine(query, searchResultsFlow) { query, searchResults ->
+            State(
+                currentQuery = query,
+                searchResultsRequest = searchResults,
+            )
+        }.stateIn(viewModelScope, SharingStarted.Lazily, State())
     }
 
     fun onSearchViewCollapse(navigator: Navigator) {
         navigator.navigateUp()
     }
 
-    fun startSearch(searchTerm: String) {
-        loadSearchResults(searchTerm)
-    }
-
     fun onQueryChanged(searchTerm: String) {
-        queryChannel.offer(searchTerm)
+        savedStateHandle.set(KEY_QUERY, searchTerm)
     }
 
-    private fun loadSearchResults(searchTerm: String) {
-        currentJob = viewModelScope.launch(dispatchers.IO) {
-            stateMachineDelegate.transition(Event.OnLoadingStart)
-            runCatching { searchUseCase(TypeParameter(searchTerm)) }
-                .onSuccess {
-                    _searchResults.postValue(it)
-                    stateMachineDelegate.transition(Event.OnLoadingEnded)
-                    if (it.isEmpty()) {
-                        stateMachineDelegate.transition(Event.OnShowEmpty)
-                    }
-                }
-                .onFailure {
-                    Timber.e(it, "Exception happened while loading search results.")
-                    stateMachineDelegate.transition(Event.OnError(it))
-                    stateMachineDelegate.transition(Event.OnLoadingEnded)
-                }
-        }
+    fun onRefresh() {
+        refreshEvent.trySend(Unit)
     }
 
-    companion object {
+    private fun getSearchResultsFlow(searchTerm: String) = flow {
+        val usecaseResult = searchUseCase.invoke(searchTerm)
+
+        val requestState = usecaseResult.fold(
+            onSuccess = RequestState::Loaded,
+            onFailure = { RequestState.Error(it.message.orEmpty()) }
+        )
+
+        emit(requestState)
+    }.onStart {
+        emit(RequestState.Loading)
+    }
+
+    sealed class RequestState {
+        object Loading : RequestState()
+        class Loaded(val searchResults: List<SearchResultModel>) : RequestState()
+        class Error(val message: String) : RequestState()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(savedStateHandle: SavedStateHandle): SearchViewModel
+    }
+
+    private companion object {
+        private const val KEY_QUERY = "query"
         private const val DEBOUNCE_TIME = 500L
     }
 }

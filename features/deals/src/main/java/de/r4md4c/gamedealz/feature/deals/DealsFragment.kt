@@ -24,9 +24,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -34,23 +40,23 @@ import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.base.fragment.viewBinding
+import de.r4md4c.gamedealz.common.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
-import de.r4md4c.gamedealz.common.state.SideEffect
-import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.deals.databinding.FragmentDealsBinding
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent
 import de.r4md4c.gamedealz.feature.deals.filter.DealsFilterDialogFragment
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentDirections
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DealsFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactoryCreator
-
-    @Inject
-    lateinit var stateVisibilityHandler: StateVisibilityHandler
 
     private val dealsViewModel by viewModels<DealsViewModel> { viewModelFactory.create(this) }
 
@@ -76,7 +82,7 @@ class DealsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dealsViewModel.init()
+        val layoutErrorBinding = LayoutErrorRetryEmptyBinding.bind(view)
 
         val context = requireContext()
         drawerLayout?.let {
@@ -88,34 +94,29 @@ class DealsFragment : BaseFragment() {
         }
         setupRecyclerView()
         setupFilterFab()
-        stateVisibilityHandler.onViewCreated()
-        stateVisibilityHandler.onRetryClick = { dealsViewModel.onRefresh() }
+        layoutErrorBinding.retry.setOnClickListener { dealsAdapter.retry() }
 
         binding.swipeToRefresh.setColorSchemeColors(context.resolveThemeColor(R.attr.colorSecondary))
         binding.swipeToRefresh.setProgressBackgroundColorSchemeColor(
             context.resolveThemeColor(R.attr.swipe_refresh_background)
         )
-        binding.swipeToRefresh.setOnRefreshListener { dealsViewModel.onRefresh() }
+        binding.swipeToRefresh.setOnRefreshListener {
+            dealsAdapter.refresh()
+        }
 
-        dealsViewModel.deals.observe(viewLifecycleOwner, {
-            println("Fuck: $it")
-            dealsAdapter.submitList(it)
-        })
-        dealsViewModel.sideEffect.observe(viewLifecycleOwner, {
-            when (it) {
-                is SideEffect.ShowLoadingMore -> dealsAdapter.showProgress(true)
-                is SideEffect.HideLoadingMore -> dealsAdapter.showProgress(true)
-                is SideEffect.ShowLoading, SideEffect.HideLoading, SideEffect.ShowEmpty -> {
-                    if (it is SideEffect.ShowLoading) {
-                        binding.filterFab.hide()
-                    } else {
-                        binding.filterFab.show()
-                    }
-                    stateVisibilityHandler.onSideEffect(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dealsAdapter.loadStateFlow.onEach { loadStates ->
+                    renderState(binding, layoutErrorBinding, loadStates)
+                }.launchIn(this)
+
+                dealsViewModel.pager.collectLatest { pagingData ->
+                    dealsAdapter.submitData(
+                        pagingData
+                    )
                 }
-                else -> stateVisibilityHandler.onSideEffect(it)
             }
-        })
+        }
     }
 
     override fun onCreateOptionsMenu(toolbar: Toolbar) {
@@ -126,7 +127,7 @@ class DealsFragment : BaseFragment() {
     }
 
     private fun setupRecyclerView() = with(binding.content) {
-        adapter = dealsAdapter
+        adapter = dealsAdapter.withLoadStateFooter(DealsFooterLoadStateAdapter())
         addItemDecoration(StaggeredGridDecorator(requireContext()))
         layoutManager =
             StaggeredGridLayoutManager(resources.getInteger(R.integer.deals_span_count), VERTICAL)
@@ -153,7 +154,20 @@ class DealsFragment : BaseFragment() {
             .inject(this)
     }
 
-    private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) : SearchView.OnQueryTextListener {
+    private fun renderState(
+        binding: FragmentDealsBinding,
+        retryBinding: LayoutErrorRetryEmptyBinding,
+        value: CombinedLoadStates
+    ) {
+        binding.swipeToRefresh.isRefreshing = value.refresh is LoadState.Loading
+
+        val error = value.refresh as? LoadState.Error
+        retryBinding.errorGroup.isVisible = error != null
+        retryBinding.errorText.text = error?.error?.localizedMessage
+    }
+
+    private inner class OnQueryTextListener(private val searchMenuItem: MenuItem) :
+        SearchView.OnQueryTextListener {
 
         override fun onQueryTextSubmit(query: String): Boolean {
             findNavController().navigate(
