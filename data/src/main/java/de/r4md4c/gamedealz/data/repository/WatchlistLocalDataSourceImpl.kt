@@ -34,7 +34,7 @@ internal class WatchlistLocalDataSourceImpl @Inject constructor(
     private val watchlistStoresDao: WatcheeStoreJoinDao
 ) : WatchlistLocalDataSource, WatchlistStoresDataSource {
 
-    override suspend fun findById(plainId: String): Flow<Watchee?> =
+    override fun findById(plainId: String): Flow<Watchee?> =
         watchlistDao.findOne(plainId).map { it.firstOrNull() }
 
     override suspend fun all(ids: Collection<Long>?): Flow<List<Watchee>> =

@@ -106,7 +106,7 @@ class AddToWatchListViewModel @AssistedInject constructor(
             .onStart {
                 activeRegion = getCurrentActiveRegionUseCase()
             }
-            .flatMapConcat { plainDetails.invoke(TypeParameter(GetPlainDetails.Params(it))) }
+            .flatMapConcat(plainDetails::invoke)
             .onEach { storeResponse ->
                 when (storeResponse.status) {
                     Status.SUCCESS -> {

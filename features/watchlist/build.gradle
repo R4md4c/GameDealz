@@ -70,6 +70,7 @@ dependencies {
     testImplementation TestLibraries.kotlinReflect
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.androidXTestCore
+    testImplementation TestLibraries.mockitoInline
     testImplementation TestLibraries.coroutinesTest
     testImplementation TestLibraries.archComponentsCoreTesting
     testImplementation TestLibraries.robolectric

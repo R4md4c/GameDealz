@@ -163,6 +163,7 @@ object TestLibraries {
     const val mockK = "io.mockk:mockk:${Versions.mockk}"
     const val mockitoKotlin =
         "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
     const val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"
     const val assertjCore = "org.assertj:assertj-core:${Versions.assertj}"
     const val liveDataTesting = "com.jraska.livedata:testing:${Versions.liveDataTesting}"

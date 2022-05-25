@@ -15,7 +15,7 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.detail.mvi
+package de.r4md4c.gamedealz.feature.detail
 
 import android.os.Parcelable
 import androidx.annotation.IdRes
@@ -24,10 +24,9 @@ import androidx.annotation.StringRes
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.mvi.MviState
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
-import de.r4md4c.gamedealz.feature.detail.R
 import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 
 internal sealed class Section : Parcelable {
     abstract val position: Int
@@ -88,7 +87,7 @@ fun SortOrder.toMenuIdRes() =
 @Parcelize
 internal data class DetailsViewState(
     val sections: List<Section> = emptyList(),
-    val isWatched: Boolean? = null,
+    val isWatched: Boolean = false,
     @IgnoredOnParcel val loading: Boolean = false,
     @IgnoredOnParcel val errorMessage: String? = null
 ) : MviState, Parcelable

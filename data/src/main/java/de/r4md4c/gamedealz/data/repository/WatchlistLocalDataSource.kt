@@ -41,7 +41,7 @@ interface WatchlistLocalDataSource : LocalDataSource<Watchee, Long> {
      *
      * @param plainId the id that will be used to retrieve the model form.
      */
-    suspend fun findById(plainId: String): Flow<Watchee?>
+    fun findById(plainId: String): Flow<Watchee?>
 
     /**
      * Update the currentPrice and the lastChecked timestamp of a Watchee.

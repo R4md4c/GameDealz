@@ -35,9 +35,9 @@ import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.newAndOldPriceSpan
 import de.r4md4c.gamedealz.domain.model.formatCurrency
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.SortOrder
 import de.r4md4c.gamedealz.feature.detail.databinding.LayoutDetailPricesItemBinding
 import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
-import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
 import java.util.concurrent.TimeUnit
 
 class PriceItem(
