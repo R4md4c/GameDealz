@@ -18,11 +18,13 @@
 package de.r4md4c.gamedealz.feature.detail
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,29 +36,23 @@ import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.stfalcon.imageviewer.StfalconImageViewer
 import de.r4md4c.commonproviders.date.DateFormatter
-import de.r4md4c.commonproviders.di.viewmodel.components
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
-import de.r4md4c.gamedealz.common.aware.LifecycleAware
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.base.fragment.viewBinding
+import de.r4md4c.gamedealz.common.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.image.GlideApp
-import de.r4md4c.gamedealz.common.mvi.MviViewModel
-import de.r4md4c.gamedealz.common.mvi.UIEventsDispatcher
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
-import de.r4md4c.gamedealz.common.state.SideEffect
-import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
+import de.r4md4c.gamedealz.common.viewmodel.createAbstractSavedStateFactory
 import de.r4md4c.gamedealz.core.CoreComponent
-import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel
 import de.r4md4c.gamedealz.feature.detail.DetailsFragmentArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.feature.detail.databinding.FragmentGameDetailBinding
 import de.r4md4c.gamedealz.feature.detail.decorator.DetailsFragmentItemDecorator
 import de.r4md4c.gamedealz.feature.detail.di.DaggerDetailComponent
-import de.r4md4c.gamedealz.feature.detail.di.DaggerDetailsRetainedComponent
 import de.r4md4c.gamedealz.feature.detail.item.AboutGameItem
 import de.r4md4c.gamedealz.feature.detail.item.ExpandableScreenshotsHeader
 import de.r4md4c.gamedealz.feature.detail.item.FilterHeaderItem
@@ -64,22 +60,14 @@ import de.r4md4c.gamedealz.feature.detail.item.HeaderItem
 import de.r4md4c.gamedealz.feature.detail.item.ScreenshotItem
 import de.r4md4c.gamedealz.feature.detail.item.toPriceItem
 import de.r4md4c.gamedealz.feature.detail.model.PriceDetails
-import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
-import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
-import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
-import de.r4md4c.gamedealz.feature.detail.mvi.Section
-import de.r4md4c.gamedealz.feature.detail.mvi.toMenuIdRes
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Suppress("TooManyFunctions")
-class DetailsFragment : BaseFragment() {
+class DetailsFragment : BaseFragment(R.layout.fragment_game_detail) {
 
     private val title by lazy { fromBundle(requireArguments()).title }
 
@@ -96,28 +84,15 @@ class DetailsFragment : BaseFragment() {
     lateinit var viewNotifier: ViewNotifier
 
     @Inject
-    lateinit var stateVisibilityHandler: StateVisibilityHandler
-
-    @Inject
     lateinit var navigator: Navigator
 
     @Inject
-    internal lateinit var detailsMviViewModel: MviViewModel<DetailsViewState, DetailsMviEvent>
+    internal lateinit var detailsVMFactory: DetailsViewModel.Factory
 
-    @Inject
-    internal lateinit var detailsUIEventsDispatcher: UIEventsDispatcher<DetailsUIEvent>
-
-    @Inject
-    internal lateinit var lifecycleAware: LifecycleAware
-
-    private val eventsChannel = Channel<DetailsMviEvent>()
-
-    private val scopedComponent by components {
-        DaggerDetailsRetainedComponent.factory()
-            .create(
-                fromBundle(requireArguments()),
-                requireContext().coreComponent()
-            )
+    private val viewModel by viewModels<DetailsViewModel> {
+        createAbstractSavedStateFactory(this, arguments) {
+            detailsVMFactory.create(it)
+        }
     }
 
     private val gameDetailsAdapter by lazy { ItemAdapter<IItem<*, *>>() }
@@ -140,43 +115,34 @@ class DetailsFragment : BaseFragment() {
 
     private val binding by viewBinding(FragmentGameDetailBinding::bind)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycle.addObserver(lifecycleAware)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.fragment_game_detail, container, false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val binding = FragmentGameDetailBinding.bind(view)
+        val retryEmptyBinding = LayoutErrorRetryEmptyBinding.bind(view)
 
         NavigationUI.setupWithNavController(
             binding.collapsingToolbar,
             binding.toolbar,
             findNavController()
         )
-        stateVisibilityHandler.onViewCreated()
-        stateVisibilityHandler.onRetryClick =
-            { eventsChannel.offer(DetailsMviEvent.RetryClickEvent) }
+
+        retryEmptyBinding.retry.setOnClickListener { viewModel.onRefresh() }
         setupTitle()
         setupFab()
         setupRecyclerView()
 
-        detailsMviViewModel.onViewEvents(
-            eventsChannel.consumeAsFlow(),
-            viewLifecycleOwner.lifecycleScope
-        )
-        detailsMviViewModel.modelState
-            .onEach { renderState(it) }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-        detailsUIEventsDispatcher.uiEvents
-            .onEach { handleUIDetailsEvent(it) }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest { state ->
+                    renderState(
+                        retryEmptyBinding = retryEmptyBinding,
+                        fragmentGameDetailBinding = binding,
+                        state = state
+                    )
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -201,56 +167,51 @@ class DetailsFragment : BaseFragment() {
     private fun setupFab() {
         binding.addToWatchList.hide()
         binding.addToWatchList.setOnClickListener {
-            eventsChannel.offer(DetailsMviEvent.WatchlistFabClickEvent)
+            onAddToWatchlistClick()
         }
-    }
-
-    private fun handleUIDetailsEvent(detailsUIEvent: DetailsUIEvent) {
-        when (detailsUIEvent) {
-            is DetailsUIEvent.AskUserToRemoveFromWatchlist -> askToRemove()
-            is DetailsUIEvent.NavigateToAddToWatchlistScreen ->
-                navigateToAddToWatchlistDialog(detailsUIEvent.priceDetails)
-            is DetailsUIEvent.NotifyRemoveFromWatchlistSuccessfully ->
-                viewNotifier.notify(
-                    getString(
-                        R.string.watchlist_remove_successfully,
-                        detailsUIEvent.gameTitle
-                    )
-                )
-        }.exhaustive
     }
 
     private fun setupTitle() {
         binding.collapsingToolbar.title = title
     }
 
-    private fun renderState(state: DetailsViewState) = with(state) {
+    private fun renderState(
+        retryEmptyBinding: LayoutErrorRetryEmptyBinding,
+        fragmentGameDetailBinding: FragmentGameDetailBinding,
+        state: DetailsViewState
+    ) = with(state) {
+
         if (loading) {
-            stateVisibilityHandler.onSideEffect(SideEffect.ShowLoading)
+            fragmentGameDetailBinding.progress.isVisible = true
+            retryEmptyBinding.errorGroup.isVisible = false
+            fragmentGameDetailBinding.content.isVisible = false
         } else {
-            stateVisibilityHandler.onSideEffect(SideEffect.HideLoading)
+            fragmentGameDetailBinding.progress.isVisible = false
+            retryEmptyBinding.errorGroup.isVisible = false
+            fragmentGameDetailBinding.content.isVisible = true
         }
 
-        if (state.errorMessage.isNullOrEmpty().not()) {
-            stateVisibilityHandler.onSideEffect(
-                SideEffect.ShowError(Throwable(state.errorMessage))
-            )
+        if (!state.errorMessage.isNullOrEmpty()) {
+            fragmentGameDetailBinding.progress.isVisible = false
+            fragmentGameDetailBinding.content.isVisible = false
+            retryEmptyBinding.errorGroup.isVisible = true
+            retryEmptyBinding.errorText.text = state.errorMessage
         }
 
         renderSections(state.sections)
 
-        renderAddToWatchlistButton(isWatched)
+        renderAddToWatchlistButton(state)
     }
 
-    private fun renderAddToWatchlistButton(isWatched: Boolean?) {
-        if (isWatched == null) {
+    private fun renderAddToWatchlistButton(state: DetailsViewState) {
+        if (state.loading || state.errorMessage != null) {
             binding.addToWatchList.hide()
-            return
+        } else {
+            binding.addToWatchList.show()
         }
 
-        binding.addToWatchList.show()
         binding.addToWatchList.setImageResource(
-            if (isWatched) R.drawable.ic_added_to_watch_list
+            if (state.isWatched) R.drawable.ic_added_to_watch_list
             else R.drawable.ic_add_to_watch_list
         )
     }
@@ -269,7 +230,7 @@ class DetailsFragment : BaseFragment() {
                     gameDetailsAdapterItems += ExpandableScreenshotsHeader(
                         section.allScreenshots.size > spanCount,
                         section.isExpanded
-                    ) { eventsChannel.offer(DetailsMviEvent.ExpandIconClicked) }
+                    ) { viewModel.onExpandClicked() }
 
                     gameDetailsAdapterItems += section.visibleScreenshots
                         .mapIndexed { index, aScreenshot ->
@@ -287,7 +248,7 @@ class DetailsFragment : BaseFragment() {
                         R.menu.details_prices_sort_menu,
                         section.currentSortOrder.toMenuIdRes()
                     ) { sortType ->
-                        eventsChannel.offer(DetailsMviEvent.PriceFilterChangeEvent(sortType))
+                        viewModel.onSortOrderChange(sortType)
                     }
 
                     val prices = section.priceDetails.map { priceDetails ->
@@ -312,7 +273,7 @@ class DetailsFragment : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val yes = ask()
             if (yes) {
-                eventsChannel.offer(DetailsMviEvent.RemoveFromWatchlistYes)
+                viewModel.onRemoveFromWatchList()
             }
         }
     }
@@ -325,8 +286,8 @@ class DetailsFragment : BaseFragment() {
                     HtmlCompat.FROM_HTML_MODE_COMPACT
                 )
             )
-            .setPositiveButton(android.R.string.yes) { dialog, _ -> continuation.resume(true); dialog.dismiss() }
-            .setNegativeButton(android.R.string.no) { dialog, _ -> continuation.resume(false); dialog.dismiss() }
+            .setPositiveButton(android.R.string.ok) { dialog, _ -> continuation.resume(true); dialog.dismiss() }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ -> continuation.resume(false); dialog.dismiss() }
             .show()
     }
 
@@ -340,7 +301,7 @@ class DetailsFragment : BaseFragment() {
     }
 
     private fun onScreenShotClick(screenshots: List<ScreenshotModel>, screenshotPosition: Int) {
-        StfalconImageViewer.Builder<ScreenshotModel>(requireContext(), screenshots) { view, image ->
+        StfalconImageViewer.Builder(requireContext(), screenshots) { view, image ->
             val circularProgressDrawable = CircularProgressDrawable(requireContext()).apply {
                 strokeWidth = resourcesProvider.getDimension(R.dimen.progress_stroke_size)
                 centerRadius = resourcesProvider.getDimension(R.dimen.progress_size)
@@ -357,35 +318,25 @@ class DetailsFragment : BaseFragment() {
         }
     }
 
-    /*private fun applyRestOfScreenshots(
-        screenshotsSection: Section.ScreenshotSection,
-        remove: Boolean
-    ) {
-        val allScreenshots = screenshotsSection.screenshots
-        val restScreenshots = screenshotsSection.restOfScreenshots(resourcesProvider)
-        val thirdScreenshot = allScreenshots.getOrNull(spanCount - 1) ?: return
-
-        val lastScreenshotPivot =
-            gameDetailsAdapter.getAdapterPosition(thirdScreenshot.hashCode().toLong())
-
-        if (remove) {
-            gameDetailsAdapter.removeRange(lastScreenshotPivot + 1, restScreenshots.size)
+    private fun onAddToWatchlistClick() {
+        val isWatched = viewModel.state.value.isWatched
+        if (isWatched) {
+            askToRemove()
         } else {
-            gameDetailsAdapter.add(restScreenshots.mapIndexed { index, item ->
-                ScreenshotItem(
-                    item,
-                    index + spanCount
-                ) { position -> onScreenShotClick(screenshotsSection.screenshots, position) }
-            })
+            val priceDetails =
+                viewModel.state.value.sections.filterIsInstance<Section.PriceSection>()
+                    .first()
+                    .priceDetails.firstOrNull() ?: return
+            navigateToAddToWatchlistDialog(
+                priceDetails
+            )
         }
-    }*/
+    }
 
     override fun onInject(coreComponent: CoreComponent) {
         super.onInject(coreComponent)
-        if (::detailsMviViewModel.isInitialized.not()) {
-            DaggerDetailComponent.factory()
-                .create(requireActivity(), this, scopedComponent, coreComponent)
-                .inject(this)
-        }
+        DaggerDetailComponent.factory()
+            .create(requireActivity(), this, coreComponent)
+            .inject(this)
     }
 }

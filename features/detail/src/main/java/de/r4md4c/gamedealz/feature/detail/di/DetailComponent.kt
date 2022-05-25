@@ -34,8 +34,7 @@ import de.r4md4c.gamedealz.feature.detail.DetailsFragment
         ActivityModule::class
     ],
     dependencies = [
-        CoreComponent::class,
-        DetailsRetainedComponent::class
+        CoreComponent::class
     ]
 )
 internal interface DetailComponent {
@@ -47,7 +46,6 @@ internal interface DetailComponent {
         fun create(
             @BindsInstance fragmentActivity: FragmentActivity,
             @BindsInstance fragment: Fragment,
-            retainedComponent: DetailsRetainedComponent,
             coreComponent: CoreComponent
         ): DetailComponent
     }

@@ -29,8 +29,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.feature.detail.R
+import de.r4md4c.gamedealz.feature.detail.SortOrder
 import de.r4md4c.gamedealz.feature.detail.databinding.LayoutDetailHeaderFilterItemBinding
-import de.r4md4c.gamedealz.feature.detail.mvi.SortOrder
 
 typealias OnFilterItemClick = (SortOrder) -> Unit
 

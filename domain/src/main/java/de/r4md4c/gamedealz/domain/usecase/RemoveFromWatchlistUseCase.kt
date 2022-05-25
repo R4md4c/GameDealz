@@ -17,9 +17,19 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.common.IDispatchers
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-/**
- * Removes a game from the Watchlist by using its plain id.
- */
-interface RemoveFromWatchlistUseCase : UseCase<TypeParameter<String>, Boolean>
+class RemoveFromWatchlistUseCase @Inject constructor(
+    private val watchlistRepository: WatchlistLocalDataSource,
+    private val dispatchers: IDispatchers
+) {
+
+    suspend fun invoke(plainId: String): Boolean {
+        return withContext(dispatchers.IO) {
+            watchlistRepository.removeById(plainId) > 0
+        }
+    }
+}

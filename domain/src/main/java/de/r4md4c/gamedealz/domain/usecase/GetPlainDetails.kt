@@ -17,12 +17,29 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.TypeParameter
+import com.dropbox.android.external.store4.StoreResponse
 import de.r4md4c.gamedealz.domain.model.PlainDetailsModel
 import de.r4md4c.gamedealz.domain.model.Resource
+import de.r4md4c.gamedealz.domain.repository.GameDetailsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-interface GetPlainDetails :
-    FlowUseCase<TypeParameter<GetPlainDetails.Params>, Resource<PlainDetailsModel>> {
+class GetPlainDetails @Inject constructor(
+    private val gameDetailsRepository: GameDetailsRepository
+) {
 
-    data class Params(val plainId: String, val fresh: Boolean = false)
+    fun invoke(plainId: String): Flow<Resource<PlainDetailsModel>> {
+        return gameDetailsRepository.findDetails(plainId, false)
+            .map {
+                when (val response = it) {
+                    is StoreResponse.Loading -> Resource.loading(response.dataOrNull())
+                    is StoreResponse.Data -> Resource.success(response.requireData())
+                    is StoreResponse.Error -> Resource.error(
+                        response.error.localizedMessage,
+                        response.dataOrNull()
+                    )
+                }
+            }
+    }
 }

@@ -17,10 +17,16 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.data.repository.WatchlistLocalDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-/**
- * Checks if the Plain Id is already added to watch list or not.
- */
-interface IsGameAddedToWatchListUseCase : UseCase<TypeParameter<String>, Flow<Boolean>>
+class IsGameAddedToWatchListUseCase @Inject constructor(
+    private val watchlistRepository: WatchlistLocalDataSource
+) {
+
+    fun invoke(plainId: String): Flow<Boolean> {
+        return watchlistRepository.findById(plainId).map { it != null }
+    }
+}

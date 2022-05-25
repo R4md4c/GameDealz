@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.common.base.fragment
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -30,7 +31,11 @@ import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.core.coreComponent
 import javax.inject.Inject
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : Fragment {
+
+    constructor(@LayoutRes layoutRes: Int) : super(layoutRes)
+
+    constructor() : super()
 
     @Inject
     lateinit var dispatchers: IDispatchers

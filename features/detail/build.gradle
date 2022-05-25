@@ -31,6 +31,7 @@ dependencies {
     }
     implementation Libraries.kotlinStdLib
     implementation Libraries.lifecycleViewModel
+    implementation Libraries.lifecycleLiveData
     implementation Libraries.lifecycleViewModelKtx
     implementation Libraries.lifecycleRuntimeKtx
     implementation Libraries.lifecycleJava8Common
