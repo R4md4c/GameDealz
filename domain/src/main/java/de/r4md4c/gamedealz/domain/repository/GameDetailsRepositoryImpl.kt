@@ -57,7 +57,7 @@ internal class GameDetailsRepositoryImpl @Inject constructor(
 
     private val store by lazy {
         StoreBuilder.fromNonFlow<String, PlainDetailsModel> { plainId ->
-            val activeRegion = activeRegionUseCase()
+            val activeRegion = activeRegionUseCase.invoke()
             val prices = retrievePrices(plainId, activeRegion)
             val historicalLows =
                 prices.map { historicalLowAsync(plainId, it.key, activeRegion) }.toMap()

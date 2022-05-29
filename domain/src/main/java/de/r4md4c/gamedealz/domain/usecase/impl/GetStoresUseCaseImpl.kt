@@ -19,14 +19,15 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
-import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
 import de.r4md4c.gamedealz.network.repository.StoresRemoteRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -36,10 +37,10 @@ internal class GetStoresUseCaseImpl @Inject constructor(
     private val activeRegionUseCase: GetCurrentActiveRegionUseCase
 ) : GetStoresUseCase {
 
-    override suspend fun invoke(param: TypeParameter<ActiveRegion>?): Flow<List<StoreModel>> {
-        val activeRegion = param?.value ?: activeRegionUseCase()
+    override fun invoke(param: ActiveRegion?): Flow<List<StoreModel>> = flow {
+        val activeRegion = param ?: activeRegionUseCase.invoke()
 
-        return with(activeRegion) {
+        with(activeRegion) {
             val stores = storesRepository.all().first()
 
             if (stores.isEmpty()) {
@@ -47,7 +48,10 @@ internal class GetStoresUseCaseImpl @Inject constructor(
                 storesRepository.save(remoteStores.map { Store(it.id, it.title, it.color) })
             }
 
-            storesRepository.all().map { it.map { item -> StoreModel(item.id, item.name, item.selected) } }
+            emitAll(
+                storesRepository.all()
+                    .map { it.map { item -> StoreModel(item.id, item.name, item.selected) } }
+            )
         }
     }
 }

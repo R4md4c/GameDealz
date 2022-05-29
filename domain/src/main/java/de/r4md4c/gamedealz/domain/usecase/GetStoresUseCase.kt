@@ -17,12 +17,11 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import kotlinx.coroutines.flow.Flow
 
-interface GetStoresUseCase : UseCase<TypeParameter<ActiveRegion>, Flow<List<StoreModel>>> {
+interface GetStoresUseCase {
 
     /**
      * Retrieves Stores according to the active region.
@@ -31,5 +30,5 @@ interface GetStoresUseCase : UseCase<TypeParameter<ActiveRegion>, Flow<List<Stor
      * to the current stored region.
      * @return a List of Store Models.
      */
-    override suspend fun invoke(param: TypeParameter<ActiveRegion>?): Flow<List<StoreModel>>
+    fun invoke(param: ActiveRegion?): Flow<List<StoreModel>>
 }

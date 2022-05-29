@@ -20,7 +20,6 @@ package de.r4md4c.gamedealz.core
 import android.app.Activity
 import android.content.Context
 import de.r4md4c.gamedealz.common.di.HasComponent
-import java.lang.ClassCastException
 
 @Suppress("UNCHECKED_CAST")
 fun Activity.coreComponent(): CoreComponent =

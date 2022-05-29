@@ -19,6 +19,7 @@ package de.r4md4c.gamedealz.feature.home
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -35,44 +36,31 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.SectionDrawerItem
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import de.r4md4c.commonproviders.di.viewmodel.components
+import de.r4md4c.commonproviders.di.viewmodel.viewModelFactoryOf
 import de.r4md4c.gamedealz.auth.AuthActivityDelegate
 import de.r4md4c.gamedealz.common.aware.DrawerAware
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
 import de.r4md4c.gamedealz.common.exhaustive
-import de.r4md4c.gamedealz.common.mvi.MviViewModel
-import de.r4md4c.gamedealz.common.mvi.UiSideEffect
-import de.r4md4c.gamedealz.common.mvi.ViewEventFlow
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.feature.home.databinding.ActivityMainBinding
 import de.r4md4c.gamedealz.feature.home.di.DaggerHomeComponent
-import de.r4md4c.gamedealz.feature.home.di.DaggerHomeViewModelComponent
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.NightModeToggleViewEvent
-import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-import de.r4md4c.gamedealz.feature.home.state.HomeUiSideEffect
 import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
 import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus.LoggedOut
+import de.r4md4c.gamedealz.feature.home.state.HomeViewState
 import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
+import de.r4md4c.gamedealz.feature.home.state.RegionStatus
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragmentArgs
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
-internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
-    ViewEventFlow<HomeMviViewEvent> {
+internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout {
 
     private lateinit var drawer: Drawer
-
-    private val viewEventsChannel = Channel<HomeMviViewEvent>()
 
     @Inject
     lateinit var authDelegate: AuthActivityDelegate
@@ -81,10 +69,10 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
     lateinit var viewNotifier: ViewNotifier
 
     @Inject
-    lateinit var viewModel: MviViewModel<HomeMviViewState, HomeMviViewEvent>
+    lateinit var viewModelProvider: Provider<HomeViewModel>
 
-    private val homeScopedComponent by components {
-        DaggerHomeViewModelComponent.factory().create(coreComponent())
+    private val viewModel by viewModels<HomeViewModel> {
+        viewModelFactoryOf { viewModelProvider.get() }
     }
 
     private val navController: NavController
@@ -135,11 +123,9 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         insertMenuItems()
         listenForDestinationChanges()
 
-        viewModel.modelState
-            .onEach { render(it) }
-            .launchIn(lifecycleScope)
-
-        viewModel.onViewEvents(viewEvents(), lifecycleScope)
+        viewModel.state.onEach {
+            render(it)
+        }.launchIn(lifecycleScope)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -147,6 +133,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         drawer.saveInstanceState(outState)
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         authDelegate.onActivityResult(this, requestCode, data)
@@ -167,7 +154,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         super.onBackPressed()
     }
 
-    private fun render(state: HomeMviViewState) {
+    private fun render(state: HomeViewState) {
         renderPriceAlertCount(state)
         renderRegion(state)
 
@@ -177,10 +164,8 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         drawer.adapter.notifyAdapterDataSetChanged()
 
         state.renderUserStatus()
-        state.uiSideEffect?.let { renderSideEffects(it) }
+        state.uiMessage?.let(this::renderUiMessage)
     }
-
-    override fun viewEvents(): Flow<HomeMviViewEvent> = viewEventsChannel.consumeAsFlow()
 
     private fun insertMenuItems() {
         val dealsDrawerItem = PrimaryDrawerItem()
@@ -189,7 +174,10 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withIcon(R.drawable.ic_deal)
             .withIconTintingEnabled(true)
             .withOnDrawerItemClickListener { _, _, _ ->
-                viewEventsChannel.offer(HomeMviViewEvent.NavigateToOngoingDealsScreen)
+                navigateToDestination(
+                    R.id.dealsFragment,
+                    popUpToRoot = true
+                )
                 false
             }
 
@@ -199,7 +187,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withIcon(R.drawable.ic_add_to_watch_list)
             .withIconTintingEnabled(true)
             .withOnDrawerItemClickListener { _, _, _ ->
-                viewEventsChannel.offer(HomeMviViewEvent.NavigateToManageWatchlistScreen)
+                navigateToDestination(R.id.manageWatchlistFragment, popUpToRoot = false)
                 false
             }
 
@@ -210,7 +198,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .withIconTintingEnabled(true)
             .withIdentifier(R.id.home_drawer_night_mode_switch.toLong())
             .withOnCheckedChangeListener { _, _, _ ->
-                viewEventsChannel.offer(NightModeToggleViewEvent)
+                viewModel.onToggleNightMode()
             }
 
         val section = SectionDrawerItem()
@@ -248,11 +236,12 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
             .build()
     }
 
-    private fun onRegionSelectionClick() = lifecycleScope.launch {
-        viewModel.modelState.first().activeRegion?.let {
+    private fun onRegionSelectionClick() {
+        val activeRegion = viewModel.state.value.regionStatus as? RegionStatus.Active
+        if (activeRegion != null) {
             navController.navigate(
                 R.id.regionSelectionDialog,
-                RegionSelectionDialogFragmentArgs(it).toBundle()
+                RegionSelectionDialogFragmentArgs(activeRegion.region).toBundle()
             )
         }
     }
@@ -284,7 +273,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         navController.navigate(identifier, null, navOptionsBuilder)
     }
 
-    private fun HomeMviViewState.renderUserStatus() = with(accountHeader) {
+    private fun HomeViewState.renderUserStatus() = with(accountHeader) {
         clear()
         return@with when (homeUserStatus) {
             is LoggedOut -> {
@@ -314,15 +303,16 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         }
     }
 
-    private fun renderRegion(state: HomeMviViewState) {
-        state.activeRegion?.let {
+    private fun renderRegion(state: HomeViewState) {
+        val activeRegion = (state.regionStatus as? RegionStatus.Active)?.region
+        if (activeRegion != null) {
             findDrawerItem<PrimaryDrawerItem>(R.id.home_drawer_region_selection)
-                ?.withDescription(it.country.displayName())
+                ?.withDescription(activeRegion.country.displayName())
         }
     }
 
     private fun renderPriceAlertCount(
-        state: HomeMviViewState
+        state: HomeViewState
     ) {
         val countString = when (state.priceAlertsCount) {
             is PriceAlertCount.NotSet -> EMPTY_STRING
@@ -331,41 +321,35 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout,
         findDrawerItem<PrimaryDrawerItem>(R.id.manageWatchlistFragment)?.withBadge(countString)
     }
 
-    private fun renderSideEffects(effects: UiSideEffect<HomeUiSideEffect>) = effects.take {
-        when (it) {
-            is HomeUiSideEffect.ShowAuthenticationError ->
-                it.message?.let { message -> viewNotifier.notify(message) }
-            is HomeUiSideEffect.NotifyUserHasLoggedOut -> viewNotifier.notify(getString(R.string.signed_out))
-            is HomeUiSideEffect.NotifyUserHasLoggedIn -> viewNotifier.notify(
-                it.username?.let { name -> getString(R.string.welcome_user, name) }
+    private fun renderUiMessage(message: HomeUIMessage) {
+        when (message) {
+            is HomeUIMessage.ShowAuthenticationError ->
+                viewNotifier.notify(message.reason)
+            is HomeUIMessage.NotifyUserHasLoggedIn -> viewNotifier.notify(
+                message.username?.let { name -> getString(R.string.welcome_user, name) }
                     ?: getString(R.string.welcome_user_unknown)
             )
-            is HomeUiSideEffect.StartAuthenticationFlow -> authDelegate.startAuthFlow(this)
-            is HomeUiSideEffect.NavigateSideEffect -> navigateToDestination(
-                it.navigationIdentifier,
-                it.popToRoot
-            )
+            HomeUIMessage.NotifyUserHasLoggedOut -> viewNotifier.notify(getString(R.string.signed_out))
         }.exhaustive
+        viewModel.clearMessage(message)
     }
 
     private fun onLogoutClick() {
-        viewEventsChannel.offer(HomeMviViewEvent.LogoutViewEvent)
+        viewModel.onLogout()
     }
 
     private fun onLoginClick() {
-        viewEventsChannel.offer(HomeMviViewEvent.LoginViewEvent)
+        authDelegate.startAuthFlow(this)
     }
 
     private inline fun <reified T : IDrawerItem<*, *>> findDrawerItem(@IdRes identifier: Int) =
         drawer.getDrawerItem(identifier.toLong()) as? T
 
     private fun onInject() {
-        if (::viewModel.isInitialized.not()) {
-            coreComponent().also { coreComponent ->
-                DaggerHomeComponent.factory()
-                    .create(this, coreComponent, coreComponent.authComponent, homeScopedComponent)
-                    .inject(this)
-            }
+        coreComponent().also { coreComponent ->
+            DaggerHomeComponent.factory()
+                .create(this, coreComponent, coreComponent.authComponent)
+                .inject(this)
         }
     }
 }

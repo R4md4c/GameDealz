@@ -21,7 +21,6 @@ import de.r4md4c.commonproviders.configuration.ConfigurationProvider
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.Default
 import de.r4md4c.commonproviders.coroutines.GameDealzDispatchers.IO
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
-import de.r4md4c.gamedealz.domain.VoidParameter
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.RegionWithCountriesModel
 import de.r4md4c.gamedealz.domain.model.findCountry
@@ -40,7 +39,7 @@ internal class GetCurrentActiveRegionUseCaseImpl @Inject constructor(
     private val sharedPreferences: SharedPreferencesProvider
 ) : GetCurrentActiveRegionUseCase, OnCurrentActiveRegionReactiveUseCase {
 
-    override suspend fun invoke(param: VoidParameter?): ActiveRegion {
+    override suspend fun invoke(): ActiveRegion {
         val savedRegionCountryPair = sharedPreferences.activeRegionAndCountry
         val regions = withContext(IO) { getRegionsUseCase() }
 
@@ -78,9 +77,9 @@ internal class GetCurrentActiveRegionUseCaseImpl @Inject constructor(
     private fun List<RegionWithCountriesModel>.getRegionAndCountry(
         regionCode: String,
         countryCode: String
-    ): ActiveRegion? {
-        val foundRegion = asSequence().first { it.regionCode == regionCode }
-        val foundCountry = foundRegion.countries.asSequence().first { it.code.equals(countryCode, true) }
+    ): ActiveRegion {
+        val foundRegion = first { it.regionCode == regionCode }
+        val foundCountry = foundRegion.countries.first { it.code.equals(countryCode, true) }
 
         return ActiveRegion(
             foundRegion.regionCode,

@@ -17,6 +17,23 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.commonproviders.appcompat.AppCompatProvider
+import de.r4md4c.commonproviders.appcompat.NightMode
+import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
+import javax.inject.Inject
 
-interface ToggleNightModeUseCase : UseCase<VoidParameter, Unit>
+class ToggleNightModeUseCase @Inject constructor(
+    private val sharedPreferencesProvider: SharedPreferencesProvider,
+    private val appCompatProvider: AppCompatProvider
+) {
+
+    fun invoke() {
+        val toggledMode = when (sharedPreferencesProvider.activeNightMode) {
+            is NightMode.Enabled -> NightMode.Disabled
+            is NightMode.Disabled -> NightMode.Enabled
+        }
+
+        appCompatProvider.currentNightMode = toggledMode
+        sharedPreferencesProvider.activeNightMode = toggledMode
+    }
+}

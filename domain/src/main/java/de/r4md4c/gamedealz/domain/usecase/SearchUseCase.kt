@@ -44,7 +44,7 @@ class SearchUseCase @Inject internal constructor(
     suspend fun invoke(searchTerm: String): Result<List<SearchResultModel>> =
         runSuspendCatching {
             withContext(IO) {
-                val activeRegion = activeRegionUseCase()
+                val activeRegion = activeRegionUseCase.invoke()
 
                 // Execute the search query.
                 val searchResults = searchService.search(searchTerm)

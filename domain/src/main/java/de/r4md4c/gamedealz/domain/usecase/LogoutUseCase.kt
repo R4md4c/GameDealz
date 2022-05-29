@@ -17,6 +17,22 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.VoidParameter
+import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
+import de.r4md4c.gamedealz.auth.AuthStateFlow
+import de.r4md4c.gamedealz.common.IDispatchers
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-interface LogoutUseCase : UseCase<VoidParameter, Unit>
+class LogoutUseCase @Inject constructor(
+    private val authStateFlow: AuthStateFlow,
+    private val sharedPreferencesProvider: SharedPreferencesProvider,
+    private val dispatchers: IDispatchers
+) {
+
+    suspend fun invoke() {
+        withContext(dispatchers.IO) {
+            authStateFlow.clear()
+            sharedPreferencesProvider.clearUser()
+        }
+    }
+}

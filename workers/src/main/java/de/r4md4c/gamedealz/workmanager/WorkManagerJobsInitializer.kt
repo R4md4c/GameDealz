@@ -18,7 +18,13 @@
 package de.r4md4c.gamedealz.workmanager
 
 import androidx.annotation.VisibleForTesting
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.Operation
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.await
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.workmanager.worker.PriceCheckerWorker
 import java.util.*

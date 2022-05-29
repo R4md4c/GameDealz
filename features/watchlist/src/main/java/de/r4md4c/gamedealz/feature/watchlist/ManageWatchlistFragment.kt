@@ -59,7 +59,6 @@ import de.r4md4c.gamedealz.feature.watchlist.shortcut.ShortcutManager
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

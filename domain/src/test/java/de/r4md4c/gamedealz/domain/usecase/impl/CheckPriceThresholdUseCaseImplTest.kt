@@ -18,7 +18,6 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -233,7 +232,7 @@ class CheckPriceThresholdUseCaseImplTest {
                         emptySet()
                     )
                 )
-                whenever(currentActiveRegionUseCase.invoke(anyOrNull())).thenReturn(ACTIVE_REGION)
+                whenever(currentActiveRegionUseCase.invoke()).thenReturn(ACTIVE_REGION)
                 whenever(watchlistRepository.findById(any<String>())).thenReturn(emptyFlow())
             }
         }

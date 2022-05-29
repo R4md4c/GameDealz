@@ -20,40 +20,11 @@ package de.r4md4c.gamedealz.feature.home.di
 import androidx.fragment.app.FragmentActivity
 import dagger.BindsInstance
 import dagger.Component
-import de.r4md4c.commonproviders.di.viewmodel.ScopedComponent
 import de.r4md4c.gamedealz.auth.di.AuthComponent
 import de.r4md4c.gamedealz.common.di.FeatureScope
-import de.r4md4c.gamedealz.common.di.ViewModelScope
 import de.r4md4c.gamedealz.common.di.activity.ActivityModule
-import de.r4md4c.gamedealz.common.mvi.MviViewModel
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.home.HomeActivity
-import de.r4md4c.gamedealz.feature.home.di.mvi.HomeMviModule
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
-
-@ViewModelScope
-@Component(
-    modules = [
-        HomeMviModule::class
-    ], dependencies = [CoreComponent::class]
-)
-internal abstract class HomeViewModelComponent : ScopedComponent() {
-
-    abstract val homeViewModel: MviViewModel<HomeMviViewState, HomeMviViewEvent>
-
-    @Component.Factory
-    interface Factory {
-        fun create(
-            coreComponent: CoreComponent
-        ): HomeViewModelComponent
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        homeViewModel.onCleared()
-    }
-}
 
 @FeatureScope
 @Component(
@@ -61,7 +32,7 @@ internal abstract class HomeViewModelComponent : ScopedComponent() {
         ActivityModule::class
     ],
     dependencies = [
-        AuthComponent::class, HomeViewModelComponent::class, CoreComponent::class
+        AuthComponent::class, CoreComponent::class
     ]
 )
 internal interface HomeComponent {
@@ -74,7 +45,6 @@ internal interface HomeComponent {
             @BindsInstance fragmentActivity: FragmentActivity,
             coreComponent: CoreComponent,
             authComponent: AuthComponent,
-            homeViewModelComponent: HomeViewModelComponent
         ): HomeComponent
     }
 }

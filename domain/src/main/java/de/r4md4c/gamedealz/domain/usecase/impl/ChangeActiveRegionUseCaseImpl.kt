@@ -42,7 +42,7 @@ internal class ChangeActiveRegionUseCaseImpl @Inject constructor(
         val activeRegionParam = requireNotNull(param).value
 
         val storedActiveRegion = withContext(IO) {
-            getCurrentActiveRegionUseCase()
+            getCurrentActiveRegionUseCase.invoke()
         }
 
         if (activeRegionParam.isSameAs(storedActiveRegion)) {

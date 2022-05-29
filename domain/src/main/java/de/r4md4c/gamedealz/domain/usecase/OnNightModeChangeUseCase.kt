@@ -25,5 +25,5 @@ import kotlinx.coroutines.flow.Flow
  */
 interface OnNightModeChangeUseCase {
 
-    suspend fun activeNightModeChange(): Flow<NightMode>
+    fun activeNightModeChange(): Flow<NightMode>
 }

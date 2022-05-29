@@ -26,7 +26,6 @@ import de.r4md4c.gamedealz.common.IDispatchers
 import de.r4md4c.gamedealz.common.launchWithCatching
 import de.r4md4c.gamedealz.common.livedata.SingleLiveEvent
 import de.r4md4c.gamedealz.domain.CollectionParameter
-import de.r4md4c.gamedealz.domain.TypeParameter
 import de.r4md4c.gamedealz.domain.model.StoreModel
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
@@ -56,8 +55,8 @@ class DealsFilterViewModel @Inject constructor(
 
     fun loadStores() = viewModelScope.launchWithCatching(dispatchers.Main, {
         val stores = withContext(dispatchers.IO) {
-            val activeRegion = getCurrentActiveRegion()
-            getStoresUseCase(TypeParameter(activeRegion)).first()
+            val activeRegion = getCurrentActiveRegion.invoke()
+            getStoresUseCase.invoke(activeRegion).first()
         }
 
         val filterItems = withContext(dispatchers.Default) {

@@ -104,7 +104,7 @@ class AddToWatchListViewModel @AssistedInject constructor(
         savedStateHandle.getLiveData<String>(KEY_PLAIN_ID)
             .asFlow()
             .onStart {
-                activeRegion = getCurrentActiveRegionUseCase()
+                activeRegion = getCurrentActiveRegionUseCase.invoke()
             }
             .flatMapConcat(plainDetails::invoke)
             .onEach { storeResponse ->
@@ -254,7 +254,7 @@ class AddToWatchListViewModel @AssistedInject constructor(
         }
 
     private suspend fun formatCurrentBestCurrencyModel(priceModels: Iterable<PriceModel>): String? {
-        val activeRegion = getCurrentActiveRegionUseCase()
+        val activeRegion = getCurrentActiveRegionUseCase.invoke()
         val smallestPriceModel = priceModels.minByOrNull { it.newPrice }
         return smallestPriceModel?.newPrice?.formatCurrency(activeRegion.currency)
     }

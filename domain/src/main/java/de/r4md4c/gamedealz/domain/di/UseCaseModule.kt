@@ -32,14 +32,11 @@ import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetLatestWatchlistCheckDate
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetWatchlistToManageUseCase
-import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
 import de.r4md4c.gamedealz.domain.usecase.MarkNotificationAsReadUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
 import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
-import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.AddToWatchListUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ChangeActiveRegionUseCaseImpl
@@ -52,13 +49,10 @@ import de.r4md4c.gamedealz.domain.usecase.impl.GetLatestWatchlistCheckDateImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetPriceAlertsCountUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.GetRegionsUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetStoresUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.GetUserUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetWatchlistToManageUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.LogOutUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.MarkNotificationAsReadUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.OnNightModeChangeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.RemoveWatcheesUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.ToggleNightModeUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.ToggleStoresUseCaseImpl
 
 @Suppress("TooManyFunctions")
@@ -127,11 +121,6 @@ abstract class UseCaseModule {
     ): OnNightModeChangeUseCase
 
     @Binds
-    internal abstract fun bindsToggleNightModeUseCase(
-        it: ToggleNightModeUseCaseImpl
-    ): ToggleNightModeUseCase
-
-    @Binds
     internal abstract fun bindsGetLatestWatchlistCheckDate(
         it: GetLatestWatchlistCheckDateImpl
     ): GetLatestWatchlistCheckDate
@@ -155,14 +144,4 @@ abstract class UseCaseModule {
     internal abstract fun bindsMarkNotificationAsReadUseCase(
         it: MarkNotificationAsReadUseCaseImpl
     ): MarkNotificationAsReadUseCase
-
-    @Binds
-    internal abstract fun bindsGetUserUseCase(
-        it: GetUserUseCaseImpl
-    ): GetUserUseCase
-
-    @Binds
-    internal abstract fun bindsLogOutUseCase(
-        it: LogOutUseCaseImpl
-    ): LogoutUseCase
 }

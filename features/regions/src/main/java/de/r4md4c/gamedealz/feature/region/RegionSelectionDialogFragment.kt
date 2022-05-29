@@ -21,7 +21,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -64,8 +63,7 @@ class RegionSelectionDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView =
-            LayoutInflater.from(requireActivity()).inflate(R.layout.dialog_region_choice, null)
+        dialogView = layoutInflater.inflate(R.layout.dialog_region_choice, null)
 
         return MaterialAlertDialogBuilder(requireActivity())
             .setView(dialogView)

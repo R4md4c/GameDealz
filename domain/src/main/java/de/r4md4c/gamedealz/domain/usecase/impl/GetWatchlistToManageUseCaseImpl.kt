@@ -30,7 +30,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.collections.mapNotNull
 
 internal class GetWatchlistToManageUseCaseImpl @Inject constructor(
     private val watchlistRepository: WatchlistLocalDataSource,

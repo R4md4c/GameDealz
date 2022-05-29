@@ -33,8 +33,6 @@ import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.common.state.StateVisibilityHandler
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsMviEvent
 import de.r4md4c.gamedealz.feature.detail.mvi.DetailsUIEvent
-import de.r4md4c.gamedealz.feature.detail.mvi.DetailsViewState
-import de.r4md4c.gamedealz.feature.detail.mvi.Section
 import de.r4md4c.gamedealz.test.mvi.TestMviViewModel
 import org.junit.Before
 import org.junit.Test

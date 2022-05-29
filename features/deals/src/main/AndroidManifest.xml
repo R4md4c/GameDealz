@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="de.r4md4c.gamedealz.feature.deals" />
+<manifest package="de.r4md4c.gamedealz.feature.deals" />
