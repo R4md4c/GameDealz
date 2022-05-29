@@ -63,7 +63,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
                 EXTRA_MODEL
             ) ?: return@launch
             markNotificationAsReadUseCase(TypeParameter(notificationModel.watcheeModel))
-            val alertsCount = activeAlertsCountUseCase().first()
+            val alertsCount = activeAlertsCountUseCase.invoke().first()
 
             if (intent.action == ACTION_VIEW_GAME_DETAILS) {
                 notificationModel.toDetailsPendingIntent(context)?.send()

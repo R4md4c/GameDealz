@@ -31,8 +31,8 @@ import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
 import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
+import de.r4md4c.gamedealz.feature.home.state.HomeViewState
 import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
 import de.r4md4c.gamedealz.test.scenario.InjectableActivityScenario
 import de.r4md4c.gamedealz.test.scenario.injectableActivityScenario
@@ -40,7 +40,6 @@ import de.r4md4c.gamedealz.test.utils.Page.Companion.on
 import de.r4md4c.gamedealz.test.utils.createFragmentFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
@@ -81,7 +80,7 @@ class HomeActivityTest {
     private lateinit var mockAuthDelegate: AuthActivityDelegate
 
     @Mock
-    private lateinit var mockViewModel: MviViewModel<HomeMviViewState, HomeMviViewEvent>
+    private lateinit var mockViewModel: MviViewModel<HomeViewState, HomeMviViewEvent>
 
     private val eventsCollections = mutableListOf<HomeMviViewEvent>()
 
@@ -93,7 +92,7 @@ class HomeActivityTest {
     @Test
     fun initialState_rendersCorrectly(): Unit = injectorScenario.use {
         ArrangeBuilder(it)
-            .withState(HomeMviViewState())
+            .withState(HomeViewState())
             .arrange()
 
         on<SideMenu>()
@@ -104,7 +103,7 @@ class HomeActivityTest {
     fun activeRegion_rendersCorrectly(): Unit = injectorScenario.use {
         ArrangeBuilder(it)
             .withState(
-                HomeMviViewState(
+                HomeViewState(
                     activeRegion = ActiveRegion(
                         "US",
                         CountryModel("US"),
@@ -122,7 +121,7 @@ class HomeActivityTest {
     fun userStatusLoggedIn_rendersCorrectly_whenKnownUser(): Unit = injectorScenario.use {
         ArrangeBuilder(it)
             .withState(
-                HomeMviViewState(
+                HomeViewState(
                     homeUserStatus = HomeUserStatus.LoggedIn.KnownUser("R4md4c")
                 )
             )
@@ -136,7 +135,7 @@ class HomeActivityTest {
     fun userStatusLoggedIn_rendersCorrectly_whenUnKnownUser(): Unit = injectorScenario.use {
         ArrangeBuilder(it)
             .withState(
-                HomeMviViewState(
+                HomeViewState(
                     homeUserStatus = HomeUserStatus.LoggedIn.UnknownUser
                 )
             )
@@ -150,7 +149,7 @@ class HomeActivityTest {
     fun clickingLogout_invokesLogoutEvent(): Unit = injectorScenario.use {
         ArrangeBuilder(it)
             .withState(
-                HomeMviViewState(
+                HomeViewState(
                     homeUserStatus = HomeUserStatus.LoggedIn.UnknownUser
                 )
             )
@@ -167,7 +166,7 @@ class HomeActivityTest {
     fun priceAlertCount_renderedCorrectly(): Unit = injectorScenario.use {
         ArrangeBuilder(it)
             .withState(
-                HomeMviViewState(
+                HomeViewState(
                     priceAlertsCount = PriceAlertCount.Set(20)
                 )
             )
@@ -194,7 +193,7 @@ class HomeActivityTest {
             }
         }
 
-        fun withState(state: HomeMviViewState) = apply {
+        fun withState(state: HomeViewState) = apply {
             whenever(mockViewModel.modelState).doReturn(flowOf(state))
         }
 

@@ -17,8 +17,14 @@
 
 package de.r4md4c.gamedealz.data.entity
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 @Entity(
     indices = [Index(value = ["fk_currencyCode"])],

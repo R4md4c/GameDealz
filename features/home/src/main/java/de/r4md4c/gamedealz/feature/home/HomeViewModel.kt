@@ -17,22 +17,167 @@
 
 package de.r4md4c.gamedealz.feature.home
 
-import de.r4md4c.gamedealz.common.di.ViewModelScope
-import de.r4md4c.gamedealz.common.mvi.IntentProcessor
-import de.r4md4c.gamedealz.common.mvi.ModelStore
-import de.r4md4c.gamedealz.common.mvi.MviViewModel
-import de.r4md4c.gamedealz.common.mvi.RealMviViewModel
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent
-import de.r4md4c.gamedealz.feature.home.mvi.HomeMviViewEvent.InitViewEvent
-import de.r4md4c.gamedealz.feature.home.state.HomeMviViewState
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import de.r4md4c.commonproviders.appcompat.NightMode
+import de.r4md4c.gamedealz.common.message.UIMessage
+import de.r4md4c.gamedealz.common.message.UIMessageManager
+import de.r4md4c.gamedealz.common.runSuspendCatching
+import de.r4md4c.gamedealz.domain.model.UserInfo
+import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetStoresUseCase
+import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
+import de.r4md4c.gamedealz.domain.usecase.LogoutUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnCurrentActiveRegionReactiveUseCase
+import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
+import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
+import de.r4md4c.gamedealz.feature.home.state.HomeUserStatus
+import de.r4md4c.gamedealz.feature.home.state.HomeViewState
+import de.r4md4c.gamedealz.feature.home.state.PriceAlertCount
+import de.r4md4c.gamedealz.feature.home.state.RegionStatus
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
-@ViewModelScope
-internal class HomeViewModel @Inject internal constructor(
-    intentProcessors: Set<@JvmSuppressWildcards IntentProcessor<HomeMviViewEvent, HomeMviViewState>>,
-    homeModelStore: ModelStore<HomeMviViewState>
-) : MviViewModel<HomeMviViewState, HomeMviViewEvent> by RealMviViewModel(
-    intentProcessors,
-    homeModelStore,
-    InitViewEvent
-)
+internal class HomeViewModel @Inject constructor(
+    private val getUserUseCase: GetUserUseCase,
+    private val activeRegionUseCase: GetCurrentActiveRegionUseCase,
+    private val reactiveRegionUseCase: OnCurrentActiveRegionReactiveUseCase,
+    private val getStoresUseCase: GetStoresUseCase,
+    private val priceAlertsCountUseCase: GetAlertsCountUseCase,
+    private val nightModeChangeUseCase: OnNightModeChangeUseCase,
+    private val toggleNightModeUseCase: ToggleNightModeUseCase,
+    private val logoutUseCase: LogoutUseCase,
+) : ViewModel() {
+
+    private val uiMessageManager = UIMessageManager<HomeUIMessage>()
+    private val regionStatus = MutableStateFlow<RegionStatus>(RegionStatus.Loading)
+    private val homeUserStatus = MutableStateFlow<HomeUserStatus>(HomeUserStatus.LoggedOut)
+    private val nighModeEnabled = MutableStateFlow(false)
+    private val priceAlertCount = MutableStateFlow<PriceAlertCount>(PriceAlertCount.NotSet)
+
+    val state by lazy {
+        combine(
+            regionStatus,
+            homeUserStatus,
+            nighModeEnabled,
+            priceAlertCount,
+            uiMessageManager.messages,
+        ) { regionStatus: RegionStatus, homeUserStatus: HomeUserStatus, nighModeEnabled: Boolean, priceAlertCount: PriceAlertCount, message ->
+            HomeViewState(
+                regionStatus = regionStatus,
+                homeUserStatus = homeUserStatus,
+                nightModeEnabled = nighModeEnabled,
+                priceAlertsCount = priceAlertCount,
+                uiMessage = message
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeViewState())
+            .also {
+                init()
+            }
+    }
+
+    fun clearMessage(uiMessage: HomeUIMessage) {
+        viewModelScope.launch {
+            uiMessageManager.clearMessage(uiMessage.id)
+        }
+    }
+
+    fun onToggleNightMode() {
+        toggleNightModeUseCase.invoke()
+    }
+
+    fun onLogout() {
+        viewModelScope.launch {
+            logoutUseCase.invoke()
+        }
+    }
+
+    private fun init() {
+        observeUserInfo()
+        observeActiveRegion()
+        observePriceAlertsCount()
+        observeNightModeChange()
+    }
+
+    private fun observeNightModeChange() {
+        nightModeChangeUseCase.activeNightModeChange()
+            .onEach { nightMode ->
+                nighModeEnabled.value = nightMode == NightMode.Enabled
+            }.launchIn(viewModelScope)
+    }
+
+    private fun observePriceAlertsCount() {
+        priceAlertsCountUseCase.invoke()
+            .map { count -> if (count == 0) PriceAlertCount.NotSet else PriceAlertCount.Set(count) }
+            .onEach { alertCount ->
+                priceAlertCount.value = alertCount
+            }.launchIn(viewModelScope)
+    }
+
+    private fun observeActiveRegion() {
+        flow {
+            runSuspendCatching { activeRegionUseCase.invoke() }
+                .map(RegionStatus::Active)
+                .onSuccess { emit(it) }
+                .onFailure {
+                    Timber.e(it, "Failure to retrieve active region")
+                }
+        }.onStart<RegionStatus> { emit(RegionStatus.Loading) }
+            .onEach { status ->
+                regionStatus.value = status
+            }
+            .launchIn(viewModelScope)
+
+        reactiveRegionUseCase.activeRegionChange()
+            .onEach { activeRegion -> getStoresUseCase.invoke(activeRegion).first() }
+            .launchIn(viewModelScope)
+    }
+
+    private fun observeUserInfo() {
+        viewModelScope.launch {
+            homeUserStatus.value = HomeUserStatus.fromUserInfo(getUserUseCase.invoke().first())
+        }
+
+        getUserUseCase.invoke()
+            .onEach { userInfo ->
+                homeUserStatus.value = HomeUserStatus.fromUserInfo(userInfo)
+                when (userInfo) {
+                    UserInfo.LoggedInUnknownUser -> {
+                        uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedIn(null))
+                    }
+                    is UserInfo.LoggedInUser -> {
+                        uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedIn(userInfo.username))
+                    }
+                    UserInfo.UserLoggedOut -> {
+                        uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedOut)
+                    }
+                    is UserInfo.LoggingUserFailed -> uiMessageManager.emitUIMessage(
+                        HomeUIMessage.ShowAuthenticationError(
+                            userInfo.reason
+                        )
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+}
+
+internal sealed class HomeUIMessage : UIMessage() {
+    data class ShowAuthenticationError(val reason: String) : HomeUIMessage()
+    data class NotifyUserHasLoggedIn(val username: String?) : HomeUIMessage()
+    object NotifyUserHasLoggedOut : HomeUIMessage() {
+        override fun toString(): String = "NotifyUserHasLoggedOut"
+    }
+}

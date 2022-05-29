@@ -44,7 +44,7 @@ internal class GetDealsUseCaseImpl @Inject constructor(
         requireNotNull(param)
 
         return withContext(IO) {
-            val activeRegion = activeRegionUseCase()
+            val activeRegion = activeRegionUseCase.invoke()
             dealsRemoteRepository.deals(param.offset,
                 param.pageSize,
                 activeRegion.regionCode,

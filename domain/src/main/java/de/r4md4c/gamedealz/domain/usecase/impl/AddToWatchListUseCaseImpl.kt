@@ -47,7 +47,7 @@ internal class AddToWatchListUseCaseImpl @Inject constructor(
         val stores = parameter.stores
 
         withContext(dispatchers.IO) {
-            val activeRegion = activeRegionUseCase()
+            val activeRegion = activeRegionUseCase.invoke()
             val watcheeModel = with(parameter) {
                 WatcheeModel(
                     plainId = plainId,

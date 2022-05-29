@@ -1,6 +1,10 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.configuration.ConfigurationProvider
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
@@ -54,7 +58,7 @@ class GetCurrentActiveRegionImplTest {
             )
 
         val result = runBlocking {
-            subject()
+            subject.invoke()
         }
 
         verify(configurationProvider).locale
@@ -78,7 +82,7 @@ class GetCurrentActiveRegionImplTest {
             )
 
         val result = runBlocking {
-            subject()
+            subject.invoke()
         }
 
         assertThat(result).isEqualTo(
@@ -108,7 +112,7 @@ class GetCurrentActiveRegionImplTest {
             )
 
         val result = runBlocking {
-            subject()
+            subject.invoke()
         }
 
         assertThat(result).isEqualTo(
@@ -139,7 +143,7 @@ class GetCurrentActiveRegionImplTest {
             )
 
         runBlocking {
-            subject()
+            subject.invoke()
         }
 
         verify(sharedPreferencesProvider).activeRegionAndCountry = DEFAULT_REGION to

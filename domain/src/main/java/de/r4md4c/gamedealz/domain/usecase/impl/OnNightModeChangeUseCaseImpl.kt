@@ -28,6 +28,6 @@ internal class OnNightModeChangeUseCaseImpl @Inject constructor(
     private val sharedPreferencesProvider: SharedPreferencesProvider
 ) : OnNightModeChangeUseCase {
 
-    override suspend fun activeNightModeChange(): Flow<NightMode> =
+    override fun activeNightModeChange(): Flow<NightMode> =
         sharedPreferencesProvider.reactiveNightMode.distinctUntilChanged()
 }

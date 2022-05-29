@@ -25,6 +25,7 @@ import de.r4md4c.gamedealz.auth.AccessTokenGetter
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
 import de.r4md4c.gamedealz.domain.model.UserInfo
+import de.r4md4c.gamedealz.domain.usecase.GetUserUseCase
 import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.repository.UserRemoteRepository
@@ -41,7 +42,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class GetUserUseCaseImplTest {
+class GetUserUseCaseTest {
 
     @Mock
     private lateinit var authState: AuthStateFlow
@@ -55,11 +56,11 @@ class GetUserUseCaseImplTest {
     @Mock
     private lateinit var accessTokenGetter: AccessTokenGetter
 
-    private lateinit var getUserUseCase: GetUserUseCaseImpl
+    private lateinit var getUserUseCase: GetUserUseCase
 
     @Before
     fun beforeEach() {
-        getUserUseCase = GetUserUseCaseImpl(
+        getUserUseCase = GetUserUseCase(
             authState,
             sharedPreferencesProvider,
             userRemoteRepository,
@@ -72,7 +73,7 @@ class GetUserUseCaseImplTest {
     fun `emits LoggedOut when auth state is NotAuthorized`() = runBlockingTest {
         ArrangeBuilder().withAuthState(AuthorizationState.NotAuthorized)
 
-        val flow = getUserUseCase()
+        val flow = getUserUseCase.invoke()
 
         flow.collect { assertThat(it).isEqualTo(UserInfo.UserLoggedOut) }
     }
@@ -81,7 +82,7 @@ class GetUserUseCaseImplTest {
     fun `emits LoggedOut when auth state is AuthorizationGranted`() = runBlockingTest {
         ArrangeBuilder().withAuthState(AuthorizationState.AuthorizationGranted)
 
-        val flow = getUserUseCase()
+        val flow = getUserUseCase.invoke()
 
         flow.collect { assertThat(it).isEqualTo(UserInfo.UserLoggedOut) }
     }
@@ -95,7 +96,7 @@ class GetUserUseCaseImplTest {
             )
         )
 
-        val flow = getUserUseCase()
+        val flow = getUserUseCase.invoke()
 
         flow.collect { assertThat(it).isEqualTo(UserInfo.LoggingUserFailed(reason = "Message")) }
     }
@@ -109,7 +110,7 @@ class GetUserUseCaseImplTest {
                 )
             ).withSharedPreferenceResult("aUser")
 
-            val flow = getUserUseCase()
+            val flow = getUserUseCase.invoke()
 
             flow.collect { assertThat(it).isEqualTo(UserInfo.LoggedInUser(username = "aUser")) }
         }
@@ -127,7 +128,7 @@ class GetUserUseCaseImplTest {
                 .withRemoteRepositoryResponse(User.KnownUser("aUser"))
 
 
-            val flow = getUserUseCase()
+            val flow = getUserUseCase.invoke()
 
             flow.collect { assertThat(it).isEqualTo(UserInfo.LoggedInUser(username = "aUser")) }
         }
@@ -145,7 +146,7 @@ class GetUserUseCaseImplTest {
                 .withRemoteRepositoryResponse(User.UnknownUser)
 
 
-            val flow = getUserUseCase()
+            val flow = getUserUseCase.invoke()
 
             flow.collect { assertThat(it).isEqualTo(UserInfo.LoggedInUnknownUser) }
         }
@@ -163,7 +164,7 @@ class GetUserUseCaseImplTest {
                 .withRemoteRepositoryResponse(User.KnownUser("aUser"))
 
 
-            getUserUseCase().collect()
+            getUserUseCase.invoke().collect()
 
             verify(sharedPreferencesProvider).userName = "aUser"
         }
@@ -181,7 +182,7 @@ class GetUserUseCaseImplTest {
                 .withRemoteRepositoryError()
 
 
-            val flow = getUserUseCase()
+            val flow = getUserUseCase.invoke()
 
             flow.collect { assertThat(it).isEqualTo(UserInfo.LoggedInUnknownUser) }
         }

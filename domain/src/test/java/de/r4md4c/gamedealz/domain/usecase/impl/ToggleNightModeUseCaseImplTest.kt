@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.domain.usecase.impl
 import de.r4md4c.commonproviders.appcompat.AppCompatProvider
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
+import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +39,7 @@ class ToggleNightModeUseCaseImplTest {
     private lateinit var appCompatProvider: AppCompatProvider
 
     @InjectMockKs
-    private lateinit var subject: ToggleNightModeUseCaseImpl
+    private lateinit var subject: ToggleNightModeUseCase
 
     @Before
     fun beforeEach() {

@@ -259,8 +259,7 @@ class NotificationsBroadcastReceiverTest {
 
         fun withAlertsCountUseCase(count: Int) = apply {
             runBlocking {
-                whenever(alertsCountUseCase())
-                    .thenReturn(flowOf(count))
+                whenever(alertsCountUseCase.invoke()).thenReturn(flowOf(count))
             }
         }
 

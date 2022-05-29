@@ -17,6 +17,8 @@
 
 package de.r4md4c.gamedealz.feature.home.state
 
+import de.r4md4c.gamedealz.domain.model.UserInfo
+
 internal sealed class HomeUserStatus {
     object LoggedOut : HomeUserStatus() {
         override fun toString(): String = "UserNotLoggedIn"
@@ -26,6 +28,17 @@ internal sealed class HomeUserStatus {
         data class KnownUser(val username: String) : LoggedIn()
         object UnknownUser : LoggedIn() {
             override fun toString(): String = "UnknownUser"
+        }
+    }
+
+    companion object {
+        fun fromUserInfo(userInfo: UserInfo): HomeUserStatus {
+            return when (userInfo) {
+                UserInfo.LoggedInUnknownUser -> LoggedIn.UnknownUser
+                is UserInfo.LoggedInUser -> LoggedIn.KnownUser(userInfo.username)
+                is UserInfo.LoggingUserFailed -> LoggedOut
+                UserInfo.UserLoggedOut -> LoggedOut
+            }
         }
     }
 }
