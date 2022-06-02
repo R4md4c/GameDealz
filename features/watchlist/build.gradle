@@ -44,7 +44,7 @@ dependencies {
     implementation Libraries.lifecycleViewModelKtx
     implementation Libraries.lifecycleRuntimeKtx
     implementation Libraries.lifecycleJava8Common
-    implementation Libraries.lifecycleLiveData
+    implementation Libraries.lifecycleLiveDataKtx
     implementation Libraries.recyclerView
     implementation Libraries.pagingRuntimeKtx
     implementation Libraries.fragmentsKtx

@@ -17,10 +17,16 @@
 
 package de.r4md4c.gamedealz.domain.usecase
 
-import de.r4md4c.gamedealz.domain.TypeParameter
+import de.r4md4c.gamedealz.data.repository.CountriesLocalDataSource
 import de.r4md4c.gamedealz.domain.model.CountryModel
+import de.r4md4c.gamedealz.domain.model.toCountryModel
+import javax.inject.Inject
 
-/**
- * Gets countries under specific region.
- */
-interface GetCountriesUnderRegionUseCase : UseCase<TypeParameter<String>, List<CountryModel>>
+class GetCountriesUnderRegionUseCase @Inject constructor(
+    private val countriesRepository: CountriesLocalDataSource
+) {
+
+    suspend fun invoke(regionCode: String): List<CountryModel> {
+        return countriesRepository.allCountriesUnderRegion(regionCode).map { it.toCountryModel() }
+    }
+}
