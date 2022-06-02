@@ -141,7 +141,10 @@ internal class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         reactiveRegionUseCase.activeRegionChange()
-            .onEach { activeRegion -> getStoresUseCase.invoke(activeRegion).first() }
+            .onEach { activeRegion ->
+                regionStatus.value = RegionStatus.Active(activeRegion)
+                getStoresUseCase.invoke(activeRegion).first()
+            }
             .launchIn(viewModelScope)
     }
 

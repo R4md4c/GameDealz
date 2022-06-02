@@ -15,20 +15,23 @@
  * along with GameDealz.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.r4md4c.gamedealz.feature.region.di
+package de.r4md4c.gamedealz.feature.region
 
-import androidx.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelKey
-import de.r4md4c.gamedealz.feature.region.RegionSelectionViewModel
+import de.r4md4c.gamedealz.domain.model.CountryModel
 
-@Module
-internal abstract class RegionsFeatureModule {
+internal data class RegionSelectionModel(
+    val regions: List<String> = emptyList(),
+    val activeRegionIndex: Int = -1,
+    val selectedRegionCode: String? = null
+)
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(RegionSelectionViewModel::class)
-    abstract fun bindsViewModel(it: RegionSelectionViewModel): ViewModel
-}
+internal data class CountrySelectionModel(
+    val countryDisplayNames: List<String> = emptyList(),
+    val activeCountryIndex: Int = -1,
+    val selectedCountryModel: CountryModel? = null
+)
+
+internal data class RegionSelectionViewState(
+    val regionSelectionModel: RegionSelectionModel,
+    val countrySelectionModel: CountrySelectionModel
+)

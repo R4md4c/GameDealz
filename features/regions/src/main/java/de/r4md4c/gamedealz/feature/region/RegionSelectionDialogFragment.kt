@@ -17,7 +17,6 @@
 
 package de.r4md4c.gamedealz.feature.region
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -27,26 +26,28 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.gamedealz.common.aware.DrawerAware
-import de.r4md4c.gamedealz.common.base.fragment.viewBinding
+import de.r4md4c.gamedealz.common.viewmodel.createAbstractSavedStateFactory
 import de.r4md4c.gamedealz.core.coreComponent
 import de.r4md4c.gamedealz.feature.region.di.DaggerRegionsComponent
 import de.r4md4c.gamedealz.feature.regions.R
 import de.r4md4c.gamedealz.feature.regions.databinding.DialogRegionChoiceBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
-class RegionSelectionDialogFragment : DialogFragment() {
+class RegionSelectionDialogFragment : DialogFragment(R.layout.dialog_region_choice) {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactoryCreator
+    internal lateinit var viewModelFactory: RegionSelectionViewModel.Factory
 
-    private val viewModel by viewModels<RegionSelectionViewModel> { viewModelFactory.create(this) }
-
-    private var dialogView: View by Delegates.notNull()
+    private val viewModel by viewModels<RegionSelectionViewModel> {
+        createAbstractSavedStateFactory(this, arguments, viewModelFactory::create)
+    }
 
     // A hack to fix a bug in spinners that makes them fire onItemSelected without any user interaction.
     private var skipFirstSelection: Int = 1
@@ -55,114 +56,81 @@ class RegionSelectionDialogFragment : DialogFragment() {
         RegionSelectionDialogFragmentArgs.fromBundle(requireArguments()).region
     }
 
-    private val binding by viewBinding(DialogRegionChoiceBinding::bind)
-
     override fun onAttach(context: Context) {
         onInject(context)
         super.onAttach(context)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = layoutInflater.inflate(R.layout.dialog_region_choice, null)
+        val binding = DialogRegionChoiceBinding.inflate(layoutInflater, null, false)
 
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest { state ->
+                    renderState(binding, state)
+                }
+            }
+        }
+
+        binding.regionSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    viewModel.onRegionSelected(position)
+                }
+            }
+
+        binding.countrySpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    viewModel.onCountrySelected(position)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            }
         return MaterialAlertDialogBuilder(requireActivity())
-            .setView(dialogView)
+            .setView(binding.root)
             .setPositiveButton(android.R.string.ok) { _, _ -> }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .create()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val regionIndex = savedInstanceState?.getInt(STATE_REGION_INDEX)
-        val countryIndex = savedInstanceState?.getInt(STATE_COUNTRY_INDEX)
+    private fun renderState(binding: DialogRegionChoiceBinding, state: RegionSelectionViewState) {
+        binding.regionSpinner.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            android.R.id.text1,
+            state.regionSelectionModel.regions
+        )
+        binding.regionSpinner.setSelection(state.regionSelectionModel.activeRegionIndex)
 
-        setupRegions(regionIndex)
-        setupCountries(countryIndex)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(STATE_REGION_INDEX, binding.regionSpinner.selectedItemPosition)
-        outState.putInt(STATE_COUNTRY_INDEX, binding.countrySpinner.selectedItemPosition)
+        binding.countrySpinner.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            android.R.id.text1,
+            state.countrySelectionModel.countryDisplayNames
+        )
+        binding.countrySpinner.setSelection(state.countrySelectionModel.activeCountryIndex)
     }
 
     override fun onResume() {
         super.onResume()
         (dialog as? AlertDialog)?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
-            submitResult()
-        }
-    }
-
-    private fun submitResult() {
-        val selectedRegionCode = viewModel.regions.value?.let {
-            it.regions[binding.regionSpinner.selectedItemPosition]
-        }
-        val selectedCountryCode =
-            viewModel.countries.value
-                ?.takeIf { binding.countrySpinner.selectedItemPosition > -1 }
-                ?.let {
-                    it.countries[binding.countrySpinner.selectedItemPosition]
-                }
-        (selectedRegionCode to selectedCountryCode).takeIf {
-            it.first != null && it.second != null
-        }?.let {
-            viewModel.onSubmitResult(it.first!!, it.second!!)
+            viewModel.submitResult()
             (requireActivity() as? DrawerAware)?.closeDrawer()
             dismiss()
         }
-    }
-
-    @SuppressLint("FragmentLiveDataObserve")
-    private fun setupRegions(regionIndex: Int?) {
-        viewModel.requestRegions(activeRegion, regionIndex)
-        viewModel.regions.observe(this, Observer { regionSelectedModel ->
-            with(dialogView) {
-                binding.regionSpinner.adapter =
-                    ArrayAdapter(
-                        context,
-                        android.R.layout.simple_dropdown_item_1line,
-                        android.R.id.text1,
-                        regionSelectedModel.regions
-                    )
-                binding.regionSpinner.setSelection(regionSelectedModel.activeRegionIndex)
-
-                binding.regionSpinner.onItemSelectedListener =
-                    object : AdapterView.OnItemSelectedListener {
-                        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-
-                        override fun onItemSelected(
-                            parent: AdapterView<*>,
-                            view: View?,
-                            position: Int,
-                            id: Long
-                        ) {
-                            if (skipFirstSelection-- <= 0) {
-                                viewModel.onRegionSelected(parent.adapter.getItem(position) as String)
-                        }
-                    }
-                }
-            }
-        })
-    }
-
-    @SuppressLint("FragmentLiveDataObserve")
-    private fun setupCountries(countryIndex: Int?) {
-        viewModel.requestCountriesUnderRegion(activeRegion, countryIndex)
-        viewModel.countries.observe(this, Observer { selectedCountryModel ->
-            with(dialogView) {
-                binding.countrySpinner.adapter =
-                    ArrayAdapter(
-                        context,
-                        android.R.layout.simple_dropdown_item_1line,
-                        android.R.id.text1,
-                        selectedCountryModel.countries
-                    )
-                selectedCountryModel.activeCountryIndex?.let {
-                    binding.countrySpinner.setSelection(it)
-                }
-            }
-        })
     }
 
     private fun onInject(context: Context) {

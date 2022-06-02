@@ -22,10 +22,8 @@ import dagger.Module
 import de.r4md4c.gamedealz.domain.repository.GameDetailsRepository
 import de.r4md4c.gamedealz.domain.repository.GameDetailsRepositoryImpl
 import de.r4md4c.gamedealz.domain.usecase.AddToWatchListUseCase
-import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.CheckPriceThresholdUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetAlertsCountUseCase
-import de.r4md4c.gamedealz.domain.usecase.GetCountriesUnderRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCurrentActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetDealsUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetImageUrlUseCase
@@ -39,9 +37,7 @@ import de.r4md4c.gamedealz.domain.usecase.OnNightModeChangeUseCase
 import de.r4md4c.gamedealz.domain.usecase.RemoveWatcheesUseCase
 import de.r4md4c.gamedealz.domain.usecase.ToggleStoresUseCase
 import de.r4md4c.gamedealz.domain.usecase.impl.AddToWatchListUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.ChangeActiveRegionUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.CheckPriceThresholdUseCaseImpl
-import de.r4md4c.gamedealz.domain.usecase.impl.GetCountriesUnderRegionUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetCurrentActiveRegionUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetDealsUseCaseImpl
 import de.r4md4c.gamedealz.domain.usecase.impl.GetImageUrlFromSteamUseCaseImpl
@@ -76,11 +72,6 @@ abstract class UseCaseModule {
     ): GetCurrentActiveRegionUseCase
 
     @Binds
-    internal abstract fun bindsChangeActiveRegionUseCase(
-        it: ChangeActiveRegionUseCaseImpl
-    ): ChangeActiveRegionUseCase
-
-    @Binds
     internal abstract fun bindsGetStoresUseCase(
         it: GetStoresUseCaseImpl
     ): GetStoresUseCase
@@ -99,11 +90,6 @@ abstract class UseCaseModule {
     internal abstract fun bindsGetImageUrlUseCase(
         it: GetImageUrlFromSteamUseCaseImpl
     ): GetImageUrlUseCase
-
-    @Binds
-    internal abstract fun bindsGetCountriesUnderRegionUseCase(
-        it: GetCountriesUnderRegionUseCaseImpl
-    ): GetCountriesUnderRegionUseCase
 
     @Binds
     internal abstract fun bindsAddToWatchListUseCase(

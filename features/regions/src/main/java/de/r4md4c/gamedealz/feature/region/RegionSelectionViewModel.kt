@@ -17,107 +17,116 @@
 
 package de.r4md4c.gamedealz.feature.region
 
-import androidx.collection.ArrayMap
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.domain.TypeParameter
-import de.r4md4c.gamedealz.domain.model.ActiveRegion
-import de.r4md4c.gamedealz.domain.model.CountryModel
 import de.r4md4c.gamedealz.domain.model.displayName
 import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionParameter
 import de.r4md4c.gamedealz.domain.usecase.ChangeActiveRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetCountriesUnderRegionUseCase
 import de.r4md4c.gamedealz.domain.usecase.GetRegionsUseCase
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-data class RegionSelectionModel(val regions: List<String>, val activeRegionIndex: Int)
-data class CountrySelectionModel(val countries: List<String>, val activeCountryIndex: Int?)
-
-class RegionSelectionViewModel @Inject constructor(
+internal class RegionSelectionViewModel @AssistedInject constructor(
     private val dispatchers: IDispatchers,
     private val countriesUnderRegionUseCase: GetCountriesUnderRegionUseCase,
     private val getRegionsUseCase: GetRegionsUseCase,
-    private val changeActiveRegionUseCase: ChangeActiveRegionUseCase
+    private val changeActiveRegionUseCase: ChangeActiveRegionUseCase,
+    @Assisted private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val displayNameToCountryCodeMap: MutableMap<String, CountryModel>
-            by lazy { ArrayMap<String, CountryModel>() }
+    private val activeRegion =
+        RegionSelectionDialogFragmentArgs.fromSavedStateHandle(savedStateHandle).region
 
-    private val _regions by lazy { MutableLiveData<RegionSelectionModel>() }
-    val regions: LiveData<RegionSelectionModel> by lazy { _regions }
+    private val selectedCountryIndex = savedStateHandle.getLiveData("countryIndex", -1)
+    private val selectedRegionIndex = savedStateHandle.getLiveData("regionIndex", -1)
 
-    private val _countries by lazy { MutableLiveData<CountrySelectionModel>() }
-    val countries: LiveData<CountrySelectionModel> by lazy { _countries }
+    private val stateBuilder = combine(
+        selectedRegionIndex.asFlow(),
+        selectedCountryIndex.asFlow()
+    ) { regionIndex, countryIndex ->
+        val regions = getRegionsUseCase()
 
-    fun requestRegions(activeRegion: ActiveRegion, restoreRegionIndex: Int?) {
-        viewModelScope.launch(dispatchers.IO) {
+        val regionSelectionModel = RegionSelectionModel(
+            regions = regions.map { it.regionCode.uppercase() },
+            activeRegionIndex = if (regionIndex == -1) {
+                regions.indexOfFirst { it.regionCode == activeRegion.regionCode }
+            } else {
+                regionIndex
+            },
+            selectedRegionCode = regions.getOrNull(regionIndex)?.regionCode
+        )
 
-            // Filter out regions that have no countries
-            val allRegions = getRegionsUseCase().filter { it.countries.isNotEmpty() }
+        val countries = countriesUnderRegionUseCase.invoke(
+            regions[regionSelectionModel.activeRegionIndex].regionCode
+        )
+        val countrySelectionModel = CountrySelectionModel(
+            countryDisplayNames = countries.map { it.displayName() },
+            activeCountryIndex = if (countryIndex == -1) {
+                countries.indexOfFirst { it.code == activeRegion.country.code }
+            } else {
+                countryIndex
+            },
+            selectedCountryModel = countries.getOrNull(countryIndex)
+        )
+        RegionSelectionViewState(regionSelectionModel, countrySelectionModel)
+    }
 
-            _regions.postValue(
-                RegionSelectionModel(
-                    allRegions.map { it.regionCode.uppercase() },
-                    restoreRegionIndex
-                        ?: allRegions.indexOfFirst { r -> r.regionCode == activeRegion.regionCode })
+    val state by lazy {
+        stateBuilder.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            RegionSelectionViewState(
+                RegionSelectionModel(), CountrySelectionModel()
             )
+        ).also {
+            loadRegions()
         }
     }
 
-    fun requestCountriesUnderRegion(activeRegion: ActiveRegion, restoreCountryIndex: Int?) {
-        loadCountries(activeRegion.regionCode.lowercase()) {
-            _countries.postValue(
-                CountrySelectionModel(it.map { model -> model.displayName() },
-                    restoreCountryIndex
-                        ?: it.indexOfFirst { c -> c.code == activeRegion.country.code })
-            )
+    private fun loadRegions() {
+        viewModelScope.launch {
+            val regions = getRegionsUseCase()
+            selectedRegionIndex.value =
+                regions.indexOfFirst { it.regionCode == activeRegion.regionCode }
+
+            val countries = countriesUnderRegionUseCase.invoke(activeRegion.regionCode)
+            selectedCountryIndex.value =
+                countries.indexOfFirst { it.code == activeRegion.country.code }
         }
     }
 
-    fun onRegionSelected(regionCode: String) {
-        loadCountries(regionCode.lowercase()) {
-            _countries.postValue(
-                CountrySelectionModel(
-                    it.map { model -> model.displayName() },
-                    0
-                )
-            )
-        }
+    fun onRegionSelected(index: Int) {
+        selectedRegionIndex.value = index
+        selectedCountryIndex.value = 0
     }
 
-    fun onSubmitResult(regionCode: String, countryDisplayName: String) {
-        val countryModel = displayNameToCountryCodeMap[countryDisplayName] ?: return
+    fun onCountrySelected(index: Int) {
+        selectedCountryIndex.value = index
+    }
 
-        // Launching to the global scope so that we don't get tied to this VM's lifecycle.
+    fun submitResult() {
+        val regionCode = state.value.regionSelectionModel.selectedRegionCode ?: return
+        val countryCode = state.value.countrySelectionModel.selectedCountryModel ?: return
+
         GlobalScope.launch {
-            changeActiveRegionUseCase(
-                TypeParameter(
-                    ChangeActiveRegionParameter(
-                        regionCode.lowercase(),
-                        countryModel.code
-                    )
-                )
+            changeActiveRegionUseCase.invoke(
+                ChangeActiveRegionParameter(regionCode = regionCode, countryCode = countryCode.code)
             )
         }
     }
 
-    private inline fun loadCountries(regionCode: String, crossinline block: (List<CountryModel>) -> Unit) {
-        viewModelScope.launch(dispatchers.IO) {
-            val countries = countriesUnderRegionUseCase(TypeParameter(regionCode))
-            saveDisplayNames(countries)
-            block(countries)
-        }
-    }
-
-    private fun saveDisplayNames(countryModels: List<CountryModel>) {
-        displayNameToCountryCodeMap.clear()
-        countryModels.associateByTo(displayNameToCountryCodeMap) { countryModel ->
-            countryModel.displayName()
-        }
+    @AssistedFactory
+    interface Factory {
+        fun create(savedStateHandle: SavedStateHandle): RegionSelectionViewModel
     }
 }

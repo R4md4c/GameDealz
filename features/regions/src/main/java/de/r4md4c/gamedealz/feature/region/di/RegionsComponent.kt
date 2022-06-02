@@ -18,17 +18,12 @@
 package de.r4md4c.gamedealz.feature.region.di
 
 import dagger.Component
-import de.r4md4c.commonproviders.di.viewmodel.ViewModelInjectionModule
 import de.r4md4c.gamedealz.common.di.FeatureScope
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.region.RegionSelectionDialogFragment
 
 @FeatureScope
 @Component(
-    modules = [
-        ViewModelInjectionModule::class,
-        RegionsFeatureModule::class
-    ],
     dependencies = [
         CoreComponent::class
     ]
