@@ -1,5 +1,6 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -9,10 +10,6 @@ dependencies {
     implementation TestLibraries.junit
     implementation project(':common')
 
-    api (TestLibraries.mockK) { exclude module: 'objenesis' }
     api TestLibraries.mockitoKotlin
     api TestLibraries.assertjCore
 }
-
-sourceCompatibility = "8"
-targetCompatibility = "8"

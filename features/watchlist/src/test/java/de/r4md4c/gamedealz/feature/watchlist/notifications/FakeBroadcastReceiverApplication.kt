@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.feature.watchlist.notifications
 
 import android.app.Application
-import com.nhaarman.mockitokotlin2.mock
 import de.r4md4c.gamedealz.common.di.HasComponent
 import de.r4md4c.gamedealz.core.CoreComponent
+import org.mockito.kotlin.mock
 
 internal class FakeBroadcastReceiverApplication : Application(), HasComponent<CoreComponent> {
 

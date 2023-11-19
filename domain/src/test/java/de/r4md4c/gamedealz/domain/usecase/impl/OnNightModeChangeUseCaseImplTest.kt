@@ -18,35 +18,37 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
-import io.mockk.MockKAnnotations
-import io.mockk.coEvery
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.verify
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class OnNightModeChangeUseCaseImplTest {
 
-    @MockK
+    @Mock
     private lateinit var sharedPreferencesProvider: SharedPreferencesProvider
 
-    @InjectMockKs
+    @InjectMocks
     private lateinit var subject: OnNightModeChangeUseCaseImpl
 
     @Before
     fun beforeEach() {
-        MockKAnnotations.init(this)
+        @Suppress("DEPRECATION")
+        MockitoAnnotations.initMocks(this)
     }
 
     @Test
     fun `it should invoke sharedPreferencesProvider`() {
-        coEvery { sharedPreferencesProvider.reactiveNightMode } returns emptyFlow()
+        whenever(sharedPreferencesProvider.reactiveNightMode) doReturn emptyFlow()
 
         runBlocking { subject.activeNightModeChange() }
 
-        verify { sharedPreferencesProvider.reactiveNightMode }
+        verify(sharedPreferencesProvider).reactiveNightMode
     }
 }

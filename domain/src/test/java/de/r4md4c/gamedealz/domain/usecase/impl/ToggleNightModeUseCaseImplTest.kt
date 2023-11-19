@@ -21,53 +21,58 @@ import de.r4md4c.commonproviders.appcompat.AppCompatProvider
 import de.r4md4c.commonproviders.appcompat.NightMode
 import de.r4md4c.commonproviders.preferences.SharedPreferencesProvider
 import de.r4md4c.gamedealz.domain.usecase.ToggleNightModeUseCase
-import io.mockk.MockKAnnotations
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.verifyBlocking
+import org.mockito.kotlin.whenever
 
 class ToggleNightModeUseCaseImplTest {
 
-    @MockK(relaxed = true)
+    @Mock
     private lateinit var sharedPreferencesProvider: SharedPreferencesProvider
 
-    @MockK(relaxed = true)
+    @Mock
     private lateinit var appCompatProvider: AppCompatProvider
 
-    @InjectMockKs
+    @InjectMocks
     private lateinit var subject: ToggleNightModeUseCase
 
     @Before
     fun beforeEach() {
-        MockKAnnotations.init(this)
+        @Suppress("DEPRECATION")
+        MockitoAnnotations.initMocks(this)
     }
 
     @Test
     fun `NightModeDisabled is set when preferences returns NightModeEnabled`() {
-        coEvery { sharedPreferencesProvider.activeNightMode } returns NightMode.Enabled
+        whenever(sharedPreferencesProvider.activeNightMode) doReturn NightMode.Enabled
 
         runBlocking { subject.invoke() }
 
-        coVerify {
-            sharedPreferencesProvider.activeNightMode = NightMode.Disabled
-            appCompatProvider.currentNightMode = NightMode.Disabled
+        verifyBlocking(sharedPreferencesProvider) {
+            activeNightMode = NightMode.Disabled
+        }
+        verifyBlocking(appCompatProvider) {
+            currentNightMode = NightMode.Disabled
         }
     }
 
     @Test
     fun `NightModeEnabled is set when preferences returns NightModeDisabled`() {
-        coEvery { sharedPreferencesProvider.activeNightMode } returns NightMode.Disabled
+        whenever(sharedPreferencesProvider.activeNightMode) doReturn NightMode.Disabled
 
         runBlocking { subject.invoke() }
 
-        coVerify {
-            sharedPreferencesProvider.activeNightMode = NightMode.Enabled
-            appCompatProvider.currentNightMode = NightMode.Enabled
+        verifyBlocking(sharedPreferencesProvider) {
+            this.activeNightMode = NightMode.Enabled
+        }
+        verifyBlocking(appCompatProvider) {
+            currentNightMode = NightMode.Enabled
         }
     }
-
 }

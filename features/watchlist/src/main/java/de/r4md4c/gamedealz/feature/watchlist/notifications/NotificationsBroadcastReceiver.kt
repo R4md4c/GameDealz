@@ -69,9 +69,13 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
                 notificationModel.toDetailsPendingIntent(context)?.send()
             } else if (intent.action == ACTION_VIEW_BUY_URL) {
                 notificationManager.cancel(notificationModel.watcheeModel.id!!.toInt())
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(notificationModel.priceModel.url)).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(notificationModel.priceModel.url)
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
             }
 
             if (alertsCount == 0) {
@@ -99,16 +103,25 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
 
-        fun toBuyUrlIntent(context: Context, notificationModel: WatcheeNotificationModel): PendingIntent =
+        fun toBuyUrlIntent(
+            context: Context,
+            notificationModel: WatcheeNotificationModel
+        ): PendingIntent =
             PendingIntent.getBroadcast(
                 context, notificationModel.watcheeModel.id!!.toInt(),
-                notificationModel.buyIntent(context), PendingIntent.FLAG_UPDATE_CURRENT
+                notificationModel.buyIntent(context),
+                FLAGS_PENDING_INTENT
             )
 
-        fun toPendingIntent(context: Context, notificationModel: WatcheeNotificationModel): PendingIntent =
+        fun toPendingIntent(
+            context: Context,
+            notificationModel: WatcheeNotificationModel
+        ): PendingIntent =
             PendingIntent.getBroadcast(
-                context, notificationModel.watcheeModel.id!!.toInt(),
-                notificationModel.intent(context), PendingIntent.FLAG_UPDATE_CURRENT
+                context,
+                notificationModel.watcheeModel.id!!.toInt(),
+                notificationModel.intent(context),
+                FLAGS_PENDING_INTENT
             )
 
         private fun WatcheeNotificationModel.intent(context: Context): Intent =
@@ -128,5 +141,8 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
         private const val EXTRA_MODEL = "extra_notification_model"
         private const val ACTION_VIEW_GAME_DETAILS = "${Intent.ACTION_VIEW}.game_details"
         private const val ACTION_VIEW_BUY_URL = "${Intent.ACTION_VIEW}.buyUrl"
+
+        private const val FLAGS_PENDING_INTENT =
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     }
 }

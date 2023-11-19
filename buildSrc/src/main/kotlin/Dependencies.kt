@@ -143,14 +143,14 @@ object Libraries {
 
 object TestLibraries {
     private object Versions {
-        const val mockk = "1.10.0"
-        const val robolectric = "4.6.1"
+        const val robolectric = "4.11.1"
         const val assertj = "3.20.2"
         const val mockito_kotlin = "5.1.0"
         const val core_testing = "2.1.0"
         const val liveDataTesting = "1.2.0"
         const val junit4 = "4.13.2"
         const val androidXTest = "1.4.0"
+        const val orchestratorVersion = "1.4.2"
         const val espresso = "3.4.0"
         const val uiAutomator = "2.2.0"
         const val mockito = "3.11.2"
@@ -161,7 +161,6 @@ object TestLibraries {
 
     const val androidXTestExtJunit = "androidx.test.ext:junit:1.1.3"
     const val room = "androidx.room:room-testing:${Libraries.Versions.room}"
-    const val mockK = "io.mockk:mockk:${Versions.mockk}"
     const val mockitoKotlin =
         "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
     const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
@@ -184,7 +183,7 @@ object TestLibraries {
     const val dexMaker = "com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.0"
     const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"
-    const val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"
+    const val testOrchestrator = "androidx.test:orchestrator:${Versions.orchestratorVersion}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espresso}"
     const val espressoContrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso}"
     const val uiAutomator = "androidx.test.uiautomator:uiautomator:${Versions.uiAutomator}"

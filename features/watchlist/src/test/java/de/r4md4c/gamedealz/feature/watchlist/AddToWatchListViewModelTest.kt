@@ -19,8 +19,6 @@ package de.r4md4c.gamedealz.feature.watchlist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.domain.model.ActiveRegion
 import de.r4md4c.gamedealz.domain.model.CountryModel
@@ -42,6 +40,8 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.whenever
 import java.util.*
 
 class AddToWatchListViewModelTest {
@@ -170,15 +170,15 @@ class AddToWatchListViewModelTest {
         }
 
         fun emitLoading() = apply {
-            plainDetailsChannel.offer(Resource.loading(null))
+            plainDetailsChannel.trySend(Resource.loading(null))
         }
 
         fun emitData(priceDetailsModel: PlainDetailsModel) = apply {
-            plainDetailsChannel.offer(Resource.success(priceDetailsModel))
+            plainDetailsChannel.trySend(Resource.success(priceDetailsModel))
         }
 
         fun emitError() = apply {
-            plainDetailsChannel.offer(Resource.error("Error", null))
+            plainDetailsChannel.trySend(Resource.error("Error", null))
         }
 
         fun arrange() = apply {

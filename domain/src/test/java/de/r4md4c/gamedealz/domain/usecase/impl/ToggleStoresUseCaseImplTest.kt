@@ -1,8 +1,5 @@
 package de.r4md4c.gamedealz.domain.usecase.impl
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.Store
 import de.r4md4c.gamedealz.data.repository.StoresLocalDataSource
 import de.r4md4c.gamedealz.domain.CollectionParameter
@@ -13,6 +10,9 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class ToggleStoresUseCaseImplTest {
 

@@ -22,11 +22,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.FragmentActivity
 import androidx.test.core.app.ApplicationProvider
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.isNull
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.test.runBlockingTest
 import net.openid.appauth.AuthorizationException
@@ -41,6 +36,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.isNull
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
@@ -96,8 +96,8 @@ class AppAuthActivityDelegateTest {
 
         delegate.onActivityResult(activity, 0x11, null)
 
-        verifyZeroInteractions(authStateManager)
-        verifyZeroInteractions(accessTokenRetriever)
+        verifyNoInteractions(authStateManager)
+        verifyNoInteractions(accessTokenRetriever)
     }
 
     @Test
@@ -106,8 +106,8 @@ class AppAuthActivityDelegateTest {
 
         delegate.onActivityResult(activity, 0x10, null)
 
-        verifyZeroInteractions(authStateManager)
-        verifyZeroInteractions(accessTokenRetriever)
+        verifyNoInteractions(authStateManager)
+        verifyNoInteractions(accessTokenRetriever)
     }
 
     @Test

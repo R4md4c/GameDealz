@@ -17,12 +17,6 @@
 
 package de.r4md4c.gamedealz.domain.usecase.impl.internal
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import de.r4md4c.gamedealz.data.entity.Watchee
 import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.repository.PricesRemoteDataSource
@@ -32,6 +26,12 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class RetrievePricesGroupedByCountriesHelperTest {
 
