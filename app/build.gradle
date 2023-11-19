@@ -24,6 +24,15 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
+    signingConfigs {
+        gamedealz {
+            keyAlias = providers.environmentVariable("KEY_STORE_ALIAS").orNull
+            keyPassword = providers.environmentVariable("KEY_STORE_PASSWORD").orNull
+            storeFile = file("$rootDir/gamedealz.keystore")
+            storePassword = providers.environmentVariable("KEY_STORE_FILE_PASSWORD").orNull
+        }
+    }
+
     buildFeatures {
         buildConfig true
     }
@@ -37,11 +46,8 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFiles fileTree('proguard-rules').asList().toArray()
+            signingConfig = signingConfigs.gamedealz
         }
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     testOptions {

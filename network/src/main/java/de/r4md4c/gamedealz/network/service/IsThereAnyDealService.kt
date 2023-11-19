@@ -27,7 +27,6 @@ import de.r4md4c.gamedealz.network.model.Plain
 import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.Region
 import de.r4md4c.gamedealz.network.model.Stores
-import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -43,26 +42,26 @@ typealias PlainPriceList = Map<String, ListWrapper<PriceDTO>>
 interface IsThereAnyDealService {
 
     @GET("v01/web/regions/")
-    fun regions(): Deferred<DataWrapper<RegionCodes>>
+    suspend fun regions(): DataWrapper<RegionCodes>
 
     @GET("v02/web/stores")
-    fun stores(@Query("region") region: String, @Query("country") country: String?): Deferred<Stores>
+    suspend fun stores(@Query("region") region: String, @Query("country") country: String?): Stores
 
     @GET("v02/game/plain")
-    fun plain(
+    suspend fun plain(
         @Query("key") key: String = BuildConfig.API_KEY,
         @Query("shop") shop: String,
         @Query("game_id") gameId: String
-    ): Deferred<DataWrapper<Plain>>
+    ): DataWrapper<Plain>
 
     @GET("v01/game/plain/list")
-    fun allPlains(
+    suspend fun allPlains(
         @Query("key") key: String = BuildConfig.API_KEY,
         @Query("shops") shops: String
-    ): Deferred<DataWrapper<ShopPlains>>
+    ): DataWrapper<ShopPlains>
 
     @GET("v01/game/prices")
-    fun prices(
+    suspend fun prices(
         @Query("key") key: String = BuildConfig.API_KEY,
         @Query("plains") plains: String,
         @Query("region") region: String? = null,
@@ -70,27 +69,27 @@ interface IsThereAnyDealService {
         @Query("shops") shops: String? = null,
         @Query("added") added: Long? = null
     ):
-            Deferred<DataWrapper<PlainPriceList>>
+            DataWrapper<PlainPriceList>
 
     @GET("v01/game/lowest")
-    fun historicalLow(
+    suspend fun historicalLow(
         @Query("key") key: String = BuildConfig.API_KEY,
         @Query("plains") plains: String,
         @Query("region") region: String? = null,
         @Query("country") country: String? = null,
         @Query("shops") shops: String? = null
     ):
-            Deferred<DataWrapper<Map<String, HistoricalLowDTO>>>
+            DataWrapper<Map<String, HistoricalLowDTO>>
 
     @GET("v01/deals/list")
-    fun deals(
+    suspend fun deals(
         @Query("key") key: String = BuildConfig.API_KEY,
         @Query("offset") offset: Int = 0,
         @Query("limit") limit: Int = 20,
         @Query("region") region: String?,
         @Query("country") country: String?,
         @Query("shops") shops: String
-    ): Deferred<DataWrapper<ListWrapper<Deal>>>
+    ): DataWrapper<ListWrapper<Deal>>
 
     @GET("v01/user/info")
     suspend fun userInfo(

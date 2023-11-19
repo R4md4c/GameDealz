@@ -35,10 +35,10 @@ internal class IsThereAnyDealRepository @Inject constructor(
     DealsRemoteRepository, PlainsRemoteRepository,
     PricesRemoteDataSource, UserRemoteRepository {
 
-    override suspend fun regions(): RegionCodes = service.regions().await().data
+    override suspend fun regions(): RegionCodes = service.regions().data
 
     override suspend fun stores(region: String, country: String?): List<Store> =
-        service.stores(region, country).await().data
+        service.stores(region, country).data
 
     override suspend fun deals(
         offset: Int,
@@ -53,12 +53,12 @@ internal class IsThereAnyDealRepository @Inject constructor(
             region = region,
             country = country,
             shops = shops.toCommaSeparated()
-        ).await().run {
+        ).run {
             PageResult(this.data.count ?: 0, this.data.list)
         }
 
     override suspend fun plainsList(shops: Set<String>): ShopPlains =
-        service.allPlains(shops = shops.fold("") { acc, value -> "$acc$value," }).await().data
+        service.allPlains(shops = shops.fold("") { acc, value -> "$acc$value," }).data
 
     override suspend fun retrievesPrices(
         plainIds: Set<String>,
@@ -73,7 +73,7 @@ internal class IsThereAnyDealRepository @Inject constructor(
             region = regionCode,
             country = countryCode,
             added = added
-        ).await().data.mapValues { it.value.list }
+        ).data.mapValues { it.value.list }
 
     override suspend fun historicalLow(
         plainIds: Set<String>,
@@ -86,7 +86,7 @@ internal class IsThereAnyDealRepository @Inject constructor(
             shops = shops.toCommaSeparated(),
             region = regionCode,
             country = countryCode
-        ).await().data
+        ).data
 
     override suspend fun user(token: AccessToken): User = service.userInfo(token.accessToken).run {
         data["username"]?.let { User.KnownUser(it) } ?: User.UnknownUser

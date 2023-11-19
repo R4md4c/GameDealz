@@ -24,3 +24,6 @@
     <init>(...);
 }
 -keep class androidx.appcompat.graphics.** { *; }
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn  org.openjsse.**
