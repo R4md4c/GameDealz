@@ -5,6 +5,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdk AndroidSdk.compile
 
+    namespace = "de.r4md4c.gamedealz.workmanager"
     defaultConfig {
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target

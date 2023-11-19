@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 
 @Entity(
     foreignKeys = [ForeignKey(

@@ -40,12 +40,12 @@ import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.base.fragment.viewBinding
-import de.r4md4c.gamedealz.common.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.image.GlideApp
 import de.r4md4c.gamedealz.common.navigation.Navigator
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
+import de.r4md4c.gamedealz.common.ui.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.viewmodel.createAbstractSavedStateFactory
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.ScreenshotModel

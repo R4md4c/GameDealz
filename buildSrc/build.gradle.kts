@@ -1,7 +1,6 @@
 repositories {
     mavenCentral()
     google()
-    jcenter()
 }
 
 plugins {
@@ -9,8 +8,8 @@ plugins {
     id("com.github.gmazzo.buildconfig") version "3.0.2"
 }
 
-val kotlinVersion = "1.6.21"
-val androidGradlePluginVersion = "7.2.0"
+val kotlinVersion = "1.9.20"
+val androidGradlePluginVersion = "8.1.4"
 
 buildConfig {
     buildConfigField("String", "KOTLIN_VERSION", "\"$kotlinVersion\"")
@@ -20,8 +19,4 @@ buildConfig {
 dependencies {
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
 }

@@ -24,6 +24,10 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"

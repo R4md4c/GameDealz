@@ -40,8 +40,8 @@ import de.r4md4c.commonproviders.di.viewmodel.ViewModelFactoryCreator
 import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.base.fragment.viewBinding
-import de.r4md4c.gamedealz.common.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.decorator.StaggeredGridDecorator
+import de.r4md4c.gamedealz.common.ui.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.feature.deals.databinding.FragmentDealsBinding
 import de.r4md4c.gamedealz.feature.deals.di.DaggerDealsComponent

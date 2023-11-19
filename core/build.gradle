@@ -19,6 +19,7 @@ android {
 
 dependencies {
     implementation Libraries.kotlinStdLib
+    api Libraries.okhttp
 
     api project(':auth')
     implementation project(':data')

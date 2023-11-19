@@ -21,7 +21,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import de.r4md4c.gamedealz.common.R
+import de.r4md4c.gamedealz.common.ui.R
 
 class VerticalLinearDecorator(private val context: Context) : RecyclerView.ItemDecoration() {
 

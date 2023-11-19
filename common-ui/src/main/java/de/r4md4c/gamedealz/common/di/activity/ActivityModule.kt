@@ -23,7 +23,7 @@ import androidx.navigation.findNavController
 import dagger.Module
 import dagger.Provides
 import de.r4md4c.commonproviders.di.CommonProvidersActivityModule
-import de.r4md4c.gamedealz.common.R
+import de.r4md4c.gamedealz.common.ui.R
 
 @Module(includes = [ActivityBindsModule::class, CommonProvidersActivityModule::class])
 object ActivityModule {

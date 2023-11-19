@@ -53,7 +53,7 @@ class GameDealzPlugin : Plugin<Project> {
 
             if (pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)) {
                 val baseExtension = this.extensions.getByType<BaseExtension>()
-                applyCommonAndroidOptions(baseExtension)
+                applyCommonAndroidOptions(project, baseExtension)
                 this.dependencies.add("kaptAndroidTest", Libraries.assistedInjectCompiler)
                 this.dependencies.add("kaptAndroidTest", Libraries.daggerCompiler)
 
@@ -75,9 +75,15 @@ class GameDealzPlugin : Plugin<Project> {
     private fun Project.hasKotlinPlugin() =
         pluginManager.hasPlugin(PLUGIN_KOTLIN) || pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)
 
-    private fun applyCommonAndroidOptions(extension: BaseExtension) {
+    private fun applyCommonAndroidOptions(project: Project, extension: BaseExtension) {
+        val namespacePath = project.path.removePrefix(":")
+            .replace(':', '.')
+            .replace('-', '.')
+            .replace("features", "feature")
+        extension.namespace =
+            "de.r4md4c.gamedealz.$namespacePath"
         extension.packagingOptions {
-            excludes.addAll(
+            resources.excludes.addAll(
                 setOf(
                     "win32-x86-64/attach_hotspot_windows.dll",
                     "win32-x86/attach_hotspot_windows.dll",

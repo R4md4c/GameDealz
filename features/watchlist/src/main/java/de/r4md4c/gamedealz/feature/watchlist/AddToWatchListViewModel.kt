@@ -205,11 +205,11 @@ class AddToWatchListViewModel @AssistedInject constructor(
             .minByOrNull { it.newPrice }
 
     fun onAllStoresChecked(isChecked: Boolean) {
-        stateEventsChannel.offer(StateEvent.AllStoresToggleEvent(isChecked))
+        stateEventsChannel.trySend(StateEvent.AllStoresToggleEvent(isChecked))
     }
 
     fun onStoreChipToggled(store: ShopModel, isChecked: Boolean) {
-        stateEventsChannel.offer(StateEvent.StoreToggleEvent(store, isChecked))
+        stateEventsChannel.trySend(StateEvent.StoreToggleEvent(store, isChecked))
     }
 
     fun formatPrice(editTextString: String): String? {
