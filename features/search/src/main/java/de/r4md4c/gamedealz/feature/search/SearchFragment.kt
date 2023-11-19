@@ -35,10 +35,10 @@ import de.r4md4c.commonproviders.date.DateFormatter
 import de.r4md4c.commonproviders.res.ResourcesProvider
 import de.r4md4c.gamedealz.common.base.fragment.BaseFragment
 import de.r4md4c.gamedealz.common.base.fragment.viewBinding
-import de.r4md4c.gamedealz.common.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.decorator.VerticalLinearDecorator
 import de.r4md4c.gamedealz.common.di.ForActivity
 import de.r4md4c.gamedealz.common.navigation.Navigator
+import de.r4md4c.gamedealz.common.ui.databinding.LayoutErrorRetryEmptyBinding
 import de.r4md4c.gamedealz.common.viewmodel.createAbstractSavedStateFactory
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.domain.model.PriceModel
@@ -125,11 +125,11 @@ class SearchFragment : BaseFragment() {
         expandActionView()
 
         setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 return false
             }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 viewModel.onSearchViewCollapse(navigator)
                 return true
             }

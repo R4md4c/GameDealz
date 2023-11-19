@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import de.r4md4c.commonproviders.appcompat.NightMode
+import de.r4md4c.gamedealz.app.BuildConfig
 import de.r4md4c.gamedealz.common.acra.AcraReportSenderFactory
 import de.r4md4c.gamedealz.common.di.HasComponent
 import de.r4md4c.gamedealz.core.CoreComponent

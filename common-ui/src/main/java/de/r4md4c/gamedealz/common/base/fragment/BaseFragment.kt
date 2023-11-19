@@ -25,8 +25,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import de.r4md4c.gamedealz.common.IDispatchers
-import de.r4md4c.gamedealz.common.R
 import de.r4md4c.gamedealz.common.base.HasDrawerLayout
+import de.r4md4c.gamedealz.common.ui.R
 import de.r4md4c.gamedealz.core.CoreComponent
 import de.r4md4c.gamedealz.core.coreComponent
 import javax.inject.Inject

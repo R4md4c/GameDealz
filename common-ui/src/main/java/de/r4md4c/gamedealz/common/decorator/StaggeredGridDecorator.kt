@@ -21,7 +21,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import de.r4md4c.gamedealz.common.R
+import de.r4md4c.gamedealz.common.ui.R
 
 /**
  * An [androidx.recyclerview.widget.RecyclerView.ItemDecoration] used to add margins of 8 dp between items.

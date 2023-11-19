@@ -1,31 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="de.r4md4c.gamedealz">
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
-            android:name=".GameDealzApplication"
+            android:name="de.r4md4c.gamedealz.GameDealzApplication"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <receiver
-                android:name=".feature.watchlist.notifications.NotificationsBroadcastReceiver"
-                android:exported="false"/>
+                android:name="de.r4md4c.gamedealz.feature.watchlist.notifications.NotificationsBroadcastReceiver"
+                android:exported="false" />
 
         <activity
-                android:name=".common.acra.ErrorActivity"
+                android:name="de.r4md4c.gamedealz.common.acra.ErrorActivity"
                 android:exported="false"
-                android:label="@string/title_submit_error_report"/>
+                android:label="@string/title_submit_error_report" />
 
         <provider
-                android:name="androidx.work.impl.WorkManagerInitializer"
-                android:authorities="${applicationId}.workmanager-init"
-                tools:node="remove"/>
+                android:name="androidx.startup.InitializationProvider"
+                android:authorities="${applicationId}.androidx-startup"
+                android:exported="false"
+                tools:node="merge">
+            <!-- If you are using androidx.startup to initialize other components -->
+            <meta-data
+                    android:name="androidx.work.WorkManagerInitializer"
+                    android:value="androidx.startup"
+                    tools:node="remove" />
+        </provider>
+
 
     </application>
 

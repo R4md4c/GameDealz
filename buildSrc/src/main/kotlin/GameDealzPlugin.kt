@@ -19,6 +19,8 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -35,6 +37,8 @@ class GameDealzPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.subprojects {
             applyKotlinCompilerOptions()
+            applyJvmToolchainVersion()
+
             afterEvaluate {
                 afterEvaluateProject(this)
             }
@@ -53,7 +57,7 @@ class GameDealzPlugin : Plugin<Project> {
 
             if (pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)) {
                 val baseExtension = this.extensions.getByType<BaseExtension>()
-                applyCommonAndroidOptions(baseExtension)
+                applyCommonAndroidOptions(project, baseExtension)
                 this.dependencies.add("kaptAndroidTest", Libraries.assistedInjectCompiler)
                 this.dependencies.add("kaptAndroidTest", Libraries.daggerCompiler)
 
@@ -64,7 +68,6 @@ class GameDealzPlugin : Plugin<Project> {
 
     private fun Project.applyKotlinCompilerOptions() {
         tasks.withType(KotlinCompile::class.java).all {
-            kotlinOptions.jvmTarget = "1.8"
             kotlinOptions.freeCompilerArgs = listOf(
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
@@ -75,9 +78,15 @@ class GameDealzPlugin : Plugin<Project> {
     private fun Project.hasKotlinPlugin() =
         pluginManager.hasPlugin(PLUGIN_KOTLIN) || pluginManager.hasPlugin(PLUGIN_ANDROID_KOTLIN)
 
-    private fun applyCommonAndroidOptions(extension: BaseExtension) {
+    private fun applyCommonAndroidOptions(project: Project, extension: BaseExtension) {
+        val namespacePath = project.path.removePrefix(":")
+            .replace(':', '.')
+            .replace('-', '.')
+            .replace("features", "feature")
+        extension.namespace =
+            "de.r4md4c.gamedealz.$namespacePath"
         extension.packagingOptions {
-            excludes.addAll(
+            resources.excludes.addAll(
                 setOf(
                     "win32-x86-64/attach_hotspot_windows.dll",
                     "win32-x86/attach_hotspot_windows.dll",
@@ -91,6 +100,18 @@ class GameDealzPlugin : Plugin<Project> {
                     "META-INF/*.kotlin_module"
                 )
             )
+        }
+    }
+
+    private fun Project.applyJvmToolchainVersion() {
+        pluginManager.withPlugin(PLUGIN_ANDROID_KOTLIN) {
+            kotlinExtension.jvmToolchain(17)
+        }
+        pluginManager.withPlugin(PLUGIN_KOTLIN) {
+            kotlinExtension.jvmToolchain(17)
+        }
+        tasks.withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "17"
         }
     }
 }

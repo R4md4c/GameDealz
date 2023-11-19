@@ -18,9 +18,9 @@
 package de.r4md4c.gamedealz.test
 
 import android.app.Application
-import com.nhaarman.mockitokotlin2.mock
 import de.r4md4c.gamedealz.common.di.HasComponent
 import de.r4md4c.gamedealz.core.CoreComponent
+import org.mockito.kotlin.mock
 
 class TestApplication : Application(), HasComponent<CoreComponent> {
 

@@ -17,9 +17,11 @@
 
 package de.r4md4c.gamedealz.feature.watchlist.notifications
 
+import android.Manifest
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
@@ -32,6 +34,7 @@ import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
 import de.r4md4c.gamedealz.feature.watchlist.R
 import org.assertj.core.api.Assertions
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class WatcheesPushNotifierIntegrationTest {
@@ -44,6 +47,10 @@ class WatcheesPushNotifierIntegrationTest {
         get() = ApplicationProvider.getApplicationContext<Context>()
 
     private val resourcesProvider = AndroidResourcesProvider(targetContext)
+
+    @get:Rule
+    var grantRuntimePermissionRule: GrantPermissionRule = GrantPermissionRule
+        .grant(Manifest.permission.POST_NOTIFICATIONS)
 
     @Before
     fun beforeEach() {

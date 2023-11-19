@@ -6,7 +6,7 @@ object BuildPlugins {
 
     object Versions {
         const val buildToolsVersion = BuildConfig.AGP_VERSION
-        const val navVersion = "2.4.2"
+        const val navVersion = "2.7.4"
         const val detektVersion = "1.20.0"
     }
 
@@ -21,8 +21,8 @@ object BuildPlugins {
 
 object AndroidSdk {
     const val min = 21
-    const val compile = 31
-    const val target = 30
+    const val compile = 34
+    const val target = 33
 }
 
 object Libraries {
@@ -37,7 +37,7 @@ object Libraries {
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "3.1.1"
         const val coroutines = "1.5.1"
-        const val room = "2.3.0"
+        const val room = "2.6.0"
         const val timber = "4.7.1"
         const val lifecycle = "2.4.1"
         const val glide = "4.12.0"
@@ -46,14 +46,14 @@ object Libraries {
         const val recyclerView = "1.2.1"
         const val androidX = "1.6.0"
         const val material = "1.4.0"
-        const val workmanager = "2.5.0"
+        const val workmanager = "2.8.0"
         const val multidex = "2.0.1"
         const val annotations = "1.2.0"
         const val fastAdapter = "3.3.1"
         const val materialDrawer = "6.1.2"
-        const val dagger = "2.38.1"
+        const val dagger = "2.48.1"
         const val assistedInject = "0.6.0"
-        const val moshi = "1.13.0"
+        const val moshi = "1.15.0"
         const val appAuth = "0.8.1" // AndroidX support
         const val sqliteKtx = "2.1.0"
         const val store4 = "4.0.0-alpha03"
@@ -143,14 +143,14 @@ object Libraries {
 
 object TestLibraries {
     private object Versions {
-        const val mockk = "1.10.0"
-        const val robolectric = "4.6.1"
+        const val robolectric = "4.11.1"
         const val assertj = "3.20.2"
-        const val mockito_kotlin = "2.2.0"
+        const val mockito_kotlin = "5.1.0"
         const val core_testing = "2.1.0"
         const val liveDataTesting = "1.2.0"
         const val junit4 = "4.13.2"
         const val androidXTest = "1.4.0"
+        const val orchestratorVersion = "1.4.2"
         const val espresso = "3.4.0"
         const val uiAutomator = "2.2.0"
         const val mockito = "3.11.2"
@@ -161,9 +161,8 @@ object TestLibraries {
 
     const val androidXTestExtJunit = "androidx.test.ext:junit:1.1.3"
     const val room = "androidx.room:room-testing:${Libraries.Versions.room}"
-    const val mockK = "io.mockk:mockk:${Versions.mockk}"
     const val mockitoKotlin =
-        "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin}"
+        "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
     const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
     const val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"
     const val assertjCore = "org.assertj:assertj-core:${Versions.assertj}"
@@ -184,7 +183,7 @@ object TestLibraries {
     const val dexMaker = "com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.0"
     const val testRunner = "androidx.test:runner:${Versions.androidXTest}"
     const val testRules = "androidx.test:rules:${Versions.androidXTest}"
-    const val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"
+    const val testOrchestrator = "androidx.test:orchestrator:${Versions.orchestratorVersion}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espresso}"
     const val espressoContrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso}"
     const val uiAutomator = "androidx.test.uiautomator:uiautomator:${Versions.uiAutomator}"

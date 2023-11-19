@@ -22,7 +22,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import de.r4md4c.gamedealz.common.R
+import de.r4md4c.gamedealz.common.ui.R
 import javax.inject.Inject
 
 typealias OnRetryClick = () -> Unit
@@ -91,6 +91,7 @@ class StateVisibilityHandler @Inject constructor(
                 emptyGroup?.isVisible = true
                 content?.isVisible = false
             }
+
             is SideEffect.ShowContent -> {
                 progress?.isVisible = false
                 swipeToRefresh?.isRefreshing = false
@@ -98,6 +99,9 @@ class StateVisibilityHandler @Inject constructor(
                 emptyGroup?.isVisible = false
                 content?.isVisible = true
             }
+
+            SideEffect.HideLoadingMore -> Unit
+            SideEffect.ShowLoadingMore -> Unit
         }
     }
 }

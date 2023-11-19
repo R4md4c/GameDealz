@@ -28,7 +28,7 @@ import com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
-import de.r4md4c.gamedealz.common.BuildConfig
+import de.r4md4c.gamedealz.common.ui.BuildConfig
 import de.r4md4c.gamedealz.core.coreComponent
 import okhttp3.OkHttpClient
 import java.io.InputStream

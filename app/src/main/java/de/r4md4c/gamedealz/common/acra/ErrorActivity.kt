@@ -24,9 +24,9 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import de.r4md4c.gamedealz.BuildConfig
-import de.r4md4c.gamedealz.R
-import de.r4md4c.gamedealz.databinding.ActivityErrorBinding
+import de.r4md4c.gamedealz.app.BuildConfig
+import de.r4md4c.gamedealz.app.R
+import de.r4md4c.gamedealz.app.databinding.ActivityErrorBinding
 import kotlinx.parcelize.Parcelize
 import org.acra.ReportField
 import org.acra.data.CrashReportData

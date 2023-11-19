@@ -5,6 +5,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdk AndroidSdk.compile
 
+    namespace = "de.r4md4c.gamedealz.workmanager"
     defaultConfig {
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target
@@ -24,11 +25,6 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

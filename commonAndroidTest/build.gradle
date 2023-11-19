@@ -1,5 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
 
 repositories {
     maven { url 'https://dl.bintray.com/blipinsk/maven/' }
@@ -19,11 +21,6 @@ android {
 
     lintOptions {
         warning 'InvalidPackage'
-    }
-
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
     }
 }
 
@@ -51,6 +48,3 @@ dependencies {
     api TestLibraries.espressoContrib
     api TestLibraries.disableAnimationsRule
 }
-
-sourceCompatibility = "8"
-targetCompatibility = "8"

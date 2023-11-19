@@ -33,7 +33,7 @@ internal class DaggerViewModelFactory @Inject constructor(
 
     override fun create(savedStateOwner: SavedStateRegistryOwner, defaultArgs: Bundle?) =
         object : AbstractSavedStateViewModelFactory(savedStateOwner, defaultArgs) {
-            override fun <T : ViewModel?> create(
+            override fun <T : ViewModel> create(
                 key: String,
                 modelClass: Class<T>,
                 handle: SavedStateHandle

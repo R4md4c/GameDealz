@@ -43,14 +43,14 @@ class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UI
     val recordedEvents = eventsList.toList()
 
     fun emitState(state: State) {
-        conflatedBroadcastChannel.offer(state)
+        conflatedBroadcastChannel.trySend(state)
     }
 
     override val uiEvents: Flow<UISideEffect>
         get() = sideEffectsChannel.consumeAsFlow()
 
     override fun dispatchEvent(event: UISideEffect) {
-        sideEffectsChannel.offer(event)
+        sideEffectsChannel.trySend(event)
     }
 
     override fun onClear() {

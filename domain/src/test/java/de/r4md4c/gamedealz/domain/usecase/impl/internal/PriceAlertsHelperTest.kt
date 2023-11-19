@@ -25,29 +25,28 @@ import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.ShopModel
 import de.r4md4c.gamedealz.domain.model.WatcheeModel
 import de.r4md4c.gamedealz.domain.model.WatcheeNotificationModel
-import io.mockk.Runs
-import io.mockk.clearMocks
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.clearInvocations
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verifyBlocking
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 
 class PriceAlertsHelperTest {
 
-    private val priceAlertRepository = mockk<PriceAlertLocalDataSource>()
+    private val priceAlertDataSource = mock<PriceAlertLocalDataSource>()
 
-    private val dateProvider = mockk<DateProvider>()
+    private val dateProvider = mock<DateProvider>()
 
-    private val priceAlertsHelper = PriceAlertsHelper(priceAlertRepository, dateProvider)
+    private val priceAlertsHelper = PriceAlertsHelper(priceAlertDataSource, dateProvider)
 
     @Before
     fun beforeEach() {
-        clearMocks(priceAlertRepository, dateProvider)
+        clearInvocations(priceAlertDataSource, dateProvider)
     }
 
     @Test
@@ -56,8 +55,7 @@ class PriceAlertsHelperTest {
 
         runBlocking { priceAlertsHelper.storeNotificationModels(emptyList()) }
 
-        coVerify(exactly = 0) { priceAlertRepository.save(allAny()) }
-        confirmVerified(priceAlertRepository)
+        verifyNoInteractions(priceAlertDataSource)
     }
 
     @Test
@@ -67,15 +65,15 @@ class PriceAlertsHelperTest {
 
         runBlocking { priceAlertsHelper.storeNotificationModels((1..5).map { notificationModel }) }
 
-        coVerify {
-            priceAlertRepository.save((1..5).map {
+        verifyBlocking(priceAlertDataSource) {
+            save((1..5).map {
                 PriceAlert(
                     0, 1,
                     buyUrl = "http://google.com", storeName = "name2", dateCreated = 1
                 )
             })
         }
-        confirmVerified(priceAlertRepository)
+
     }
 
     @Test
@@ -85,9 +83,8 @@ class PriceAlertsHelperTest {
 
         runBlocking { priceAlertsHelper.storeNotificationModels(listOf(notificationModel)) }
 
-        coVerify {
-            priceAlertRepository.save(match { it.size == 1 && it.first().dateCreated == 2L })
-            dateProvider.timeInMillis()
+        verifyBlocking(priceAlertDataSource) {
+            save(argThat { size == 1 && first().dateCreated == 2L })
         }
     }
 
@@ -105,12 +102,8 @@ class PriceAlertsHelperTest {
     )
 
     inner class ArrangeBuilder {
-        init {
-            coEvery { priceAlertRepository.save(any()) } just Runs
-        }
-
         fun withDate(date: Long) = apply {
-            every { dateProvider.timeInMillis() } returns date
+            whenever(dateProvider.timeInMillis()) doReturn date
         }
     }
 }

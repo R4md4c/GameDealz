@@ -88,7 +88,9 @@ class WatcheesPushNotifier @Inject constructor(
                 .setAutoCancel(true)
                 .setContentIntent(notificationModel.toDetailsPendingIntent())
                 .addAction(
-                    0, resourcesProvider.getString(R.string.check_on, priceModel.shop.name).capitalize(),
+                    0,
+                    resourcesProvider.getString(R.string.check_on, priceModel.shop.name)
+                        .capitalize(),
                     notificationModel.toBuyUrlPendingIntent()
                 )
                 .also {
@@ -123,8 +125,10 @@ class WatcheesPushNotifier @Inject constructor(
     private fun NotificationManagerCompat.createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = resourcesProvider.getString(R.string.watchlist_channel_name)
-            val descriptionText = resourcesProvider.getString(R.string.watchlist_channel_description)
-            val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
+            val descriptionText =
+                resourcesProvider.getString(R.string.watchlist_channel_description)
+            val channel =
+                NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
             channel.description = descriptionText
             createNotificationChannel(channel)
         }
@@ -141,7 +145,10 @@ class WatcheesPushNotifier @Inject constructor(
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.manageWatchlistFragment)
             .createTaskStackBuilder()
-            .getPendingIntent(UUID.randomUUID().hashCode(), PendingIntent.FLAG_ONE_SHOT)
+            .getPendingIntent(
+                UUID.randomUUID().hashCode(),
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            )
 
     private companion object {
         private const val SUMMARY_ID = Integer.MAX_VALUE - 1
