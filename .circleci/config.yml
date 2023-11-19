@@ -60,8 +60,8 @@ workflows:
   build:
     jobs:
       - build
-      - generate-apk
-#          filters:
-#            branches:
-#              only:
-#                - main
+      - generate-apk:
+          filters:
+            branches:
+              only:
+                - main
