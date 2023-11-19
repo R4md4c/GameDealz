@@ -61,3 +61,7 @@ workflows:
     jobs:
       - build
       - generate-apk
+#          filters:
+#            branches:
+#              only:
+#                - main

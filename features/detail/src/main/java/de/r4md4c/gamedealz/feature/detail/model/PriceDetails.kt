@@ -22,7 +22,7 @@ import de.r4md4c.gamedealz.domain.model.CurrencyModel
 import de.r4md4c.gamedealz.domain.model.HistoricalLowModel
 import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.ShopModel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PriceDetails(
