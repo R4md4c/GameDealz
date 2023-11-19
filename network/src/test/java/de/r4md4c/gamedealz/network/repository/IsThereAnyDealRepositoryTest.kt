@@ -2,15 +2,12 @@ package de.r4md4c.gamedealz.network.repository
 
 import de.r4md4c.gamedealz.network.model.AccessToken
 import de.r4md4c.gamedealz.network.model.DataWrapper
-import de.r4md4c.gamedealz.network.model.Deal
 import de.r4md4c.gamedealz.network.model.ListWrapper
 import de.r4md4c.gamedealz.network.model.PriceDTO
 import de.r4md4c.gamedealz.network.model.Stores
 import de.r4md4c.gamedealz.network.model.User
 import de.r4md4c.gamedealz.network.service.IsThereAnyDealService
 import de.r4md4c.gamedealz.network.service.PlainPriceList
-import de.r4md4c.gamedealz.network.service.RegionCodes
-import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -40,7 +37,7 @@ class IsThereAnyDealRepositoryTest {
 
     @Test
     fun regions() = runBlockingTest {
-        whenever(service.regions()).thenReturn(async { DataWrapper<RegionCodes>(mapOf()) })
+        whenever(service.regions()).thenReturn(DataWrapper(mapOf()))
 
         val result = subject.regions()
 
@@ -51,7 +48,7 @@ class IsThereAnyDealRepositoryTest {
     @Test
     fun stores() = runBlockingTest {
 
-        whenever(service.stores("", "")).thenReturn(async { Stores(emptyList()) })
+        whenever(service.stores("", "")).thenReturn(Stores(emptyList()))
 
         val result = subject.stores("", "")
 
@@ -62,7 +59,7 @@ class IsThereAnyDealRepositoryTest {
     @Test
     fun deals() = runBlockingTest {
         whenever(service.deals(any(), any(), any(), any(), any(), any()))
-            .thenReturn(async { DataWrapper<ListWrapper<Deal>>(ListWrapper(emptyList(), 0)) })
+            .thenReturn(DataWrapper(ListWrapper(emptyList(), 0)))
 
         subject.deals(0, 0, "region", "country", setOf("steam", "gog"))
 
@@ -90,7 +87,7 @@ class IsThereAnyDealRepositoryTest {
                 anyOrNull()
             )
         )
-            .thenReturn(async { response })
+            .thenReturn(response)
 
         val result = subject.retrievesPrices(setOf("plain1", "plain2"))
 
