@@ -14,7 +14,7 @@ android {
         applicationId "de.r4md4c.gamedealz"
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target
-        versionCode 14
+        versionCode providers.environmentVariable("CIRCLE_BUILD_NUM").getOrElse("14").toInteger()
         versionName "1.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
