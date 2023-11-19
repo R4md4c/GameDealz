@@ -1,4 +1,4 @@
-version: 3
+version: 2.1
 jobs:
   build:
     working_directory: ~/code
@@ -33,3 +33,35 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
+  generate-apk:
+    docker:
+      - image: cimg/android:2023.11
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: Prepare gradle.properties
+          command: source environmentSetup.sh && copyEnvVarsToGradleProperties
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Prepare keystore
+          command: |
+            echo $KEY_STORE_BASE64 | base64 -d | tee keystore gamedealz.keystore > /dev/null
+      - run:
+          name: Assemble Release
+          command: ./gradlew assembleRelease
+      - store_artifacts:
+          path: app/build/outputs/apk/release
+
+
+# Orchestrate our job run sequence
+workflows:
+  build:
+    jobs:
+      - build
+      - generate-apk:
+          filters:
+            branches:
+              only:
+                - main

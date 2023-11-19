@@ -14,7 +14,7 @@ android {
         applicationId "de.r4md4c.gamedealz"
         minSdkVersion AndroidSdk.min
         targetSdkVersion AndroidSdk.target
-        versionCode 14
+        versionCode providers.environmentVariable("CIRCLE_BUILD_NUM").getOrElse("14").toInteger()
         versionName "1.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -22,6 +22,15 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunnerArguments clearPackageData: 'true'
+    }
+
+    signingConfigs {
+        gamedealz {
+            keyAlias = providers.environmentVariable("KEY_STORE_ALIAS").orNull
+            keyPassword = providers.environmentVariable("KEY_STORE_PASSWORD").orNull
+            storeFile = file("$rootDir/gamedealz.keystore")
+            storePassword = providers.environmentVariable("KEY_STORE_FILE_PASSWORD").orNull
+        }
     }
 
     buildFeatures {
@@ -37,11 +46,8 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFiles fileTree('proguard-rules').asList().toArray()
+            signingConfig = signingConfigs.gamedealz
         }
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     testOptions {

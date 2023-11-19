@@ -19,7 +19,7 @@ package de.r4md4c.gamedealz.domain.model
 
 import android.os.Parcelable
 import de.r4md4c.gamedealz.data.entity.Watchee
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class WatcheeModel(
