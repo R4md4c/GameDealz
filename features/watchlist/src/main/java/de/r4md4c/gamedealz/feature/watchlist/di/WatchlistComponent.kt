@@ -41,7 +41,7 @@ import de.r4md4c.gamedealz.feature.watchlist.ManageWatchlistFragment
         CoreComponent::class
     ]
 )
-interface WatchlistComponent {
+internal interface WatchlistComponent {
 
     fun inject(fragment: ManageWatchlistFragment)
 

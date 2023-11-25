@@ -18,27 +18,8 @@
 package de.r4md4c.commonproviders.di.viewmodel
 
 import androidx.annotation.MainThread
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
-
-abstract class ScopedComponent : ViewModel()
-
-@MainThread
-inline fun <reified C : ScopedComponent> AppCompatActivity.components(
-    noinline factory: () -> C
-): Lazy<C> = ViewModelLazy(
-    C::class,
-    { viewModelStore }) { viewModelFactoryOf { factory() } }
-
-@MainThread
-inline fun <reified C : ScopedComponent> Fragment.components(
-    noinline factory: () -> C
-): Lazy<C> = ViewModelLazy(
-    C::class,
-    { viewModelStore }) { viewModelFactoryOf { factory() } }
 
 @MainThread
 inline fun <reified VM : ViewModel> viewModelFactoryOf(

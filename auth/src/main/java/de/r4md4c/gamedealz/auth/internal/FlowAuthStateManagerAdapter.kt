@@ -20,7 +20,7 @@ package de.r4md4c.gamedealz.auth.internal
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -50,7 +50,7 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
         exception: AuthorizationException?
     ) {
         authStateManager.updateAuthStateAfterAuthorization(authorizationResponse, exception)
-        channel.sendBlocking(authStateManager.currentAuthState)
+        channel.trySendBlocking(authStateManager.currentAuthState)
     }
 
     override fun updateAuthStateAfterToken(
@@ -58,12 +58,12 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
         exception: AuthorizationException?
     ) {
         authStateManager.updateAuthStateAfterToken(tokenResponse, exception)
-        channel.sendBlocking(authStateManager.currentAuthState)
+        channel.trySendBlocking(authStateManager.currentAuthState)
     }
 
     override fun clear() {
         authStateManager.clear()
-        channel.sendBlocking(authStateManager.currentAuthState)
+        channel.trySendBlocking(authStateManager.currentAuthState)
     }
 
     private fun AuthState.toAuthorizationState(): AuthorizationState =

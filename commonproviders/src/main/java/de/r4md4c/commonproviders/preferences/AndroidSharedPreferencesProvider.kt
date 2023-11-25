@@ -37,7 +37,7 @@ internal class AndroidSharedPreferencesProvider @Inject constructor(
             val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 if (key == KEY_ACTIVE_REGION_COUNTRY) {
                     activeRegionAndCountry?.let {
-                        offer(it)
+                        trySend(it)
                     } ?: close()
                 }
             }
@@ -100,11 +100,11 @@ internal class AndroidSharedPreferencesProvider @Inject constructor(
 
     private fun <T> SharedPreferences.createFlowFromKey(key: String, value: () -> T): Flow<T> =
         callbackFlow {
-            offer(value())
+            trySend(value())
 
             val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
                 if (changedKey == key) {
-                    offer(value())
+                    trySend(value())
                 }
             }
             registerOnSharedPreferenceChangeListener(callback)

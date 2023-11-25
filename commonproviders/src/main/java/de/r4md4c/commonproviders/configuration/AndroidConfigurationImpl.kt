@@ -18,7 +18,7 @@
 package de.r4md4c.commonproviders.configuration
 
 import android.content.Context
-import androidx.core.os.ConfigurationCompat
+import androidx.core.app.LocaleManagerCompat
 import java.util.*
 import javax.inject.Inject
 
@@ -27,5 +27,5 @@ internal class AndroidConfigurationImpl @Inject constructor(
 ) : ConfigurationProvider {
 
     override val locale: Locale
-        get() = ConfigurationCompat.getLocales(context.resources.configuration)[0]
+        get() = LocaleManagerCompat.getSystemLocales(context).get(0) ?: Locale.getDefault()
 }
