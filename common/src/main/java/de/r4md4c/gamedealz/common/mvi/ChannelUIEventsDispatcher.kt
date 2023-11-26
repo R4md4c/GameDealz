@@ -41,7 +41,7 @@ class ChannelUIEventsDispatcher<T : UIEvent> @Inject constructor(
         eventsChannel.consumeAsFlow().shareIn(dispatcherScope, SharingStarted.Lazily)
 
     override fun dispatchEvent(event: T) {
-        eventsChannel.offer(event)
+        eventsChannel.trySend(event)
     }
 
     override fun onClear() {

@@ -56,6 +56,8 @@ dependencies {
     implementation Libraries.fastAdapter
     implementation Libraries.coreKtx
 
+    debugImplementation Libraries.fragmentTesting
+
     implementation project(':common')
     implementation project(':domain')
     implementation project(':commonproviders')
@@ -73,6 +75,7 @@ dependencies {
     testImplementation TestLibraries.coroutinesTest
     testImplementation TestLibraries.archComponentsCoreTesting
     testImplementation TestLibraries.robolectric
+    testImplementation TestLibraries.androidXJunitExt
 
     androidTestUtil TestLibraries.testOrchestrator
     androidTestImplementation TestLibraries.uiAutomator

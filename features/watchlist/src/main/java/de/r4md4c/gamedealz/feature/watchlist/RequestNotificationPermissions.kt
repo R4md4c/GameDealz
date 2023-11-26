@@ -20,6 +20,7 @@ package de.r4md4c.gamedealz.feature.watchlist
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,9 +34,16 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal class RequestNotificationPermissions @Inject constructor(
+internal class RequestNotificationPermissions(
     private val fragment: Fragment,
+    private val activityResultRegistry: ActivityResultRegistry,
 ) {
+
+    @Inject
+    constructor(fragment: Fragment) : this(
+        fragment,
+        fragment.requireActivity().activityResultRegistry
+    )
 
     @SuppressLint("InlinedApi")
     private val isPermissionGranted = MutableStateFlow<State>(
@@ -48,7 +56,10 @@ internal class RequestNotificationPermissions @Inject constructor(
     )
 
     private val launcher =
-        fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        fragment.registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+            activityResultRegistry
+        ) { isGranted ->
             isPermissionGranted.value = State.Result(isGranted)
         }
 

@@ -32,11 +32,11 @@ object Libraries {
         const val retrofitCoroutinesAdapter = "0.9.2"
         const val okio = "2.10.0"
         const val acra = "5.5.0"
-        const val fragments = "1.4.1"
+        const val fragments = "1.6.2"
         const val constraintLayout = "2.1.0"
         const val nav_version = BuildPlugins.Versions.navVersion
         const val paging_version = "3.1.1"
-        const val coroutines = "1.5.1"
+        const val coroutines = "1.7.3"
         const val room = "2.6.0"
         const val timber = "4.7.1"
         const val lifecycle = "2.6.2"
@@ -175,6 +175,7 @@ object TestLibraries {
     const val junit = "junit:junit:${Versions.junit4}"
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val androidXTestCore = "androidx.test:core:${Versions.androidXTest}"
+    const val androidXJunitExt = "androidx.test.ext:junit-ktx:1.1.5"
 
     const val kakao = "com.agoda.kakao:kakao:${Versions.kakao}"
     const val navigationTest =

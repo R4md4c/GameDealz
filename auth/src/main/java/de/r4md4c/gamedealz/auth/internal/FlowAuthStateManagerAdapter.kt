@@ -19,10 +19,8 @@ package de.r4md4c.gamedealz.auth.internal
 
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -39,18 +37,17 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
     private val authStateManager: InternalAuthStateManager
 ) : AuthStateManager, AuthStateFlow {
 
-    private val channel = ConflatedBroadcastChannel(authStateManager.currentAuthState)
+    private val channel = MutableStateFlow(authStateManager.currentAuthState)
 
     override val authorizationState: Flow<AuthorizationState> =
-        channel.asFlow()
-            .map { it.toAuthorizationState() }
+        channel.map { it.toAuthorizationState() }
 
     override fun updateAuthStateAfterAuthorization(
         authorizationResponse: AuthorizationResponse?,
         exception: AuthorizationException?
     ) {
         authStateManager.updateAuthStateAfterAuthorization(authorizationResponse, exception)
-        channel.trySendBlocking(authStateManager.currentAuthState)
+        channel.value = authStateManager.currentAuthState
     }
 
     override fun updateAuthStateAfterToken(
@@ -58,12 +55,12 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
         exception: AuthorizationException?
     ) {
         authStateManager.updateAuthStateAfterToken(tokenResponse, exception)
-        channel.trySendBlocking(authStateManager.currentAuthState)
+        channel.value = authStateManager.currentAuthState
     }
 
     override fun clear() {
         authStateManager.clear()
-        channel.trySendBlocking(authStateManager.currentAuthState)
+        channel.value = authStateManager.currentAuthState
     }
 
     private fun AuthState.toAuthorizationState(): AuthorizationState =
