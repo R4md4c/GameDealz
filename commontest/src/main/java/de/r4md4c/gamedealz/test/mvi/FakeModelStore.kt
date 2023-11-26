@@ -21,28 +21,26 @@ import de.r4md4c.gamedealz.common.mvi.ModelStore
 import de.r4md4c.gamedealz.common.mvi.MviResult
 import de.r4md4c.gamedealz.common.mvi.MviState
 import de.r4md4c.gamedealz.common.mvi.ReducibleMviResult
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 
 class FakeModelStore<S : MviState>(initialState: S) : ModelStore<S> {
-    private val conflatedBroadcastChannel = ConflatedBroadcastChannel(initialState)
+    private val conflatedBroadcastChannel = MutableStateFlow(initialState)
 
     override suspend fun process(result: MviResult<S>) {
         if (result is ReducibleMviResult<S>) {
-            conflatedBroadcastChannel.send(result.reduce(conflatedBroadcastChannel.value))
+            conflatedBroadcastChannel.value = result.reduce(conflatedBroadcastChannel.value)
         }
     }
 
-    override fun modelState(): Flow<S> = conflatedBroadcastChannel.asFlow()
+    override fun modelState(): Flow<S> = conflatedBroadcastChannel.asStateFlow()
 
     override val currentState: S
         get() = conflatedBroadcastChannel.value
 
     suspend fun lastValue() = modelState().first()
 
-    override fun dispose() {
-        conflatedBroadcastChannel.cancel()
-    }
+    override fun dispose() = Unit
 }

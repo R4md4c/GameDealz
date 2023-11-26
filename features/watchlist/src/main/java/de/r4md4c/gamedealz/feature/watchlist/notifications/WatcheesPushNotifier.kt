@@ -17,15 +17,18 @@
 
 package de.r4md4c.gamedealz.feature.watchlist.notifications
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.SparseArray
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.util.forEach
 import androidx.navigation.NavDeepLinkBuilder
 import de.r4md4c.commonproviders.notification.Notifier
@@ -47,6 +50,14 @@ class WatcheesPushNotifier @Inject constructor(
     }
 
     override fun notify(data: Collection<WatcheeNotificationModel>) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            return
+        }
+
         val notifications = data.notificationsFromWatchees().takeIf { it.size() > 0 } ?: return
 
         buildSummaryNotification(notifications.size())?.also {

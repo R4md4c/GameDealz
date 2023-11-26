@@ -24,4 +24,5 @@
     <string name="manage_watch_list_last_checked">Last update: %s</string>
     <string name="managed_watch_list_current_price">Last fetched price was</string>
     <string name="add_home_shortcut">Add Home Shortcut</string>
+    <string name="watchlist_please_allow_notification_permissions">In order to be able to receive notifications for games that are in watchlist, Please give GameDealz the notifications permissions</string>
 </resources>

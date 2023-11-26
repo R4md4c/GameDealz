@@ -22,9 +22,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +39,7 @@ class FlowModelStore<S : MviState>(
     private val logger = LoggerFactory.getLogger(FlowModelStore::class.java.simpleName)
 
     private val intents: Channel<MviResult<S>> = Channel()
-    private val store by lazy { ConflatedBroadcastChannel(initialStateFactory.create()) }
+    private val store by lazy { MutableStateFlow<S>(initialStateFactory.create()) }
 
     init {
         launch {
@@ -54,13 +54,17 @@ class FlowModelStore<S : MviState>(
                                 logger.debug("State After-reduction: $it")
                             }
                         }
+
                         else -> null
                     }.takeIf {
                         // Only return a new state when there is a change.
                         it != store.value
                     }
                 }
-                newState?.let(store::offer)
+
+                newState?.let {
+                    store.value = it
+                }
             }
         }
     }
@@ -73,11 +77,10 @@ class FlowModelStore<S : MviState>(
     override val currentState: S
         get() = store.value
 
-    override fun modelState(): Flow<S> = store.asFlow()
+    override fun modelState(): Flow<S> = store.asStateFlow()
 
     override fun dispose() {
         cancel()
         intents.cancel()
-        store.cancel()
     }
 }

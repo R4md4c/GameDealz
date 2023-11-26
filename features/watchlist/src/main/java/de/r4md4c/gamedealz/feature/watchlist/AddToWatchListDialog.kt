@@ -35,12 +35,12 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.math.MathUtils
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -53,21 +53,18 @@ import de.r4md4c.commonproviders.extensions.resolveThemeColor
 import de.r4md4c.gamedealz.common.exhaustive
 import de.r4md4c.gamedealz.common.notifications.ViewNotifier
 import de.r4md4c.gamedealz.core.coreComponent
-import de.r4md4c.gamedealz.domain.model.PriceModel
 import de.r4md4c.gamedealz.domain.model.ShopModel
 import de.r4md4c.gamedealz.feature.watchlist.AddToWatchListDialogArgs.Companion.fromBundle
 import de.r4md4c.gamedealz.feature.watchlist.databinding.LayoutAddToWatchListBinding
 import de.r4md4c.gamedealz.feature.watchlist.di.DaggerWatchlistComponent
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.abs
 
-class AddToWatchListDialog : BottomSheetDialogFragment() {
+internal class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     private val title: String by lazy { fromBundle(requireArguments()).title }
-
-    private val plainId: String by lazy { fromBundle(requireArguments()).plainId }
-
-    private val priceModel: PriceModel by lazy { fromBundle(requireArguments()).priceModel }
 
     private val toolbar: Toolbar by lazy {
         requireView().findViewById(R.id.toolbar) as Toolbar
@@ -86,6 +83,9 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var viewNotifier: ViewNotifier
+
+    @Inject
+    lateinit var requestNotificationPermissions: RequestNotificationPermissions
 
     private val bottomSheetCallback by lazy { AddToWatchListBottomSheetCallback() }
 
@@ -160,15 +160,10 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
     }
 
     private fun onSubmit() {
-        kotlin.runCatching {
-            binding!!.storesChipGroup.children.mapNotNull {
-                (it as? Chip)?.takeIf { chip -> chip.isChecked }
-                    ?.let { chip -> chip.tag as ShopModel }
-            }.toList()
-        }.onSuccess {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isAccepted = requestNotificationPermissions.requestNotificationPermission()
+            Timber.i("Notifications permissions result: $isAccepted")
             addToWatchListViewModel.onSubmit(binding!!.priceEditText.text.toString())
-        }.onFailure {
-            viewNotifier.notify(it.localizedMessage)
         }
     }
 
@@ -193,9 +188,11 @@ class AddToWatchListDialog : BottomSheetDialogFragment() {
                     viewNotifier.notify(getString(R.string.watchlist_added_successfully, title))
                     dismiss()
                 }
+
                 is AddToWatchListViewModel.UIEvent.ShowError -> {
                     viewNotifier.notify(event.errorString)
                 }
+
                 is AddToWatchListViewModel.UIEvent.PriceError -> {
                     binding!!.priceEditText.error = event.errorString
                 }

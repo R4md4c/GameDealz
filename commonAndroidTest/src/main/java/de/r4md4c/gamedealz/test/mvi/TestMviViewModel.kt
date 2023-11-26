@@ -24,26 +24,27 @@ import de.r4md4c.gamedealz.common.mvi.UIEvent
 import de.r4md4c.gamedealz.common.mvi.UIEventsDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UIEvent> :
-    MviViewModel<State, Event>, UIEventsDispatcher<UISideEffect> {
+class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UIEvent>(
+    private val initialState: State
+) : MviViewModel<State, Event>, UIEventsDispatcher<UISideEffect> {
 
     private val sideEffectsChannel = Channel<UISideEffect>()
 
     private val eventsList = mutableListOf<Event>()
 
-    private val conflatedBroadcastChannel = ConflatedBroadcastChannel<State>()
+    private val conflatedBroadcastChannel = MutableStateFlow(initialState)
 
     val recordedEvents = eventsList.toList()
 
     fun emitState(state: State) {
-        conflatedBroadcastChannel.trySend(state)
+        conflatedBroadcastChannel.value = state
     }
 
     override val uiEvents: Flow<UISideEffect>
@@ -58,7 +59,7 @@ class TestMviViewModel<State : MviState, Event : MviViewEvent, UISideEffect : UI
     }
 
     override val modelState: Flow<State>
-        get() = conflatedBroadcastChannel.asFlow()
+        get() = conflatedBroadcastChannel.asStateFlow()
 
     override fun onViewEvents(viewEventFlow: Flow<Event>, viewScope: CoroutineScope) {
         viewEventFlow.onEach { eventsList += it }.launchIn(viewScope)

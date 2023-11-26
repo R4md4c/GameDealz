@@ -19,7 +19,8 @@ package de.r4md4c.gamedealz.test
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
@@ -28,7 +29,7 @@ import org.junit.runner.Description
 // Taken from https://medium.com/androiddevelopers/easy-coroutines-in-android-viewmodelscope-25bffb605471
 @ExperimentalCoroutinesApi
 class CoroutinesTestRule(
-    private val testDispatcher: TestCoroutineDispatcher = TestDispatchers.testDispatcher
+    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 ) : TestWatcher() {
 
     override fun starting(description: Description?) {
@@ -39,6 +40,5 @@ class CoroutinesTestRule(
     override fun finished(description: Description?) {
         super.finished(description)
         Dispatchers.resetMain()
-        testDispatcher.cleanupTestCoroutines()
     }
 }
