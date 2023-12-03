@@ -136,7 +136,12 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout 
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        authDelegate.onActivityResult(this, requestCode, data)
+        authDelegate.onActivityResult(
+            activity = this,
+            resultCode = resultCode,
+            requestCode = requestCode,
+            data = data
+        )
     }
 
     override fun onSupportNavigateUp(): Boolean =
@@ -280,6 +285,7 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout 
                 setSelectionFirstLine(getString(R.string.sign_in))
                 setSelectionSecondLine(getString(R.string.sign_in_isthereanydeal))
             }
+
             is HomeUserStatus.LoggedIn -> {
                 setSelectionSecondLine(EMPTY_STRING)
                 val userLabel = when (homeUserStatus) {
@@ -325,10 +331,12 @@ internal class HomeActivity : AppCompatActivity(), DrawerAware, HasDrawerLayout 
         when (message) {
             is HomeUIMessage.ShowAuthenticationError ->
                 viewNotifier.notify(message.reason)
+
             is HomeUIMessage.NotifyUserHasLoggedIn -> viewNotifier.notify(
                 message.username?.let { name -> getString(R.string.welcome_user, name) }
                     ?: getString(R.string.welcome_user_unknown)
             )
+
             HomeUIMessage.NotifyUserHasLoggedOut -> viewNotifier.notify(getString(R.string.signed_out))
         }.exhaustive
         viewModel.clearMessage(message)

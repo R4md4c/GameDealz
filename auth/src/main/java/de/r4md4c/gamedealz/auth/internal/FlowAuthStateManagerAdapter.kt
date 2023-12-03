@@ -19,9 +19,10 @@ package de.r4md4c.gamedealz.auth.internal
 
 import de.r4md4c.gamedealz.auth.AuthStateFlow
 import de.r4md4c.gamedealz.auth.state.AuthorizationState
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -37,17 +38,17 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
     private val authStateManager: InternalAuthStateManager
 ) : AuthStateManager, AuthStateFlow {
 
-    private val channel = MutableStateFlow(authStateManager.currentAuthState)
+    private val channel = Channel<AuthState>(Channel.UNLIMITED)
 
     override val authorizationState: Flow<AuthorizationState> =
-        channel.map { it.toAuthorizationState() }
+        channel.receiveAsFlow().map { it.toAuthorizationState() }
 
     override fun updateAuthStateAfterAuthorization(
         authorizationResponse: AuthorizationResponse?,
         exception: AuthorizationException?
     ) {
         authStateManager.updateAuthStateAfterAuthorization(authorizationResponse, exception)
-        channel.value = authStateManager.currentAuthState
+        channel.trySend(authStateManager.currentAuthState)
     }
 
     override fun updateAuthStateAfterToken(
@@ -55,12 +56,12 @@ internal class FlowAuthStateManagerAdapter @Inject constructor(
         exception: AuthorizationException?
     ) {
         authStateManager.updateAuthStateAfterToken(tokenResponse, exception)
-        channel.value = authStateManager.currentAuthState
+        channel.trySend(authStateManager.currentAuthState)
     }
 
     override fun clear() {
         authStateManager.clear()
-        channel.value = authStateManager.currentAuthState
+        channel.trySend(authStateManager.currentAuthState)
     }
 
     private fun AuthState.toAuthorizationState(): AuthorizationState =

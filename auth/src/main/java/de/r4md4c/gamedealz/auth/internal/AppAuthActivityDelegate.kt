@@ -17,6 +17,7 @@
 
 package de.r4md4c.gamedealz.auth.internal
 
+import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -40,8 +41,13 @@ internal class AppAuthActivityDelegate @Inject constructor(
     private val authStateManager: AuthStateManager
 ) : AuthActivityDelegate {
 
-    override fun onActivityResult(activity: FragmentActivity, requestCode: Int, data: Intent?) {
-        if (requestCode != AUTH_REQUEST_CODE || data == null) {
+    override fun onActivityResult(
+        activity: FragmentActivity,
+        resultCode: Int,
+        requestCode: Int,
+        data: Intent?
+    ) {
+        if (requestCode != AUTH_REQUEST_CODE || data == null || resultCode == Activity.RESULT_CANCELED) {
             return
         }
 
@@ -50,13 +56,10 @@ internal class AppAuthActivityDelegate @Inject constructor(
 
         activity.lifecycleScope.launchWhenResumed {
             withContext(dispatchers.Default) {
-                updateAfterAuthorization(resp, ex)
-            }
-
-            // Only retrieve the token if there was no exception while getting authorized.
-            withContext(dispatchers.IO) {
                 if (ex == null) {
                     updateAfterToken(resp)
+                } else {
+                    updateAfterAuthorization(resp, ex)
                 }
             }
         }

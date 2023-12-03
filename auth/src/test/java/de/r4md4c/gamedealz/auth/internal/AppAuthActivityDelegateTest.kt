@@ -17,13 +17,16 @@
 
 package de.r4md4c.gamedealz.auth.internal
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.FragmentActivity
 import androidx.test.core.app.ApplicationProvider
+import de.r4md4c.gamedealz.test.CoroutinesTestRule
 import de.r4md4c.gamedealz.test.TestDispatchers
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
@@ -32,6 +35,7 @@ import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ResponseTypeValues
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -62,6 +66,9 @@ class AppAuthActivityDelegateTest {
 
     @Mock
     internal lateinit var authStateManager: AuthStateManager
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var delegate: AppAuthActivityDelegate
 
@@ -94,7 +101,7 @@ class AppAuthActivityDelegateTest {
     fun `onActivityResult should return with no interactions when request code is not correct`() {
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
 
-        delegate.onActivityResult(activity, 0x11, null)
+        delegate.onActivityResult(activity, Activity.RESULT_OK, 0x11, null)
 
         verifyNoInteractions(authStateManager)
         verifyNoInteractions(accessTokenRetriever)
@@ -104,14 +111,36 @@ class AppAuthActivityDelegateTest {
     fun `onActivityResult should return with no interactions when intent is null`() {
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
 
-        delegate.onActivityResult(activity, 0x10, null)
+        delegate.onActivityResult(activity, Activity.RESULT_OK, 0x10, null)
 
         verifyNoInteractions(authStateManager)
         verifyNoInteractions(accessTokenRetriever)
     }
 
     @Test
-    fun `onActivityResult should call authStateManager when Intent has AuthorizationResponse`() {
+    fun `onActivityResult should call authStateManager when Intent has AuthorizationResponse`() =
+        runTest {
+            whenever(accessTokenRetriever.retrieveAccessToken(any())).thenReturn(TestFixtures.tokenResponse)
+            val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
+            val authorizationResponseIntent = Intent().apply {
+                putExtra(
+                    AuthorizationResponse.EXTRA_RESPONSE,
+                    TestFixtures.authorizationResponse.jsonSerializeString()
+                )
+            }
+
+            delegate.onActivityResult(
+                activity,
+                Activity.RESULT_OK,
+                0x10,
+                authorizationResponseIntent
+            )
+
+            verify(authStateManager).updateAuthStateAfterToken(any(), isNull())
+        }
+
+    @Test
+    fun `onActivityResult should call nothing when resultCode is cancelled`() = runTest {
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
         val authorizationResponseIntent = Intent().apply {
             putExtra(
@@ -120,9 +149,15 @@ class AppAuthActivityDelegateTest {
             )
         }
 
-        delegate.onActivityResult(activity, 0x10, authorizationResponseIntent)
+        delegate.onActivityResult(
+            activity,
+            Activity.RESULT_CANCELED,
+            0x10,
+            authorizationResponseIntent
+        )
 
-        verify(authStateManager).updateAuthStateAfterAuthorization(any(), isNull())
+        verifyNoInteractions(authStateManager)
+        verifyNoInteractions(accessTokenRetriever)
     }
 
     @Test
@@ -135,7 +170,7 @@ class AppAuthActivityDelegateTest {
             )
         }
 
-        delegate.onActivityResult(activity, 0x10, authorizationExceptionIntent)
+        delegate.onActivityResult(activity, Activity.RESULT_OK, 0x10, authorizationExceptionIntent)
 
         verify(authStateManager).updateAuthStateAfterAuthorization(isNull(), any())
     }
@@ -152,7 +187,12 @@ class AppAuthActivityDelegateTest {
                 )
             }
 
-            delegate.onActivityResult(activity, 0x10, authorizationResponseIntent)
+            delegate.onActivityResult(
+                activity,
+                Activity.RESULT_OK,
+                0x10,
+                authorizationResponseIntent
+            )
 
             verify(accessTokenRetriever).retrieveAccessToken(any())
             verify(authStateManager).updateAuthStateAfterToken(any(), isNull())
@@ -175,7 +215,12 @@ class AppAuthActivityDelegateTest {
                 )
             }
 
-            delegate.onActivityResult(activity, 0x10, authorizationResponseIntent)
+            delegate.onActivityResult(
+                activity,
+                Activity.RESULT_OK,
+                0x10,
+                authorizationResponseIntent
+            )
 
             verify(accessTokenRetriever).retrieveAccessToken(any())
             verify(authStateManager).updateAuthStateAfterToken(isNull(), any())
