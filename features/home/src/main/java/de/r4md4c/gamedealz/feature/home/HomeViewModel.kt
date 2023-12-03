@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -66,18 +67,20 @@ internal class HomeViewModel @Inject constructor(
     private val homeUserStatus = MutableStateFlow<HomeUserStatus>(HomeUserStatus.LoggedOut)
     private val nighModeEnabled = MutableStateFlow(false)
     private val priceAlertCount = MutableStateFlow<PriceAlertCount>(PriceAlertCount.NotSet)
+    private val userInfoFlow = getUserUseCase.invoke()
+        .shareIn(viewModelScope, SharingStarted.Lazily)
 
     val state by lazy {
         combine(
             regionStatus,
-            homeUserStatus,
+            userInfoFlow,
             nighModeEnabled,
             priceAlertCount,
             uiMessageManager.messages,
-        ) { regionStatus: RegionStatus, homeUserStatus: HomeUserStatus, nighModeEnabled: Boolean, priceAlertCount: PriceAlertCount, message ->
+        ) { regionStatus: RegionStatus, userInfo: UserInfo, nighModeEnabled: Boolean, priceAlertCount: PriceAlertCount, message ->
             HomeViewState(
                 regionStatus = regionStatus,
-                homeUserStatus = homeUserStatus,
+                homeUserStatus = HomeUserStatus.fromUserInfo(userInfo),
                 nightModeEnabled = nighModeEnabled,
                 priceAlertsCount = priceAlertCount,
                 uiMessage = message
@@ -149,23 +152,19 @@ internal class HomeViewModel @Inject constructor(
     }
 
     private fun observeUserInfo() {
-        viewModelScope.launch {
-            homeUserStatus.value = HomeUserStatus.fromUserInfo(getUserUseCase.invoke().first())
-        }
+        userInfoFlow.onEach { userInfo ->
+            when (userInfo) {
+                UserInfo.LoggedInUnknownUser -> {
+                    uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedIn(null))
+                }
 
-        getUserUseCase.invoke()
-            .onEach { userInfo ->
-                homeUserStatus.value = HomeUserStatus.fromUserInfo(userInfo)
-                when (userInfo) {
-                    UserInfo.LoggedInUnknownUser -> {
-                        uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedIn(null))
-                    }
-                    is UserInfo.LoggedInUser -> {
-                        uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedIn(userInfo.username))
-                    }
-                    UserInfo.UserLoggedOut -> {
-                        uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedOut)
-                    }
+                is UserInfo.LoggedInUser -> {
+                    uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedIn(userInfo.username))
+                }
+
+                UserInfo.UserLoggedOut -> {
+                    uiMessageManager.emitUIMessage(HomeUIMessage.NotifyUserHasLoggedOut)
+                }
                     is UserInfo.LoggingUserFailed -> uiMessageManager.emitUIMessage(
                         HomeUIMessage.ShowAuthenticationError(
                             userInfo.reason
@@ -180,7 +179,5 @@ internal class HomeViewModel @Inject constructor(
 internal sealed class HomeUIMessage : UIMessage() {
     data class ShowAuthenticationError(val reason: String) : HomeUIMessage()
     data class NotifyUserHasLoggedIn(val username: String?) : HomeUIMessage()
-    object NotifyUserHasLoggedOut : HomeUIMessage() {
-        override fun toString(): String = "NotifyUserHasLoggedOut"
-    }
+    data object NotifyUserHasLoggedOut : HomeUIMessage()
 }

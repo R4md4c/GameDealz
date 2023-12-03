@@ -25,7 +25,12 @@ import androidx.fragment.app.FragmentActivity
  */
 interface AuthActivityDelegate {
 
-    fun onActivityResult(activity: FragmentActivity, requestCode: Int, data: Intent?)
+    fun onActivityResult(
+        activity: FragmentActivity,
+        resultCode: Int,
+        requestCode: Int,
+        data: Intent?
+    )
 
     fun startAuthFlow(activity: FragmentActivity)
 }
